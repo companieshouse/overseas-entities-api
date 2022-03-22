@@ -1,5 +1,5 @@
 local_resource(
-  name = 'dev:overseas-entities-api-build',
+  name = 'dev:overseas-entities-api',
   cmd = 'mvn clean compile',
   deps = ['src']
 )
