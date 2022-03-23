@@ -17,13 +17,14 @@ To checkout and build the service:
 4. Run docker using "tilt up" in the docker-chs-development directory.
 5. Use spacebar in the command line to open tilt window - wait for overseas-entities-api to become green.
 6. Open your browser and go to page http://chs.local/register-an-overseas-entity
+7. If you are using the api directly, then use this url: http://chs.local/overseas-entities
 
 These instructions are for a local docker environment.
 
 ### Endpoints
 
 The full path for each public endpoints that requires a transaction id begins with the app url:
-`TBA`
+`${API_URL}/overseas-entities`
 
 Method    | Path                                                                         | Description
 :---------|:-----------------------------------------------------------------------------|:-----------
