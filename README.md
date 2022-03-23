@@ -1,7 +1,7 @@
 # overseas-entities-api
 
 ### Overview
-API service for submitting overseas entity registrations to CHIPS
+API service for submitting overseas entity registrations
 
 ### Requirements
 In order to run the service locally you will need the following:
@@ -23,7 +23,7 @@ These instructions are for a local docker environment.
 ### Endpoints
 
 The full path for each public endpoints that requires a transaction id begins with the app url:
-`${API_URL}/transactions/{TRANSACTION_ID}/register-an-overseas-entity`
+`TBA`
 
 Method    | Path                                                                         | Description
 :---------|:-----------------------------------------------------------------------------|:-----------
