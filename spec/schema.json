@@ -1,0 +1,37 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "An API to allow registration of overseas entities",
+    "version": "1.0.0",
+    "title": "Companies House - Overseas Entities API"
+  },
+  "host": "api.companieshouse.gov.uk",
+  "schemes": [
+    "https"
+  ],
+  "tags": [
+    {
+      "name": "Overseas Entities"
+    }
+  ],
+  "paths": {
+    "/overseas-entities": {
+      "post": {
+        "summary": "Create an overseas entity registration submission",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Overseas Entities"
+        ],
+        "responses": {
+          "200": {
+            "description": "Request has been received"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+  }
+}
