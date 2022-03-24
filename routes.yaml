@@ -1,6 +1,6 @@
 app_name: overseas-entities-api
 group: api
 
-weight: 90
+weight: 100
 routes:
- 1: ^/register-an-overseas-entity/*
+ 1: ^/overseas-entities/*
