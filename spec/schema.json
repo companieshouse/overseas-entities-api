@@ -11,18 +11,36 @@
   ],
   "tags": [
     {
-      "name": "Overseas Entities"
+      "name": "Overseas Entity"
     }
   ],
   "paths": {
-    "/overseas-entities": {
+    "/transactions/{transaction_id}/overseas-entity/": {
+      "parameters": [
+        {
+          "name": "transaction_id",
+          "in": "path",
+          "required" : true,
+          "type" : "string"
+        }
+      ],
       "post": {
         "summary": "Create an overseas entity registration submission",
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "Overseas Entity Submission",
+            "in": "body",
+            "required" : true,
+            "schema": {
+              "$ref": "#/definitions/OverseasEntitySubmission"
+            }
+          }
+        ],
         "tags": [
-          "Overseas Entities"
+          "Overseas Entity"
         ],
         "responses": {
           "200": {
@@ -33,5 +51,131 @@
     }
   },
   "definitions": {
+    "OverseasEntitySubmission": {
+      "type": "object",
+      "properties": {
+        "presenter": {
+          "$ref": "#/definitions/Presenter"
+        },
+        "entity": {
+          "$ref": "#/definitions/Entity"
+        }
+      },
+      "required": [
+        "presenter",
+        "entity"
+      ]
+    },
+    "Presenter": {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "administrator",
+            "agent",
+            "solicitor",
+            "beneficial_owner",
+            "other"
+          ]
+        },
+        "role_title": {
+          "type": "string"
+        },
+        "anti_money_laundering_registration_number": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "full_name",
+        "phone_number",
+        "role",
+        "role_title"
+      ]
+    },
+    "Entity": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "incorporation_country": {
+          "type": "string"
+        },
+        "principal_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "service_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "is_service_address_same_as_principal_address": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "legal_form": {
+          "type": "string"
+        },
+        "law_governed": {
+          "type": "string"
+        },
+        "public_register_entity_registered_on": {
+          "type": "string"
+        },
+        "registration_number": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "incorporation_country",
+        "principal_address",
+        "is_service_address_same_as_principal_address",
+        "email",
+        "legal_form",
+        "law_governed",
+        "public_register_entity_registered_on",
+        "registration_number"
+      ]
+    },
+    "Address": {
+      "type": "object",
+      "properties": {
+        "property_name_number": {
+          "type": "string"
+        },
+        "line_1": {
+          "type": "string"
+        },
+        "line_2": {
+          "type": "string"
+        },
+        "town": {
+          "type": "string"
+        },
+        "county": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "postcode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_1",
+        "town",
+        "county",
+        "postcode"
+      ]
+    }
   }
 }
