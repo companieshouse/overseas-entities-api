@@ -2,8 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
-
 public class OverseasEntitySubmission {
 
     @JsonProperty
