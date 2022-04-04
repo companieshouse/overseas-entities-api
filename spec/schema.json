@@ -151,10 +151,10 @@
         "propertyNameNumber": {
           "type": "string"
         },
-        "addressLine1": {
+        "line1": {
           "type": "string"
         },
-        "addressLine2": {
+        "line2": {
           "type": "string"
         },
         "town": {
