@@ -15,7 +15,7 @@
     }
   ],
   "paths": {
-    "/transaction/{transaction_id}/overseas-entity/": {
+    "/transactions/{transaction_id}/overseas-entity/": {
       "parameters": [
         {
           "name": "transaction_id",
@@ -69,92 +69,92 @@
     "Presenter": {
       "type": "object",
       "properties": {
-        "fullName": {
+        "full_name": {
           "type": "string"
         },
-        "phoneNumber": {
+        "phone_number": {
           "type": "string"
         },
         "role": {
           "type": "string",
           "enum": [
-            "Administrator",
-            "Agent",
-            "Solicitor",
-            "Beneficial Owner",
-            "Other"
+            "administrator",
+            "agent",
+            "solicitor",
+            "beneficial_owner",
+            "other"
           ]
         },
-        "roleTitle": {
+        "role_title": {
           "type": "string"
         },
-        "antiMoneyLaunderingRegistrationNumber": {
+        "anti_money_laundering_registration_number": {
           "type": "string"
         }
       },
       "required": [
-        "fullName",
-        "phoneNumber",
+        "full_name",
+        "phone_number",
         "role",
-        "roleTitle"
+        "role_title"
       ]
     },
     "Entity": {
       "type": "object",
       "properties": {
-        "entityName": {
+        "name": {
           "type": "string"
         },
-        "incorporationCountry": {
+        "incorporation_country": {
           "type": "string"
         },
-        "principalAddress": {
+        "principal_address": {
           "$ref": "#/definitions/Address"
         },
-        "serviceAddress": {
+        "service_address": {
           "$ref": "#/definitions/Address"
         },
-        "isAddressSameAsPrincipalAddress": {
+        "is_service_address_same_as_principal_address": {
           "type": "boolean"
         },
         "email": {
           "type": "string"
         },
-        "legalForm": {
+        "legal_form": {
           "type": "string"
         },
-        "lawGoverned": {
+        "law_governed": {
           "type": "string"
         },
-        "publicRegisterEntityRegisteredOn": {
+        "public_register_entity_registered_on": {
           "type": "string"
         },
-        "registrationNumber": {
+        "registration_number": {
           "type": "string"
         }
       },
       "required": [
-        "entityName",
-        "incorporationCountry",
-        "principalAddress",
-        "isAddressSameAsPrincipalAddress",
+        "name",
+        "incorporation_country",
+        "principal_address",
+        "is_service_address_same_as_principal_address",
         "email",
-        "legalForm",
-        "lawGoverned",
-        "publicRegisterEntityRegisteredOn",
-        "registrationNumber"
+        "legal_form",
+        "law_governed",
+        "public_register_entity_registered_on",
+        "registration_number"
       ]
     },
     "Address": {
       "type": "object",
       "properties": {
-        "propertyNameNumber": {
+        "property_name_number": {
           "type": "string"
         },
-        "line1": {
+        "line_1": {
           "type": "string"
         },
-        "line2": {
+        "line_2": {
           "type": "string"
         },
         "town": {
@@ -171,7 +171,7 @@
         }
       },
       "required": [
-        "addressLine1",
+        "line_1",
         "town",
         "county",
         "postcode"
