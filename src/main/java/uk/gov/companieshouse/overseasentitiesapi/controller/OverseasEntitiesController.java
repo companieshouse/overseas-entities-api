@@ -18,8 +18,6 @@ public class OverseasEntitiesController {
             @RequestBody OverseasEntitySubmission overseasEntitySubmission) {
         ApiLogger.debug("Called createNewSubmission()");
 
-        System.out.println("\n\n\n ****" + overseasEntitySubmission.getPresenter().getFullName() + "\n\n\n");
-
         return ResponseEntity.ok().body("This is the Register an Overseas Entity API");
     }
 }
