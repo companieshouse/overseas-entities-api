@@ -16,8 +16,6 @@ public class OverseasEntitiesController {
     @PostMapping("/")
     public ResponseEntity<String> createNewSubmission(
             @RequestBody OverseasEntitySubmission overseasEntitySubmission) {
-        ApiLogger.debug("Called createNewSubmission()");
-
         return ResponseEntity.ok().body("This is the Register an Overseas Entity API");
     }
 }
