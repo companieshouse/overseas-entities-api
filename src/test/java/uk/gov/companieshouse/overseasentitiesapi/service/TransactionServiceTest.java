@@ -45,7 +45,7 @@ class TransactionServiceTest {
     private TransactionService transactionService;
 
     @Test
-    void getTransaction() throws ServiceException, IOException, URIValidationException {
+    void testGettingATransactionIsSuccessful() throws ServiceException, IOException, URIValidationException {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
@@ -61,7 +61,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getTransactionURIValidationException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenTransactionSdkThrowsURIValidationException() throws IOException, URIValidationException {
         when(apiClientService.getOauthAuthenticatedClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
         when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.get("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsGet);
@@ -73,7 +73,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getTransactionProfileApiErrorResponse() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenTransactionSdkThrowsIOException() throws IOException, URIValidationException {
         when(apiClientService.getOauthAuthenticatedClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
         when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.get("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsGet);
