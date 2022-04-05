@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 @RestController
 @RequestMapping("/overseas-entities")
