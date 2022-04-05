@@ -18,7 +18,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     /**
      * Setup the interceptors to run against endpoints when the endpoints are called
      * Interceptors are executed in the order they are added to the registry
-     * @param registry the spring interceptor registry
+     * @param registry The spring interceptor registry
      */
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
@@ -26,8 +26,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     }
 
     /**
-     *  Interceptor to get transaction and put in request for endpoints that require a transaction
-     * @param registry the spring interceptor registry
+     * Interceptor to get transaction and put in request for endpoints that require a transaction
+     * @param registry The spring interceptor registry
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)

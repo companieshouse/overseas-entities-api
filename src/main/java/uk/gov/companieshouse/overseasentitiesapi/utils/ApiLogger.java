@@ -45,10 +45,6 @@ public class ApiLogger {
         LOGGER.errorContext(context, message, e, null);
     }
 
-    public static void errorContext(String context, Exception e, Map<String, Object> dataMap) {
-        LOGGER.errorContext(context, e, cloneMapData(dataMap));
-    }
-
     public static void errorContext(String context, String message, Exception e, Map<String, Object> dataMap) {
         LOGGER.errorContext(context, message, e, cloneMapData(dataMap));
     }

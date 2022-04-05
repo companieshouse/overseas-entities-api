@@ -46,7 +46,7 @@ public class TransactionInterceptor implements HandlerInterceptor {
             request.setAttribute("transaction", transaction);
             return true;
         } catch (Exception e) {
-            ApiLogger.errorContext(reqId,"Error retrieving transaction", e, logMap);
+            ApiLogger.errorContext(reqId, "Error retrieving transaction", e, logMap);
             response.setStatus(500);
             return false;
         }
