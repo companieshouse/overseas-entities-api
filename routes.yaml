@@ -3,4 +3,4 @@ group: api
 
 weight: 100
 routes:
- 1: ^/overseas-entities/*
+ 1:  ^/transactions/(.*)/overseas-entity/*
