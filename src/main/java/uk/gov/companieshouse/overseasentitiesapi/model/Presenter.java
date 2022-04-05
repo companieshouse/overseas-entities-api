@@ -1,24 +1,35 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Presenter {
 
-    @JsonProperty("full_name")
+    private static final String FULL_NAME_FIELD = "full_name";
+    private static final String PHONE_NUMBER_FIELD = "phone_number";
+    private static final String ROLE_FIELD = "role";
+    private static final String ROLE_TITLE_FIELD = "role_title";
+    private static final String ANTI_MONEY_LAUNDERING_REGISTRATION_NUMBER_FIELD = "anti_money_laundering_registration_number";
+
+    @JsonProperty(FULL_NAME_FIELD)
+    @Field(FULL_NAME_FIELD)
     private String fullName;
 
-    @JsonProperty("phone_number")
+    @JsonProperty(PHONE_NUMBER_FIELD)
+    @Field(PHONE_NUMBER_FIELD)
     private String phoneNumber;
 
-    @JsonProperty("role")
+    @JsonProperty(ROLE_FIELD)
+    @Field(ROLE_FIELD)
     private String role;
 
-    @JsonProperty("role_title")
+    @JsonProperty(ROLE_TITLE_FIELD)
+    @Field(ROLE_TITLE_FIELD)
     private String roleTitle;
 
-    @JsonProperty("anti_money_laundering_registration_number")
+    @JsonProperty(ANTI_MONEY_LAUNDERING_REGISTRATION_NUMBER_FIELD)
+    @Field(ANTI_MONEY_LAUNDERING_REGISTRATION_NUMBER_FIELD)
     private String antiMoneyLaunderingRegistrationNumber;
-
 
     public String getFullName() {
         return this.fullName;
@@ -27,7 +38,6 @@ public class Presenter {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-
 
     public String getPhoneNumber() {
         return phoneNumber;
