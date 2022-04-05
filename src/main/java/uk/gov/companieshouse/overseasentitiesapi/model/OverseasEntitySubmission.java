@@ -42,7 +42,7 @@ public class OverseasEntitySubmission {
         return entity;
     }
 
-    public void setEntity(Presenter presenter) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 }
