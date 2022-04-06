@@ -1,5 +1,6 @@
-package uk.gov.companieshouse.overseasentitiesapi.Interceptor;
+package uk.gov.companieshouse.overseasentitiesapi.interceptor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -7,6 +8,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 
@@ -16,7 +18,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     public static final String START_TIME_KEY = "start-time";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         Long startTime = System.currentTimeMillis();
         request.getSession().setAttribute(START_TIME_KEY, startTime);
 
@@ -26,7 +28,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, @NonNull Object handler, Exception ex) {
         Long startTime = (Long) request.getSession().getAttribute(START_TIME_KEY);
         long responseTime = System.currentTimeMillis() - startTime;
 

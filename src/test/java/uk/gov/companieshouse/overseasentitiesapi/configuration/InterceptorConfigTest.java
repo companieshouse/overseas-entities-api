@@ -1,7 +1,5 @@
-package uk.gov.companieshouse.overseasentitiesapi.controller.configuration;
+package uk.gov.companieshouse.overseasentitiesapi.configuration;
 
-import uk.gov.companieshouse.overseasentitiesapi.configuration.InterceptorConfig;
-import uk.gov.companieshouse.overseasentitiesapi.Interceptor.LoggingInterceptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -10,13 +8,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class InterceptorConfigTest {
+class InterceptorConfigTest {
 
     @Mock
     private InterceptorRegistry interceptorRegistry;
@@ -27,15 +27,25 @@ public class InterceptorConfigTest {
     @Mock
     private LoggingInterceptor loggingInterceptor;
 
+    @Mock
+    private TransactionInterceptor transactionInterceptor;
+
     @InjectMocks
     private InterceptorConfig interceptorConfig;
 
     @Test
     void addInterceptorsTest() {
         when(interceptorRegistry.addInterceptor(any())).thenReturn(interceptorRegistration);
+
         interceptorConfig.addInterceptors(interceptorRegistry);
+
         InOrder inOrder = inOrder(interceptorRegistry, interceptorRegistration);
 
+        // logging interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(loggingInterceptor);
+
+        // Transactions endpoints interceptor check
+        inOrder.verify(interceptorRegistry).addInterceptor(transactionInterceptor);
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS);
     }
 }
