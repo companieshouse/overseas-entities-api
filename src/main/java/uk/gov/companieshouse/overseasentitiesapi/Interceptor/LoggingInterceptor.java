@@ -1,4 +1,4 @@
-package interceptor;
+package uk.gov.companieshouse.overseasentitiesapi.Interceptor;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller.configuration;
 
-import configuration.InterceptorConfig;
-import interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.configuration.InterceptorConfig;
+import uk.gov.companieshouse.overseasentitiesapi.Interceptor.LoggingInterceptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;

@@ -1,6 +1,6 @@
-package configuration;
+package uk.gov.companieshouse.overseasentitiesapi.configuration;
 
-import interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.Interceptor.LoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
