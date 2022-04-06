@@ -33,6 +33,7 @@ class TransactionInterceptorTest {
 
     @Mock
     private HttpServletRequest mockHttpServletRequest;
+
     @InjectMocks
     private TransactionInterceptor transactionInterceptor;
 
