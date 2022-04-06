@@ -13,34 +13,36 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQ
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
 
+    public static final String START_TIME_KEY = "start-time";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Long startTime = System.currentTimeMillis();
-        request.getSession().setAttribute("start-time", startTime);
+        request.getSession().setAttribute(START_TIME_KEY, startTime);
 
-        ApiLogger.infoContext(requestId(request), String.format("Start of request. Method: %s Path: %s",
-                requestMethod(request), requestPath(request)), null);
+        ApiLogger.infoContext(getRequestId(request), String.format("Start of request. Method: %s Path: %s",
+                getRequestMethod(request), getRequestPath(request)), null);
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        Long startTime = (Long) request.getSession().getAttribute("start-time");
+        Long startTime = (Long) request.getSession().getAttribute(START_TIME_KEY);
         long responseTime = System.currentTimeMillis() - startTime;
 
-        ApiLogger.infoContext(requestId(request), String.format("End of request. Method: %s Path: %s Duration: %sms Status: %s",
-                requestMethod(request), requestPath(request), responseTime, response.getStatus()), null);
+        ApiLogger.infoContext(getRequestId(request), String.format("End of request. Method: %s Path: %s Duration: %sms Status: %s",
+                getRequestMethod(request), getRequestPath(request), responseTime, response.getStatus()), null);
     }
 
-    private String requestPath(HttpServletRequest request) {
+    private String getRequestPath(HttpServletRequest request) {
         return (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
     }
 
-    private String requestMethod(HttpServletRequest request) {
+    private String getRequestMethod(HttpServletRequest request) {
         return request.getMethod();
     }
 
-    private String requestId(HttpServletRequest request) {
+    private String getRequestId(HttpServletRequest request) {
         return request.getHeader(ERIC_REQUEST_ID_KEY);
     }
 }
