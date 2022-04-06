@@ -2,7 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
+import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -11,16 +12,21 @@ public class OverseasEntitiesService {
 
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
 
+    private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
+
     @Autowired
-    public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository) {
+    public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
+                                   OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
+        this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
     }
 
-    public void createOverseasEntity(OverseasEntitySubmission overseasEntitySubmission) {
+    public void createOverseasEntity(OverseasEntitySubmissionDto overseasEntitySubmissionJson) {
         ApiLogger.debug("Called createOverseasEntity()");
 
-        var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmission);
+        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionJson);
+        var insertedSubmissionDao = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
-        ApiLogger.debug("Created a new overseas entity with id " + insertedSubmission.getId());
+        ApiLogger.debug("Created a new overseas entity with id " + insertedSubmissionDao.getId());
     }
 }

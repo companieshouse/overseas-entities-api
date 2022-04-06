@@ -17,6 +17,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <structured-logging.version>1.9.14</structured-logging.version>
         <log4j.version>2.17.2</log4j.version>
+        <org.mapstruct.version>1.5.0.RC1</org.mapstruct.version>
     </properties>
     <profiles>
         <profile>
@@ -65,6 +66,11 @@
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>1.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -105,6 +111,13 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

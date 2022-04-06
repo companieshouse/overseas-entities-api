@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -24,7 +24,7 @@ public class OverseasEntitiesController {
 
     @PostMapping("/")
     public ResponseEntity<String> createNewSubmission(
-            @RequestBody OverseasEntitySubmission overseasEntitySubmission) {
+            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmission) {
         ApiLogger.debug("Called createNewSubmission()");
 
         this.overseasEntitiesService.createOverseasEntity(overseasEntitySubmission);

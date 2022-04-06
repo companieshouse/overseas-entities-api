@@ -1,63 +1,41 @@
-package uk.gov.companieshouse.overseasentitiesapi.model;
+package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 
-public class Entity {
+public class EntityDto {
 
-    private static final String NAME_FIELD = "name";
-    private static final String INCORPORATION_COUNTRY_FIELD = "incorporation_country";
-    private static final String PRINCIPAL_ADDRESS_FIELD = "principal_address";
-    private static final String SERVICE_ADDRESS_FIELD = "service_address";
-    private static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
-    private static final String EMAIL_FIELD = "email";
-    private static final String LEGAL_FORM_FIELD = "legal_form";
-    private static final String LAW_GOVERNED_FIELD = "law_governed";
-    private static final String PUBLIC_REGISTER_ENTITY_REGISTERED_ON_FIELD = "public_register_entity_registered_on";
-    private static final String REGISTRATION_NUMBER_FIELD = "registration_number";
-
-    @JsonProperty(NAME_FIELD)
-    @Field(NAME_FIELD)
+    @JsonProperty("name")
     private String name;
 
-    @JsonProperty(INCORPORATION_COUNTRY_FIELD)
-    @Field(INCORPORATION_COUNTRY_FIELD)
+    @JsonProperty("incorporation_country")
     private String incorporationCountry;
 
-    @JsonProperty(PRINCIPAL_ADDRESS_FIELD)
-    @Field(PRINCIPAL_ADDRESS_FIELD)
-    private Address principalAddress;
+    @JsonProperty("principal_address")
+    private AddressDto principalAddress;
 
-    @JsonProperty(SERVICE_ADDRESS_FIELD)
-    @Field(SERVICE_ADDRESS_FIELD)
-    private Address serviceAddress;
+    @JsonProperty("service_address")
+    private AddressDto serviceAddress;
 
-    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
-    @Field(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
+    @JsonProperty("is_service_address_same_as_principal_address")
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
-    @JsonProperty(EMAIL_FIELD)
-    @Field(EMAIL_FIELD)
+    @JsonProperty("email")
     private String email;
 
-    @JsonProperty(LEGAL_FORM_FIELD)
-    @Field(LEGAL_FORM_FIELD)
+    @JsonProperty("legal_form")
     private String legalForm;
 
-    @JsonProperty(LAW_GOVERNED_FIELD)
-    @Field(LAW_GOVERNED_FIELD)
+    @JsonProperty("law_governed")
     private String lawGoverned;
 
-    @JsonProperty(PUBLIC_REGISTER_ENTITY_REGISTERED_ON_FIELD)
+    @JsonProperty("public_register_entity_registered_on")
     @JsonFormat(pattern="yyyy-MM-dd")
-    @Field(PUBLIC_REGISTER_ENTITY_REGISTERED_ON_FIELD)
     private LocalDate publicRegisterEntityRegisteredOn;
 
-    @JsonProperty(REGISTRATION_NUMBER_FIELD)
-    @Field(REGISTRATION_NUMBER_FIELD)
+    @JsonProperty("registration_number")
     private String registrationNumber;
 
     public String getName() {
@@ -76,19 +54,19 @@ public class Entity {
         this.incorporationCountry = incorporationCountry;
     }
 
-    public Address getPrincipalAddress() {
+    public AddressDto getPrincipalAddress() {
         return principalAddress;
     }
 
-    public void setPrincipalAddress(Address principalAddress) {
+    public void setPrincipalAddress(AddressDto principalAddress) {
         this.principalAddress = principalAddress;
     }
 
-    public Address getServiceAddress() {
+    public AddressDto getServiceAddress() {
         return serviceAddress;
     }
 
-    public void setServiceAddress(Address serviceAddress) {
+    public void setServiceAddress(AddressDto serviceAddress) {
         this.serviceAddress = serviceAddress;
     }
 
