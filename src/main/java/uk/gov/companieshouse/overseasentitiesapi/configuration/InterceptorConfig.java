@@ -8,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan("uk.gov.companieshouse.api.interceptor")
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
