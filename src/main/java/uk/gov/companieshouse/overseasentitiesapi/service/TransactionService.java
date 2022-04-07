@@ -26,4 +26,17 @@ public class TransactionService {
             throw new ServiceException("Error Retrieving Transaction " + transactionId, e);
         }
     }
+
+    public void updateTransaction(Transaction transaction, String passthroughHeader) throws ServiceException {
+        try {
+            var uri = "/private/transactions/" + transaction.getId();
+            var resp = apiClientService.getInternalOauthAuthenticatedClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
+
+            if (resp.getStatusCode() != 204) {
+                throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
+            }
+        } catch (IOException | URIValidationException e) {
+            throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
+        }
+    }
 }
