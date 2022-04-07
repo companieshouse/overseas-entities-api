@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 
 
@@ -27,7 +27,7 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() {
-        OverseasEntitySubmission overseasEntitySubmission = new OverseasEntitySubmission();
+        OverseasEntitySubmissionDto overseasEntitySubmission = new OverseasEntitySubmissionDto();
         Transaction transaction = new Transaction();
 
         ResponseEntity<String> response = overseasEntitiesController.createNewSubmission(transaction, overseasEntitySubmission);
