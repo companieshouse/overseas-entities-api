@@ -57,7 +57,7 @@ public class OverseasEntitiesService {
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
         ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity id: %s",  transaction.getId(), insertedSubmission.getId()));
-        OverseasEntitySubmissionCreatedResponseDto overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
+        var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
