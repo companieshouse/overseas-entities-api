@@ -14,8 +14,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DtoDaoMappingTest {
@@ -65,7 +63,7 @@ class DtoDaoMappingTest {
         entity.setLegalForm("legal form");
         entity.setServiceAddressSameAsPrincipalAddress(true);
         entity.setRegistrationNumber("reg number");
-        entity.setPublicRegisterEntityRegisteredOn(LocalDate.of(1994, 11, 23));
+        entity.setPublicRegisterName("reg name");
         entity.setServiceAddress(address);
         entity.setPrincipalAddress(address);
 
@@ -103,7 +101,7 @@ class DtoDaoMappingTest {
         entity.setLegalForm("legal form");
         entity.setServiceAddressSameAsPrincipalAddress(true);
         entity.setRegistrationNumber("reg number");
-        entity.setPublicRegisterEntityRegisteredOn(LocalDate.of(1994, 11, 23));
+        entity.setPublicRegisterName("reg name");
         entity.setServiceAddress(address);
         entity.setPrincipalAddress(address);
 
@@ -132,7 +130,7 @@ class DtoDaoMappingTest {
         assertEquals(entityDto.getLawGoverned(), entityDao.getLawGoverned());
         assertEquals(entityDto.getLegalForm(), entityDao.getLegalForm());
         assertEquals(entityDto.getRegistrationNumber(), entityDao.getRegistrationNumber());
-        assertEquals(entityDto.getPublicRegisterEntityRegisteredOn(), entityDao.getPublicRegisterEntityRegisteredOn());
+        assertEquals(entityDto.getPublicRegisterName(), entityDao.getPublicRegisterName());
         assertEquals(entityDto.getServiceAddressSameAsPrincipalAddress(), entityDao.getServiceAddressSameAsPrincipalAddress());
 
         assertAddressesAreEqual(entityDto.getPrincipalAddress(), entityDao.getPrincipalAddress());

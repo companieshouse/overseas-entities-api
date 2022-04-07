@@ -2,8 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
-
 public class EntityDao {
 
     @Field("name")
@@ -30,8 +28,8 @@ public class EntityDao {
     @Field("law_governed")
     private String lawGoverned;
 
-    @Field("public_register_entity_registered_on")
-    private LocalDate publicRegisterEntityRegisteredOn;
+    @Field("public_register_name")
+    private String publicRegisterName;
 
     @Field("registration_number")
     private String registrationNumber;
@@ -100,12 +98,12 @@ public class EntityDao {
         this.lawGoverned = lawGoverned;
     }
 
-    public LocalDate getPublicRegisterEntityRegisteredOn() {
-        return publicRegisterEntityRegisteredOn;
+    public String getPublicRegisterName() {
+        return publicRegisterName;
     }
 
-    public void setPublicRegisterEntityRegisteredOn(LocalDate publicRegisterEntityRegisteredOn) {
-        this.publicRegisterEntityRegisteredOn = publicRegisterEntityRegisteredOn;
+    public void setPublicRegisterName(String publicRegisterName) {
+        this.publicRegisterName = publicRegisterName;
     }
 
     public String getRegistrationNumber() {

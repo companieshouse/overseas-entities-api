@@ -1,9 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDate;
 
 public class EntityDto {
 
@@ -31,9 +28,8 @@ public class EntityDto {
     @JsonProperty("law_governed")
     private String lawGoverned;
 
-    @JsonProperty("public_register_entity_registered_on")
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate publicRegisterEntityRegisteredOn;
+    @JsonProperty("public_register_name")
+    private String publicRegisterName;
 
     @JsonProperty("registration_number")
     private String registrationNumber;
@@ -102,12 +98,12 @@ public class EntityDto {
         this.lawGoverned = lawGoverned;
     }
 
-    public LocalDate getPublicRegisterEntityRegisteredOn() {
-        return publicRegisterEntityRegisteredOn;
+    public String getPublicRegisterName() {
+        return publicRegisterName;
     }
 
-    public void setPublicRegisterEntityRegisteredOn(LocalDate publicRegisterEntityRegisteredOn) {
-        this.publicRegisterEntityRegisteredOn = publicRegisterEntityRegisteredOn;
+    public void setPublicRegisterName(String publicRegisterName) {
+        this.publicRegisterName = publicRegisterName;
     }
 
     public String getRegistrationNumber() {
