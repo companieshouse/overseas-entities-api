@@ -1,6 +1,5 @@
-package uk.gov.companieshouse.overseasentitiesapi.model;
+package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -8,21 +7,16 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Map;
 
 @Document(collection = "overseas_entities_submissions")
-public class OverseasEntitySubmission {
-
-    private static final String PRESENTER_FIELD = "presenter";
-    private static final String ENTITY_FIELD = "entity";
+public class OverseasEntitySubmissionDao {
 
     @Id
     private String id;
 
-    @JsonProperty(PRESENTER_FIELD)
-    @Field(PRESENTER_FIELD)
-    private Presenter presenter;
+    @Field("presenter")
+    private PresenterDao presenter;
 
-    @JsonProperty(ENTITY_FIELD)
-    @Field(ENTITY_FIELD)
-    private Entity entity;
+    @Field("entity")
+    private EntityDao entity;
 
     @Field("links")
     private Map<String, String> links;
@@ -35,19 +29,19 @@ public class OverseasEntitySubmission {
         this.id = id;
     }
 
-    public Presenter getPresenter() {
+    public PresenterDao getPresenter() {
         return presenter;
     }
 
-    public void setPresenter(Presenter presenter) {
+    public void setPresenter(PresenterDao presenter) {
         this.presenter = presenter;
     }
 
-    public Entity getEntity() {
+    public EntityDao getEntity() {
         return entity;
     }
 
-    public void setEntity(Entity entity) {
+    public void setEntity(EntityDao entity) {
         this.entity = entity;
     }
 

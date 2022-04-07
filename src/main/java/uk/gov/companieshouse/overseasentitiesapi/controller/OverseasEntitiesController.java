@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
@@ -34,9 +34,9 @@ public class OverseasEntitiesController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> createNewSubmission(
+    public ResponseEntity<Object> createNewSubmission(
             @RequestAttribute("transaction") Transaction transaction,
-            @RequestBody OverseasEntitySubmission overseasEntitySubmission,
+            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
@@ -46,7 +46,7 @@ public class OverseasEntitiesController {
         ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
         try {
-            return this.overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmission, passthroughHeader);
+            return this.overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughHeader);
         } catch (Exception e) {
             ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

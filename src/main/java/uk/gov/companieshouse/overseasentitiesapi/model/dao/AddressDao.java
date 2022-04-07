@@ -1,44 +1,28 @@
-package uk.gov.companieshouse.overseasentitiesapi.model;
+package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class Address {
+public class AddressDao {
 
-    private static final String PROPERTY_NAME_NUMBER_FIELD = "property_name_number";
-    private static final String LINE_1_FIELD = "line_1";
-    private static final String LINE_2_FIELD = "line_2";
-    private static final String TOWN_FIELD = "town";
-    private static final String COUNTY_FIELD = "county";
-    private static final String COUNTRY_FIELD = "country";
-    private static final String POSTCODE_FIELD = "postcode";
-
-    @JsonProperty(PROPERTY_NAME_NUMBER_FIELD)
-    @Field(PROPERTY_NAME_NUMBER_FIELD)
+    @Field("property_name_number")
     private String propertyNameNumber;
 
-    @JsonProperty(LINE_1_FIELD)
-    @Field(LINE_1_FIELD)
+    @Field("line_1")
     private String line1;
 
-    @JsonProperty(LINE_2_FIELD)
-    @Field(LINE_2_FIELD)
+    @Field("line_2")
     private String line2;
 
-    @JsonProperty(TOWN_FIELD)
-    @Field(TOWN_FIELD)
+    @Field("town")
     private String town;
 
-    @JsonProperty(COUNTY_FIELD)
-    @Field(COUNTY_FIELD)
+    @Field("county")
     private String county;
 
-    @JsonProperty(COUNTRY_FIELD)
-    @Field(COUNTRY_FIELD)
+    @Field("country")
     private String country;
 
-    @JsonProperty(POSTCODE_FIELD)
-    @Field(POSTCODE_FIELD)
+    @Field("postcode")
     private String postcode;
 
     public String getPropertyNameNumber() {

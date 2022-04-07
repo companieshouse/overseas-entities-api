@@ -126,7 +126,7 @@
         "law_governed": {
           "type": "string"
         },
-        "public_register_entity_registered_on": {
+        "public_register_name": {
           "type": "string"
         },
         "registration_number": {
@@ -141,7 +141,7 @@
         "email",
         "legal_form",
         "law_governed",
-        "public_register_entity_registered_on",
+        "public_register_name",
         "registration_number"
       ]
     },

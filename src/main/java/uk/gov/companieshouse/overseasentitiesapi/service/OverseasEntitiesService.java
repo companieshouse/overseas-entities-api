@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.model.OverseasEntitySubmission;
+import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -23,15 +25,19 @@ public class OverseasEntitiesService {
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
     private final TransactionService transactionService;
 
+    private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
+
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
-                                   TransactionService transactionService) {
+                                   TransactionService transactionService,
+                                   OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
         this.transactionService = transactionService;
+        this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
     }
 
-    public ResponseEntity<String> createOverseasEntity(Transaction transaction,
-                                                       OverseasEntitySubmission overseasEntitySubmission,
+    public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
+                                                       OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String passthroughHeader) throws ServiceException {
         ApiLogger.debug("Called createOverseasEntity(...)");
 
@@ -40,7 +46,8 @@ public class OverseasEntitiesService {
         }
 
         // add the overseas entity submission into MongoDB
-        var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmission);
+        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+        var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
         var submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), insertedSubmission.getId());
         insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
         overseasEntitySubmissionsRepository.save(insertedSubmission);
@@ -50,7 +57,9 @@ public class OverseasEntitiesService {
         addOverseasEntityResourceToTransaction(transaction, passthroughHeader, submissionUri, overseasEntityResource);
 
         ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity id: %s",  transaction.getId(), insertedSubmission.getId()));
-        return ResponseEntity.created(URI.create(submissionUri)).body("insertedSubmission.getId()");
+        OverseasEntitySubmissionCreatedResponseDto overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
+        overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
+        return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
 
     private boolean hasExistingOverseasEntitySubmission (Transaction transaction) {
@@ -67,9 +76,6 @@ public class OverseasEntitiesService {
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
         linksMap.put("validation_status", submissionUri + "/validation-status");
-        // TODO - to enable payment uncomment line below and implement /costs endpoint
-        // linksMap.put("costs", submissionUri + "/costs");
-
         overseasEntityResource.setLinks(linksMap);
         return overseasEntityResource;
     }
