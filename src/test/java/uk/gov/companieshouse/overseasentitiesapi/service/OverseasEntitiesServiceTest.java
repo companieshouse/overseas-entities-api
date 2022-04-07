@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
@@ -16,12 +17,16 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitiesServiceTest {
@@ -50,8 +55,8 @@ class OverseasEntitiesServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(txnId);
 
-        OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        OverseasEntitySubmissionDao overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         overseasEntitySubmissionDao.setId(submissionId);
 
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
@@ -77,5 +82,29 @@ class OverseasEntitiesServiceTest {
         OverseasEntitySubmissionCreatedResponseDto responseDto = ((OverseasEntitySubmissionCreatedResponseDto) response.getBody());
         assertNotNull(responseDto);
         assertEquals(submissionId, responseDto.getId());
+    }
+
+    @Test
+    void testOverseasEntitySubmissionCannotCreateWhenExistingOverseasEntitySubmissionInTransaction() throws ServiceException {
+        final String txnId = "324234-123123-768685";
+        final String submissionId = "434jhg43hj34534";
+
+        Transaction transaction = new Transaction();
+        transaction.setId(txnId);
+        Resource resource = new Resource();
+        resource.setKind(FILING_KIND_OVERSEAS_ENTITY);
+        Map<String, Resource> resourceMap = new HashMap<>();
+        resourceMap.put(String.format("/transactions/%s/overseas-entity/%s", txnId, submissionId), resource);
+        transaction.setResources(resourceMap);
+
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+
+        // make the call to test
+        var response = overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, PASSTHROUGH_TOKEN_HEADER);
+
+        // assert response
+        var responseBody = response.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format("Transaction id: %s has an existing Overseas Entity submission", txnId), responseBody);
     }
 }
