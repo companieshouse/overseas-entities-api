@@ -39,14 +39,14 @@ public class OverseasEntitiesController {
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
-        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
         ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
         try {
-            return this.overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughHeader);
+            return this.overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader);
         } catch (Exception e) {
             ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

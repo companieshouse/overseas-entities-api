@@ -38,7 +38,7 @@ public class OverseasEntitiesService {
 
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                       String passthroughHeader) throws ServiceException {
+                                                       String passthroughTokenHeader) throws ServiceException {
         ApiLogger.debug("Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
@@ -54,7 +54,7 @@ public class OverseasEntitiesService {
 
         // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
-        addOverseasEntityResourceToTransaction(transaction, passthroughHeader, submissionUri, overseasEntityResource);
+        addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
         ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity id: %s",  transaction.getId(), insertedSubmission.getId()));
         OverseasEntitySubmissionCreatedResponseDto overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
@@ -81,10 +81,10 @@ public class OverseasEntitiesService {
     }
 
     private void addOverseasEntityResourceToTransaction(Transaction transaction,
-                                                        String passthroughHeader,
+                                                        String passthroughTokenHeader,
                                                         String submissionUri,
                                                         Resource overseasEntityResource) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
-        transactionService.updateTransaction(transaction, passthroughHeader);
+        transactionService.updateTransaction(transaction, passthroughTokenHeader);
     }
 }
