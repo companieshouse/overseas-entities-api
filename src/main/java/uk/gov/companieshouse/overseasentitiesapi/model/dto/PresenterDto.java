@@ -4,12 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PresenterDto {
 
-    private static final String FULL_NAME_FIELD = "full_name";
-    private static final String PHONE_NUMBER_FIELD = "phone_number";
-    private static final String ROLE_FIELD = "role";
-    private static final String ROLE_TITLE_FIELD = "role_title";
-    private static final String ANTI_MONEY_LAUNDERING_REGISTRATION_NUMBER_FIELD = "anti_money_laundering_registration_number";
-
     @JsonProperty("full_name")
     private String fullName;
 
