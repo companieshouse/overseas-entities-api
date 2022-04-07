@@ -21,10 +21,10 @@ public class OverseasEntitiesService {
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
     }
 
-    public void createOverseasEntity(OverseasEntitySubmissionDto overseasEntitySubmissionJson) {
+    public void createOverseasEntity(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         ApiLogger.debug("Called createOverseasEntity()");
 
-        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionJson);
+        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmissionDao = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         ApiLogger.debug("Created a new overseas entity with id " + insertedSubmissionDao.getId());
