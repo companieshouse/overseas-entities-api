@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
 
 @Service
 public class OverseasEntitiesService {
@@ -48,7 +50,7 @@ public class OverseasEntitiesService {
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
-        var submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), insertedSubmission.getId());
+        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
         insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
@@ -75,7 +77,7 @@ public class OverseasEntitiesService {
 
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
-        linksMap.put("validation_status", submissionUri + "/validation-status");
+        linksMap.put("validation_status", submissionUri + VALIDATION_STATUS_URI_SUFFIX);
         overseasEntityResource.setLinks(linksMap);
         return overseasEntityResource;
     }

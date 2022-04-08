@@ -85,7 +85,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testOverseasEntitySubmissionCannotCreateWhenExistingOverseasEntitySubmissionInTransaction() throws ServiceException {
+    void testOverseasEntitySubmissionCannotBeCreateWhenExistingOverseasEntitySubmissionInTransaction() throws ServiceException {
         final String txnId = "324234-123123-768685";
         final String submissionId = "434jhg43hj34534";
 

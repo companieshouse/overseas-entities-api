@@ -8,6 +8,9 @@ import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import java.io.IOException;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTIONS_PRIVATE_API_PREFIX;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTIONS_PUBLIC_API_PREFIX;
+
 @Service
 public class TransactionService {
 
@@ -20,7 +23,7 @@ public class TransactionService {
 
     public Transaction getTransaction(String transactionId, String passthroughHeader) throws ServiceException {
         try {
-            var uri = "/transactions/" + transactionId;
+            var uri = TRANSACTIONS_PUBLIC_API_PREFIX + transactionId;
             return apiClientService.getOauthAuthenticatedClient(passthroughHeader).transactions().get(uri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + transactionId, e);
@@ -29,11 +32,11 @@ public class TransactionService {
 
     public void updateTransaction(Transaction transaction, String passthroughHeader) throws ServiceException {
         try {
-            var uri = "/private/transactions/" + transaction.getId();
-            var resp = apiClientService.getInternalOauthAuthenticatedClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
+            var uri = TRANSACTIONS_PRIVATE_API_PREFIX + transaction.getId();
+            var response = apiClientService.getInternalOauthAuthenticatedClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
 
-            if (resp.getStatusCode() != 204) {
-                throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
+            if (response.getStatusCode() != 204) {
+                throw new IOException("Invalid Status Code received: " + response.getStatusCode());
             }
         } catch (IOException | URIValidationException e) {
             throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
