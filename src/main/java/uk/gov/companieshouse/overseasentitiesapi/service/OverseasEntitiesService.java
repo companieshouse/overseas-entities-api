@@ -7,6 +7,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.util.Optional;
+
 @Service
 public class OverseasEntitiesService {
 
@@ -28,5 +30,17 @@ public class OverseasEntitiesService {
         var insertedSubmissionDao = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         ApiLogger.debug("Created a new overseas entity with id " + insertedSubmissionDao.getId());
+    }
+
+    public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
+        var submission = overseasEntitySubmissionsRepository.findById(submissionId);
+        if (submission.isPresent()) {
+            ApiLogger.info(String.format("%s: Confirmation Statement Submission found. About to return", submission.get().getId()));
+
+            var json = overseasEntityDtoDaoMapper.daoToDto(submission.get());
+            return Optional.of(json);
+        } else {
+            return Optional.empty();
+        }
     }
 }
