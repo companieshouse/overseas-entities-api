@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @Component
 public class TransactionInterceptor implements HandlerInterceptor {
@@ -43,7 +44,7 @@ public class TransactionInterceptor implements HandlerInterceptor {
             final var transaction = transactionService.getTransaction(transactionId, passthroughHeader);
             ApiLogger.debugContext(reqId, "Transaction retrieved.", logMap);
 
-            request.setAttribute("transaction", transaction);
+            request.setAttribute(TRANSACTION_KEY, transaction);
             return true;
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction", e, logMap);
