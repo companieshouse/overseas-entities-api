@@ -48,6 +48,48 @@
           }
         }
       }
+    },
+    "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings": {
+      "parameters": [
+        {
+          "name": "transaction_id",
+          "in": "path",
+          "required" : true,
+          "type" : "string"
+        },
+        {
+          "name": "overseas_entity_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "summary": "Gets filing data ready to send send to CHIPS",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Filings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Filing data",
+            "schema": {
+              "$ref": "#/definitions/FilingAPIResponse"
+            }
+          },
+          "400": {
+            "description": "A provided url id failed validation"
+          },
+          "401":{
+            "description": "Unauthorised"
+          },
+          "404": {
+            "description": "Submission not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -176,6 +218,48 @@
         "county",
         "postcode"
       ]
+    },
+    "FilingAPIResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Data"
+        },
+        "description": {
+          "type": "string"
+        },
+        "description_identifier": {
+          "type": "string"
+        },
+        "description_values": {
+          "$ref": "#/definitions/Description"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
+    },
+    "Data": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
+    "Description": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
     }
   }
 }
