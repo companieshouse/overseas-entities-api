@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Map;
+
 @Document(collection = "overseas_entities_submissions")
 public class OverseasEntitySubmissionDao {
 
@@ -15,6 +17,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("entity")
     private EntityDao entity;
+
+    @Field("links")
+    private Map<String, String> links;
 
     public String getId() {
         return id;
@@ -38,5 +43,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setEntity(EntityDao entity) {
         this.entity = entity;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 }
