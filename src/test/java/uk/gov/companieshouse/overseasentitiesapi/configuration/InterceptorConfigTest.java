@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.FilingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 
@@ -30,6 +31,9 @@ class InterceptorConfigTest {
     @Mock
     private TransactionInterceptor transactionInterceptor;
 
+    @Mock
+    private FilingInterceptor filingInterceptor;
+
     @InjectMocks
     private InterceptorConfig interceptorConfig;
 
@@ -41,11 +45,15 @@ class InterceptorConfigTest {
 
         InOrder inOrder = inOrder(interceptorRegistry, interceptorRegistration);
 
-        // logging interceptor check
+        // Logging interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(loggingInterceptor);
 
-        // Transactions endpoints interceptor check
+        // Transaction interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(transactionInterceptor);
         inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS);
+
+        // Filing interceptor check
+        inOrder.verify(interceptorRegistry).addInterceptor(filingInterceptor);
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.FILINGS);
     }
 }

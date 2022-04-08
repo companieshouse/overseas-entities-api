@@ -13,8 +13,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
+
 @RestController
-@RequestMapping("/transactions/{transaction_id}/overseas-entity")
+@RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/overseas-entity")
 public class OverseasEntitiesController {
 
     private final OverseasEntitiesService overseasEntitiesService;
@@ -26,7 +29,7 @@ public class OverseasEntitiesController {
 
     @PostMapping("/")
     public ResponseEntity<String> createNewSubmission(
-            @RequestAttribute("transaction") Transaction transaction,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmission) {
         ApiLogger.debug("Called createNewSubmission()");
 
