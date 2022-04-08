@@ -51,13 +51,8 @@ public class FilingsService {
     private void setSubmissionData(String overseasEntityId, FilingApi filing, OverseasEntitySubmissionDto submissionDto) throws SubmissionNotFoundException {
         Map<String, Object> data = new HashMap<>(); // TODO map object to kv in this stub
         data.put("name", submissionDto.getEntity().getName());
-        if (submissionDto != null) {
-            filing.setData(data);
-            setDescription(filing);
-        } else {
-            throw new SubmissionNotFoundException(
-                    String.format("Submission contains no data %s", overseasEntityId));
-        }
+        filing.setData(data);
+        setDescription(filing);
     }
 
     private void setDescription(FilingApi filing) {
