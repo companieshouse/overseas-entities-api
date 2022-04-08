@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -14,6 +15,7 @@ import uk.gov.companieshouse.overseasentitiesapi.service.FilingsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,5 +42,21 @@ class FilingsControllerTest {
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
         assertEquals("12345678", result.getBody()[0].getDescription());
+    }
+
+    @Test
+    void getFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenThrow(SubmissionNotFoundException.class);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        assertNull(result.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    void getFilingException() throws SubmissionNotFoundException, ServiceException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenThrow(RuntimeException.class);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        assertNull(result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }
 }
