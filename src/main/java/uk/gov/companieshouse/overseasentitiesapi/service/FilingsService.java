@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OE;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @Service
 public class FilingsService {
@@ -32,7 +32,7 @@ public class FilingsService {
     public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction)
             throws SubmissionNotFoundException, ServiceException {
         var filing = new FilingApi();
-        filing.setKind(FILING_KIND_OE);
+        filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
         setFilingApiData(filing, overseasEntityId, transaction);
         return filing;
     }

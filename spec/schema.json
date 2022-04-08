@@ -43,8 +43,14 @@
           "Overseas Entity"
         ],
         "responses": {
-          "200": {
-            "description": "Request has been received"
+          "201": {
+            "description": "Overseas Entity Submission has been successfully created.",
+            "schema": {
+              "$ref": "#/definitions/OverseasEntitySubmissionCreatedResponse"
+            }
+          },
+          "401":{
+            "description": "Unauthorised"
           }
         }
       }
@@ -218,6 +224,14 @@
         "county",
         "postcode"
       ]
+    },
+    "OverseasEntitySubmissionCreatedResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "FilingAPIResponse": {
       "type": "object",
