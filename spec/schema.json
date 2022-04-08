@@ -55,7 +55,7 @@
         }
       }
     },
-    "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings": {
+    "/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings": {
       "parameters": [
         {
           "name": "transaction_id",
@@ -71,7 +71,7 @@
         }
       ],
       "get": {
-        "summary": "Gets filing data ready to send send to CHIPS",
+        "summary": "Gets filing data ready to send to CHIPS",
         "produces": [
           "application/json"
         ],

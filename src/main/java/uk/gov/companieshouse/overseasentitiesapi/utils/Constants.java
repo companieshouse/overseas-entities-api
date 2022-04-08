@@ -21,6 +21,6 @@ public class Constants {
     public static final String TRANSACTION_KEY = "transaction";
 
     public static final String OVERSEAS_ENTITY_ID_KEY = "overseas_entity_id";
-        // Filings
+    // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
 }

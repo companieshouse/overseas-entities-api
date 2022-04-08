@@ -20,9 +20,10 @@ import java.util.HashMap;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @RestController
-@RequestMapping("/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings")
 public class FilingsController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class FilingsController {
 
     @GetMapping
     public ResponseEntity<FilingApi[]> getFiling(
-            @RequestAttribute("transaction") Transaction transaction,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {

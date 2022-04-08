@@ -95,10 +95,10 @@ public class OverseasEntitiesService {
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
         var submission = overseasEntitySubmissionsRepository.findById(submissionId);
         if (submission.isPresent()) {
-            ApiLogger.info(String.format("%s: Confirmation Statement Submission found. About to return", submission.get().getId()));
+            ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", submission.get().getId()));
 
-            var json = overseasEntityDtoDaoMapper.daoToDto(submission.get());
-            return Optional.of(json);
+            var dto = overseasEntityDtoDaoMapper.daoToDto(submission.get());
+            return Optional.of(dto);
         } else {
             return Optional.empty();
         }

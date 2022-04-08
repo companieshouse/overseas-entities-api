@@ -42,7 +42,7 @@ public class FilingServiceTest {
     private Transaction transaction;
 
     @Test
-    void test() throws SubmissionNotFoundException, ServiceException {
+    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException {
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
                 OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
@@ -54,7 +54,7 @@ public class FilingServiceTest {
     }
 
     @Test
-    void testWhenSubmissionThrowsException()  {
+    void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
                 when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
