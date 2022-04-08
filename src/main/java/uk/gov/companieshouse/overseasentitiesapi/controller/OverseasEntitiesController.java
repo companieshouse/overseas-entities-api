@@ -22,8 +22,10 @@ import java.util.HashMap;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
+
 @RestController
-@RequestMapping("/transactions/{transaction_id}/overseas-entity")
+@RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/overseas-entity")
 public class OverseasEntitiesController {
 
     private final OverseasEntitiesService overseasEntitiesService;
@@ -35,7 +37,7 @@ public class OverseasEntitiesController {
 
     @PostMapping("/")
     public ResponseEntity<Object> createNewSubmission(
-            @RequestAttribute("transaction") Transaction transaction,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
