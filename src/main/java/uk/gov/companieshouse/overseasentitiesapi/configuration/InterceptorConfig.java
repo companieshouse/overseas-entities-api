@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.FilingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 
@@ -12,12 +13,16 @@ import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionIntercep
 public class InterceptorConfig implements WebMvcConfigurer {
 
     static final String TRANSACTIONS = "/transactions/**";
+    static final String FILINGS = "/private/**/filings";
 
     @Autowired
     private LoggingInterceptor loggingInterceptor;
 
     @Autowired
     private TransactionInterceptor transactionInterceptor;
+
+    @Autowired
+    private FilingInterceptor filingInterceptor;
 
     /**
      * Setup the interceptors to run against endpoints when the endpoints are called
@@ -28,6 +33,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addTransactionInterceptor(registry);
+        addFilingInterceptor(registry);
     }
 
     /**
@@ -45,5 +51,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
                 .addPathPatterns(TRANSACTIONS);
+    }
+
+    /**
+     * Interceptor to check specific conditions for the /filings endpoint
+     * @param registry
+     */
+    private void addFilingInterceptor(InterceptorRegistry registry) {
+        registry.addInterceptor(filingInterceptor)
+                .addPathPatterns(FILINGS);
     }
 }
