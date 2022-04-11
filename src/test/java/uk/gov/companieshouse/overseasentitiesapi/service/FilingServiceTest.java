@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
-public class FilingServiceTest {
+class FilingServiceTest {
 
     private static final String OVERSEAS_ENTITY_ID = "abc123";
     public static final String FILING_DESCRIPTION = "Test this";

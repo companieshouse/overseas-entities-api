@@ -28,7 +28,7 @@ public class FilingsService {
     }
 
     public FilingApi generateOverseasEntityFiling(String overseasEntityId)
-            throws SubmissionNotFoundException, ServiceException {
+            throws SubmissionNotFoundException {
         var filing = new FilingApi();
         filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
         setFilingApiData(filing, overseasEntityId);
@@ -48,7 +48,7 @@ public class FilingsService {
     }
 
     private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
-        Map<String, Object> data = new HashMap<>(); // TODO map object to kv in this stub
+        Map<String, Object> data = new HashMap<>();
         data.put("name", submissionDto.getEntity().getName());
         filing.setData(data);
         setDescription(filing);
