@@ -34,7 +34,7 @@ class FilingsControllerTest {
     private FilingsService filingsService;
 
     @Test
-    void testGetFilingReturnsSuccessfully() throws ServiceException, SubmissionNotFoundException {
+    void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
         when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenReturn(filing);
@@ -45,18 +45,10 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
+    void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException {
         when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(SubmissionNotFoundException.class);
         var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-    }
-
-    @Test
-    void testGetFilingServiceException() throws SubmissionNotFoundException, ServiceException {
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(ServiceException.class);
-        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
-        assertNull(result.getBody());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }
 }
