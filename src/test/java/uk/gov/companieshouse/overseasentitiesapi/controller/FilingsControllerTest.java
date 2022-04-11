@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.api.model.transaction.TransactionLinks;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.service.FilingsService;
 
@@ -33,12 +34,18 @@ class FilingsControllerTest {
     @Mock
     private FilingsService filingsService;
 
+    @BeforeEach
+    void init() {
+        transaction = new Transaction();
+         transaction.setId(TRANSACTION_ID);
+    }
+
     @Test
     void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
         when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenReturn(filing);
-        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
         assertEquals("12345678", result.getBody()[0].getDescription());
@@ -47,7 +54,7 @@ class FilingsControllerTest {
     @Test
     void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException {
         when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(SubmissionNotFoundException.class);
-        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }

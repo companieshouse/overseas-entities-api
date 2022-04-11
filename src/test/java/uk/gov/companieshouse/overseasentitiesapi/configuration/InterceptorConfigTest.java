@@ -50,7 +50,7 @@ class InterceptorConfigTest {
 
         // Transaction interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(transactionInterceptor);
-        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS);
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS, InterceptorConfig.FILINGS);
 
         // Filing interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(filingInterceptor);
