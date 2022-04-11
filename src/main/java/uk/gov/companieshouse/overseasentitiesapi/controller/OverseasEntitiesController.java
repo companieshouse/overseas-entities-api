@@ -71,7 +71,7 @@ public class OverseasEntitiesController {
         logMap.put(TRANSACTION_ID_KEY, transactionId);
         ApiLogger.infoContext(requestId, "Calling service to get validation status", logMap);
         try {
-            ValidationStatusResponse validationStatusResponse = this.overseasEntitiesService.isValid(submissionId);
+            var validationStatusResponse = this.overseasEntitiesService.isValid(submissionId);
             return ResponseEntity.ok().body(validationStatusResponse);
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId,e.getMessage(), e, logMap);
