@@ -71,7 +71,7 @@
         }
       ],
       "get": {
-        "summary": "Verify that all the tasks for the Specified Overseas Entities Submission have been completed",
+        "summary": "Verify that the specified Overseas Entities Submission is valid",
         "produces": [
           "application/json"
         ],
@@ -80,7 +80,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The Specified Overseas Entities Submission tasks have been completed.",
+            "description": "The specified Overseas Entities Submission is valid.",
             "schema": {
               "$ref": "#/definitions/ValidationStatusResponse"
             }
