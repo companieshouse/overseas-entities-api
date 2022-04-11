@@ -10,8 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -19,9 +22,12 @@ import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmis
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,6 +37,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_K
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitiesServiceTest {
     private static final String PASSTHROUGH_TOKEN_HEADER = "13456";
+    private static final String SUBMISSION_ID = "abc123";
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -106,5 +113,21 @@ class OverseasEntitiesServiceTest {
         var responseBody = response.getBody();
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(String.format("Transaction id: %s has an existing Overseas Entity submission", txnId), responseBody);
+    }
+
+    @Test
+    void testValidationStatusWhenSubmissionIsPresent() throws SubmissionNotFoundException {
+        OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(Mocks.buildSubmissionDto());
+        when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(submissionDao));
+
+        ValidationStatusResponse validationStatusResponse = overseasEntitiesService.isValid(SUBMISSION_ID);
+        assertTrue(validationStatusResponse.isValid());
+    }
+
+    @Test
+    void testValidationStatusWhenSubmissionIsNotPresent() {
+        when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.empty());
+        assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.isValid(SUBMISSION_ID));
     }
 }
