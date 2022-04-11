@@ -15,7 +15,7 @@
     }
   ],
   "paths": {
-    "/transactions/{transaction_id}/overseas-entity/": {
+    "/transactions/{transaction_id}/overseas-entity": {
       "parameters": [
         {
           "name": "transaction_id",
