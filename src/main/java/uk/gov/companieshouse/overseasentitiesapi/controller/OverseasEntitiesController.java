@@ -35,7 +35,7 @@ public class OverseasEntitiesController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createNewSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
