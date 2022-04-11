@@ -55,6 +55,48 @@
         }
       }
     },
+    "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/validation-status": {
+      "parameters": [
+        {
+          "name": "transaction_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "overseas_entity_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "summary": "Verify that all the tasks for the Specified Overseas Entities Submission have been completed",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Validation Status"
+        ],
+        "responses": {
+          "200": {
+            "description": "The Specified Overseas Entities Submission tasks have been completed.",
+            "schema": {
+              "$ref": "#/definitions/ValidationStatusResponse"
+            }
+          },
+          "400": {
+            "description": "A provided url id failed validation"
+          },
+          "401":{
+            "description": "Unauthorised"
+          },
+          "404": {
+            "description": "Submission not found"
+          }
+        }
+      }
+    },
     "/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings": {
       "parameters": [
         {
@@ -271,6 +313,37 @@
           "type": "string"
         },
         "value": {
+          "type": "string"
+        }
+      }
+    },
+    "ValidationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "is_valid": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValidationStatusError"
+          }
+        }
+      }
+    },
+    "ValidationStatusError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "location_type": {
+          "type": "string"
+        },
+        "type": {
           "type": "string"
         }
       }
