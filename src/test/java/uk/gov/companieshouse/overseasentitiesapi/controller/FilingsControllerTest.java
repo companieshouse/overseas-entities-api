@@ -37,8 +37,8 @@ class FilingsControllerTest {
     void testGetFilingReturnsSuccessfully() throws ServiceException, SubmissionNotFoundException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenReturn(filing);
-        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenReturn(filing);
+        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
         assertEquals("12345678", result.getBody()[0].getDescription());
@@ -46,16 +46,16 @@ class FilingsControllerTest {
 
     @Test
     void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenThrow(SubmissionNotFoundException.class);
-        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(SubmissionNotFoundException.class);
+        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
     void testGetFilingServiceException() throws SubmissionNotFoundException, ServiceException {
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenThrow(ServiceException.class);
-        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(ServiceException.class);
+        var result = filingsController.getFiling(OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNull(result.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }

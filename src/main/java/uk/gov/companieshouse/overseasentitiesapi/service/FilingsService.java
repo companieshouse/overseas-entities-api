@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -28,15 +27,15 @@ public class FilingsService {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction)
+    public FilingApi generateOverseasEntityFiling(String overseasEntityId)
             throws SubmissionNotFoundException, ServiceException {
         var filing = new FilingApi();
         filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
-        setFilingApiData(filing, overseasEntityId, transaction);
+        setFilingApiData(filing, overseasEntityId);
         return filing;
     }
 
-    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction) throws SubmissionNotFoundException, ServiceException {
+    private void setFilingApiData(FilingApi filing, String overseasEntityId) throws SubmissionNotFoundException {
          Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
@@ -45,10 +44,10 @@ public class FilingsService {
                         new SubmissionNotFoundException(
                                 String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
 
-        setSubmissionData(overseasEntityId, filing, submissionDto);
+        setSubmissionData(filing, submissionDto);
     }
 
-    private void setSubmissionData(String overseasEntityId, FilingApi filing, OverseasEntitySubmissionDto submissionDto) throws SubmissionNotFoundException {
+    private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
         Map<String, Object> data = new HashMap<>(); // TODO map object to kv in this stub
         data.put("name", submissionDto.getEntity().getName());
         filing.setData(data);
