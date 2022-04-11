@@ -12,6 +12,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.util.Optional;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,5 +90,17 @@ public class OverseasEntitiesService {
                                                         Resource overseasEntityResource) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
         transactionService.updateTransaction(transaction, passthroughTokenHeader);
+    }
+
+    public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
+        var submission = overseasEntitySubmissionsRepository.findById(submissionId);
+        if (submission.isPresent()) {
+            ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", submission.get().getId()));
+
+            var dto = overseasEntityDtoDaoMapper.daoToDto(submission.get());
+            return Optional.of(dto);
+        } else {
+            return Optional.empty();
+        }
     }
 }
