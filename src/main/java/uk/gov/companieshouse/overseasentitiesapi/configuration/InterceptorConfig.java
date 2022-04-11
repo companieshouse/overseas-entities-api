@@ -50,7 +50,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
-                .addPathPatterns(TRANSACTIONS);
+                .addPathPatterns(TRANSACTIONS, FILINGS);
     }
 
     /**
