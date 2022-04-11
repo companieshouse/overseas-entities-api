@@ -10,6 +10,8 @@ public class Constants {
 
     // URI path attributes
     public static final String TRANSACTION_ID_KEY = "transaction_id";
+    public static final String OVERSEAS_ENTITY_ID_KEY = "overseas_entity_id";
+
     // Request attribute names
     public static final String TRANSACTION_KEY = "transaction";
 
@@ -19,7 +21,6 @@ public class Constants {
     public static final String TRANSACTIONS_PRIVATE_API_PREFIX = "/private/transactions/";
     public static final String TRANSACTIONS_PUBLIC_API_PREFIX = "/transactions/";
 
-    public static final String OVERSEAS_ENTITY_ID_KEY = "overseas_entity_id";
     // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
 }
