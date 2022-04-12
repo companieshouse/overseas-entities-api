@@ -18,6 +18,18 @@
         <structured-logging.version>1.9.14</structured-logging.version>
         <log4j.version>2.17.2</log4j.version>
         <org.mapstruct.version>1.5.0.RC1</org.mapstruct.version>
+
+        <!--sonar configuration-->
+        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.sources>src/main</sonar.sources>
+        <sonar.tests>src/test</sonar.tests>
+        <sonar.verbose>true</sonar.verbose>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/target/site/jacoco/jacoco.xml,
+            ${project.basedir}/target/site/jacoco-it/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
     </properties>
     <profiles>
         <profile>
