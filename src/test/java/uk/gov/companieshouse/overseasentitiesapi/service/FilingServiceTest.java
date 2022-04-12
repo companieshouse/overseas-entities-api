@@ -12,7 +12,10 @@ import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +50,12 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID);
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION, filing.getDescriptionIdentifier());
-        assertEquals("Joe Bloggs Ltd", filing.getData().get("name"));
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        final PresenterDto presenterInFiling = ((PresenterDto) filing.getData().get("presenter"));
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("999", presenterInFiling.getAntiMoneyLaunderingRegistrationNumber());
     }
 
     @Test

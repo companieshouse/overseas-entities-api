@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,9 +49,12 @@ public class FilingsService {
 
     private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("name", submissionDto.getEntity().getName());
+        data.put("presenter", submissionDto.getPresenter());
+        data.put("entity", submissionDto.getEntity());
         filing.setData(data);
         setDescription(filing);
+
+        ApiLogger.debug("Submission data has been set on filing");
     }
 
     private void setDescription(FilingApi filing) {
