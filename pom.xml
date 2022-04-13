@@ -16,6 +16,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <structured-logging.version>1.9.14</structured-logging.version>
+        <api-security-java.version>0.3.9</api-security-java.version>
         <log4j.version>2.17.2</log4j.version>
         <org.mapstruct.version>1.5.0.RC1</org.mapstruct.version>
     </properties>
@@ -70,6 +71,11 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>private-api-sdk-java</artifactId>
             <version>2.0.147</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-security-java</artifactId>
+            <version>${api-security-java.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
