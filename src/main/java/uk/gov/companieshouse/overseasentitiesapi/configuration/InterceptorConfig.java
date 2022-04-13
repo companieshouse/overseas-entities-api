@@ -13,7 +13,6 @@ import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 
 import static uk.gov.companieshouse.api.util.security.Permission.Key.COMPANY_INCORPORATION;
-import static uk.gov.companieshouse.api.util.security.Permission.Key.USER_PROFILE;
 
 @Configuration
 @ComponentScan("uk.gov.companieshouse.api.interceptor")
