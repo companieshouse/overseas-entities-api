@@ -161,6 +161,24 @@
           "items": {
             "$ref": "#/definitions/BeneficialOwnerCorporate"
           }
+        },
+        "beneficial_owners_government_or_public_authority": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BeneficialOwnerGovernmentOrPublicAuthority"
+          }
+        },
+        "managing_officers_individual": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ManagingOfficerIndividual"
+          }
+        },
+        "managing_officers_corporate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ManagingOfficerCorporate"
+          }
         }
       },
       "required": [
@@ -225,7 +243,7 @@
         "legal_form": {
           "type": "string"
         },
-        "law_governed": {
+        "governing_law": {
           "type": "string"
         },
         "public_register_name": {
@@ -317,7 +335,7 @@
         "legal_form": {
           "type": "string"
         },
-        "law_governed": {
+        "governing_law": {
           "type": "string"
         },
         "is_on_register_in_country_formed_in": {
@@ -353,6 +371,128 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        }
+      }
+    },
+    "BeneficialOwnerGovernmentOrPublicAuthority": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "principal_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "service_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "is_service_address_same_as_principal_address": {
+          "type": "boolean"
+        },
+        "legal_form": {
+          "type": "string"
+        },
+        "governing_law": {
+          "type": "string"
+        },
+        "is_on_register_in_country_formed_in": {
+          "type": "boolean"
+        },
+        "register_name": {
+          "type": "string"
+        },
+        "registration_number": {
+          "type": "string"
+        },
+        "beneficial_owner_nature_of_control_types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NatureOfControlType"
+          }
+        },
+        "non_legal_firm_members_nature_of_control_types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NatureOfControlType"
+          }
+        }
+      }
+    },
+    "ManagingOfficerIndividual": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "has_former_names": {
+          "type": "boolean"
+        },
+        "former_names": {
+          "type": "string"
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date"
+        },
+        "nationality": {
+          "type": "string"
+        },
+        "usual_residential_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "service_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "is_service_address_same_as_usual_residential_address": {
+          "type": "boolean"
+        },
+        "occupation": {
+          "type": "string"
+        },
+        "role_and_responsibilities": {
+          "type": "string"
+        }
+      }
+    },
+    "ManagingOfficerCorporate": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "principal_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "service_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "is_service_address_same_as_principal_address": {
+          "type": "boolean"
+        },
+        "registered_location": {
+          "type": "string"
+        },
+        "legal_form": {
+          "type": "string"
+        },
+        "governing_law": {
+          "type": "string"
+        },
+        "is_on_register_in_country_formed_in": {
+          "type": "boolean"
+        },
+        "register_name": {
+          "type": "string"
+        },
+        "registration_number": {
+          "type": "string"
+        },
+        "start_date": {
+          "type": "string",
+          "format": "date"
         }
       }
     },
