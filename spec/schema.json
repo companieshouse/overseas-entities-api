@@ -243,7 +243,7 @@
         "legal_form": {
           "type": "string"
         },
-        "governing_law": {
+        "law_governed": {
           "type": "string"
         },
         "public_register_name": {
@@ -335,7 +335,7 @@
         "legal_form": {
           "type": "string"
         },
-        "governing_law": {
+        "law_governed": {
           "type": "string"
         },
         "is_on_register_in_country_formed_in": {
@@ -392,7 +392,7 @@
         "legal_form": {
           "type": "string"
         },
-        "governing_law": {
+        "law_governed": {
           "type": "string"
         },
         "is_on_register_in_country_formed_in": {
@@ -478,7 +478,7 @@
         "legal_form": {
           "type": "string"
         },
-        "governing_law": {
+        "law_governed": {
           "type": "string"
         },
         "is_on_register_in_country_formed_in": {
