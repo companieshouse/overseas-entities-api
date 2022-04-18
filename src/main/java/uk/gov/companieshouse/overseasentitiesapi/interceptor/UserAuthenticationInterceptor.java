@@ -49,7 +49,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         }
 
         // TokenPermissions should have been set up in the request by TokenPermissionsInterceptor
-        final TokenPermissions tokenPermissions = getTokenPermissions(request)
+        final var tokenPermissions = getTokenPermissions(request)
                 .orElseThrow(() -> new IllegalStateException("UserAuthenticationInterceptor - TokenPermissions object not present in request"));
 
         // Check the user has the company_incorporation=create permission
