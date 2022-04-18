@@ -8,11 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import uk.gov.companieshouse.api.interceptor.CRUDAuthenticationInterceptor;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
+import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.FilingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.UserAuthenticationInterceptor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -37,6 +38,9 @@ class InterceptorConfigTest {
     private FilingInterceptor filingInterceptor;
 
     @Mock
+    private UserAuthenticationInterceptor userAuthenticationInterceptor;
+
+    @Mock
     private InternalUserInterceptor internalUserInterceptor;
 
     @InjectMocks
@@ -53,8 +57,12 @@ class InterceptorConfigTest {
         // Logging interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(loggingInterceptor);
 
-        // User auth CRUD interceptor check
-        inOrder.verify(interceptorRegistry).addInterceptor(any(CRUDAuthenticationInterceptor.class));
+        // Token Permissions interceptor check
+        inOrder.verify(interceptorRegistry).addInterceptor(any(TokenPermissionsInterceptor.class));
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.USER_AUTH_ENDPOINTS);
+
+        // User authentication interceptor check
+        inOrder.verify(interceptorRegistry).addInterceptor(userAuthenticationInterceptor);
         inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.USER_AUTH_ENDPOINTS);
 
         // Internal User auth interceptor check
