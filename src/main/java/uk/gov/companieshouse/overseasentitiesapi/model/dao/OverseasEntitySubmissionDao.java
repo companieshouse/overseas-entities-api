@@ -22,6 +22,12 @@ public class OverseasEntitySubmissionDao {
     @Field("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual;
 
+    @Field("beneficial_owners_individual")
+    private List<BeneficialOwnerCorporateDao> beneficialOwnersCorporate;
+
+    @Field("beneficial_owners_individual")
+    private List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority;
+
     @Field("links")
     private Map<String, String> links;
 
@@ -55,6 +61,22 @@ public class OverseasEntitySubmissionDao {
 
     public void setBeneficialOwnersIndividual(List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual) {
         this.beneficialOwnersIndividual = beneficialOwnersIndividual;
+    }
+
+    public List<BeneficialOwnerCorporateDao> getBeneficialOwnersCorporate() {
+        return beneficialOwnersCorporate;
+    }
+
+    public void setBeneficialOwnersCorporate(List<BeneficialOwnerCorporateDao> beneficialOwnersCorporate) {
+        this.beneficialOwnersCorporate = beneficialOwnersCorporate;
+    }
+
+    public List<BeneficialOwnerGovernmentOrPublicAuthorityDao> getBeneficialOwnersGovernmentOrPublicAuthority() {
+        return beneficialOwnersGovernmentOrPublicAuthority;
+    }
+
+    public void setBeneficialOwnersGovernmentOrPublicAuthority(List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority) {
+        this.beneficialOwnersGovernmentOrPublicAuthority = beneficialOwnersGovernmentOrPublicAuthority;
     }
 
     public Map<String, String> getLinks() {

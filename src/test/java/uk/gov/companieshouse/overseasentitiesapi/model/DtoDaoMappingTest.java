@@ -1,18 +1,30 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapperImpl;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,8 +90,21 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setPresenter(presenter);
 
+        List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual = new ArrayList<>();
+        beneficialOwnersIndividual.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDao());
+        overseasEntitySubmission.setBeneficialOwnersIndividual(beneficialOwnersIndividual);
+
+        List<BeneficialOwnerCorporateDao> beneficialOwnersCorporate = new ArrayList<>();
+        beneficialOwnersCorporate.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDao());
+        overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
+
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();;
+        beneficialOwnersGovernmentOrPublicAuthority.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDao());
+        overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
+
         return overseasEntitySubmission;
     }
+
 
     private OverseasEntitySubmissionDto getOverseasEntitySubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmission = new OverseasEntitySubmissionDto();
@@ -116,6 +141,18 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setPresenter(presenter);
 
+        List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual = new ArrayList<>();
+        beneficialOwnersIndividual.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+        overseasEntitySubmission.setBeneficialOwnersIndividual(beneficialOwnersIndividual);
+
+        List<BeneficialOwnerCorporateDto> beneficialOwnersCorporate = new ArrayList<>();
+        beneficialOwnersCorporate.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
+
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();;
+        beneficialOwnersGovernmentOrPublicAuthority.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
+
         return overseasEntitySubmission;
     }
 
@@ -144,6 +181,63 @@ class DtoDaoMappingTest {
         assertEquals(presenterDto.getRole(), presenterDao.getRole());
         assertEquals(presenterDto.getRoleTitle(), presenterDao.getRoleTitle());
         assertEquals(presenterDto.getAntiMoneyLaunderingRegistrationNumber(), presenterDao.getAntiMoneyLaunderingRegistrationNumber());
+
+        assertIndividualBeneficialOwnersAreEqual(dto, dao);
+        assertCorprotateBeneficialOwnersAreEqual(dto, dao);
+        assertGovernmentBeneficialOwnersAreEqual(dto, dao);
+    }
+
+    private void assertIndividualBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
+        BeneficialOwnerIndividualDao boDao = dao.getBeneficialOwnersIndividual().get(0);
+        BeneficialOwnerIndividualDto boDto = dto.getBeneficialOwnersIndividual().get(0);
+        assertEquals(boDto.getFirstName(), boDao.getFirstName());
+        assertEquals(boDto.getLastName(), boDao.getLastName());
+        assertEquals(boDto.getDateOfBirth(), boDao.getDateOfBirth());
+        assertEquals(boDto.getNationality(), boDao.getNationality());
+        assertEquals(boDto.getServiceAddressSameAsUsualResidentialAddress(),
+                boDao.getServiceAddressSameAsUsualResidentialAddress());
+        assertEquals(boDto.getStartDate(), boDao.getStartDate());
+        assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
+        assertEquals(boDto.getTrusteesNatureOfControlTypes(), boDao.getTrusteesNatureOfControlTypes());
+        assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
+                boDao.getNonLegalFirmMembersNatureOfControlTypes());
+        assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
+    }
+
+    private void assertCorprotateBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao)
+    {
+        BeneficialOwnerCorporateDao boDao = dao.getBeneficialOwnersCorporate().get(0);
+        BeneficialOwnerCorporateDto boDto = dto.getBeneficialOwnersCorporate().get(0);
+        assertEquals(boDto.getName(), boDao.getName());
+        assertEquals(boDto.getServiceAddressSameAsPrincipalAddress(),
+                boDao.getServiceAddressSameAsPrincipalAddress());
+        assertEquals(boDto.getLegalForm(), boDao.getLegalForm());
+        assertEquals(boDto.getLawGoverned(), boDao.getLawGoverned());
+        assertEquals(boDto.getOnRegisterInCountryFormedIn(), boDao.getOnRegisterInCountryFormedIn());
+        assertEquals(boDto.getPublicRegisterName(), boDao.getPublicRegisterName());
+        assertEquals(boDto.getRegistrationNumber(), boDao.getRegistrationNumber());
+        assertEquals(boDto.getStartDate(), boDao.getStartDate());
+        assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
+        assertEquals(boDto.getTrusteesNatureOfControlTypes(), boDao.getTrusteesNatureOfControlTypes());
+        assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
+                boDao.getNonLegalFirmMembersNatureOfControlTypes());
+        assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
+    }
+
+    private void assertGovernmentBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
+        BeneficialOwnerGovernmentOrPublicAuthorityDao boDao = dao.getBeneficialOwnersGovernmentOrPublicAuthority().get(0);
+        BeneficialOwnerGovernmentOrPublicAuthorityDto boDto = dto.getBeneficialOwnersGovernmentOrPublicAuthority().get(0);
+        assertEquals(boDto.getName(), boDao.getName());
+        assertEquals(boDto.getServiceAddressSameAsPrincipalAddress(),
+                boDao.getServiceAddressSameAsPrincipalAddress());
+        assertEquals(boDto.getLegalForm(), boDao.getLegalForm());
+        assertEquals(boDto.getLawGoverned(), boDao.getLawGoverned());
+        assertEquals(boDto.getOnRegisterInCountryFormedIn(), boDao.getOnRegisterInCountryFormedIn());
+        assertEquals(boDto.getPublicRegisterName(), boDao.getPublicRegisterName());
+        assertEquals(boDto.getRegistrationNumber(), boDao.getRegistrationNumber());
+        assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
+        assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
+                boDao.getNonLegalFirmMembersNatureOfControlTypes());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {
