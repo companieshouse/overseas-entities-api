@@ -22,10 +22,10 @@ public class OverseasEntitySubmissionDao {
     @Field("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual;
 
-    @Field("beneficial_owners_individual")
+    @Field("beneficial_owners_corporate")
     private List<BeneficialOwnerCorporateDao> beneficialOwnersCorporate;
 
-    @Field("beneficial_owners_individual")
+    @Field("beneficial_owners_government_or_public_authority")
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority;
 
     @Field("links")

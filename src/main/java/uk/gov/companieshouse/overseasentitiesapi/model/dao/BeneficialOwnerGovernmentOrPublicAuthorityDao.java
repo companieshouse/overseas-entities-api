@@ -28,8 +28,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     @Field("is_on_register_in_country_formed_in")
     private Boolean isOnRegisterInCountryFormedIn;
 
-    @Field("public_register_name")
-    private String publicRegisterName;
+    @Field("register_name")
+    private String registerName;
 
     @Field("registration_number")
     private String registrationNumber;
@@ -96,12 +96,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
         isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 
-    public String getPublicRegisterName() {
-        return publicRegisterName;
+    public String getRegisterName() {
+        return registerName;
     }
 
-    public void setPublicRegisterName(String publicRegisterName) {
-        this.publicRegisterName = publicRegisterName;
+    public void setRegisterName(String registerName) {
+        this.registerName = registerName;
     }
 
     public String getRegistrationNumber() {

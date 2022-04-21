@@ -16,10 +16,10 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
 
-    @JsonProperty("beneficial_owners_individual")
+    @JsonProperty("beneficial_owners_corporate")
     private List<BeneficialOwnerCorporateDto> beneficialOwnersCorporate;
 
-    @JsonProperty("beneficial_owners_individual")
+    @JsonProperty("beneficial_owners_government_or_public_authority")
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority;
 
     @JsonProperty("links")

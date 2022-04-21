@@ -40,7 +40,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setLegalForm("Test Legal");
         dao.setLawGoverned("Test Laws");
         dao.setOnRegisterInCountryFormedIn(true);
-        dao.setPublicRegisterName("Test Register");
+        dao.setRegisterName("Test Register");
         dao.setRegistrationNumber("abc123");
         dao.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
@@ -61,7 +61,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setLegalForm("Test Legal");
         dao.setLawGoverned("Test Laws");
         dao.setOnRegisterInCountryFormedIn(true);
-        dao.setPublicRegisterName("Test Register");
+        dao.setRegisterName("Test Register");
         dao.setRegistrationNumber("abc123");
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
         naturesOfControl.add(NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS);
@@ -98,7 +98,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setLegalForm("Test Legal");
         dto.setLawGoverned("Test Laws");
         dto.setOnRegisterInCountryFormedIn(true);
-        dto.setPublicRegisterName("Test Register");
+        dto.setRegisterName("Test Register");
         dto.setRegistrationNumber("abc123");
         dto.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
@@ -119,7 +119,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setLegalForm("Test Legal");
         dto.setLawGoverned("Test Laws");
         dto.setOnRegisterInCountryFormedIn(true);
-        dto.setPublicRegisterName("Test Register");
+        dto.setRegisterName("Test Register");
         dto.setRegistrationNumber("abc123");
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
         naturesOfControl.add(NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS);

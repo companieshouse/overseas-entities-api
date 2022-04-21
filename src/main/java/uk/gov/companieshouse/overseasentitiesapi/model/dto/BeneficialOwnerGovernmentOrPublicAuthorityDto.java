@@ -28,8 +28,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     @JsonProperty("is_on_register_in_country_formed_in")
     private Boolean isOnRegisterInCountryFormedIn;
 
-    @JsonProperty("public_register_name")
-    private String publicRegisterName;
+    @JsonProperty("register_name")
+    private String registerName;
 
     @JsonProperty("registration_number")
     private String registrationNumber;
@@ -96,12 +96,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
         isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 
-    public String getPublicRegisterName() {
-        return publicRegisterName;
+    public String getRegisterName() {
+        return registerName;
     }
 
-    public void setPublicRegisterName(String publicRegisterName) {
-        this.publicRegisterName = publicRegisterName;
+    public void setRegisterName(String registerName) {
+        this.registerName = registerName;
     }
 
     public String getRegistrationNumber() {
