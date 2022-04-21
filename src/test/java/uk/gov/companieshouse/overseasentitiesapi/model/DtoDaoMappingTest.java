@@ -104,7 +104,7 @@ class DtoDaoMappingTest {
         beneficialOwnersCorporate.add(corporateBo);
         overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
 
-        List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();;
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();
         BeneficialOwnerGovernmentOrPublicAuthorityDao governmentBo =  BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDao();
         governmentBo.setPrincipalAddress(address);
         governmentBo.setServiceAddress(address);
