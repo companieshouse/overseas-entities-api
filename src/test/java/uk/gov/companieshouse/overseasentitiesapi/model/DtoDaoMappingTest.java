@@ -91,20 +91,28 @@ class DtoDaoMappingTest {
         overseasEntitySubmission.setPresenter(presenter);
 
         List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual = new ArrayList<>();
-        beneficialOwnersIndividual.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDao());
+        BeneficialOwnerIndividualDao individualBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDao();
+        individualBo.setUsualResidentialAddress(address);
+        individualBo.setServiceAddress(address);
+        beneficialOwnersIndividual.add(individualBo);
         overseasEntitySubmission.setBeneficialOwnersIndividual(beneficialOwnersIndividual);
 
         List<BeneficialOwnerCorporateDao> beneficialOwnersCorporate = new ArrayList<>();
-        beneficialOwnersCorporate.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDao());
+        BeneficialOwnerCorporateDao corporateBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDao();
+        corporateBo.setPrincipalAddress(address);
+        corporateBo.setServiceAddress(address);
+        beneficialOwnersCorporate.add(corporateBo);
         overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
 
         List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();;
-        beneficialOwnersGovernmentOrPublicAuthority.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDao());
+        BeneficialOwnerGovernmentOrPublicAuthorityDao governmentBo =  BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDao();
+        governmentBo.setPrincipalAddress(address);
+        governmentBo.setServiceAddress(address);
+        beneficialOwnersGovernmentOrPublicAuthority.add(governmentBo);
         overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
 
         return overseasEntitySubmission;
     }
-
 
     private OverseasEntitySubmissionDto getOverseasEntitySubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmission = new OverseasEntitySubmissionDto();
@@ -142,15 +150,24 @@ class DtoDaoMappingTest {
         overseasEntitySubmission.setPresenter(presenter);
 
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual = new ArrayList<>();
-        beneficialOwnersIndividual.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+        BeneficialOwnerIndividualDto individualBo =  BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        individualBo.setUsualResidentialAddress(address);
+        individualBo.setServiceAddress(address);
+        beneficialOwnersIndividual.add(individualBo);
         overseasEntitySubmission.setBeneficialOwnersIndividual(beneficialOwnersIndividual);
 
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporate = new ArrayList<>();
-        beneficialOwnersCorporate.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        BeneficialOwnerCorporateDto coroporateBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        coroporateBo.setPrincipalAddress(address);
+        coroporateBo.setServiceAddress(address);
+        beneficialOwnersCorporate.add(coroporateBo);
         overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
 
-        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();;
-        beneficialOwnersGovernmentOrPublicAuthority.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto governmentBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        governmentBo.setPrincipalAddress(address);
+        governmentBo.setServiceAddress(address);
+        beneficialOwnersGovernmentOrPublicAuthority.add(governmentBo);
         overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
 
         return overseasEntitySubmission;
