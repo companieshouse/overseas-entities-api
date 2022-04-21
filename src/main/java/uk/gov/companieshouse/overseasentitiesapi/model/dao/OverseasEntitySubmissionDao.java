@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
 import java.util.Map;
 
 @Document(collection = "overseas_entities_submissions")
@@ -17,6 +18,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("entity")
     private EntityDao entity;
+
+    @Field("beneficial_owners_individual")
+    private List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual;
 
     @Field("links")
     private Map<String, String> links;
@@ -43,6 +47,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setEntity(EntityDao entity) {
         this.entity = entity;
+    }
+
+    public List<BeneficialOwnerIndividualDao> getBeneficialOwnersIndividual() {
+        return beneficialOwnersIndividual;
+    }
+
+    public void setBeneficialOwnersIndividual(List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual) {
+        this.beneficialOwnersIndividual = beneficialOwnersIndividual;
     }
 
     public Map<String, String> getLinks() {
