@@ -14,7 +14,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty("entity")
     private EntityDto entity;
 
-    @Field("beneficial_owners_statement")
+    @JsonProperty("beneficial_owners_statement")
     private BeneficialOwnersStatementDto beneficialOwnersStatement;
 
     @JsonProperty("beneficial_owners_individual")
