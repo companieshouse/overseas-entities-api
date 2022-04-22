@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty("entity")
     private EntityDto entity;
+
+    @Field("beneficial_owners_statement")
+    private BeneficialOwnersStatementDto beneficialOwnersStatement;
 
     @JsonProperty("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
@@ -39,6 +43,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setEntity(EntityDto entity) {
         this.entity = entity;
+    }
+
+    public BeneficialOwnersStatementDto getBeneficialOwnersStatement() {
+        return beneficialOwnersStatement;
+    }
+
+    public void setBeneficialOwnersStatement(BeneficialOwnersStatementDto beneficialOwnersStatement) {
+        this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 
     public List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividual() {

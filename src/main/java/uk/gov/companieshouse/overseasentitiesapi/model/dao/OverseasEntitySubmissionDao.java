@@ -19,6 +19,9 @@ public class OverseasEntitySubmissionDao {
     @Field("entity")
     private EntityDao entity;
 
+    @Field("beneficial_owners_statement")
+    private BeneficialOwnersStatementDao beneficialOwnersStatement;
+
     @Field("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual;
 
@@ -53,6 +56,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setEntity(EntityDao entity) {
         this.entity = entity;
+    }
+
+    public BeneficialOwnersStatementDao getBeneficialOwnersStatement() {
+        return beneficialOwnersStatement;
+    }
+
+    public void setBeneficialOwnersStatement(BeneficialOwnersStatementDao beneficialOwnersStatement) {
+        this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 
     public List<BeneficialOwnerIndividualDao> getBeneficialOwnersIndividual() {

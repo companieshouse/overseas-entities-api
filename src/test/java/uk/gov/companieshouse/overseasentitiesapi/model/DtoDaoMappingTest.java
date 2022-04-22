@@ -10,6 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnersStatementDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
@@ -17,6 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnersStatementDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -88,6 +90,10 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setPresenter(presenter);
 
+        BeneficialOwnersStatementDao beneficialOwnersStatement = new BeneficialOwnersStatementDao();
+        beneficialOwnersStatement.setBeneficialOwnersStatementType(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
+        overseasEntitySubmission.setBeneficialOwnersStatement(beneficialOwnersStatement);
+
         List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual = new ArrayList<>();
         BeneficialOwnerIndividualDao individualBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDao();
         individualBo.setUsualResidentialAddress(address);
@@ -147,6 +153,10 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setPresenter(presenter);
 
+        BeneficialOwnersStatementDto beneficialOwnersStatement = new BeneficialOwnersStatementDto();
+        beneficialOwnersStatement.setBeneficialOwnersStatementType(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
+        overseasEntitySubmission.setBeneficialOwnersStatement(beneficialOwnersStatement);
+
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual = new ArrayList<>();
         BeneficialOwnerIndividualDto individualBo =  BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
         individualBo.setUsualResidentialAddress(address);
@@ -196,6 +206,9 @@ class DtoDaoMappingTest {
         assertEquals(presenterDto.getRole(), presenterDao.getRole());
         assertEquals(presenterDto.getRoleTitle(), presenterDao.getRoleTitle());
         assertEquals(presenterDto.getAntiMoneyLaunderingRegistrationNumber(), presenterDao.getAntiMoneyLaunderingRegistrationNumber());
+
+        assertEquals(dto.getBeneficialOwnersStatement().getBeneficialOwnersStatementType(),
+                dao.getBeneficialOwnersStatement().getBeneficialOwnersStatementType());
 
         assertIndividualBeneficialOwnersAreEqual(dto, dao);
         assertCorprotateBeneficialOwnersAreEqual(dto, dao);
