@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class OverseasEntitySubmissionDto {
     private EntityDto entity;
 
     @JsonProperty("beneficial_owners_statement")
-    private BeneficialOwnersStatementDto beneficialOwnersStatement;
+    private BeneficialOwnersStatementType beneficialOwnersStatement;
 
     @JsonProperty("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
@@ -44,11 +45,11 @@ public class OverseasEntitySubmissionDto {
         this.entity = entity;
     }
 
-    public BeneficialOwnersStatementDto getBeneficialOwnersStatement() {
+    public BeneficialOwnersStatementType getBeneficialOwnersStatement() {
         return beneficialOwnersStatement;
     }
 
-    public void setBeneficialOwnersStatement(BeneficialOwnersStatementDto beneficialOwnersStatement) {
+    public void setBeneficialOwnersStatement(BeneficialOwnersStatementType beneficialOwnersStatement) {
         this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 
