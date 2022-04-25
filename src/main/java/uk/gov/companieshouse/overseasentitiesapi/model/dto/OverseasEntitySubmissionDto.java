@@ -13,6 +13,9 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty("entity")
     private EntityDto entity;
 
+    @JsonProperty("beneficial_owners_statement")
+    private BeneficialOwnersStatementDto beneficialOwnersStatement;
+
     @JsonProperty("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
 
@@ -39,6 +42,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setEntity(EntityDto entity) {
         this.entity = entity;
+    }
+
+    public BeneficialOwnersStatementDto getBeneficialOwnersStatement() {
+        return beneficialOwnersStatement;
+    }
+
+    public void setBeneficialOwnersStatement(BeneficialOwnersStatementDto beneficialOwnersStatement) {
+        this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 
     public List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividual() {
