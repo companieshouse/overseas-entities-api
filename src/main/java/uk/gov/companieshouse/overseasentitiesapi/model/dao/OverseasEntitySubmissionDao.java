@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class OverseasEntitySubmissionDao {
     private EntityDao entity;
 
     @Field("beneficial_owners_statement")
-    private BeneficialOwnersStatementDao beneficialOwnersStatement;
+    private BeneficialOwnersStatementType beneficialOwnersStatement;
 
     @Field("beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual;
@@ -58,11 +59,11 @@ public class OverseasEntitySubmissionDao {
         this.entity = entity;
     }
 
-    public BeneficialOwnersStatementDao getBeneficialOwnersStatement() {
+    public BeneficialOwnersStatementType getBeneficialOwnersStatement() {
         return beneficialOwnersStatement;
     }
 
-    public void setBeneficialOwnersStatement(BeneficialOwnersStatementDao beneficialOwnersStatement) {
+    public void setBeneficialOwnersStatement(BeneficialOwnersStatementType beneficialOwnersStatement) {
         this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 

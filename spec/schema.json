@@ -151,7 +151,7 @@
           "$ref": "#/definitions/Entity"
         },
         "beneficial_owners_statement": {
-          "$ref": "#/definitions/BeneficialOwnersStatement"
+          "$ref": "#/definitions/BeneficialOwnersStatementType"
         },
         "beneficial_owners_individual": {
           "type": "array",
@@ -267,14 +267,6 @@
         "public_register_name",
         "registration_number"
       ]
-    },
-    "BeneficialOwnersStatement": {
-      "type": "object",
-      "properties": {
-        "beneficial_owners_statement": {
-          "$ref": "#/definitions/BeneficialOwnersStatementType"
-        }
-      }
     },
     "BeneficialOwnerIndividual": {
       "type": "object",
