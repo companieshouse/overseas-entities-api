@@ -53,9 +53,6 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
-        final PresenterDto presenterInFiling = ((PresenterDto) filing.getData().get("presenter"));
-        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
-        assertEquals("999", presenterInFiling.getAntiMoneyLaunderingRegistrationNumber());
     }
 
     @Test
