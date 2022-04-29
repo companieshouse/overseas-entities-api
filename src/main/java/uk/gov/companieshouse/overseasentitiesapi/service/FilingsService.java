@@ -49,7 +49,6 @@ public class FilingsService {
 
     private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("presenter", submissionDto.getPresenter());
         data.put("entity", submissionDto.getEntity());
         filing.setData(data);
         setDescription(filing);
