@@ -7,6 +7,9 @@ public class Constants {
 
     // Request header names
     public static final String ERIC_REQUEST_ID_KEY = "X-Request-Id";
+    public static final String ERIC_IDENTITY = "ERIC-identity";
+    public static final String ERIC_AUTHORISED_USER = "ERIC-Authorised-User";
+
 
     // URI path attributes
     public static final String TRANSACTION_ID_KEY = "transaction_id";

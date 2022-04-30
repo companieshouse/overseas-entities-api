@@ -22,6 +22,8 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_AUTHORISED_USER;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -43,18 +45,26 @@ public class OverseasEntitiesController {
     public ResponseEntity<Object> createNewSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String ericRequestId,
+            @RequestHeader(value = ERIC_IDENTITY) String ericUserId,
+            @RequestHeader(value = ERIC_AUTHORISED_USER) String ericUserDetails,
             HttpServletRequest request) {
         String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-        ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
+        ApiLogger.infoContext(ericRequestId, "Calling service to create Overseas Entity Submission", logMap);
 
         try {
-            return this.overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader);
+            return this.overseasEntitiesService.createOverseasEntity(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    passthroughTokenHeader,
+                    ericRequestId,
+                    ericUserId,
+                    ericUserDetails);
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
+            ApiLogger.errorContext(ericRequestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
