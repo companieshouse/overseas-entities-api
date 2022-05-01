@@ -31,6 +31,8 @@ class OverseasEntitiesControllerTest {
     private static final String PASSTHROUGH = "13456";
     private static final String SUBMISSION_ID = "abc123";
     private static final String TRANSACTION_ID = "test-1";
+    private static final String USER_ID = "22334455";
+    private static final String USER_DETAILS = "demo@ch.gov.uk; forename=demoForename; surname=demoSurname";
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
@@ -55,17 +57,35 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntity(transaction, overseasEntitySubmissionDto, PASSTHROUGH)).thenReturn(CREATED_SUCCESS_RESPONSE);
-        var response = overseasEntitiesController.createNewSubmission(transaction, overseasEntitySubmissionDto, REQUEST_ID, mockHttpServletRequest);
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID,
+                USER_DETAILS)).thenReturn(CREATED_SUCCESS_RESPONSE);
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                USER_DETAILS,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(transaction, overseasEntitySubmissionDto, PASSTHROUGH);
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID,
+                USER_DETAILS);
     }
 
     @Test
-    void testValidationStatusReposneWhenTrue() throws SubmissionNotFoundException {
+    void testValidationStatusResponseWhenTrue() throws SubmissionNotFoundException {
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
         when(overseasEntitiesService.isValid(SUBMISSION_ID)).thenReturn(validationStatus);
@@ -75,7 +95,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusReposneWhenSubmissionNotFound() throws SubmissionNotFoundException {
+    void testValidationStatusResponseWhenSubmissionNotFound() throws SubmissionNotFoundException {
         when(overseasEntitiesService.isValid(SUBMISSION_ID)).thenThrow(SubmissionNotFoundException.class);
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
         assertEquals(ResponseEntity.notFound().build(), response);
