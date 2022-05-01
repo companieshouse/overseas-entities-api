@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 

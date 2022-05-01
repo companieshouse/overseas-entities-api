@@ -36,7 +36,7 @@ public class OverseasEntitiesService {
 
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
-    private ERICHeaderParser ericHeaderParser;
+    private final ERICHeaderParser ericHeaderParser;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
@@ -54,8 +54,8 @@ public class OverseasEntitiesService {
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String passthroughTokenHeader,
-                                                       String ericRequestId,
-                                                       String ericUserId,
+                                                       String requestId,
+                                                       String userId,
                                                        String ericUserDetails) throws ServiceException {
         ApiLogger.debug("Called createOverseasEntity(...)");
 
@@ -69,8 +69,8 @@ public class OverseasEntitiesService {
         var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
         insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
         insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
-        insertedSubmission.setHttpRequestId(ericRequestId);
-        insertedSubmission.setCreatedByUserId(ericUserId);
+        insertedSubmission.setHttpRequestId(requestId);
+        insertedSubmission.setCreatedByUserId(userId);
         insertedSubmission.setCreatedByUserEmail(ericHeaderParser.getEmailAddress(ericUserDetails));
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
