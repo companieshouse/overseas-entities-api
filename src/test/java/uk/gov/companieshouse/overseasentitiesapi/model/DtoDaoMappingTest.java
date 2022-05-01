@@ -253,9 +253,7 @@ class DtoDaoMappingTest {
                 boDao.getServiceAddressSameAsPrincipalAddress());
         assertEquals(boDto.getLegalForm(), boDao.getLegalForm());
         assertEquals(boDto.getLawGoverned(), boDao.getLawGoverned());
-        assertEquals(boDto.getOnRegisterInCountryFormedIn(), boDao.getOnRegisterInCountryFormedIn());
-        assertEquals(boDto.getRegisterName(), boDao.getRegisterName());
-        assertEquals(boDto.getRegistrationNumber(), boDao.getRegistrationNumber());
+        assertEquals(boDto.getStartDate(), boDao.getStartDate());
         assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());

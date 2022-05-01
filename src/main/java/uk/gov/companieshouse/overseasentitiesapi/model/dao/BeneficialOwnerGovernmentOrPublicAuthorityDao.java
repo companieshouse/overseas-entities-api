@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
@@ -25,14 +26,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     @Field("law_governed")
     private String lawGoverned;
 
-    @Field("is_on_register_in_country_formed_in")
-    private Boolean isOnRegisterInCountryFormedIn;
-
-    @Field("register_name")
-    private String registerName;
-
-    @Field("registration_number")
-    private String registrationNumber;
+    @Field("start_date")
+    private LocalDate startDate;
 
     @Field("beneficial_owner_nature_of_control_types")
     private List<NatureOfControlType> beneficialOwnerNatureOfControlTypes;
@@ -88,28 +83,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
         this.lawGoverned = lawGoverned;
     }
 
-    public Boolean getOnRegisterInCountryFormedIn() {
-        return isOnRegisterInCountryFormedIn;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setOnRegisterInCountryFormedIn(Boolean onRegisterInCountryFormedIn) {
-        isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
-    }
-
-    public String getRegisterName() {
-        return registerName;
-    }
-
-    public void setRegisterName(String registerName) {
-        this.registerName = registerName;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     public List<NatureOfControlType> getBeneficialOwnerNatureOfControlTypes() {
