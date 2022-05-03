@@ -114,10 +114,10 @@ class DtoDaoMappingTest {
         beneficialOwnersGovernmentOrPublicAuthority.add(governmentBo);
         overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
 
-        List<ManagingOfficerIndividualDao> managingOfficerIndividualDao = new ArrayList<>();
+        List<ManagingOfficerIndividualDao> managingOfficersIndividualDao = new ArrayList<>();
         ManagingOfficerIndividualDao managingOI = ManagingOfficerMock.getManagingOfficerIndividualDao();
-        managingOfficerIndividualDao.add(managingOI);
-        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficerIndividualDao);
+        managingOfficersIndividualDao.add(managingOI);
+        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficersIndividualDao);
 
         return overseasEntitySubmission;
     }
@@ -180,10 +180,10 @@ class DtoDaoMappingTest {
         beneficialOwnersGovernmentOrPublicAuthority.add(governmentBo);
         overseasEntitySubmission.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthority);
 
-        List<ManagingOfficerIndividualDto> managingOfficerIndividualDto = new ArrayList<>();
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualDto = new ArrayList<>();
         ManagingOfficerIndividualDto managingOI = ManagingOfficerMock.getManagingOfficerIndividualDto();
-        managingOfficerIndividualDto.add(managingOI);
-        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficerIndividualDto);
+        managingOfficersIndividualDto.add(managingOI);
+        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficersIndividualDto);
 
         return overseasEntitySubmission;
     }
