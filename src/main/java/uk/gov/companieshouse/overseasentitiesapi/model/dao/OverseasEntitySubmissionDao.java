@@ -32,6 +32,9 @@ public class OverseasEntitySubmissionDao {
     @Field("beneficial_owners_government_or_public_authority")
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority;
 
+    @Field("managing_officers_individual")
+    private List<ManagingOfficerIndividualDao> managingOfficersIndividual;
+
     @Field("links")
     private Map<String, String> links;
 
@@ -89,6 +92,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setBeneficialOwnersGovernmentOrPublicAuthority(List<BeneficialOwnerGovernmentOrPublicAuthorityDao> beneficialOwnersGovernmentOrPublicAuthority) {
         this.beneficialOwnersGovernmentOrPublicAuthority = beneficialOwnersGovernmentOrPublicAuthority;
+    }
+
+    public List<ManagingOfficerIndividualDao> getManagingOfficersIndividual() {
+        return managingOfficersIndividual;
+    }
+
+    public void setManagingOfficersIndividual(List<ManagingOfficerIndividualDao> managingOfficersIndividual) {
+        this.managingOfficersIndividual = managingOfficersIndividual;
     }
 
     public Map<String, String> getLinks() {
