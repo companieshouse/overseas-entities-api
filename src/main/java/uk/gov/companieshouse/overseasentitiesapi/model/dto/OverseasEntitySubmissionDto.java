@@ -26,6 +26,9 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty("beneficial_owners_government_or_public_authority")
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority;
 
+    @JsonProperty("managing_officers_individual")
+    private List<ManagingOfficerIndividualDto> managingOfficerIndividual;
+
     @JsonProperty("links")
     private Map<String, String> links;
 
@@ -75,6 +78,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setBeneficialOwnersGovernmentOrPublicAuthority(List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority) {
         this.beneficialOwnersGovernmentOrPublicAuthority = beneficialOwnersGovernmentOrPublicAuthority;
+    }
+
+    public List<ManagingOfficerIndividualDto> getManagingOfficerIndividual() {
+        return managingOfficerIndividual;
+    }
+
+    public void setManagingOfficerIndividual(List<ManagingOfficerIndividualDto> managingOfficerIndividual) {
+        this.managingOfficerIndividual = managingOfficerIndividual;
     }
 
     public Map<String, String> getLinks() {
