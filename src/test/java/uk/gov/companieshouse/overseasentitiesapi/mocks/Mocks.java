@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -24,8 +23,7 @@ public class Mocks {
         entityDto.setLawGoverned("The law");
         entityDto.setLegalForm("Legal form");
         entityDto.setPublicRegisterName("JB");
-        entityDto.setPrincipalAddress(buildAddressDto());
-        entityDto.setServiceAddress(buildAddressDto());
+        entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         return entityDto;
     }
@@ -38,17 +36,5 @@ public class Mocks {
         presenterDto.setRole("Coder");
         presenterDto.setRoleTitle("Digital developer");
         return presenterDto;
-    }
-
-    private static AddressDto buildAddressDto() {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("100");
-        addressDto.setLine1("No Street");
-        addressDto.setLine2("");
-        addressDto.setTown("Notown");
-        addressDto.setCounty("Noshire");
-        addressDto.setCountry("Eutopia");
-        addressDto.setPostcode("NOW 3RE");
-        return addressDto;
     }
 }
