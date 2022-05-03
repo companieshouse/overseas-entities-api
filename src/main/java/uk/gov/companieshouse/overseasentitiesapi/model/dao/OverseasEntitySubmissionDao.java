@@ -21,9 +21,6 @@ public class OverseasEntitySubmissionDao {
     @Field("created_by_user_id")
     private String createdByUserId;
 
-    @Field("created_by_user_email")
-    private String createdByUserEmail;
-
     @Field("http_request_id")
     private String httpRequestId;
 
@@ -126,14 +123,6 @@ public class OverseasEntitySubmissionDao {
 
     public void setCreatedByUserId(String createdByUserId) {
         this.createdByUserId = createdByUserId;
-    }
-
-    public String getCreatedByUserEmail() {
-        return createdByUserEmail;
-    }
-
-    public void setCreatedByUserEmail(String createdByUserEmail) {
-        this.createdByUserEmail = createdByUserEmail;
     }
 
     public String getHttpRequestId() {

@@ -32,7 +32,6 @@ class OverseasEntitiesControllerTest {
     private static final String SUBMISSION_ID = "abc123";
     private static final String TRANSACTION_ID = "test-1";
     private static final String USER_ID = "22334455";
-    private static final String USER_DETAILS = "demo@ch.gov.uk; forename=demoForename; surname=demoSurname";
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
@@ -62,14 +61,12 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
                 REQUEST_ID,
-                USER_ID,
-                USER_DETAILS)).thenReturn(CREATED_SUCCESS_RESPONSE);
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
                 USER_ID,
-                USER_DETAILS,
                 mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
@@ -80,8 +77,7 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
                 REQUEST_ID,
-                USER_ID,
-                USER_DETAILS);
+                USER_ID);
     }
 
     @Test

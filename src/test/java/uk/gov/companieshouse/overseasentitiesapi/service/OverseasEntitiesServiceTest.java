@@ -19,7 +19,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ERICHeaderParser;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ class OverseasEntitiesServiceTest {
     private static final String PASSTHROUGH_TOKEN_HEADER = "13456";
     private static final String SUBMISSION_ID = "abc123";
     private static final String USER_ID = "22334455";
-    private static final String USER_DETAILS = "demo@ch.gov.uk; forename=demoForename; surname=demoSurname";
     private static final String USER_EMAIL = "demo@ch.gov.uk";
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
 
@@ -55,9 +53,6 @@ class OverseasEntitiesServiceTest {
 
     @Mock
     private OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
-
-    @Mock
-    private ERICHeaderParser ericHeaderParser;
 
     @Mock
     private Supplier<LocalDateTime> localDateTimeSupplier;
@@ -83,7 +78,6 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
-        when(ericHeaderParser.getEmailAddress(USER_DETAILS)).thenReturn(USER_EMAIL);
 
 
         // make the call to test
@@ -92,12 +86,10 @@ class OverseasEntitiesServiceTest {
                 overseasEntitySubmissionDto,
                 PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
-                USER_ID,
-                USER_DETAILS);
+                USER_ID);
 
         verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         verify(localDateTimeSupplier, times(1)).get();
-        verify(ericHeaderParser, times(1)).getEmailAddress(USER_DETAILS);
 
         String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());
 
@@ -137,8 +129,7 @@ class OverseasEntitiesServiceTest {
                 overseasEntitySubmissionDto,
                 PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
-                USER_ID,
-                USER_DETAILS);
+                USER_ID);
 
         // assert response
         var responseBody = response.getBody();

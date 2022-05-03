@@ -13,7 +13,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ERICHeaderParser;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -36,27 +35,23 @@ public class OverseasEntitiesService {
 
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
-    private final ERICHeaderParser ericHeaderParser;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
                                    TransactionService transactionService,
                                    OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper,
-                                   Supplier<LocalDateTime> dateTimeNowSupplier,
-                                   ERICHeaderParser ericHeaderParser) {
+                                   Supplier<LocalDateTime> dateTimeNowSupplier) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
         this.dateTimeNowSupplier = dateTimeNowSupplier;
-        this.ericHeaderParser = ericHeaderParser;
     }
 
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String passthroughTokenHeader,
                                                        String requestId,
-                                                       String userId,
-                                                       String ericUserDetails) throws ServiceException {
+                                                       String userId) throws ServiceException {
         ApiLogger.debug("Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
@@ -71,14 +66,13 @@ public class OverseasEntitiesService {
         insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
         insertedSubmission.setHttpRequestId(requestId);
         insertedSubmission.setCreatedByUserId(userId);
-        insertedSubmission.setCreatedByUserEmail(ericHeaderParser.getEmailAddress(ericUserDetails));
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
         // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
-        ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity id: %s",  transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
