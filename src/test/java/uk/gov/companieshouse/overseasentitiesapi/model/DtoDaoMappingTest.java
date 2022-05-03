@@ -117,7 +117,7 @@ class DtoDaoMappingTest {
         List<ManagingOfficerIndividualDao> managingOfficerIndividualDao = new ArrayList<>();
         ManagingOfficerIndividualDao managingOI = ManagingOfficerMock.getManagingOfficerIndividualDao();
         managingOfficerIndividualDao.add(managingOI);
-        overseasEntitySubmission.setManagingOfficerIndividual(managingOfficerIndividualDao);
+        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficerIndividualDao);
 
         return overseasEntitySubmission;
     }
@@ -183,7 +183,7 @@ class DtoDaoMappingTest {
         List<ManagingOfficerIndividualDto> managingOfficerIndividualDto = new ArrayList<>();
         ManagingOfficerIndividualDto managingOI = ManagingOfficerMock.getManagingOfficerIndividualDto();
         managingOfficerIndividualDto.add(managingOI);
-        overseasEntitySubmission.setManagingOfficerIndividual(managingOfficerIndividualDto);
+        overseasEntitySubmission.setManagingOfficersIndividual(managingOfficerIndividualDto);
 
         return overseasEntitySubmission;
     }
@@ -274,8 +274,8 @@ class DtoDaoMappingTest {
     }
 
     private void assertManagingOfficerIndividualAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
-        ManagingOfficerIndividualDao moiDao = dao.getManagingOfficerIndividual().get(0);
-        ManagingOfficerIndividualDto moiDto = dto.getManagingOfficerIndividual().get(0);
+        ManagingOfficerIndividualDao moiDao = dao.getManagingOfficersIndividual().get(0);
+        ManagingOfficerIndividualDto moiDto = dto.getManagingOfficersIndividual().get(0);
 
         assertEquals(moiDto.getFirstName(), moiDao.getFirstName());
         assertEquals(moiDto.getLastName(), moiDao.getLastName());
