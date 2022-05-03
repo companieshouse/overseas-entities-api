@@ -52,7 +52,7 @@ public class OverseasEntitiesService {
                                                        String passthroughTokenHeader,
                                                        String requestId,
                                                        String userId) throws ServiceException {
-        ApiLogger.debug("Called createOverseasEntity(...)");
+        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
             return ResponseEntity.badRequest().body(String.format("Transaction id: %s has an existing Overseas Entity submission", transaction.getId()));
@@ -72,7 +72,7 @@ public class OverseasEntitiesService {
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
-        ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
