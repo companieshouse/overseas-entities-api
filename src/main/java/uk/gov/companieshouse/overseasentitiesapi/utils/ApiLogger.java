@@ -17,6 +17,10 @@ public class ApiLogger {
         LOGGER.debug(message);
     }
 
+    public static void debugContext(String context, String message) {
+        LOGGER.debugContext(context, message, null);
+    }
+
     public static void debugContext(String context, String message, Map<String, Object> dataMap) {
         LOGGER.debugContext(context, message, cloneMapData(dataMap));
     }

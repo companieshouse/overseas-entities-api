@@ -14,12 +14,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
@@ -32,20 +34,25 @@ public class OverseasEntitiesService {
     private final TransactionService transactionService;
 
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
+    private final Supplier<LocalDateTime> dateTimeNowSupplier;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
                                    TransactionService transactionService,
-                                   OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper) {
+                                   OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper,
+                                   Supplier<LocalDateTime> dateTimeNowSupplier) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
+        this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                       String passthroughTokenHeader) throws ServiceException {
-        ApiLogger.debug("Called createOverseasEntity(...)");
+                                                       String passthroughTokenHeader,
+                                                       String requestId,
+                                                       String userId) throws ServiceException {
+        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
             return ResponseEntity.badRequest().body(String.format("Transaction id: %s has an existing Overseas Entity submission", transaction.getId()));
@@ -56,13 +63,16 @@ public class OverseasEntitiesService {
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
         var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
         insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
+        insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
+        insertedSubmission.setHttpRequestId(requestId);
+        insertedSubmission.setCreatedByUserId(userId);
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
         // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
-        ApiLogger.info(String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity id: %s",  transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);

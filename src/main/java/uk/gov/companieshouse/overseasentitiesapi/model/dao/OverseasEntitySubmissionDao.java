@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,15 @@ public class OverseasEntitySubmissionDao {
 
     @Id
     private String id;
+
+    @Field("created_on")
+    private LocalDateTime createdOn;
+
+    @Field("created_by_user_id")
+    private String createdByUserId;
+
+    @Field("http_request_id")
+    private String httpRequestId;
 
     @Field("presenter")
     private PresenterDao presenter;
@@ -108,5 +118,29 @@ public class OverseasEntitySubmissionDao {
 
     public void setLinks(Map<String, String> links) {
         this.links = links;
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(String createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    public String getHttpRequestId() {
+        return httpRequestId;
+    }
+
+    public void setHttpRequestId(String httpRequestId) {
+        this.httpRequestId = httpRequestId;
     }
 }
