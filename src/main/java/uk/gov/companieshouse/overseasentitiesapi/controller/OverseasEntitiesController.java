@@ -3,14 +3,10 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
@@ -20,7 +16,9 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Map;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
@@ -39,12 +37,35 @@ public class OverseasEntitiesController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        System.out.println("\n\n*** VALIATION ERROR! ***\n\n");
+
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        System.out.println("\n\n*** Errors = >" + errors + "< ***\n\n");
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
     @PostMapping
     public ResponseEntity<Object> createNewSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
-            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            @Valid @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
+
+        System.out.println("\n\n*** NEW SUBMISSION RECEIVED ***\n\n");
+
+        System.out.println("\n\n*** Test field value = >" + overseasEntitySubmissionDto.getTest() + "< ***\n\n");
+
         String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();

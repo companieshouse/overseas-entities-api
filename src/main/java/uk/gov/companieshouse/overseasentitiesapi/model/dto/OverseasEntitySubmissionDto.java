@@ -3,11 +3,20 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 
 public class OverseasEntitySubmissionDto {
 
+    @NotBlank(message = "'Test' field value is mandatory")
+    @Size(min=4, max=8)
+    @JsonProperty("test")
+    private String test;
+
+    @Valid
     @JsonProperty("presenter")
     private PresenterDto presenter;
 
@@ -28,6 +37,14 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty("links")
     private Map<String, String> links;
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
 
     public PresenterDto getPresenter() {
         return presenter;

@@ -2,8 +2,11 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.Size;
+
 public class PresenterDto {
 
+    @Size(min=10, max=12)
     @JsonProperty("full_name")
     private String fullName;
 
