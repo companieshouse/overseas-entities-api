@@ -249,11 +249,14 @@
         "law_governed": {
           "type": "string"
         },
-        "public_register_name": {
+        "register_name": {
           "type": "string"
         },
         "registration_number": {
           "type": "string"
+        },
+        "is_on_register_in_country_formed_in": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -264,7 +267,7 @@
         "email",
         "legal_form",
         "law_governed",
-        "public_register_name",
+        "register_name",
         "registration_number"
       ]
     },

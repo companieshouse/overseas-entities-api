@@ -28,11 +28,14 @@ public class EntityDao {
     @Field("law_governed")
     private String lawGoverned;
 
-    @Field("public_register_name")
-    private String publicRegisterName;
+    @Field("register_name")
+    private String registerName;
 
     @Field("registration_number")
     private String registrationNumber;
+
+    @Field("is_on_register_in_country_formed_in")
+    private boolean isOnRegisterInCountryFormedIn;
 
     public String getName() {
         return name;
@@ -98,12 +101,12 @@ public class EntityDao {
         this.lawGoverned = lawGoverned;
     }
 
-    public String getPublicRegisterName() {
-        return publicRegisterName;
+    public String getRegisterName() {
+        return registerName;
     }
 
-    public void setPublicRegisterName(String publicRegisterName) {
-        this.publicRegisterName = publicRegisterName;
+    public void setRegisterName(String registerName) {
+        this.registerName = registerName;
     }
 
     public String getRegistrationNumber() {
@@ -112,5 +115,13 @@ public class EntityDao {
 
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
+    }
+
+    public boolean isOnRegisterInCountryFormedIn() {
+        return isOnRegisterInCountryFormedIn;
+    }
+
+    public void setOnRegisterInCountryFormedIn(boolean onRegisterInCountryFormedIn) {
+        isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 }
