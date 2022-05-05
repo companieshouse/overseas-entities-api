@@ -23,6 +23,7 @@ public class Mocks {
         entityDto.setLawGoverned("The law");
         entityDto.setLegalForm("Legal form");
         entityDto.setPublicRegisterName("JB");
+        entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         return entityDto;

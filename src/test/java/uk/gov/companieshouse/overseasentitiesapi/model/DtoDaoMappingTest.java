@@ -200,6 +200,7 @@ class DtoDaoMappingTest {
         assertEquals(entityDto.getLegalForm(), entityDao.getLegalForm());
         assertEquals(entityDto.getRegistrationNumber(), entityDao.getRegistrationNumber());
         assertEquals(entityDto.getPublicRegisterName(), entityDao.getPublicRegisterName());
+        assertEquals(entityDto.isOnRegisterInCountryFormedIn(), entityDao.isOnRegisterInCountryFormedIn());
         assertEquals(entityDto.getServiceAddressSameAsPrincipalAddress(), entityDao.getServiceAddressSameAsPrincipalAddress());
 
         assertAddressesAreEqual(entityDto.getPrincipalAddress(), entityDao.getPrincipalAddress());

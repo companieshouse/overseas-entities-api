@@ -34,6 +34,9 @@ public class EntityDao {
     @Field("registration_number")
     private String registrationNumber;
 
+    @Field("is_on_register_in_country_formed_in")
+    private boolean isOnRegisterInCountryFormedIn;
+
     public String getName() {
         return name;
     }
@@ -112,5 +115,13 @@ public class EntityDao {
 
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
+    }
+
+    public boolean isOnRegisterInCountryFormedIn() {
+        return isOnRegisterInCountryFormedIn;
+    }
+
+    public void setOnRegisterInCountryFormedIn(boolean onRegisterInCountryFormedIn) {
+        isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 }

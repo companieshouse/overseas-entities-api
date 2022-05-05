@@ -254,6 +254,9 @@
         },
         "registration_number": {
           "type": "string"
+        },
+        "is_on_register_in_country_formed_in": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -265,7 +268,8 @@
         "legal_form",
         "law_governed",
         "public_register_name",
-        "registration_number"
+        "registration_number",
+        "is_on_register_in_country_formed_in"
       ]
     },
     "BeneficialOwnerIndividual": {
