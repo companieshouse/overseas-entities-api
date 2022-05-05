@@ -268,7 +268,8 @@
         "legal_form",
         "law_governed",
         "register_name",
-        "registration_number"
+        "registration_number",
+        "is_on_register_in_country_formed_in"
       ]
     },
     "BeneficialOwnerIndividual": {
