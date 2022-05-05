@@ -28,8 +28,8 @@ public class EntityDto {
     @JsonProperty("law_governed")
     private String lawGoverned;
 
-    @JsonProperty("register_name")
-    private String registerName;
+    @JsonProperty("public_register_name")
+    private String publicRegisterName;
 
     @JsonProperty("registration_number")
     private String registrationNumber;
@@ -101,12 +101,12 @@ public class EntityDto {
         this.lawGoverned = lawGoverned;
     }
 
-    public String getRegisterName() {
-        return registerName;
+    public String getPublicRegisterName() {
+        return publicRegisterName;
     }
 
-    public void setRegisterName(String registerName) {
-        this.registerName = registerName;
+    public void setPublicRegisterName(String publicRegisterName) {
+        this.publicRegisterName = publicRegisterName;
     }
 
     public String getRegistrationNumber() {

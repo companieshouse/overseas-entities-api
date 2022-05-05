@@ -76,7 +76,7 @@ class DtoDaoMappingTest {
         entity.setLegalForm("legal form");
         entity.setServiceAddressSameAsPrincipalAddress(true);
         entity.setRegistrationNumber("reg number");
-        entity.setRegisterName("reg name");
+        entity.setPublicRegisterName("reg name");
         entity.setServiceAddress(address);
         entity.setPrincipalAddress(address);
 
@@ -142,7 +142,7 @@ class DtoDaoMappingTest {
         entity.setLegalForm("legal form");
         entity.setServiceAddressSameAsPrincipalAddress(true);
         entity.setRegistrationNumber("reg number");
-        entity.setRegisterName("reg name");
+        entity.setPublicRegisterName("reg name");
         entity.setServiceAddress(address);
         entity.setPrincipalAddress(address);
 
@@ -199,7 +199,7 @@ class DtoDaoMappingTest {
         assertEquals(entityDto.getLawGoverned(), entityDao.getLawGoverned());
         assertEquals(entityDto.getLegalForm(), entityDao.getLegalForm());
         assertEquals(entityDto.getRegistrationNumber(), entityDao.getRegistrationNumber());
-        assertEquals(entityDto.getRegisterName(), entityDao.getRegisterName());
+        assertEquals(entityDto.getPublicRegisterName(), entityDao.getPublicRegisterName());
         assertEquals(entityDto.isOnRegisterInCountryFormedIn(), entityDao.isOnRegisterInCountryFormedIn());
         assertEquals(entityDto.getServiceAddressSameAsPrincipalAddress(), entityDao.getServiceAddressSameAsPrincipalAddress());
 

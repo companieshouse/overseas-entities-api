@@ -22,7 +22,7 @@ public class Mocks {
         entityDto.setIncorporationCountry("Eutopia");
         entityDto.setLawGoverned("The law");
         entityDto.setLegalForm("Legal form");
-        entityDto.setRegisterName("JB");
+        entityDto.setPublicRegisterName("JB");
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
