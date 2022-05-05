@@ -249,7 +249,7 @@
         "law_governed": {
           "type": "string"
         },
-        "register_name": {
+        "public_register_name": {
           "type": "string"
         },
         "registration_number": {
@@ -267,7 +267,7 @@
         "email",
         "legal_form",
         "law_governed",
-        "register_name",
+        "public_register_name",
         "registration_number",
         "is_on_register_in_country_formed_in"
       ]
