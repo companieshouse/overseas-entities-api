@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @Service
@@ -49,7 +51,8 @@ public class FilingsService {
 
     private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("entity", submissionDto.getEntity());
+        data.put(ENTITY_FIELD, submissionDto.getEntity());
+        data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, submissionDto.getBeneficialOwnersIndividual());
         filing.setData(data);
         setDescription(filing);
 

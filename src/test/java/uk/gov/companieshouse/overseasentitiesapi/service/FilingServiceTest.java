@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,8 +15,10 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 
+
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +56,12 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get("beneficial_owners_individual"));
+        assertEquals(1, beneficialOwnersIndividualInFiling.size());
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        assertEquals("Jack", beneficialOwnerIndividualDto.getFirstName());
+        assertEquals("Jones", beneficialOwnerIndividualDto.getLastName());
+        assertEquals("Welsh", beneficialOwnerIndividualDto.getNationality());
     }
 
     @Test
