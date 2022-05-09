@@ -195,31 +195,13 @@
         "full_name": {
           "type": "string"
         },
-        "phone_number": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "enum": [
-            "administrator",
-            "agent",
-            "solicitor",
-            "beneficial_owner",
-            "other"
-          ]
-        },
-        "role_title": {
-          "type": "string"
-        },
-        "anti_money_laundering_registration_number": {
+        "email": {
           "type": "string"
         }
       },
       "required": [
         "full_name",
-        "phone_number",
-        "role",
-        "role_title"
+        "email"
       ]
     },
     "Entity": {

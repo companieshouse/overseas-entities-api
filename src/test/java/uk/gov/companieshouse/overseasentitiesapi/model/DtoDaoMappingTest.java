@@ -7,6 +7,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapp
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapperImpl;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
@@ -82,12 +83,7 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setEntity(entity);
 
-        PresenterDao presenter = new PresenterDao();
-        presenter.setFullName("full name");
-        presenter.setPhoneNumber("phone number");
-        presenter.setRole("role");
-        presenter.setRoleTitle("role title");
-        presenter.setAntiMoneyLaunderingRegistrationNumber("launder reg number");
+        PresenterDao presenter = PresenterMock.getPresenterDao();
 
         overseasEntitySubmission.setPresenter(presenter);
 
@@ -148,12 +144,7 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setEntity(entity);
 
-        PresenterDto presenter = new PresenterDto();
-        presenter.setFullName("full name");
-        presenter.setPhoneNumber("phone number");
-        presenter.setRole("role");
-        presenter.setRoleTitle("role title");
-        presenter.setAntiMoneyLaunderingRegistrationNumber("launder reg number");
+        PresenterDto presenter = PresenterMock.getPresenterDto();
 
         overseasEntitySubmission.setPresenter(presenter);
 
@@ -210,10 +201,7 @@ class DtoDaoMappingTest {
         PresenterDto presenterDto = dto.getPresenter();
 
         assertEquals(presenterDto.getFullName(), presenterDao.getFullName());
-        assertEquals(presenterDto.getPhoneNumber(), presenterDao.getPhoneNumber());
-        assertEquals(presenterDto.getRole(), presenterDao.getRole());
-        assertEquals(presenterDto.getRoleTitle(), presenterDao.getRoleTitle());
-        assertEquals(presenterDto.getAntiMoneyLaunderingRegistrationNumber(), presenterDao.getAntiMoneyLaunderingRegistrationNumber());
+        assertEquals(presenterDto.getEmail(), presenterDao.getEmail());
 
         assertEquals(dto.getBeneficialOwnersStatement(), dao.getBeneficialOwnersStatement());
 

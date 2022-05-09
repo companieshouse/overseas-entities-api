@@ -14,7 +14,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         EntityDto entity = buildEntityDto();
         overseasEntitySubmissionDto.setEntity(entity);
-        PresenterDto presenter = buildPresenterDto();
+        PresenterDto presenter = PresenterMock.getPresenterDto();
         overseasEntitySubmissionDto.setPresenter(presenter);
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = buildBeneficialOwnersIndividualInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualInFiling);
@@ -33,16 +33,6 @@ public class Mocks {
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         return entityDto;
-    }
-
-    private static PresenterDto buildPresenterDto() {
-        PresenterDto presenterDto = new PresenterDto();
-        presenterDto.setFullName("Joe Bloggs");
-        presenterDto.setPhoneNumber("01234 567890");
-        presenterDto.setAntiMoneyLaunderingRegistrationNumber("999");
-        presenterDto.setRole("Coder");
-        presenterDto.setRoleTitle("Digital developer");
-        return presenterDto;
     }
 
     private static List<BeneficialOwnerIndividualDto> buildBeneficialOwnersIndividualInFiling() {
