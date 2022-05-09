@@ -29,8 +29,8 @@ public class BeneficialOwnerCorporateDao {
     @Field("is_on_register_in_country_formed_in")
     private Boolean isOnRegisterInCountryFormedIn;
 
-    @Field("register_name")
-    private String registerName;
+    @Field("public_register_name")
+    private String publicRegisterName;
 
     @Field("registration_number")
     private String registrationNumber;
@@ -106,12 +106,12 @@ public class BeneficialOwnerCorporateDao {
         isOnRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 
-    public String getRegisterName() {
-        return registerName;
+    public String getPublicRegisterName() {
+        return publicRegisterName;
     }
 
-    public void setRegisterName(String registerName) {
-        this.registerName = registerName;
+    public void setPublicRegisterName(String publicRegisterName) {
+        this.publicRegisterName = publicRegisterName;
     }
 
     public String getRegistrationNumber() {
