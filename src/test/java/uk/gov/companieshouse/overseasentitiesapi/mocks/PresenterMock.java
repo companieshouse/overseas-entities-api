@@ -13,7 +13,7 @@ public class PresenterMock {
 
     public static PresenterDao getPresenterDao() {
         PresenterDao presenterDao = new PresenterDao();
-        presenterDao.setFullName("full name");
+        presenterDao.setFullName("Joe Bloggs");
         presenterDao.setEmail("user@domain.roe");
         return presenterDao;
     }
