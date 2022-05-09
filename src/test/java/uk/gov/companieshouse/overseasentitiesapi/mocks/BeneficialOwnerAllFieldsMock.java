@@ -40,7 +40,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setLegalForm("Test Legal");
         dao.setLawGoverned("Test Laws");
         dao.setOnRegisterInCountryFormedIn(true);
-        dao.setRegisterName("Test Register");
+        dao.setPublicRegisterName("Test Register");
         dao.setRegistrationNumber("abc123");
         dao.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
@@ -96,7 +96,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setLegalForm("Test Legal");
         dto.setLawGoverned("Test Laws");
         dto.setOnRegisterInCountryFormedIn(true);
-        dto.setRegisterName("Test Register");
+        dto.setPublicRegisterName("Test Register");
         dto.setRegistrationNumber("abc123");
         dto.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
