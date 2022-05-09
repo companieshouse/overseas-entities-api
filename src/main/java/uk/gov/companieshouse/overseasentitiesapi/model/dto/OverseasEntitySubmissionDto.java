@@ -8,16 +8,19 @@ import java.util.Map;
 
 public class OverseasEntitySubmissionDto {
 
+    public static final String ENTITY_FIELD = "entity";
+    public static final String BENEFICIAL_OWNERS_INDIVIDUAL_FIELD = "beneficial_owners_individual";
+
     @JsonProperty("presenter")
     private PresenterDto presenter;
 
-    @JsonProperty("entity")
+    @JsonProperty(ENTITY_FIELD)
     private EntityDto entity;
 
     @JsonProperty("beneficial_owners_statement")
     private BeneficialOwnersStatementType beneficialOwnersStatement;
 
-    @JsonProperty("beneficial_owners_individual")
+    @JsonProperty(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD)
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
 
     @JsonProperty("beneficial_owners_corporate")
