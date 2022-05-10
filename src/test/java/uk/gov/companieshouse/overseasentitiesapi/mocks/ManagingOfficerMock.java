@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 
 import java.time.LocalDate;
@@ -33,6 +35,34 @@ public class ManagingOfficerMock {
         dao.setServiceAddressSameAsUsualResidentialAddress(true);
         dao.setOccupation("Some occupation");
         dao.setRoleAndResponsibilities("Some role and responsibility");
+        return dao;
+    }
+
+    public static ManagingOfficerCorporateDto getManagingOfficerCorporateDto()  {
+        ManagingOfficerCorporateDto dto = new ManagingOfficerCorporateDto();
+        dto.setName("Test");
+        dto.setPrincipalAddress(AddressMock.getAddressDto());
+        dto.setServiceAddressSameAsPrincipalAddress(true);
+        dto.setLegalForm("LegalForm");
+        dto.setLawGoverned("Law Governed");
+        dto.setOnRegisterInCountryFormedIn(true);
+        dto.setPublicRegisterName("Public register");
+        dto.setRegistrationNumber("11223344");
+        dto.setStartDate(LocalDate.of(2015,1,1));
+        return dto;
+    }
+
+    public static ManagingOfficerCorporateDao getManagingOfficerCorporateDao()  {
+        ManagingOfficerCorporateDao dao = new ManagingOfficerCorporateDao();
+        dao.setName("Test");
+        dao.setPrincipalAddress(AddressMock.getAddressDao());
+        dao.setServiceAddressSameAsPrincipalAddress(true);
+        dao.setLegalForm("LegalForm");
+        dao.setLawGoverned("Law Governed");
+        dao.setOnRegisterInCountryFormedIn(true);
+        dao.setPublicRegisterName("Public register");
+        dao.setRegistrationNumber("11223344");
+        dao.setStartDate(LocalDate.of(2015,1,1));
         return dao;
     }
 }
