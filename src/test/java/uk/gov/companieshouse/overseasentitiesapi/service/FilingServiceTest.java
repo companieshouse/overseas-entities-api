@@ -67,7 +67,7 @@ class FilingServiceTest {
         assertEquals("Welsh", beneficialOwnerIndividualDto.getNationality());
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityInFiling = ((List<BeneficialOwnerGovernmentOrPublicAuthorityDto>) filing.getData().get(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD));
         assertEquals(1, beneficialOwnerGovernmentOrPublicAuthorityInFiling.size());
-        final BeneficialOwnerGovernmentOrPublicAuthorityDto  beneficialOwnerGovernmentOrPublicAuthorityDto = beneficialOwnerGovernmentOrPublicAuthorityInFiling.get(0);
+        final BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = beneficialOwnerGovernmentOrPublicAuthorityInFiling.get(0);
         assertEquals("The Government", beneficialOwnerGovernmentOrPublicAuthorityDto.getName());
         assertEquals("Legal form", beneficialOwnerGovernmentOrPublicAuthorityDto.getLegalForm());
         assertEquals("The Law", beneficialOwnerGovernmentOrPublicAuthorityDto.getLawGoverned());
