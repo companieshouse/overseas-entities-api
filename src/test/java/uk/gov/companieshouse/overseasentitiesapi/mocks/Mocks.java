@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualInFiling);
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityInFiling = buildBeneficialOwnerGovernmentOrPublicAuthorityInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityInFiling);
+        List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = buildBeneficialOwnersCorporateInFiling();
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateInFiling);
         return overseasEntitySubmissionDto;
     }
 
@@ -56,5 +60,15 @@ public class Mocks {
         beneficialOwnerGovernmentOrPublicAuthorityDto.setLegalForm("Legal form");
         beneficialOwnersGovernmentOrPublicAuthorityInFiling.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
         return beneficialOwnersGovernmentOrPublicAuthorityInFiling;
+    }
+
+    private static List<BeneficialOwnerCorporateDto> buildBeneficialOwnersCorporateInFiling() {
+        List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setLegalForm("Top Class");
+        beneficialOwnerCorporateDto.setOnRegisterInCountryFormedIn(true);
+        beneficialOwnerCorporateDto.setStartDate(LocalDate.of(2020, 4, 23));
+        beneficialOwnersCorporateInFiling.add(beneficialOwnerCorporateDto);
+        return beneficialOwnersCorporateInFiling;
     }
 }

@@ -11,6 +11,7 @@ public class OverseasEntitySubmissionDto {
     public static final String ENTITY_FIELD = "entity";
     public static final String BENEFICIAL_OWNERS_INDIVIDUAL_FIELD = "beneficial_owners_individual";
     public static final String BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD = "beneficial_owners_government_or_public_authority";
+    public static final String BENEFICIAL_OWNERS_CORPORATE_FIELD = "beneficial_owners_corporate";
 
     @JsonProperty("presenter")
     private PresenterDto presenter;
@@ -24,7 +25,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD)
     private List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual;
 
-    @JsonProperty("beneficial_owners_corporate")
+    @JsonProperty(BENEFICIAL_OWNERS_CORPORATE_FIELD)
     private List<BeneficialOwnerCorporateDto> beneficialOwnersCorporate;
 
     @JsonProperty(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD)
