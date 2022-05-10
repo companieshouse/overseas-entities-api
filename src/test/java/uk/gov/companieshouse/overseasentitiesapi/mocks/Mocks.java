@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -18,6 +19,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setPresenter(presenter);
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = buildBeneficialOwnersIndividualInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualInFiling);
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityInFiling = buildBeneficialOwnerGovernmentOrPublicAuthorityInFiling();
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityInFiling);
         return overseasEntitySubmissionDto;
     }
 
@@ -43,5 +46,15 @@ public class Mocks {
         beneficialOwnerIndividualDto.setNationality("Welsh");
         beneficialOwnersIndividualInFiling.add(beneficialOwnerIndividualDto);
         return beneficialOwnersIndividualInFiling;
+    }
+
+    private static List<BeneficialOwnerGovernmentOrPublicAuthorityDto> buildBeneficialOwnerGovernmentOrPublicAuthorityInFiling() {
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthorityInFiling = new ArrayList<>();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setName("The Government");
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setLawGoverned("The Law");
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setLegalForm("Legal form");
+        beneficialOwnersGovernmentOrPublicAuthorityInFiling.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        return beneficialOwnersGovernmentOrPublicAuthorityInFiling;
     }
 }
