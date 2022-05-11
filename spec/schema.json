@@ -361,7 +361,16 @@
         "is_on_sanctions_list": {
           "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "name",
+        "principal_address",
+        "is_service_address_same_as_principal_address",
+        "legal_form",
+        "law_governed",
+        "is_on_register_in_country_formed_in",
+        "start_date"
+      ]
     },
     "BeneficialOwnerGovernmentOrPublicAuthority": {
       "type": "object",
@@ -455,9 +464,6 @@
         },
         "is_service_address_same_as_principal_address": {
           "type": "boolean"
-        },
-        "registered_location": {
-          "type": "string"
         },
         "legal_form": {
           "type": "string"
