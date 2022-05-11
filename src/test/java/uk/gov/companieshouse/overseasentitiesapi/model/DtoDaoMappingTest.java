@@ -303,10 +303,11 @@ class DtoDaoMappingTest {
         assertEquals(mocDto.getLawGoverned(), mocDao.getLawGoverned());
         assertEquals(mocDto.getOnRegisterInCountryFormedIn(), mocDao.getOnRegisterInCountryFormedIn());
         assertEquals(mocDto.getPublicRegisterName(), mocDao.getPublicRegisterName());
-        assertEquals(mocDto.getRegistrationNumber(), mocDto.getRegistrationNumber());
+        assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
         assertEquals(mocDto.getStartDate(), mocDao.getStartDate());
 
         assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());
+        assertAddressesAreEqual(mocDto.getServiceAddress(), mocDao.getServiceAddress());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {

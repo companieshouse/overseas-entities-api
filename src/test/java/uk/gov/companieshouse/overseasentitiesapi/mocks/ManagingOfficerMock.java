@@ -42,7 +42,8 @@ public class ManagingOfficerMock {
         ManagingOfficerCorporateDto dto = new ManagingOfficerCorporateDto();
         dto.setName("Test");
         dto.setPrincipalAddress(AddressMock.getAddressDto());
-        dto.setServiceAddressSameAsPrincipalAddress(true);
+        dto.setServiceAddress(AddressMock.getAddressDto());
+        dto.setServiceAddressSameAsPrincipalAddress(false);
         dto.setLegalForm("LegalForm");
         dto.setLawGoverned("Law Governed");
         dto.setOnRegisterInCountryFormedIn(true);
@@ -56,7 +57,8 @@ public class ManagingOfficerMock {
         ManagingOfficerCorporateDao dao = new ManagingOfficerCorporateDao();
         dao.setName("Test");
         dao.setPrincipalAddress(AddressMock.getAddressDao());
-        dao.setServiceAddressSameAsPrincipalAddress(true);
+        dao.setServiceAddress(AddressMock.getAddressDao());
+        dao.setServiceAddressSameAsPrincipalAddress(false);
         dao.setLegalForm("LegalForm");
         dao.setLawGoverned("Law Governed");
         dao.setOnRegisterInCountryFormedIn(true);
