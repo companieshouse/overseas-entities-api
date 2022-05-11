@@ -13,6 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
@@ -21,6 +22,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -115,6 +117,11 @@ class DtoDaoMappingTest {
         managingOfficersIndividualDao.add(managingOI);
         overseasEntitySubmission.setManagingOfficersIndividual(managingOfficersIndividualDao);
 
+        List<ManagingOfficerCorporateDao> managingOfficersCorporateDao = new ArrayList<>();
+        ManagingOfficerCorporateDao managingOC = ManagingOfficerMock.getManagingOfficerCorporateDao();
+        managingOfficersCorporateDao.add(managingOC);
+        overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDao);
+
         return overseasEntitySubmission;
     }
 
@@ -176,6 +183,11 @@ class DtoDaoMappingTest {
         managingOfficersIndividualDto.add(managingOI);
         overseasEntitySubmission.setManagingOfficersIndividual(managingOfficersIndividualDto);
 
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateDto = new ArrayList<>();
+        ManagingOfficerCorporateDto managingOC = ManagingOfficerMock.getManagingOfficerCorporateDto();
+        managingOfficersCorporateDto.add(managingOC);
+        overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDto);
+
         return overseasEntitySubmission;
     }
 
@@ -206,9 +218,10 @@ class DtoDaoMappingTest {
         assertEquals(dto.getBeneficialOwnersStatement(), dao.getBeneficialOwnersStatement());
 
         assertIndividualBeneficialOwnersAreEqual(dto, dao);
-        assertCorprotateBeneficialOwnersAreEqual(dto, dao);
+        assertCorporateBeneficialOwnersAreEqual(dto, dao);
         assertGovernmentBeneficialOwnersAreEqual(dto, dao);
         assertManagingOfficerIndividualAreEqual(dto, dao);
+        assertManagingOfficerCorporateAreEqual(dto, dao);
     }
 
     private void assertIndividualBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
@@ -228,7 +241,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
     }
 
-    private void assertCorprotateBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao)
+    private void assertCorporateBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao)
     {
         BeneficialOwnerCorporateDao boDao = dao.getBeneficialOwnersCorporate().get(0);
         BeneficialOwnerCorporateDto boDto = dto.getBeneficialOwnersCorporate().get(0);
@@ -278,6 +291,23 @@ class DtoDaoMappingTest {
         assertEquals(moiDto.getRoleAndResponsibilities(), moiDao.getRoleAndResponsibilities());
 
         assertAddressesAreEqual(moiDto.getUsualResidentialAddress(), moiDao.getUsualResidentialAddress());
+    }
+
+    private void assertManagingOfficerCorporateAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
+        ManagingOfficerCorporateDao mocDao = dao.getManagingOfficersCorporate().get(0);
+        ManagingOfficerCorporateDto mocDto = dto.getManagingOfficersCorporate().get(0);
+
+        assertEquals(mocDto.getName(), mocDao.getName());
+        assertEquals(mocDto.getServiceAddressSameAsPrincipalAddress(), mocDao.getServiceAddressSameAsPrincipalAddress());
+        assertEquals(mocDto.getLegalForm(), mocDao.getLegalForm());
+        assertEquals(mocDto.getLawGoverned(), mocDao.getLawGoverned());
+        assertEquals(mocDto.getOnRegisterInCountryFormedIn(), mocDao.getOnRegisterInCountryFormedIn());
+        assertEquals(mocDto.getPublicRegisterName(), mocDao.getPublicRegisterName());
+        assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
+        assertEquals(mocDto.getStartDate(), mocDao.getStartDate());
+
+        assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());
+        assertAddressesAreEqual(mocDto.getServiceAddress(), mocDao.getServiceAddress());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {

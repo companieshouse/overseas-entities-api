@@ -45,6 +45,9 @@ public class OverseasEntitySubmissionDao {
     @Field("managing_officers_individual")
     private List<ManagingOfficerIndividualDao> managingOfficersIndividual;
 
+    @Field("managing_officers_corporate")
+    private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
+
     @Field("links")
     private Map<String, String> links;
 
@@ -110,6 +113,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setManagingOfficersIndividual(List<ManagingOfficerIndividualDao> managingOfficersIndividual) {
         this.managingOfficersIndividual = managingOfficersIndividual;
+    }
+
+    public List<ManagingOfficerCorporateDao> getManagingOfficersCorporate() {
+        return managingOfficersCorporate;
+    }
+
+    public void setManagingOfficersCorporate(List<ManagingOfficerCorporateDao> managingOfficersCorporate) {
+        this.managingOfficersCorporate = managingOfficersCorporate;
     }
 
     public Map<String, String> getLinks() {
