@@ -100,6 +100,7 @@ class OverseasEntitiesServiceTest {
         Transaction transactionSent = transactionApiCaptor.getValue();
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
+        assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
 
         // assert response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

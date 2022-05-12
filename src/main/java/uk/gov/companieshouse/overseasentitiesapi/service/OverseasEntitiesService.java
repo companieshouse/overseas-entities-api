@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
@@ -68,8 +69,9 @@ public class OverseasEntitiesService {
         insertedSubmission.setCreatedByUserId(userId);
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
-        // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
+        // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
+        // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
@@ -92,6 +94,7 @@ public class OverseasEntitiesService {
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
         linksMap.put("validation_status", submissionUri + VALIDATION_STATUS_URI_SUFFIX);
+        linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
         overseasEntityResource.setLinks(linksMap);
         return overseasEntityResource;
     }
