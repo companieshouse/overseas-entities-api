@@ -19,13 +19,15 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     static final String TRANSACTIONS = "/transactions/**";
     static final String FILINGS = "/private/**/filings";
+    static final String COSTS = TRANSACTIONS + "/costs";
 
     static final String[] USER_AUTH_ENDPOINTS = {
       TRANSACTIONS
     };
 
     static final String[] INTERNAL_AUTH_ENDPOINTS = {
-      FILINGS
+      FILINGS,
+      COSTS
     };
 
     @Autowired
