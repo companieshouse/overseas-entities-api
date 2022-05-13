@@ -26,7 +26,7 @@ public class Mocks {
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityInFiling);
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = buildBeneficialOwnersCorporateInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateInFiling);
-        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = buildManagingofficersIndividualInFiling();
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = buildManagingOfficersIndividualInFiling();
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualInFiling);
         return overseasEntitySubmissionDto;
     }
@@ -75,7 +75,7 @@ public class Mocks {
         return beneficialOwnersCorporateInFiling;
     }
 
-    private static List<ManagingOfficerIndividualDto> buildManagingofficersIndividualInFiling() {
+    private static List<ManagingOfficerIndividualDto> buildManagingOfficersIndividualInFiling() {
         List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = new ArrayList<ManagingOfficerIndividualDto>();
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
         managingOfficerIndividualDto.setFirstName("Walter");
