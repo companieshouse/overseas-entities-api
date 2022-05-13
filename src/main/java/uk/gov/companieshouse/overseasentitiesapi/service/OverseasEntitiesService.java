@@ -94,7 +94,8 @@ public class OverseasEntitiesService {
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
         linksMap.put("validation_status", submissionUri + VALIDATION_STATUS_URI_SUFFIX);
-        linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
+        // TODO enable line below to enable payment integration (and in unit test)
+        // linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
         overseasEntityResource.setLinks(linksMap);
         return overseasEntityResource;
     }
