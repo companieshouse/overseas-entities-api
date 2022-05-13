@@ -4,6 +4,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 
@@ -25,6 +26,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityInFiling);
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = buildBeneficialOwnersCorporateInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateInFiling);
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = buildManagingofficersIndividualInFiling();
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualInFiling);
         return overseasEntitySubmissionDto;
     }
 
@@ -70,5 +73,15 @@ public class Mocks {
         beneficialOwnerCorporateDto.setStartDate(LocalDate.of(2020, 4, 23));
         beneficialOwnersCorporateInFiling.add(beneficialOwnerCorporateDto);
         return beneficialOwnersCorporateInFiling;
+    }
+
+    private static List<ManagingOfficerIndividualDto> buildManagingofficersIndividualInFiling() {
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = new ArrayList<ManagingOfficerIndividualDto>();
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setFirstName("Walter");
+        managingOfficerIndividualDto.setLastName("Blanc");
+        managingOfficerIndividualDto.setNationality("French");
+        managingOfficersIndividualInFiling.add(managingOfficerIndividualDto);
+        return managingOfficersIndividualInFiling;
     }
 }
