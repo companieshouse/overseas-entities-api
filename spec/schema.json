@@ -138,6 +138,42 @@
           }
         }
       }
+    },
+    "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/costs": {
+      "parameters": [
+        {
+          "name": "transaction_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "overseas_entity_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "summary": "Get payment costs for registering an overseas entity",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Costs"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of costs",
+            "schema": {
+              "$ref": "#/definitions/CostsResponse"
+            }
+          },
+          "401":{
+            "description": "Unauthorised"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -615,6 +651,64 @@
         },
         "type": {
           "type": "string"
+        }
+      }
+    },
+    "CostsResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "availablePaymentMethods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "classOfPayment": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "descriptionIdentifier": {
+          "type": "string"
+        },
+        "descriptionValues": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "isVariablePayment": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "resourceKind": {
+          "type": "string"
+        },
+        "productType": {
+          "type": "string"
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         }
       }
     }
