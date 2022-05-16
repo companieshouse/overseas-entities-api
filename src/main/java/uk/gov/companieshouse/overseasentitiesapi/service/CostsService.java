@@ -33,7 +33,6 @@ public class CostsService {
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
         cost.setProductType(PRODUCT_TYPE);
-        cost.setVariablePayment(false);
 
         return cost;
     }

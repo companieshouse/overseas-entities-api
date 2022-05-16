@@ -3,13 +3,22 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.payment.Cost;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @RestController
 @RequestMapping("/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/costs")
@@ -23,7 +32,13 @@ public class CostsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cost>> getCosts() {
+    public ResponseEntity<List<Cost>> getCosts(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
+
+        var logMap = new HashMap<String, Object>();
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
         var cost = costsService.getCosts();
 
