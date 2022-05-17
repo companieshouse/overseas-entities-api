@@ -10,7 +10,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
 class CostsServiceTest {
@@ -35,6 +34,5 @@ class CostsServiceTest {
         assertEquals("payment-session#payment-session", result.getKind());
         assertEquals("overseas-entity", result.getResourceKind());
         assertEquals("register-overseas-entity", result.getProductType());
-        assertFalse(result.getVariablePayment());
     }
 }

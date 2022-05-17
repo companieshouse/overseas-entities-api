@@ -37,7 +37,7 @@ class FilingsControllerTest {
     @BeforeEach
     void init() {
         transaction = new Transaction();
-         transaction.setId(TRANSACTION_ID);
+        transaction.setId(TRANSACTION_ID);
     }
 
     @Test
