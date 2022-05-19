@@ -273,6 +273,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());
+        assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
     }
 
     private void assertManagingOfficerIndividualAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {

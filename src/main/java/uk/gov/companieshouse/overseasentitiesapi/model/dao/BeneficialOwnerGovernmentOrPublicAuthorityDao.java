@@ -35,6 +35,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     @Field("non_legal_firm_members_nature_of_control_types")
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
+    @Field("is_on_sanctions_list")
+    private Boolean isOnSanctionsList;
+
     public String getName() {
         return name;
     }
@@ -105,5 +108,13 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
 
     public void setNonLegalFirmMembersNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes) {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
+    }
+
+    public Boolean getOnSanctionsList() {
+        return isOnSanctionsList;
+    }
+
+    public void setOnSanctionsList(Boolean onSanctionsList) {
+        isOnSanctionsList = onSanctionsList;
     }
 }
