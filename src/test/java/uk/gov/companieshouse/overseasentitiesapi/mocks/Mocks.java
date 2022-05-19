@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -20,6 +21,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setEntity(entity);
         PresenterDto presenter = PresenterMock.getPresenterDto();
         overseasEntitySubmissionDto.setPresenter(presenter);
+        BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS;
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = buildBeneficialOwnersIndividualInFiling();
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualInFiling);
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityInFiling = buildBeneficialOwnerGovernmentOrPublicAuthorityInFiling();
