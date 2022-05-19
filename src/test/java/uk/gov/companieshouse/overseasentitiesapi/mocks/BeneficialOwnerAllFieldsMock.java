@@ -67,6 +67,7 @@ public class BeneficialOwnerAllFieldsMock {
         naturesOfControl.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         dao.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
         dao.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
+        dao.setOnSanctionsList(true);
         return dao;
     }
 
@@ -123,6 +124,7 @@ public class BeneficialOwnerAllFieldsMock {
         naturesOfControl.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         dto.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
         dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
+        dto.setOnSanctionsList(true);
         return dto;
     }
 }
