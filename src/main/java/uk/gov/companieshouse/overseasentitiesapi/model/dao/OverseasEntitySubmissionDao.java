@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +51,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("links")
     private Map<String, String> links;
+
+    @Field("trust_data")
+    private List<TrustDataDao> trustData;
 
     public String getId() {
         return id;
@@ -153,5 +157,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setHttpRequestId(String httpRequestId) {
         this.httpRequestId = httpRequestId;
+    }
+
+    public List<TrustDataDao> getTrustData() {
+        return trustData;
+    }
+
+    public void setTrustData(List<TrustDataDao> trustData) {
+        this.trustData = trustData;
     }
 }

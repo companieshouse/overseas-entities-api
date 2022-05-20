@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty("links")
     private Map<String, String> links;
+
+    @JsonProperty("trust_data")
+    private List<TrustDataDto> trustData;
 
     public PresenterDto getPresenter() {
         return presenter;
@@ -112,5 +116,13 @@ public class OverseasEntitySubmissionDto {
 
     public void setLinks(Map<String, String> links) {
         this.links = links;
+    }
+
+    public List<TrustDataDto> getTrustData() {
+        return trustData;
+    }
+
+    public void setTrustData(List<TrustDataDto> trustData) {
+        this.trustData = trustData;
     }
 }
