@@ -58,12 +58,4 @@ public class TrustDataDao {
     public void setUnableToObtainAllTrustInfo(String unableToObtainAllTrustInfo) {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
-
-
-
-    /*
-    @Field("INDIVIDUAL")
-    private IndividualDao individual;
-
-     */
 }
