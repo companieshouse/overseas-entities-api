@@ -10,18 +10,18 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
@@ -70,6 +70,20 @@ public class OverseasEntitiesService {
         insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
         insertedSubmission.setHttpRequestId(requestId);
         insertedSubmission.setCreatedByUserId(userId);
+
+        List<TrustDataDto> trustData = overseasEntitySubmissionDto.getTrustData();
+        if (trustData != null) {
+            List<TrustDataDao> trustDataDao = insertedSubmission.getTrustData();
+
+            for (int i = 0; i < trustData.size(); i++) {
+                int day = Integer.parseInt(trustData.get(i).getTrustCreationDateDay());
+                int month = Integer.parseInt(trustData.get(i).getTrustCreationDateMonth());
+                int year = Integer.parseInt(trustData.get(i).getTrustCreationDateYear());
+                LocalDate date = LocalDate.of(year, month, day);
+                trustDataDao.get(i).setTrustCreationDate(date);
+            }
+
+        }
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
