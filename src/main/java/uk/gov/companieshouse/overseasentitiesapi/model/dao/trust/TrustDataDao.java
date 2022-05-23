@@ -3,20 +3,12 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class TrustDataDao {
 
     @Field("name")
     private String trustName;
-
-    @Field("trust_creation_date_day")
-    private String trustCreationDateDay;
-
-    @Field("trust_creation_date_month")
-    private String trustCreationDateMonth;
-
-    @Field("trust_creation_date_year")
-    private String trustCreationDateYear;
 
     @Field("creation_date")
     private LocalDate trustCreationDate;
@@ -24,36 +16,27 @@ public class TrustDataDao {
     @Field("unable_to_obtain_all_trust_info")
     private String unableToObtainAllTrustInfo;
 
+    @Field("historical_beneficial_owners")
+    private List<BeneficialOwnerDao> historicalBeneficialOwners;
+
+    @Field("beneficiaries")
+    private List<BeneficialOwnerDao> beneficiaries;
+
+    @Field("settlers")
+    private List<BeneficialOwnerDao> settlers;
+
+    @Field("grantors")
+    private List<BeneficialOwnerDao> grantors;
+
+    @Field("interested_persons")
+    private List<BeneficialOwnerDao> interestedPersons;
+
     public String getTrustName() {
         return trustName;
     }
 
     public void setTrustName(String trustName) {
         this.trustName = trustName;
-    }
-
-    public String getTrustCreationDateDay() {
-        return trustCreationDateDay;
-    }
-
-    public void setTrustCreationDateDay(String trustCreationDateDay) {
-        this.trustCreationDateDay = trustCreationDateDay;
-    }
-
-    public String getTrustCreationDateMonth() {
-        return trustCreationDateMonth;
-    }
-
-    public void setTrustCreationDateMonth(String trustCreationDateMonth) {
-        this.trustCreationDateMonth = trustCreationDateMonth;
-    }
-
-    public String getTrustCreationDateYear() {
-        return trustCreationDateYear;
-    }
-
-    public void setTrustCreationDateYear(String trustCreationDateYear) {
-        this.trustCreationDateYear = trustCreationDateYear;
     }
 
     public LocalDate getTrustCreationDate() {
@@ -70,5 +53,45 @@ public class TrustDataDao {
 
     public void setUnableToObtainAllTrustInfo(String unableToObtainAllTrustInfo) {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
+    }
+
+    public List<BeneficialOwnerDao> getHistoricalBeneficialOwners() {
+        return historicalBeneficialOwners;
+    }
+
+    public void setHistoricalBeneficialOwners(List<BeneficialOwnerDao> historicalBeneficialOwners) {
+        this.historicalBeneficialOwners = historicalBeneficialOwners;
+    }
+
+    public List<BeneficialOwnerDao> getBeneficiaries() {
+        return beneficiaries;
+    }
+
+    public void setBeneficiaries(List<BeneficialOwnerDao> beneficiaries) {
+        this.beneficiaries = beneficiaries;
+    }
+
+    public List<BeneficialOwnerDao> getSettlers() {
+        return settlers;
+    }
+
+    public void setSettlers(List<BeneficialOwnerDao> settlers) {
+        this.settlers = settlers;
+    }
+
+    public List<BeneficialOwnerDao> getGrantors() {
+        return grantors;
+    }
+
+    public void setGrantors(List<BeneficialOwnerDao> grantors) {
+        this.grantors = grantors;
+    }
+
+    public List<BeneficialOwnerDao> getInterestedPersons() {
+        return interestedPersons;
+    }
+
+    public void setInterestedPersons(List<BeneficialOwnerDao> interestedPersons) {
+        this.interestedPersons = interestedPersons;
     }
 }
