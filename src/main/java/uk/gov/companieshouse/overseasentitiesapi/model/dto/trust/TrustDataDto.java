@@ -8,13 +8,13 @@ public class TrustDataDto {
     private String trustName;
 
     @JsonProperty("trust_creation_date_day")
-    private String trustCreateDateDay;
+    private String trustCreationDateDay;
 
     @JsonProperty("trust_creation_date_month")
-    private String trustCreateDateMonth;
+    private String trustCreationDateMonth;
 
     @JsonProperty("trust_creation_date_year")
-    private String trustCreateDateYear;
+    private String trustCreationDateYear;
 
     @JsonProperty("unable_to_obtain_all_trust_info")
     private String unableToObtainAllTrustInfo;
@@ -27,28 +27,28 @@ public class TrustDataDto {
         this.trustName = trustName;
     }
 
-    public String getTrustCreateDateDay() {
-        return trustCreateDateDay;
+    public String getTrustCreationDateDay() {
+        return trustCreationDateDay;
     }
 
-    public void setTrustCreateDateDay(String trustCreateDateDay) {
-        this.trustCreateDateDay = trustCreateDateDay;
+    public void setTrustCreationDateDay(String trustCreationDateDay) {
+        this.trustCreationDateDay = trustCreationDateDay;
     }
 
     public String getTrustCreationDateMonth() {
-        return trustCreateDateMonth;
+        return trustCreationDateMonth;
     }
 
     public void setTrustCreationDateMonth(String trustCreationDateMonth) {
-        this.trustCreateDateMonth = trustCreationDateMonth;
+        this.trustCreationDateMonth = trustCreationDateMonth;
     }
 
     public String getTrustCreationDateYear() {
-        return trustCreateDateYear;
+        return trustCreationDateYear;
     }
 
     public void setTrustCreationDateYear(String trustCreationDateYear) {
-        this.trustCreateDateYear = trustCreationDateYear;
+        this.trustCreationDateYear = trustCreationDateYear;
     }
 
     public String getUnableToObtainAllTrustInfo() {

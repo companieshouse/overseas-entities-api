@@ -8,13 +8,13 @@ public class TrustDataDao {
     private String trustName;
 
     @Field("trust_creation_date_day")
-    private String trustCreateDateDay;
+    private String trustCreationDateDay;
 
     @Field("trust_creation_date_month")
-    private String trustCreateDateMonth;
+    private String trustCreationDateMonth;
 
     @Field("trust_creation_date_year")
-    private String trustCreateDateYear;
+    private String trustCreationDateYear;
 
     @Field("unable_to_obtain_all_trust_info")
     private String unableToObtainAllTrustInfo;
@@ -27,28 +27,28 @@ public class TrustDataDao {
         this.trustName = trustName;
     }
 
-    public String getTrustCreateDateDay() {
-        return trustCreateDateDay;
+    public String getTrustCreationDateDay() {
+        return trustCreationDateDay;
     }
 
-    public void setTrustCreateDateDay(String trustCreateDateDay) {
-        this.trustCreateDateDay = trustCreateDateDay;
+    public void setTrustCreationDateDay(String trustCreationDateDay) {
+        this.trustCreationDateDay = trustCreationDateDay;
     }
 
-    public String getTrustCreateDateMonth() {
-        return trustCreateDateMonth;
+    public String getTrustCreationDateMonth() {
+        return trustCreationDateMonth;
     }
 
-    public void setTrustCreateDateMonth(String trustCreateDateMonth) {
-        this.trustCreateDateMonth = trustCreateDateMonth;
+    public void setTrustCreationDateMonth(String trustCreationDateMonth) {
+        this.trustCreationDateMonth = trustCreationDateMonth;
     }
 
-    public String getTrustCreateDateYear() {
-        return trustCreateDateYear;
+    public String getTrustCreationDateYear() {
+        return trustCreationDateYear;
     }
 
-    public void setTrustCreateDateYear(String trustCreateDateYear) {
-        this.trustCreateDateYear = trustCreateDateYear;
+    public void setTrustCreationDateYear(String trustCreationDateYear) {
+        this.trustCreationDateYear = trustCreationDateYear;
     }
 
     public String getUnableToObtainAllTrustInfo() {
