@@ -5,6 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -31,6 +32,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateInFiling);
         List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = buildManagingOfficersIndividualInFiling();
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualInFiling);
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateInFiling = buildManagingOfficersCorporateInFiling();
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateInFiling);
         return overseasEntitySubmissionDto;
     }
 
@@ -86,5 +89,15 @@ public class Mocks {
         managingOfficerIndividualDto.setNationality("French");
         managingOfficersIndividualInFiling.add(managingOfficerIndividualDto);
         return managingOfficersIndividualInFiling;
+    }
+
+    private static List<ManagingOfficerCorporateDto> buildManagingOfficersCorporateInFiling() {
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateInFiling = new ArrayList<>();
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setName("Corporate Man");
+        managingOfficerCorporateDto.setLawGoverned("The Law");
+        managingOfficerCorporateDto.setLegalForm("Legal FM");
+        managingOfficersCorporateInFiling.add(managingOfficerCorporateDto);
+        return managingOfficersCorporateInFiling;
     }
 }
