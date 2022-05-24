@@ -19,6 +19,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @Service
@@ -56,6 +57,7 @@ public class FilingsService {
 
     private void setSubmissionData(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
         Map<String, Object> data = new HashMap<>();
+        data.put(PRESENTER, submissionDto.getPresenter());
         data.put(ENTITY_FIELD, submissionDto.getEntity());
         data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, submissionDto.getBeneficialOwnersIndividual());
         data.put(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
