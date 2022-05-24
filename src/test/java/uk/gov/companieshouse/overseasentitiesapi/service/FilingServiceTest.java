@@ -21,6 +21,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -65,6 +66,9 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID);
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION, filing.getDescriptionIdentifier());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
