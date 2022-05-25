@@ -8,13 +8,13 @@ import java.util.List;
 public class TrustDataDao {
 
     @Field("name")
-    private String trustName;
+    private String name;
 
     @Field("creation_date")
     private LocalDate trustCreationDate;
 
     @Field("unable_to_obtain_all_trust_info")
-    private String unableToObtainAllTrustInfo;
+    private boolean unableToObtainAllTrustInfo;
 
     @Field("historical_beneficial_owners")
     private List<BeneficialOwnerDao> historicalBeneficialOwners;
@@ -31,12 +31,12 @@ public class TrustDataDao {
     @Field("interested_persons")
     private List<BeneficialOwnerDao> interestedPersons;
 
-    public String getTrustName() {
-        return trustName;
+    public String getName() {
+        return name;
     }
 
-    public void setTrustName(String trustName) {
-        this.trustName = trustName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getTrustCreationDate() {
@@ -47,11 +47,11 @@ public class TrustDataDao {
         this.trustCreationDate = trustCreationDate;
     }
 
-    public String getUnableToObtainAllTrustInfo() {
+    public boolean getUnableToObtainAllTrustInfo() {
         return unableToObtainAllTrustInfo;
     }
 
-    public void setUnableToObtainAllTrustInfo(String unableToObtainAllTrustInfo) {
+    public void setUnableToObtainAllTrustInfo(boolean unableToObtainAllTrustInfo) {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 

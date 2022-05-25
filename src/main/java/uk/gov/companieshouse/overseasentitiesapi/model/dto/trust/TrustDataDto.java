@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class TrustDataDto {
 
     @JsonProperty("trust_name")
@@ -18,6 +20,15 @@ public class TrustDataDto {
 
     @JsonProperty("unable_to_obtain_all_trust_info")
     private String unableToObtainAllTrustInfo;
+
+    @JsonProperty("INDIVIDUAL")
+    private List<IndividualDto> individualDtos;
+
+    @JsonProperty("HISTORICAL_BO")
+    private List<HistoricalBoDto> historicalBoDtos;
+
+    @JsonProperty("CORPORATE")
+    private List<CorporateDto> corporateDtos;
 
     public String getTrustName() {
         return trustName;
@@ -59,5 +70,27 @@ public class TrustDataDto {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 
+    public List<IndividualDto> getIndividualDtos() {
+        return individualDtos;
+    }
 
+    public void setIndividualDtos(List<IndividualDto> individualDtos) {
+        this.individualDtos = individualDtos;
+    }
+
+    public List<HistoricalBoDto> getHistoricalBoDtos() {
+        return historicalBoDtos;
+    }
+
+    public void setHistoricalBoDtos(List<HistoricalBoDto> historicalBoDtos) {
+        this.historicalBoDtos = historicalBoDtos;
+    }
+
+    public List<CorporateDto> getCorporateDtos() {
+        return corporateDtos;
+    }
+
+    public void setCorporateDtos(List<CorporateDto> corporateDtos) {
+        this.corporateDtos = corporateDtos;
+    }
 }

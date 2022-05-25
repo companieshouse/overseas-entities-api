@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
 import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
 import java.time.LocalDate;
 
