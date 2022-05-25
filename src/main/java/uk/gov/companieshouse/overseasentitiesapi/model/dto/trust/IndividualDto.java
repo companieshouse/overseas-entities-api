@@ -5,7 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.IndividualType;
 
 public class IndividualDto {
     @JsonProperty("type")
-    private IndividualType type;
+    private String type;
 
     @JsonProperty("forename")
     private String forename;
@@ -91,11 +91,11 @@ public class IndividualDto {
     @JsonProperty("date_became_interested_person_year")
     private String dateBecameInterestedPersonYear;
 
-    public IndividualType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(IndividualType type) {
+    public void setType(String type) {
         this.type = type;
     }
 

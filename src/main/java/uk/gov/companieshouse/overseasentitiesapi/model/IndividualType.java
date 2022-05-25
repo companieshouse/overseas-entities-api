@@ -1,18 +1,30 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
-public enum IndividualType {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.commons.lang.StringUtils;
 
-    INDIVIDUAL_SETTLERS("individual_settlers"),
-    INDIVIDUAL_GRANTORS("individual_grantors"),
-    INDIVIDUAL_BENEFICIARIES("individual_beneficiaries"),
-    INDIVIDUAL_INTERESTED_PERSONS("individual_interested_persons");
+import java.util.HashMap;
+import java.util.Map;
 
-    private final String individualType;
+public class IndividualType {
+    public static final String INDIVIDUAL_SETTLERS = "Individual Settlers";
+    public static final String INDIVIDUAL_GRANTORS = "Individual Grantors";
+    public static final String INDIVIDUAL_BENEFICIARIES = "Individual Beneficiaries";
+    public static final String INDIVIDUAL_INTERESTED_PERSONS = "Individual Interested Persons";
 
-    IndividualType(String individualType) {
-        this.individualType = individualType;
+    private String value;
+
+    IndividualType(String value) {
+        this.value = value;
     }
 
+
+    public String getValue() {
+        return value;
+    }
+
+    /*
     public static IndividualType findByIndividualType(String individualType) {
         for (IndividualType type: values()) {
             if(type.individualType.equals(individualType)) {
@@ -21,4 +33,32 @@ public enum IndividualType {
         }
         return null;
     }
+
+    private static Map<String, IndividualType> individualTypeMap = new HashMap<String, IndividualType>(4);
+
+    static {
+        individualTypeMap.put("Individual Settlers", INDIVIDUAL_SETTLERS);
+        individualTypeMap.put("Individual Grantors", INDIVIDUAL_GRANTORS);
+        individualTypeMap.put("Individual Beneficiaries", INDIVIDUAL_BENEFICIARIES);
+        individualTypeMap.put("Individual Interested Persons", INDIVIDUAL_INTERESTED_PERSONS);
+    }
+
+    @JsonCreator
+    public static IndividualType forValue(String value) {
+        return individualTypeMap.get(StringUtils.lowerCase(value));
+    }
+
+    @JsonValue
+    public String toValue() {
+        for (Map.Entry<String, IndividualType> entry : individualTypeMap.entrySet()) {
+            if (entry.getValue() == this)
+                return entry.getKey();
+        }
+
+        return null;
+    }
+
+     */
+
+
 }

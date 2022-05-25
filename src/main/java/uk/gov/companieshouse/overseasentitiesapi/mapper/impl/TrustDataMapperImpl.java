@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.mapper.impl;
 
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.TrustDataMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerDao;
@@ -11,7 +12,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class TrustDataMapperImpl implements TrustDataMapper {
+
+    private static final String INDIVIDUAL_SETTLERS = "Individual Settlers";
+    private static final String INDIVIDUAL_GRANTORS = "Individual Grantors";
+    private static final String INDIVIDUAL_BENEFICIARIES = "Individual Beneficiaries";
+    private static final String INDIVIDUAL_INTERESTED_PERSONS = "Individual Interested Persons";
 
     public TrustDataDao dtoToDao(TrustDataDto trustDataDto) {
         TrustDataDao trustDataDao = new TrustDataDao();
@@ -34,6 +41,9 @@ public class TrustDataMapperImpl implements TrustDataMapper {
         List<BeneficialOwnerDao> beneficiaries = new ArrayList<>();
         List<BeneficialOwnerDao> interestedPersons = new ArrayList<>();
         for (IndividualDto individualDto : trustDataDto.getIndividualDtos()) {
+            System.out.println("**************************");
+            System.out.println(individualDto.getType());
+
             switch (individualDto.getType()) {
                 case INDIVIDUAL_GRANTORS:
                     grantors.add(individualDtoToBeneficialOwnerDao(individualDto));
@@ -47,6 +57,9 @@ public class TrustDataMapperImpl implements TrustDataMapper {
                 case INDIVIDUAL_INTERESTED_PERSONS:
                     interestedPersons.add(individualDtoToBeneficialOwnerDao(individualDto));
                     break;
+                default:
+                    // TODO error
+                    System.out.println("ERROR"); // TODO
             }
         }
 
