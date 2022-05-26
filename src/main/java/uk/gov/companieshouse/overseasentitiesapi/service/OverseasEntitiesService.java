@@ -85,24 +85,12 @@ public class OverseasEntitiesService {
         if (trustData != null) {
             List<TrustDataDao> trustDataDao = insertedSubmission.getTrustData();
 
-            /*
-            for (int i = 0; i < trustData.size(); i++) {
-                int day = Integer.parseInt(trustData.get(i).getTrustCreationDateDay());
-                int month = Integer.parseInt(trustData.get(i).getTrustCreationDateMonth());
-                int year = Integer.parseInt(trustData.get(i).getTrustCreationDateYear());
-                LocalDate date = LocalDate.of(year, month, day);
-                trustDataDao.get(i).setTrustCreationDate(date);
-            }
-             */
-
             for (TrustDataDto trustDataDto : trustData) {
                 trustDataDao.add(trustDataMapper.dtoToDao(trustDataDto));
             }
             insertedSubmission.setTrustData(trustDataDao);
-
-
-
         }
+
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)

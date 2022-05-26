@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.mapper.impl;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.TrustDataMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerDao;
@@ -10,6 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBoDto
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.IndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class TrustDataMapperImpl implements TrustDataMapper {
     private static final String CORPORATE_BENEFICIARIES = "Corporate Beneficiaries";
     private static final String CORPORATE_INTERESTED_PERSONS = "Corporate Interested Persons";
 
-    public TrustDataDao dtoToDao(TrustDataDto trustDataDto) {
+    public TrustDataDao dtoToDao(TrustDataDto trustDataDto) throws ServiceException {
         TrustDataDao trustDataDao = new TrustDataDao();
         trustDataDao.setName(trustDataDto.getTrustName());
         trustDataDao.setTrustCreationDate(
@@ -42,7 +44,7 @@ public class TrustDataMapperImpl implements TrustDataMapper {
         return trustDataDao;
     }
 
-    private void setBeneficialOwners(TrustDataDto trustDataDto, TrustDataDao trustDataDao) {
+    private void setBeneficialOwners(TrustDataDto trustDataDto, TrustDataDao trustDataDao) throws ServiceException {
         List<BeneficialOwnerDao> grantors = new ArrayList<>();
         List<BeneficialOwnerDao> settlers = new ArrayList<>();
         List<BeneficialOwnerDao> beneficiaries = new ArrayList<>();
@@ -63,28 +65,35 @@ public class TrustDataMapperImpl implements TrustDataMapper {
                     interestedPersons.add(individualDtoToBeneficialOwnerDao(individualDto));
                     break;
                 default:
-                    // TODO error
-                    System.out.println("ERROR"); // TODO
+                    throw new ServiceException("Invalid beneficial owner type received: " + individualDto.getType());
             }
         }
 
-        for (CorporateDto corporateDto : trustDataDto.getCorporateDtos()) {
-            switch (corporateDto.getType()) {
-                case CORPORATE_GRANTORS:
-                    grantors.add(corporateDtoToBeneficialOwner(corporateDto));
-                    break;
-                case CORPORATE_SETTLERS:
-                    settlers.add(corporateDtoToBeneficialOwner(corporateDto));
-                    break;
-                case CORPORATE_BENEFICIARIES:
-                    beneficiaries.add(corporateDtoToBeneficialOwner(corporateDto));
-                    break;
-                case CORPORATE_INTERESTED_PERSONS:
-                    interestedPersons.add(corporateDtoToBeneficialOwner(corporateDto));
-                    break;
-                default:
-                    // TODO error
-                    System.out.println("ERROR"); // TODO
+        if (trustDataDto.getCorporateDtos() != null && !trustDataDto.getCorporateDtos().isEmpty()) {
+            for (CorporateDto corporateDto : trustDataDto.getCorporateDtos()) {
+                switch (corporateDto.getType()) {
+                    case CORPORATE_GRANTORS:
+                        grantors.add(corporateDtoToBeneficialOwner(corporateDto));
+                        break;
+                    case CORPORATE_SETTLERS:
+                        settlers.add(corporateDtoToBeneficialOwner(corporateDto));
+                        break;
+                    case CORPORATE_BENEFICIARIES:
+                        beneficiaries.add(corporateDtoToBeneficialOwner(corporateDto));
+                        break;
+                    case CORPORATE_INTERESTED_PERSONS:
+                        interestedPersons.add(corporateDtoToBeneficialOwner(corporateDto));
+                        break;
+                    default:
+                        throw new ServiceException("Invalid beneficial owner type received: " + corporateDto.getType());
+                }
+            }
+        }
+
+        List<BeneficialOwnerDao> historicalBoDtoList = new ArrayList<>();
+        if (trustDataDto.getHistoricalBoDtos() != null && !trustDataDto.getHistoricalBoDtos().isEmpty()) {
+            for (HistoricalBoDto historicalBoDto : trustDataDto.getHistoricalBoDtos()) {
+                historicalBoDtoList.add(historicalBoDtoToBeneficialOwner(historicalBoDto));
             }
         }
 
@@ -92,11 +101,7 @@ public class TrustDataMapperImpl implements TrustDataMapper {
         trustDataDao.setSettlers(settlers);
         trustDataDao.setBeneficiaries(beneficiaries);
         trustDataDao.setInterestedPersons(interestedPersons);
-
-        List<BeneficialOwnerDao> historicalBoDtoList = new ArrayList<>();
-        for (HistoricalBoDto historicalBoDto : trustDataDto.getHistoricalBoDtos()) {
-            historicalBoDtoList.add(historicalBoDtoToBeneficialOwner(historicalBoDto));
-        }
+        trustDataDao.setHistoricalBeneficialOwners(historicalBoDtoList);
     }
 
     private BeneficialOwnerDao individualDtoToBeneficialOwnerDao(IndividualDto individualDto) {
