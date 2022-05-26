@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.IndividualType;
 
 public class IndividualDto {
     @JsonProperty("type")

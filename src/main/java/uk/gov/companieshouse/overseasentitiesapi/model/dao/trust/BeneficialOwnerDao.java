@@ -42,11 +42,11 @@ public class BeneficialOwnerDao {
     @Field("registered_office_address")
     private AddressDao registeredOfficeAddress;
 
-    @Field("identification_country_region")
-    private String identificationCountryRegion;
+    @Field("identification_country_registration")
+    private String identificationCountryRegistration;
 
-    @Field("identification_legal_authority")
-    private String identificationLegalAuthority;
+    @Field("identification_legal_registration")
+    private String identificationLegalRegistration;
 
     @Field("identification_legal_form")
     private String identificationLegalForm;
@@ -56,6 +56,12 @@ public class BeneficialOwnerDao {
 
     @Field("identification_registration_number")
     private String identificationRegistrationNumber;
+
+    // ===============================
+    // Historical BO Fields:
+
+    @Field("ceased_date")
+    private LocalDate ceasedDate;
 
     public String getType() {
         return type;
@@ -145,20 +151,20 @@ public class BeneficialOwnerDao {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
-    public String getIdentificationCountryRegion() {
-        return identificationCountryRegion;
+    public String getIdentificationCountryRegistration() {
+        return identificationCountryRegistration;
     }
 
-    public void setIdentificationCountryRegion(String identificationCountryRegion) {
-        this.identificationCountryRegion = identificationCountryRegion;
+    public void setIdentificationCountryRegistration(String identificationCountryRegistration) {
+        this.identificationCountryRegistration = identificationCountryRegistration;
     }
 
-    public String getIdentificationLegalAuthority() {
-        return identificationLegalAuthority;
+    public String getIdentificationLegalRegistration() {
+        return identificationLegalRegistration;
     }
 
-    public void setIdentificationLegalAuthority(String identificationLegalAuthority) {
-        this.identificationLegalAuthority = identificationLegalAuthority;
+    public void setIdentificationLegalRegistration(String identificationLegalRegistration) {
+        this.identificationLegalRegistration = identificationLegalRegistration;
     }
 
     public String getIdentificationLegalForm() {
@@ -183,5 +189,13 @@ public class BeneficialOwnerDao {
 
     public void setIdentificationRegistrationNumber(String identificationRegistrationNumber) {
         this.identificationRegistrationNumber = identificationRegistrationNumber;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 }

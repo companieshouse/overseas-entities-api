@@ -1,11 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.CorporateType;
 
 public class CorporateDto {
     @JsonProperty("type")
-    private CorporateType type;
+    private String type;
 
     @JsonProperty("name")
     private String name;
@@ -88,11 +87,11 @@ public class CorporateDto {
     @JsonProperty("identification_registration_number")
     private String identificationRegistrationNumber;
 
-    public CorporateType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(CorporateType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
