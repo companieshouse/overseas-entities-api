@@ -11,7 +11,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBoDto
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.IndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +173,7 @@ public class TrustDataMapperImpl implements TrustDataMapper {
                 corporateDto.getRoAddressPostalCode(),
                 corporateDto.getRoAddressCareOf(),
                 corporateDto.getRoAddressPoBox());
-        beneficialOwnerDao.setUsualResidentialAddress(ro);
+        beneficialOwnerDao.setRegisteredOfficeAddress(ro);
         beneficialOwnerDao.setDateBecameInterestedPerson(
                 LocalDate.of(
                         Integer.parseInt(corporateDto.getDateBecameInterestedPersonYear()),
