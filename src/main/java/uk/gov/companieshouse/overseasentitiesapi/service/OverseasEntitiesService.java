@@ -80,7 +80,7 @@ public class OverseasEntitiesService {
 
         List<TrustDataDto> trustData = overseasEntitySubmissionDto.getTrustData();
         if (trustData != null) {
-            List<TrustDataDao> trustDataDao = insertedSubmission.getTrustData();
+            List<TrustDataDao> trustDataDao = new ArrayList<>();
 
             for (TrustDataDto trustDataDto : trustData) {
                 trustDataDao.add(trustDataMapper.dtoToDao(trustDataDto));
