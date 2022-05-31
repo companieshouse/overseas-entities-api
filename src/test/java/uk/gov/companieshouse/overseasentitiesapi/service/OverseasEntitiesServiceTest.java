@@ -29,6 +29,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -94,11 +96,8 @@ class OverseasEntitiesServiceTest {
         trustDataDtoList.add(trustDataDto);
         var mappedTrustDataDao = new TrustDataDao();
         mappedTrustDataDao.setName("mapped dto to dao");
-
-        var trustDataDao = new TrustDataDao();
-        trustDataDao.setName("existing dao");
         List<TrustDataDao> trustDataDaoList = new ArrayList<>();
-        trustDataDaoList.add(trustDataDao);
+        trustDataDaoList.add(mappedTrustDataDao);
 
         overseasEntitySubmissionDto.setTrustData(trustDataDtoList);
         overseasEntitySubmissionDao.setTrustData(trustDataDaoList);
@@ -125,8 +124,8 @@ class OverseasEntitiesServiceTest {
         // assert 'self' link is set on dao object
         assertEquals(submissionUri, overseasEntitySubmissionDao.getLinks().get("self"));
 
-        // assert trust data is added to existing resource
-        assertEquals(overseasEntitySubmissionDao.getTrustData().size(), 2);
+        // assert trust data is added to submission
+        assertEquals(1, overseasEntitySubmissionDao.getTrustData().size());
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
