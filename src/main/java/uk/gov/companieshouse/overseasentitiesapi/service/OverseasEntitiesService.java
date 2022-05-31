@@ -19,6 +19,7 @@ import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmis
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,9 @@ public class OverseasEntitiesService {
 
     @Value("${FEATURE_FLAG_ENABLE_PAYMENT_16052022}")
     private boolean isPaymentEnabled;
+
+    @Value("${FEATURE_FLAG_ENABLE_TRUST_31052022}")
+    private boolean isTrustEnabled;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
@@ -78,14 +82,16 @@ public class OverseasEntitiesService {
         insertedSubmission.setHttpRequestId(requestId);
         insertedSubmission.setCreatedByUserId(userId);
 
-        List<TrustDataDto> trustData = overseasEntitySubmissionDto.getTrustData();
-        if (trustData != null) {
-            List<TrustDataDao> trustDataDao = new ArrayList<>();
+        if(isTrustEnabled) {
+            List<TrustDataDto> trustData = overseasEntitySubmissionDto.getTrustData();
+            if (trustData != null) {
+                List<TrustDataDao> trustDataDao = new ArrayList<>();
 
-            for (TrustDataDto trustDataDto : trustData) {
-                trustDataDao.add(trustDataMapper.dtoToDao(trustDataDto));
+                for (TrustDataDto trustDataDto : trustData) {
+                    trustDataDao.add(trustDataMapper.dtoToDao(trustDataDto));
+                }
+                insertedSubmission.setTrustData(trustDataDao);
             }
-            insertedSubmission.setTrustData(trustDataDao);
         }
 
         overseasEntitySubmissionsRepository.save(insertedSubmission);

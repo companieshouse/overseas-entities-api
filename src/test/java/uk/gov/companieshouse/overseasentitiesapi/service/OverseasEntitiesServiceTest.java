@@ -26,7 +26,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.List;
@@ -77,6 +79,7 @@ class OverseasEntitiesServiceTest {
     @BeforeEach
     void init() {
         setPaymentEnabledFeatureFlag(true);
+        setTrustEnabledFeatureFlag(true);
     }
 
     @Test
@@ -143,6 +146,7 @@ class OverseasEntitiesServiceTest {
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyHasNoCostsLinkWhenFeatureFlagFalse() throws ServiceException {
         setPaymentEnabledFeatureFlag(false);
+        setTrustEnabledFeatureFlag(false);
 
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
@@ -182,6 +186,7 @@ class OverseasEntitiesServiceTest {
         OverseasEntitySubmissionCreatedResponseDto responseDto = ((OverseasEntitySubmissionCreatedResponseDto) response.getBody());
         assertNotNull(responseDto);
         assertEquals(SUBMISSION_ID, responseDto.getId());
+        assertNull(overseasEntitySubmissionDao.getTrustData());
     }
 
     @Test
@@ -228,5 +233,9 @@ class OverseasEntitiesServiceTest {
 
     private void setPaymentEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitiesService, "isPaymentEnabled", value);
+    }
+
+    private void setTrustEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitiesService, "isTrustEnabled", value);
     }
 }
