@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class IndividualDto {
     @JsonProperty("type")
@@ -146,6 +147,11 @@ public class IndividualDto {
         this.dobYear = dobYear;
     }
 
+    public String getDateOfBirth() {
+        String[] dateFields = {dobYear, dobMonth, dobDay};
+        return String.join("-", dateFields);
+    }
+
     public String getNationality() {
         return nationality;
     }
@@ -226,6 +232,20 @@ public class IndividualDto {
         this.saAddressRegion = saAddressRegion;
     }
 
+    public AddressDto getServiceAddress() {
+        AddressDto serviceAddress = new AddressDto();
+        serviceAddress.setPropertyNameNumber(saAddressPremises);
+        serviceAddress.setLine1(saAddressLine1);
+        serviceAddress.setLine2(saAddressLine2);
+        serviceAddress.setCounty(saAddressRegion);
+        serviceAddress.setLocality(saAddressLocality);
+        serviceAddress.setCountry(saAddressCountry);
+        serviceAddress.setCareOf(saAddressCareOf);
+        serviceAddress.setPoBox(saAddressPoBox);
+        serviceAddress.setPostcode(saAddressPostalCode);
+        return serviceAddress;
+    }
+
     public String getUraAddressLine1() {
         return uraAddressLine1;
     }
@@ -298,6 +318,20 @@ public class IndividualDto {
         this.uraAddressRegion = uraAddressRegion;
     }
 
+    public AddressDto getUsualResidentialAddress() {
+        AddressDto address = new AddressDto();
+        address.setPropertyNameNumber(uraAddressPremises);
+        address.setLine1(uraAddressLine1);
+        address.setLine2(uraAddressLine2);
+        address.setCounty(uraAddressRegion);
+        address.setLocality(uraAddressLocality);
+        address.setCountry(uraAddressCountry);
+        address.setCareOf(uraAddressCareOf);
+        address.setPoBox(uraAddressPoBox);
+        address.setPostcode(uraAddressPostalCode);
+        return address;
+    }
+
     public String getDateBecameInterestedPersonDay() {
         return dateBecameInterestedPersonDay;
     }
@@ -320,5 +354,10 @@ public class IndividualDto {
 
     public void setDateBecameInterestedPersonYear(String dateBecameInterestedPersonYear) {
         this.dateBecameInterestedPersonYear = dateBecameInterestedPersonYear;
+    }
+
+    public String getDateBecameInterestedPerson() {
+        String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+        return String.join("-", dateFields);
     }
 }

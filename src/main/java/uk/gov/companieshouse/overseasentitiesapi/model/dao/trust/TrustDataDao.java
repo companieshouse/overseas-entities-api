@@ -2,48 +2,41 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class TrustDataDao {
 
     @Field("name")
-    private String name;
+    private String trustName;
 
     @Field("creation_date")
-    private LocalDate trustCreationDate;
+    private String trustCreationDate;
 
     @Field("unable_to_obtain_all_trust_info")
     private boolean unableToObtainAllTrustInfo;
 
     @Field("historical_beneficial_owners")
-    private List<BeneficialOwnerDao> historicalBeneficialOwners;
+    private List<HistoricalBeneficialOwnerDao> historicalBeneficialOwners;
 
-    @Field("beneficiaries")
-    private List<BeneficialOwnerDao> beneficiaries;
+    @Field("individual_beneficial_owners")
+    private List<IndividualBeneficialOwnerDao> individualBeneficialOwners;
 
-    @Field("settlers")
-    private List<BeneficialOwnerDao> settlers;
+    @Field("corporate_beneficial_owners")
+    private List<CorporateBeneficialOwnerDao> corporateBeneficialOwners;
 
-    @Field("grantors")
-    private List<BeneficialOwnerDao> grantors;
-
-    @Field("interested_persons")
-    private List<BeneficialOwnerDao> interestedPersons;
-
-    public String getName() {
-        return name;
+    public String getTrustName() {
+        return trustName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTrustName(String trustName) {
+        this.trustName = trustName;
     }
 
-    public LocalDate getTrustCreationDate() {
+    public String getTrustCreationDate() {
         return trustCreationDate;
     }
 
-    public void setTrustCreationDate(LocalDate trustCreationDate) {
+    public void setTrustCreationDate(String trustCreationDate) {
         this.trustCreationDate = trustCreationDate;
     }
 
@@ -55,43 +48,32 @@ public class TrustDataDao {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 
-    public List<BeneficialOwnerDao> getHistoricalBeneficialOwners() {
+    public List<HistoricalBeneficialOwnerDao> getHistoricalBeneficialOwners() {
         return historicalBeneficialOwners;
     }
 
-    public void setHistoricalBeneficialOwners(List<BeneficialOwnerDao> historicalBeneficialOwners) {
+    public void setHistoricalBeneficialOwners(List<HistoricalBeneficialOwnerDao> historicalBeneficialOwners) {
         this.historicalBeneficialOwners = historicalBeneficialOwners;
     }
 
-    public List<BeneficialOwnerDao> getBeneficiaries() {
-        return beneficiaries;
+    public boolean isUnableToObtainAllTrustInfo() {
+        return unableToObtainAllTrustInfo;
     }
 
-    public void setBeneficiaries(List<BeneficialOwnerDao> beneficiaries) {
-        this.beneficiaries = beneficiaries;
+    public List<IndividualBeneficialOwnerDao> getIndividualBeneficialOwners() {
+        return individualBeneficialOwners;
     }
 
-    public List<BeneficialOwnerDao> getSettlers() {
-        return settlers;
+    public void setIndividualBeneficialOwners(List<IndividualBeneficialOwnerDao> individualBeneficialOwners) {
+        this.individualBeneficialOwners = individualBeneficialOwners;
     }
 
-    public void setSettlers(List<BeneficialOwnerDao> settlers) {
-        this.settlers = settlers;
+    public List<CorporateBeneficialOwnerDao> getCorporateBeneficialOwners() {
+        return corporateBeneficialOwners;
     }
 
-    public List<BeneficialOwnerDao> getGrantors() {
-        return grantors;
+    public void setCorporateBeneficialOwners(List<CorporateBeneficialOwnerDao> corporateBeneficialOwners) {
+        this.corporateBeneficialOwners = corporateBeneficialOwners;
     }
 
-    public void setGrantors(List<BeneficialOwnerDao> grantors) {
-        this.grantors = grantors;
-    }
-
-    public List<BeneficialOwnerDao> getInterestedPersons() {
-        return interestedPersons;
-    }
-
-    public void setInterestedPersons(List<BeneficialOwnerDao> interestedPersons) {
-        this.interestedPersons = interestedPersons;
-    }
 }

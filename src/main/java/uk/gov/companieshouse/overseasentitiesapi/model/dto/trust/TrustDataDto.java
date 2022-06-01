@@ -22,13 +22,13 @@ public class TrustDataDto {
     private String unableToObtainAllTrustInfo;
 
     @JsonProperty("INDIVIDUAL")
-    private List<IndividualDto> individualDtos;
+    private List<IndividualDto> individualBeneficialOwners;
 
     @JsonProperty("HISTORICAL_BO")
-    private List<HistoricalBoDto> historicalBoDtos;
+    private List<HistoricalBoDto> historicalBeneficialOwners;
 
     @JsonProperty("CORPORATE")
-    private List<CorporateDto> corporateDtos;
+    private List<CorporateDto> corporateBeneficialOwners;
 
     public String getTrustName() {
         return trustName;
@@ -62,6 +62,11 @@ public class TrustDataDto {
         this.trustCreationDateYear = trustCreationDateYear;
     }
 
+    public String getTrustCreationDate() {
+        String[] dateFields = {trustCreationDateYear, trustCreationDateMonth, trustCreationDateDay};
+        return String.join("-", dateFields);
+    }
+
     public String getUnableToObtainAllTrustInfo() {
         return unableToObtainAllTrustInfo;
     }
@@ -70,27 +75,27 @@ public class TrustDataDto {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 
-    public List<IndividualDto> getIndividualDtos() {
-        return individualDtos;
+    public List<IndividualDto> getIndividualBeneficialOwners() {
+        return individualBeneficialOwners;
     }
 
-    public void setIndividualDtos(List<IndividualDto> individualDtos) {
-        this.individualDtos = individualDtos;
+    public void setIndividualBeneficialOwners(List<IndividualDto> individualDtos) {
+        this.individualBeneficialOwners = individualDtos;
     }
 
-    public List<HistoricalBoDto> getHistoricalBoDtos() {
-        return historicalBoDtos;
+    public List<HistoricalBoDto> getHistoricalBeneficialOwners() {
+        return historicalBeneficialOwners;
     }
 
     public void setHistoricalBoDtos(List<HistoricalBoDto> historicalBoDtos) {
-        this.historicalBoDtos = historicalBoDtos;
+        this.historicalBeneficialOwners = historicalBoDtos;
     }
 
-    public List<CorporateDto> getCorporateDtos() {
-        return corporateDtos;
+    public List<CorporateDto> getCorporateBeneficialOwners() {
+        return corporateBeneficialOwners;
     }
 
-    public void setCorporateDtos(List<CorporateDto> corporateDtos) {
-        this.corporateDtos = corporateDtos;
+    public void setCorporateBeneficialOwners(List<CorporateDto> corporateDtos) {
+        this.corporateBeneficialOwners = corporateDtos;
     }
 }

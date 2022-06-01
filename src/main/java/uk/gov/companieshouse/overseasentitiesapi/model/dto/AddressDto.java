@@ -19,8 +19,17 @@ public class AddressDto {
     @JsonProperty("county")
     private String county;
 
+    @JsonProperty("locality")
+    private String locality;
+
     @JsonProperty("country")
     private String country;
+
+    @JsonProperty("po_box")
+    private String poBox;
+
+    @JsonProperty("care_of")
+    private String careOf;
 
     @JsonProperty("postcode")
     private String postcode;
@@ -63,6 +72,30 @@ public class AddressDto {
 
     public void setCounty(String county) {
         this.county = county;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    public String getPoBox() {
+        return poBox;
+    }
+
+    public void setPoBox(String poBox) {
+        this.poBox = poBox;
+    }
+
+    public String getCareOf() {
+        return careOf;
+    }
+
+    public void setCareOf(String careOf) {
+        this.careOf = careOf;
     }
 
     public String getCountry() {

@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class CorporateDto {
     @JsonProperty("type")
@@ -75,8 +76,8 @@ public class CorporateDto {
     @JsonProperty("identification_country_registration")
     private String identificationCountryRegistration;
 
-    @JsonProperty("identification_legal_registration")
-    private String identificationLegalRegistration;
+    @JsonProperty("identification_legal_authority")
+    private String identificationLegalAuthority;
 
     @JsonProperty("identification_legal_form")
     private String identificationLegalForm;
@@ -125,6 +126,11 @@ public class CorporateDto {
 
     public void setDateBecameInterestedPersonYear(String dateBecameInterestedPersonYear) {
         this.dateBecameInterestedPersonYear = dateBecameInterestedPersonYear;
+    }
+
+    public String getDateBecameInterestedPerson() {
+        String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+        return String.join("-", dateFields);
     }
 
     public String getRoAddressLine1() {
@@ -199,6 +205,20 @@ public class CorporateDto {
         this.roAddressRegion = roAddressRegion;
     }
 
+    public AddressDto getRegisteredOfficeAddress() {
+        AddressDto address = new AddressDto();
+        address.setPropertyNameNumber(roAddressPremises);
+        address.setLine1(roAddressLine1);
+        address.setLine2(roAddressLine2);
+        address.setCounty(roAddressRegion);
+        address.setLocality(roAddressLocality);
+        address.setCountry(roAddressCountry);
+        address.setCareOf(roAddressCareOf);
+        address.setPoBox(roAddressPoBox);
+        address.setPostcode(roAddressPostalCode);
+        return address;
+    }
+
     public String getSaAddressLine1() {
         return saAddressLine1;
     }
@@ -271,6 +291,20 @@ public class CorporateDto {
         this.saAddressRegion = saAddressRegion;
     }
 
+    public AddressDto getServiceAddress() {
+        AddressDto serviceAddress = new AddressDto();
+        serviceAddress.setPropertyNameNumber(saAddressPremises);
+        serviceAddress.setLine1(saAddressLine1);
+        serviceAddress.setLine2(saAddressLine2);
+        serviceAddress.setCounty(saAddressRegion);
+        serviceAddress.setLocality(saAddressLocality);
+        serviceAddress.setCountry(saAddressCountry);
+        serviceAddress.setCareOf(saAddressCareOf);
+        serviceAddress.setPoBox(saAddressPoBox);
+        serviceAddress.setPostcode(saAddressPostalCode);
+        return serviceAddress;
+    }
+
     public String getIdentificationCountryRegistration() {
         return identificationCountryRegistration;
     }
@@ -279,12 +313,12 @@ public class CorporateDto {
         this.identificationCountryRegistration = identificationCountryRegistration;
     }
 
-    public String getIdentificationLegalRegistration() {
-        return identificationLegalRegistration;
+    public String getIdentificationLegalAuthority() {
+        return identificationLegalAuthority;
     }
 
-    public void setIdentificationLegalRegistration(String identificationLegalRegistration) {
-        this.identificationLegalRegistration = identificationLegalRegistration;
+    public void setIdentificationLegalAuthority(String identificationLegalAuthority) {
+        this.identificationLegalAuthority = identificationLegalAuthority;
     }
 
     public String getIdentificationLegalForm() {

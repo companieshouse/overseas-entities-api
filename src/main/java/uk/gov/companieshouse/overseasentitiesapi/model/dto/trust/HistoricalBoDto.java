@@ -68,4 +68,9 @@ public class HistoricalBoDto {
     public void setCeasedDateYear(String ceasedDateYear) {
         this.ceasedDateYear = ceasedDateYear;
     }
+
+    public String getCeasedDate() {
+        String[] dateFields = {ceasedDateYear, ceasedDateMonth, ceasedDateDay};
+        return String.join("-", dateFields);
+    }
 }
