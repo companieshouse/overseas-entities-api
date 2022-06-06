@@ -357,7 +357,14 @@ public class IndividualDto {
     }
 
     public String getDateBecameInterestedPerson() {
-        String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
-        return String.join("-", dateFields);
+        if (type.equals("Individual Interested Person")
+                && dateBecameInterestedPersonYear != null
+                && dateBecameInterestedPersonMonth != null
+                && dateBecameInterestedPersonDay != null
+        ) {
+            String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+            return String.join("-", dateFields);
+        }
+        return null;
     }
 }

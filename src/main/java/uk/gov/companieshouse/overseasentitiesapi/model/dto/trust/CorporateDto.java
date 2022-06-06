@@ -129,8 +129,15 @@ public class CorporateDto {
     }
 
     public String getDateBecameInterestedPerson() {
-        String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
-        return String.join("-", dateFields);
+        if (type.equals("Corporate Interested Person")
+                && dateBecameInterestedPersonYear != null
+                && dateBecameInterestedPersonMonth != null
+                && dateBecameInterestedPersonDay != null
+        ) {
+            String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+            return String.join("-", dateFields);
+        }
+        return null;
     }
 
     public String getRoAddressLine1() {
