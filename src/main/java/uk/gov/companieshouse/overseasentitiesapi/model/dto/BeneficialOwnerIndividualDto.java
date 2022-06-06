@@ -44,6 +44,9 @@ public class BeneficialOwnerIndividualDto {
     @JsonProperty("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
 
+    @JsonProperty("trust")
+    private String trust;
+
     public String getFirstName() {
         return firstName;
     }
@@ -138,5 +141,13 @@ public class BeneficialOwnerIndividualDto {
 
     public void setOnSanctionsList(Boolean onSanctionsList) {
         isOnSanctionsList = onSanctionsList;
+    }
+
+    public String getTrust() {
+        return trust;
+    }
+
+    public void setTrust(String trust) {
+        this.trust = trust;
     }
 }

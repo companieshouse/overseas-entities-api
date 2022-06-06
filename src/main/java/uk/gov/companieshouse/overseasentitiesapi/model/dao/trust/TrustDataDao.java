@@ -6,6 +6,9 @@ import java.util.List;
 
 public class TrustDataDao {
 
+    @Field("_id")
+    private String trustId;
+
     @Field("name")
     private String trustName;
 
@@ -23,6 +26,14 @@ public class TrustDataDao {
 
     @Field("corporate_beneficial_owners")
     private List<CorporateBeneficialOwnerDao> corporateBeneficialOwners;
+
+    public String getId() {
+        return trustId;
+    }
+
+    public void setTrustId(String trustId) {
+        this.trustId = trustId;
+    }
 
     public String getTrustName() {
         return trustName;
