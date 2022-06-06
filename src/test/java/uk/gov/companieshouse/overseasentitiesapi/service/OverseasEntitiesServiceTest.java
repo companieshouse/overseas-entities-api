@@ -16,7 +16,6 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
-import uk.gov.companieshouse.overseasentitiesapi.mapper.TrustDataMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
@@ -65,9 +64,6 @@ class OverseasEntitiesServiceTest {
     @Mock
     private Supplier<LocalDateTime> localDateTimeSupplier;
 
-    @Mock
-    private TrustDataMapper trustDataMapper;
-
     @Captor
     private ArgumentCaptor<Transaction> transactionApiCaptor;
 
@@ -95,7 +91,7 @@ class OverseasEntitiesServiceTest {
         List<TrustDataDto> trustDataDtoList = new ArrayList<>();
         trustDataDtoList.add(trustDataDto);
         var mappedTrustDataDao = new TrustDataDao();
-        mappedTrustDataDao.setName("mapped dto to dao");
+        mappedTrustDataDao.setTrustName("mapped dto to dao");
         List<TrustDataDao> trustDataDaoList = new ArrayList<>();
         trustDataDaoList.add(mappedTrustDataDao);
 
@@ -103,7 +99,6 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDao.setTrustData(trustDataDaoList);
 
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
-        when(trustDataMapper.dtoToDao(trustDataDto)).thenReturn(mappedTrustDataDao);
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
 
