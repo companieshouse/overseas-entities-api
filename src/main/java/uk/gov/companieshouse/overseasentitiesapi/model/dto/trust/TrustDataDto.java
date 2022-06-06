@@ -19,7 +19,7 @@ public class TrustDataDto {
     private String trustCreationDateYear;
 
     @JsonProperty("unable_to_obtain_all_trust_info")
-    private String unableToObtainAllTrustInfo;
+    private Boolean unableToObtainAllTrustInfo;
 
     @JsonProperty("INDIVIDUAL")
     private List<IndividualDto> individualBeneficialOwners;
@@ -67,11 +67,11 @@ public class TrustDataDto {
         return String.join("-", dateFields);
     }
 
-    public String getUnableToObtainAllTrustInfo() {
+    public Boolean getUnableToObtainAllTrustInfo() {
         return unableToObtainAllTrustInfo;
     }
 
-    public void setUnableToObtainAllTrustInfo(String unableToObtainAllTrustInfo) {
+    public void setUnableToObtainAllTrustInfo(Boolean unableToObtainAllTrustInfo) {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 
