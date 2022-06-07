@@ -70,7 +70,7 @@ public class HistoricalBoDto {
     }
 
     public String getCeasedDate() {
-        String[] dateFields = {ceasedDateYear, ceasedDateMonth, ceasedDateDay};
+        var dateFields = new String[]{ceasedDateYear, ceasedDateMonth, ceasedDateDay};
         return String.join("-", dateFields);
     }
 }

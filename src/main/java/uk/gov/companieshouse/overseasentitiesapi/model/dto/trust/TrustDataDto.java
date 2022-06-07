@@ -74,7 +74,7 @@ public class TrustDataDto {
     }
 
     public String getTrustCreationDate() {
-        String[] dateFields = {trustCreationDateYear, trustCreationDateMonth, trustCreationDateDay};
+        var dateFields = new String[]{trustCreationDateYear, trustCreationDateMonth, trustCreationDateDay};
         return String.join("-", dateFields);
     }
 
