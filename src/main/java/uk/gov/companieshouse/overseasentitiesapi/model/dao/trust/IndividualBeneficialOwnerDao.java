@@ -3,8 +3,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.BeneficialOwnerTypes.beneficialOwnerTypes;
-
 public class IndividualBeneficialOwnerDao {
     @Field("type")
     private BeneficialOwnerType type;
@@ -38,7 +36,7 @@ public class IndividualBeneficialOwnerDao {
     }
 
     public void setType(String type) {
-        this.type = beneficialOwnerTypes.get(type);
+        this.type = BeneficialOwnerType.findByBeneficialOwnerTypeString(type);
     }
 
     public String getForename() {
