@@ -148,7 +148,7 @@ public class IndividualDto {
     }
 
     public String getDateOfBirth() {
-        String[] dateFields = {dobYear, dobMonth, dobDay};
+        var dateFields = new String[]{dobYear, dobMonth, dobDay};
         return String.join("-", dateFields);
     }
 
@@ -233,7 +233,7 @@ public class IndividualDto {
     }
 
     public AddressDto getServiceAddress() {
-        AddressDto serviceAddress = new AddressDto();
+        var serviceAddress = new AddressDto();
         serviceAddress.setPropertyNameNumber(saAddressPremises);
         serviceAddress.setLine1(saAddressLine1);
         serviceAddress.setLine2(saAddressLine2);
@@ -319,7 +319,7 @@ public class IndividualDto {
     }
 
     public AddressDto getUsualResidentialAddress() {
-        AddressDto address = new AddressDto();
+        var address = new AddressDto();
         address.setPropertyNameNumber(uraAddressPremises);
         address.setLine1(uraAddressLine1);
         address.setLine2(uraAddressLine2);
@@ -362,7 +362,7 @@ public class IndividualDto {
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null
         ) {
-            String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+            var dateFields = new String[]{dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
             return String.join("-", dateFields);
         }
         return null;

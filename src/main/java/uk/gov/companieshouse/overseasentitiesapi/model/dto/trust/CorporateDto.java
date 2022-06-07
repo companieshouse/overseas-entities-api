@@ -134,7 +134,7 @@ public class CorporateDto {
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null
         ) {
-            String[] dateFields = {dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
+            var dateFields = new String[]{dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
             return String.join("-", dateFields);
         }
         return null;
@@ -213,7 +213,7 @@ public class CorporateDto {
     }
 
     public AddressDto getRegisteredOfficeAddress() {
-        AddressDto address = new AddressDto();
+        var address = new AddressDto();
         address.setPropertyNameNumber(roAddressPremises);
         address.setLine1(roAddressLine1);
         address.setLine2(roAddressLine2);
@@ -299,7 +299,7 @@ public class CorporateDto {
     }
 
     public AddressDto getServiceAddress() {
-        AddressDto serviceAddress = new AddressDto();
+        var serviceAddress = new AddressDto();
         serviceAddress.setPropertyNameNumber(saAddressPremises);
         serviceAddress.setLine1(saAddressLine1);
         serviceAddress.setLine2(saAddressLine2);

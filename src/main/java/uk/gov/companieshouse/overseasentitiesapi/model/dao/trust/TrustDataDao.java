@@ -51,7 +51,7 @@ public class TrustDataDao {
         this.trustCreationDate = trustCreationDate;
     }
 
-    public boolean getUnableToObtainAllTrustInfo() {
+    public boolean isUnableToObtainAllTrustInfo() {
         return unableToObtainAllTrustInfo;
     }
 
@@ -65,10 +65,6 @@ public class TrustDataDao {
 
     public void setHistoricalBeneficialOwners(List<HistoricalBeneficialOwnerDao> historicalBeneficialOwners) {
         this.historicalBeneficialOwners = historicalBeneficialOwners;
-    }
-
-    public boolean isUnableToObtainAllTrustInfo() {
-        return unableToObtainAllTrustInfo;
     }
 
     public List<IndividualBeneficialOwnerDao> getIndividualBeneficialOwners() {
