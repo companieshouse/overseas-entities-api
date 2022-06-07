@@ -50,7 +50,7 @@ public class OverseasEntitySubmissionDao {
     private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
 
     @Field("trust_data")
-    private List<TrustDataDao> trustData;
+    private List<TrustDataDao> trusts;
 
     @Field("links")
     private Map<String, String> links;
@@ -127,12 +127,12 @@ public class OverseasEntitySubmissionDao {
         this.managingOfficersCorporate = managingOfficersCorporate;
     }
 
-    public List<TrustDataDao> getTrustData() {
-        return trustData;
+    public List<TrustDataDao> getTrusts() {
+        return trusts;
     }
 
-    public void setTrustData(List<TrustDataDao> trustData) {
-        this.trustData = trustData;
+    public void setTrusts(List<TrustDataDao> trusts) {
+        this.trusts = trusts;
     }
 
     public Map<String, String> getLinks() {
