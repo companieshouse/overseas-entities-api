@@ -574,7 +574,10 @@
           }
         },
         "HISTORICAL_BO": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HistoricalBeneficialOwner"
+          }
         }
       }
     },
@@ -755,6 +758,29 @@
           "type": "string"
         },
         "date_became_interested_person_year": {
+          "type": "string"
+        }
+      }
+    },
+    "HistoricalBeneficialOwner": {
+      "type": "object",
+      "properties": {
+        "forename": {
+          "type": "string"
+        },
+        "other_forenames": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string"
+        },
+        "ceased_date_day": {
+          "type": "string"
+        },
+        "ceased_date_month": {
+          "type": "string"
+        },
+        "ceased_date_year": {
           "type": "string"
         }
       }
