@@ -345,6 +345,9 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust": {
+          "type": "string"
         }
       }
     },
@@ -402,6 +405,9 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust": {
+          "type": "string"
         }
       }
     },
@@ -444,6 +450,9 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust": {
+          "type": "string"
         }
       }
     },
@@ -534,6 +543,9 @@
     "TrustData": {
       "type": "object",
       "properties": {
+        "trust_id": {
+          "type": "string"
+        },
         "trust_name": {
           "type": "string"
         },

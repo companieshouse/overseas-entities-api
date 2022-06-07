@@ -6,6 +6,9 @@ import java.util.List;
 
 public class TrustDataDto {
 
+    @JsonProperty("trust_id")
+    private String trustId;
+
     @JsonProperty("trust_name")
     private String trustName;
 
@@ -29,6 +32,14 @@ public class TrustDataDto {
 
     @JsonProperty("CORPORATE")
     private List<CorporateDto> corporateBeneficialOwners;
+
+    public String getTrustId() {
+        return trustId;
+    }
+
+    public void setTrustId(String trustId) {
+        this.trustId = trustId;
+    }
 
     public String getTrustName() {
         return trustName;
@@ -87,8 +98,8 @@ public class TrustDataDto {
         return historicalBeneficialOwners;
     }
 
-    public void setHistoricalBoDtos(List<HistoricalBoDto> historicalBoDtos) {
-        this.historicalBeneficialOwners = historicalBoDtos;
+    public void setHistoricalBeneficialOwners(List<HistoricalBoDto> historicalBeneficialOwners) {
+        this.historicalBeneficialOwners = historicalBeneficialOwners;
     }
 
     public List<CorporateDto> getCorporateBeneficialOwners() {
