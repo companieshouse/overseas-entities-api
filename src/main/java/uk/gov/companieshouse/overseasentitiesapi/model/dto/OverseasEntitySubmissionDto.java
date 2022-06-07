@@ -43,7 +43,7 @@ public class OverseasEntitySubmissionDto {
     private List<ManagingOfficerCorporateDto> managingOfficersCorporate;
 
     @JsonProperty("trust_data")
-    private List<TrustDataDto> trustData;
+    private List<TrustDataDto> trusts;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -112,12 +112,12 @@ public class OverseasEntitySubmissionDto {
         this.managingOfficersCorporate = managingOfficersCorporate;
     }
 
-    public List<TrustDataDto> getTrustData() {
-        return trustData;
+    public List<TrustDataDto> getTrusts() {
+        return trusts;
     }
 
-    public void setTrustData(List<TrustDataDto> trustData) {
-        this.trustData = trustData;
+    public void setTrusts(List<TrustDataDto> trusts) {
+        this.trusts = trusts;
     }
 
     public Map<String, String> getLinks() {

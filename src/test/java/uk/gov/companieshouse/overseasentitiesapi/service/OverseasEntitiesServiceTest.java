@@ -95,8 +95,8 @@ class OverseasEntitiesServiceTest {
         List<TrustDataDao> trustDataDaoList = new ArrayList<>();
         trustDataDaoList.add(mappedTrustDataDao);
 
-        overseasEntitySubmissionDto.setTrustData(trustDataDtoList);
-        overseasEntitySubmissionDao.setTrustData(trustDataDaoList);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
+        overseasEntitySubmissionDao.setTrusts(trustDataDaoList);
 
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
@@ -120,7 +120,7 @@ class OverseasEntitiesServiceTest {
         assertEquals(submissionUri, overseasEntitySubmissionDao.getLinks().get("self"));
 
         // assert trust data is added to submission
-        assertEquals(1, overseasEntitySubmissionDao.getTrustData().size());
+        assertEquals(1, overseasEntitySubmissionDao.getTrusts().size());
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
