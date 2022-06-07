@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
+
 public class HistoricalBoDto {
     @JsonProperty("forename")
     private String forename;
@@ -69,8 +71,10 @@ public class HistoricalBoDto {
         this.ceasedDateYear = ceasedDateYear;
     }
 
-    public String getCeasedDate() {
-        var dateFields = new String[]{ceasedDateYear, ceasedDateMonth, ceasedDateDay};
-        return String.join("-", dateFields);
+    public LocalDate getCeasedDate() {
+        int year = Integer.parseInt(ceasedDateYear);
+        int month = Integer.parseInt(ceasedDateMonth);
+        int day = Integer.parseInt(ceasedDateDay);
+        return LocalDate.of(year, month, day);
     }
 }

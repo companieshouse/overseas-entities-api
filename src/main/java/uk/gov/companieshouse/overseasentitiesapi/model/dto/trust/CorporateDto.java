@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
+import java.time.LocalDate;
+
 public class CorporateDto {
     @JsonProperty("type")
     private String type;
@@ -129,14 +131,16 @@ public class CorporateDto {
         this.dateBecameInterestedPersonYear = dateBecameInterestedPersonYear;
     }
 
-    public String getDateBecameInterestedPerson() {
+    public LocalDate getDateBecameInterestedPerson() {
         if (type.equals(BeneficialOwnerType.CORPORATE_INTERESTED_PERSON.getValue())
                 && dateBecameInterestedPersonYear != null
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null
         ) {
-            var dateFields = new String[]{dateBecameInterestedPersonYear, dateBecameInterestedPersonMonth, dateBecameInterestedPersonDay};
-            return String.join("-", dateFields);
+            int year = Integer.parseInt(dateBecameInterestedPersonYear);
+            int month = Integer.parseInt(dateBecameInterestedPersonMonth);
+            int day = Integer.parseInt(dateBecameInterestedPersonDay);
+            return LocalDate.of(year, month, day);
         }
         return null;
     }

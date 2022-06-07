@@ -3,6 +3,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
+import java.time.LocalDate;
+
 public class CorporateBeneficialOwnerDao {
     @Field("type")
     private BeneficialOwnerType type;
@@ -32,7 +34,7 @@ public class CorporateBeneficialOwnerDao {
     private String identificationRegistrationNumber;
 
     @Field("date_became_interested_person")
-    private String dateBecameInterestedPerson;
+    private LocalDate dateBecameInterestedPerson;
 
     public BeneficialOwnerType getType() {
         return type;
@@ -106,11 +108,11 @@ public class CorporateBeneficialOwnerDao {
         this.identificationRegistrationNumber = identificationRegistrationNumber;
     }
 
-    public String getDateBecameInterestedPerson() {
+    public LocalDate getDateBecameInterestedPerson() {
         return dateBecameInterestedPerson;
     }
 
-    public void setDateBecameInterestedPerson(String dateBecameInterestedPerson) {
+    public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
 }

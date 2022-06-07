@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class TrustDataDao {
@@ -13,7 +14,7 @@ public class TrustDataDao {
     private String trustName;
 
     @Field("creation_date")
-    private String trustCreationDate;
+    private LocalDate trustCreationDate;
 
     @Field("unable_to_obtain_all_trust_info")
     private boolean unableToObtainAllTrustInfo;
@@ -43,11 +44,11 @@ public class TrustDataDao {
         this.trustName = trustName;
     }
 
-    public String getTrustCreationDate() {
+    public LocalDate getTrustCreationDate() {
         return trustCreationDate;
     }
 
-    public void setTrustCreationDate(String trustCreationDate) {
+    public void setTrustCreationDate(LocalDate trustCreationDate) {
         this.trustCreationDate = trustCreationDate;
     }
 

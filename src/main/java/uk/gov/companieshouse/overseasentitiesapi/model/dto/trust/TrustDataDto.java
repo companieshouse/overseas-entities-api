@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class TrustDataDto {
@@ -73,9 +74,11 @@ public class TrustDataDto {
         this.trustCreationDateYear = trustCreationDateYear;
     }
 
-    public String getTrustCreationDate() {
-        var dateFields = new String[]{trustCreationDateYear, trustCreationDateMonth, trustCreationDateDay};
-        return String.join("-", dateFields);
+    public LocalDate getTrustCreationDate() {
+        int year = Integer.parseInt(trustCreationDateYear);
+        int month = Integer.parseInt(trustCreationDateMonth);
+        int day = Integer.parseInt(trustCreationDateDay);
+        return LocalDate.of(year, month, day);
     }
 
     public Boolean getUnableToObtainAllTrustInfo() {

@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDate;
+
 public class HistoricalBeneficialOwnerDao {
 
     @Field("forename")
@@ -14,7 +16,7 @@ public class HistoricalBeneficialOwnerDao {
     private String surname;
 
     @Field("ceased_date")
-    private String ceasedDate;
+    private LocalDate ceasedDate;
 
     public String getForename() {
         return forename;
@@ -40,11 +42,11 @@ public class HistoricalBeneficialOwnerDao {
         this.surname = surname;
     }
 
-    public String getCeasedDate() {
+    public LocalDate getCeasedDate() {
         return ceasedDate;
     }
 
-    public void setCeasedDate(String ceasedDate) {
+    public void setCeasedDate(LocalDate ceasedDate) {
         this.ceasedDate = ceasedDate;
     }
 

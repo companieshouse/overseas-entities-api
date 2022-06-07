@@ -3,6 +3,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
+import java.time.LocalDate;
+
 public class IndividualBeneficialOwnerDao {
     @Field("type")
     private BeneficialOwnerType type;
@@ -17,7 +19,7 @@ public class IndividualBeneficialOwnerDao {
     private String surname;
 
     @Field("date_of_birth")
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Field("nationality")
     private String nationality;
@@ -29,7 +31,7 @@ public class IndividualBeneficialOwnerDao {
     private AddressDao usualResidentialAddress;
 
     @Field("date_became_interested_person")
-    private String dateBecameInterestedPerson;
+    private LocalDate dateBecameInterestedPerson;
 
     public BeneficialOwnerType getType() {
         return type;
@@ -63,11 +65,11 @@ public class IndividualBeneficialOwnerDao {
         this.surname = surname;
     }
 
-    public String getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -95,11 +97,11 @@ public class IndividualBeneficialOwnerDao {
         this.usualResidentialAddress = usualResidentialAddress;
     }
 
-    public String getDateBecameInterestedPerson() {
+    public LocalDate getDateBecameInterestedPerson() {
         return dateBecameInterestedPerson;
     }
 
-    public void setDateBecameInterestedPerson(String dateBecameInterestedPerson) {
+    public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
 }
