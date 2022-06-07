@@ -42,11 +42,11 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(MANAGING_OFFICERS_CORPORATE_FIELD)
     private List<ManagingOfficerCorporateDto> managingOfficersCorporate;
 
-    @JsonProperty("links")
-    private Map<String, String> links;
-
     @JsonProperty("trust_data")
     private List<TrustDataDto> trustData;
+
+    @JsonProperty("links")
+    private Map<String, String> links;
 
     public PresenterDto getPresenter() {
         return presenter;
@@ -112,19 +112,19 @@ public class OverseasEntitySubmissionDto {
         this.managingOfficersCorporate = managingOfficersCorporate;
     }
 
-    public Map<String, String> getLinks() {
-        return links;
-    }
-
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
-    }
-
     public List<TrustDataDto> getTrustData() {
         return trustData;
     }
 
     public void setTrustData(List<TrustDataDto> trustData) {
         this.trustData = trustData;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 }

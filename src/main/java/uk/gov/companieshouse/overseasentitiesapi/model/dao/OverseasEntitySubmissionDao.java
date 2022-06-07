@@ -49,11 +49,11 @@ public class OverseasEntitySubmissionDao {
     @Field("managing_officers_corporate")
     private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
 
-    @Field("links")
-    private Map<String, String> links;
-
     @Field("trust_data")
     private List<TrustDataDao> trustData;
+
+    @Field("links")
+    private Map<String, String> links;
 
     public String getId() {
         return id;
@@ -127,6 +127,14 @@ public class OverseasEntitySubmissionDao {
         this.managingOfficersCorporate = managingOfficersCorporate;
     }
 
+    public List<TrustDataDao> getTrustData() {
+        return trustData;
+    }
+
+    public void setTrustData(List<TrustDataDao> trustData) {
+        this.trustData = trustData;
+    }
+
     public Map<String, String> getLinks() {
         return links;
     }
@@ -157,13 +165,5 @@ public class OverseasEntitySubmissionDao {
 
     public void setHttpRequestId(String httpRequestId) {
         this.httpRequestId = httpRequestId;
-    }
-
-    public List<TrustDataDao> getTrustData() {
-        return trustData;
-    }
-
-    public void setTrustData(List<TrustDataDao> trustData) {
-        this.trustData = trustData;
     }
 }

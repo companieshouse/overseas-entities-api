@@ -7,7 +7,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.BeneficialOwnerTyp
 
 public class IndividualBeneficialOwnerDao {
     @Field("type")
-    private String type;
+    private BeneficialOwnerType type;
 
     @Field("forename")
     private String forename;
@@ -33,7 +33,7 @@ public class IndividualBeneficialOwnerDao {
     @Field("date_became_interested_person")
     private String dateBecameInterestedPerson;
 
-    public String getType() {
+    public BeneficialOwnerType getType() {
         return type;
     }
 
