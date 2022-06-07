@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class IndividualDto {
@@ -357,7 +358,7 @@ public class IndividualDto {
     }
 
     public String getDateBecameInterestedPerson() {
-        if (type.equals("Individual Interested Person")
+        if (type.equals(BeneficialOwnerType.INDIVIDUAL_INTERESTED_PERSON.getValue())
                 && dateBecameInterestedPersonYear != null
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null

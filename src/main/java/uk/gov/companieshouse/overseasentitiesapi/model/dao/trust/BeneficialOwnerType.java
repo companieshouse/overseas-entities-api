@@ -10,18 +10,22 @@ public enum BeneficialOwnerType {
     INDIVIDUAL_GRANTOR("Individual Grantor"),
     INDIVIDUAL_BENEFICIARY("Individual Beneficiary");
 
-    private final String beneficialOwnerType;
+    private final String value;
 
     BeneficialOwnerType(String beneficialOwnerType) {
-        this.beneficialOwnerType = beneficialOwnerType;
+        this.value = beneficialOwnerType;
     }
 
     public static BeneficialOwnerType findByBeneficialOwnerTypeString(String beneficialOwnerType) {
         for (BeneficialOwnerType type : values()) {
-            if(type.beneficialOwnerType.equals(beneficialOwnerType)) {
+            if(type.value.equals(beneficialOwnerType)) {
                 return type;
             }
         }
         return null;
+    }
+
+    public String getValue() {
+        return value;
     }
 }
