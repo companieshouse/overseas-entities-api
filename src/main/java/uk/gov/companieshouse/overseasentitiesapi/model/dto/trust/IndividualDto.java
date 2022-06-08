@@ -365,9 +365,9 @@ public class IndividualDto {
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null
         ) {
-            int year = Integer.parseInt(dateBecameInterestedPersonYear);
-            int month = Integer.parseInt(dateBecameInterestedPersonMonth);
-            int day = Integer.parseInt(dateBecameInterestedPersonDay);
+            var year = Integer.parseInt(dateBecameInterestedPersonYear);
+            var month = Integer.parseInt(dateBecameInterestedPersonMonth);
+            var day = Integer.parseInt(dateBecameInterestedPersonDay);
             return LocalDate.of(year, month, day);
         }
         return null;

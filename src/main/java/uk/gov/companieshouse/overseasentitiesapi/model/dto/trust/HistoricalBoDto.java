@@ -72,9 +72,9 @@ public class HistoricalBoDto {
     }
 
     public LocalDate getCeasedDate() {
-        int year = Integer.parseInt(ceasedDateYear);
-        int month = Integer.parseInt(ceasedDateMonth);
-        int day = Integer.parseInt(ceasedDateDay);
+        var year = Integer.parseInt(ceasedDateYear);
+        var month = Integer.parseInt(ceasedDateMonth);
+        var day = Integer.parseInt(ceasedDateDay);
         return LocalDate.of(year, month, day);
     }
 }

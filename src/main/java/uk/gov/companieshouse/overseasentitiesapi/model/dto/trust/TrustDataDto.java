@@ -75,9 +75,9 @@ public class TrustDataDto {
     }
 
     public LocalDate getTrustCreationDate() {
-        int year = Integer.parseInt(trustCreationDateYear);
-        int month = Integer.parseInt(trustCreationDateMonth);
-        int day = Integer.parseInt(trustCreationDateDay);
+        var year = Integer.parseInt(trustCreationDateYear);
+        var month = Integer.parseInt(trustCreationDateMonth);
+        var day = Integer.parseInt(trustCreationDateDay);
         return LocalDate.of(year, month, day);
     }
 
