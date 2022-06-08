@@ -513,6 +513,12 @@
         "start_date": {
           "type": "string",
           "format": "date"
+        },
+        "contact_full_name": {
+          "type": "string"
+        },
+        "contact_email": {
+          "type": "string"
         }
       },
       "required": [
