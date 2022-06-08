@@ -306,6 +306,8 @@ class DtoDaoMappingTest {
         assertEquals(mocDto.getPublicRegisterName(), mocDao.getPublicRegisterName());
         assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
         assertEquals(mocDto.getStartDate(), mocDao.getStartDate());
+        assertEquals(mocDto.getContactFullName(), mocDao.getContactFullName());
+        assertEquals(mocDto.getContactEmail(), mocDao.getContactEmail());
 
         assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());
         assertAddressesAreEqual(mocDto.getServiceAddress(), mocDao.getServiceAddress());
