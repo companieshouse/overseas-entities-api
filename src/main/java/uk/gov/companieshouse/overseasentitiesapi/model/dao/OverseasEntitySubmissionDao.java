@@ -49,7 +49,7 @@ public class OverseasEntitySubmissionDao {
     @Field("managing_officers_corporate")
     private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
 
-    @Field("trust_data")
+    @Field("trusts")
     private List<TrustDataDao> trusts;
 
     @Field("links")
