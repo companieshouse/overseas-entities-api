@@ -44,8 +44,8 @@ public class BeneficialOwnerIndividualDao {
     @Field("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
 
-    @Field("trust")
-    private String trust;
+    @Field("trust_ids")
+    private List<String> trustIds;
 
     public String getFirstName() {
         return firstName;
@@ -143,11 +143,11 @@ public class BeneficialOwnerIndividualDao {
         isOnSanctionsList = onSanctionsList;
     }
 
-    public String getTrust() {
-        return trust;
+    public List<String> getTrustIds() {
+        return trustIds;
     }
 
-    public void setTrust(String trust) {
-        this.trust = trust;
+    public void setTrustIds(List<String> trustIds) {
+        this.trustIds = trustIds;
     }
 }

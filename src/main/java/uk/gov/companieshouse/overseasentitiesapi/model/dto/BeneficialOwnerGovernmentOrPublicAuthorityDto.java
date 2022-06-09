@@ -38,8 +38,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     @JsonProperty("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
 
-    @JsonProperty("trust")
-    private String trust;
+    @JsonProperty("trust_ids")
+    private List<String> trustIds;
 
     public String getName() {
         return name;
@@ -121,11 +121,11 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
         isOnSanctionsList = onSanctionsList;
     }
 
-    public String getTrust() {
-        return trust;
+    public List<String> getTrustIds() {
+        return trustIds;
     }
 
-    public void setTrust(String trust) {
-        this.trust = trust;
+    public void setTrustIds(List<String> trustIds) {
+        this.trustIds = trustIds;
     }
 }
