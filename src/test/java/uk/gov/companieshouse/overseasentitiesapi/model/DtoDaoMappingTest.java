@@ -8,6 +8,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapp
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
@@ -17,6 +18,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -26,6 +31,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +131,9 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDao.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDao);
 
+        List<TrustDataDao> trusts = TrustMock.getTrustsDao();
+        overseasEntitySubmission.setTrusts(trusts);
+
         return overseasEntitySubmission;
     }
 
@@ -188,6 +200,9 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDto.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDto);
 
+        List<TrustDataDto> trusts = TrustMock.getTrustsDto();
+        overseasEntitySubmission.setTrusts(trusts);
+
         return overseasEntitySubmission;
     }
 
@@ -222,6 +237,8 @@ class DtoDaoMappingTest {
         assertGovernmentBeneficialOwnersAreEqual(dto, dao);
         assertManagingOfficerIndividualAreEqual(dto, dao);
         assertManagingOfficerCorporateAreEqual(dto, dao);
+
+        assertTrustDataIsEqual(dto.getTrusts(), dao.getTrusts());
     }
 
     private void assertIndividualBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
@@ -321,5 +338,89 @@ class DtoDaoMappingTest {
         assertEquals(dto.getCounty(), dao.getCounty());
         assertEquals(dto.getCountry(), dao.getCountry());
         assertEquals(dto.getPostcode(), dao.getPostcode());
+    }
+
+    private void assertTrustDataIsEqual(List<TrustDataDto> dtos, List<TrustDataDao> daos) {
+        TrustDataDto dto = dtos.get(0);
+        TrustDataDao dao = daos.get(0);
+        assertEquals(dto.getTrustId(), dao.getId());
+        assertEquals(dto.getTrustName(), dao.getTrustName());
+        assertEquals(dto.getCreationDate(), dao.getCreationDate());
+        assertEquals(dto.getUnableToObtainAllTrustInfo(), dao.isUnableToObtainAllTrustInfo());
+        assertTrustIndividualsAreEqual(dto.getIndividuals().get(0), dao.getIndividuals().get(0));
+        assertTrustCorporatesAreEqual(dto.getCorporates().get(0), dao.getCorporates().get(0));
+        assertTrustHistoricalBeneficialOwnersAreEqual(dto.getHistoricalBeneficialOwners().get(0),
+                dao.getHistoricalBeneficialOwners().get(0));
+    }
+
+    private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {
+        assertEquals(dto.getType(), dao.getType().getValue());
+        assertEquals(dto.getForename(), dao.getForename());
+        assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
+        assertEquals(dto.getSurname(), dao.getSurname());
+        assertEquals(dto.getDateOfBirth(), dao.getDateOfBirth());
+        assertEquals(dto.getNationality(), dao.getNationality());
+
+        assertEquals(dto.getSaAddressLine1(), dao.getServiceAddress().getLine1());
+        assertEquals(dto.getSaAddressLine2(), dao.getServiceAddress().getLine2());
+        assertEquals(dto.getSaAddressCareOf(), dao.getServiceAddress().getCareOf());
+        assertEquals(dto.getSaAddressCountry(), dao.getServiceAddress().getCountry());
+        assertEquals(dto.getSaAddressLocality(), dao.getServiceAddress().getLocality());
+        assertEquals(dto.getSaAddressPoBox(), dao.getServiceAddress().getPoBox());
+        assertEquals(dto.getSaAddressPostalCode(), dao.getServiceAddress().getPostcode());
+        assertEquals(dto.getSaAddressPremises(), dao.getServiceAddress().getPropertyNameNumber());
+        assertEquals(dto.getSaAddressRegion(), dao.getServiceAddress().getCounty());
+
+        assertEquals(dto.getUraAddressLine1(), dao.getUsualResidentialAddress().getLine1());
+        assertEquals(dto.getUraAddressLine2(), dao.getUsualResidentialAddress().getLine2());
+        assertEquals(dto.getUraAddressCareOf(), dao.getUsualResidentialAddress().getCareOf());
+        assertEquals(dto.getUraAddressCountry(), dao.getUsualResidentialAddress().getCountry());
+        assertEquals(dto.getUraAddressLocality(), dao.getUsualResidentialAddress().getLocality());
+        assertEquals(dto.getUraAddressPoBox(), dao.getUsualResidentialAddress().getPoBox());
+        assertEquals(dto.getUraAddressPostalCode(), dao.getUsualResidentialAddress().getPostcode());
+        assertEquals(dto.getUraAddressPremises(), dao.getUsualResidentialAddress().getPropertyNameNumber());
+        assertEquals(dto.getUraAddressRegion(), dao.getUsualResidentialAddress().getCounty());
+
+        assertEquals(dto.getDateBecameInterestedPerson(), dao.getDateBecameInterestedPerson());
+    }
+
+    private void assertTrustCorporatesAreEqual(TrustCorporateDto dto, TrustCorporateDao dao) {
+        assertEquals(dto.getType(), dao.getType().getValue());
+        assertEquals(dto.getName(), dao.getName());
+        assertEquals(dto.getDateBecameInterestedPerson(), dao.getDateBecameInterestedPerson());
+
+        assertEquals(dto.getRoAddressLine1(), dao.getRegisteredOfficeAddress().getLine1());
+        assertEquals(dto.getRoAddressLine2(), dao.getRegisteredOfficeAddress().getLine2());
+        assertEquals(dto.getRoAddressCareOf(), dao.getRegisteredOfficeAddress().getCareOf());
+        assertEquals(dto.getRoAddressCountry(), dao.getRegisteredOfficeAddress().getCountry());
+        assertEquals(dto.getRoAddressLocality(), dao.getRegisteredOfficeAddress().getLocality());
+        assertEquals(dto.getRoAddressPoBox(), dao.getRegisteredOfficeAddress().getPoBox());
+        assertEquals(dto.getRoAddressPostalCode(), dao.getRegisteredOfficeAddress().getPostcode());
+        assertEquals(dto.getRoAddressPremises(), dao.getRegisteredOfficeAddress().getPropertyNameNumber());
+        assertEquals(dto.getRoAddressRegion(), dao.getRegisteredOfficeAddress().getCounty());
+
+        assertEquals(dto.getSaAddressLine1(), dao.getServiceAddress().getLine1());
+        assertEquals(dto.getSaAddressLine2(), dao.getServiceAddress().getLine2());
+        assertEquals(dto.getSaAddressCareOf(), dao.getServiceAddress().getCareOf());
+        assertEquals(dto.getSaAddressCountry(), dao.getServiceAddress().getCountry());
+        assertEquals(dto.getSaAddressLocality(), dao.getServiceAddress().getLocality());
+        assertEquals(dto.getSaAddressPoBox(), dao.getServiceAddress().getPoBox());
+        assertEquals(dto.getSaAddressPostalCode(), dao.getServiceAddress().getPostcode());
+        assertEquals(dto.getSaAddressPremises(), dao.getServiceAddress().getPropertyNameNumber());
+        assertEquals(dto.getSaAddressRegion(), dao.getServiceAddress().getCounty());
+
+        assertEquals(dto.getIdentificationCountryRegistration(), dao.getIdentificationCountryRegistration());
+        assertEquals(dto.getIdentificationLegalAuthority(), dao.getIdentificationLegalAuthority());
+        assertEquals(dto.getIdentificationLegalForm(), dao.getIdentificationLegalForm());
+        assertEquals(dto.getIdentificationPlaceRegistered(), dao.getIdentificationPlaceRegistered());
+        assertEquals(dto.getIdentificationRegistrationNumber(), dao.getIdentificationRegistrationNumber());
+    }
+
+    private void assertTrustHistoricalBeneficialOwnersAreEqual(HistoricalBeneficialOwnerDto dto, HistoricalBeneficialOwnerDao dao) {
+        assertEquals(dto.getForename(), dao.getForename());
+        assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
+        assertEquals(dto.getSurname(), dao.getSurname());
+        assertEquals(dto.getCeasedDate(), dao.getCeasedDate());
+        assertEquals(dto.getNotifiedDate(), dao.getNotifiedDate());
     }
 }
