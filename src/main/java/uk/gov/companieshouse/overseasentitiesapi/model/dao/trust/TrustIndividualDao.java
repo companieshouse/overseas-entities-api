@@ -5,7 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
 import java.time.LocalDate;
 
-public class IndividualDao {
+public class TrustIndividualDao {
     @Field("type")
     private BeneficialOwnerType type;
 

@@ -5,7 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
 
-public class CorporateDto {
+public class TrustCorporateDto {
     @JsonProperty("type")
     private String type;
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 
-public class HistoricalBoDto {
+public class HistoricalBeneficialOwnerDto {
     @JsonProperty("forename")
     private String forename;
 

@@ -23,10 +23,10 @@ public class TrustDataDao {
     private List<HistoricalBeneficialOwnerDao> historicalBeneficialOwners;
 
     @Field("individuals")
-    private List<IndividualDao> individuals;
+    private List<TrustIndividualDao> individuals;
 
     @Field("corporates")
-    private List<CorporateDao> corporates;
+    private List<TrustCorporateDao> corporates;
 
     public String getId() {
         return trustId;
@@ -68,19 +68,19 @@ public class TrustDataDao {
         this.historicalBeneficialOwners = historicalBeneficialOwners;
     }
 
-    public List<IndividualDao> getIndividuals() {
+    public List<TrustIndividualDao> getIndividuals() {
         return individuals;
     }
 
-    public void setIndividuals(List<IndividualDao> individuals) {
+    public void setIndividuals(List<TrustIndividualDao> individuals) {
         this.individuals = individuals;
     }
 
-    public List<CorporateDao> getCorporates() {
+    public List<TrustCorporateDao> getCorporates() {
         return corporates;
     }
 
-    public void setCorporates(List<CorporateDao> corporates) {
+    public void setCorporates(List<TrustCorporateDao> corporates) {
         this.corporates = corporates;
     }
 
