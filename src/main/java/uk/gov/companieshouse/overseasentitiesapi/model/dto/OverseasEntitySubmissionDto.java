@@ -42,7 +42,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(MANAGING_OFFICERS_CORPORATE_FIELD)
     private List<ManagingOfficerCorporateDto> managingOfficersCorporate;
 
-    @JsonProperty("trust_data")
+    @JsonProperty("trusts")
     private List<TrustDataDto> trusts;
 
     @JsonProperty("links")

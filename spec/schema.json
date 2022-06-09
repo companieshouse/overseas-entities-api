@@ -219,10 +219,10 @@
             "$ref": "#/definitions/ManagingOfficerCorporate"
           }
         },
-        "trust_data": {
+        "trusts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/TrustData"
+            "$ref": "#/definitions/Trust"
           }
         }
       },
@@ -555,7 +555,7 @@
         "start_date"
       ]
     },
-    "TrustData": {
+    "Trust": {
       "type": "object",
       "properties": {
         "trust_id": {
