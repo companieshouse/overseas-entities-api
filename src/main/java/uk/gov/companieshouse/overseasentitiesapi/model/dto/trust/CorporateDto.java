@@ -132,7 +132,7 @@ public class CorporateDto {
     }
 
     public LocalDate getDateBecameInterestedPerson() {
-        if (type.equals(BeneficialOwnerType.CORPORATE_INTERESTED_PERSON.getValue())
+        if (type.equals(BeneficialOwnerType.INTERESTED_PERSON.getValue())
                 && dateBecameInterestedPersonYear != null
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null

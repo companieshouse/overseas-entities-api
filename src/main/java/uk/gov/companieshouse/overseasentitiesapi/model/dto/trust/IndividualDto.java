@@ -360,7 +360,7 @@ public class IndividualDto {
     }
 
     public LocalDate getDateBecameInterestedPerson() {
-        if (type.equals(BeneficialOwnerType.INDIVIDUAL_INTERESTED_PERSON.getValue())
+        if (type.equals(BeneficialOwnerType.INTERESTED_PERSON.getValue())
                 && dateBecameInterestedPersonYear != null
                 && dateBecameInterestedPersonMonth != null
                 && dateBecameInterestedPersonDay != null

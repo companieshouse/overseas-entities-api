@@ -1,14 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
 public enum BeneficialOwnerType {
-    CORPORATE_INTERESTED_PERSON("Corporate Interested Person"),
-    CORPORATE_GRANTOR("Corporate Grantor"),
-    CORPORATE_SETTLER("Corporate Settler"),
-    CORPORATE_BENEFICIARY("Corporate Beneficiary"),
-    INDIVIDUAL_INTERESTED_PERSON("Individual Interested Person"),
-    INDIVIDUAL_SETTLER("Individual Settler"),
-    INDIVIDUAL_GRANTOR("Individual Grantor"),
-    INDIVIDUAL_BENEFICIARY("Individual Beneficiary");
+    INTERESTED_PERSON("Interested Person"),
+    GRANTOR("Grantor"),
+    SETTLER("Settler"),
+    BENEFICIARY("Beneficiary");
 
     private final String value;
 
