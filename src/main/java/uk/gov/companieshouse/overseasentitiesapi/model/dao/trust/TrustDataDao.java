@@ -14,7 +14,7 @@ public class TrustDataDao {
     private String trustName;
 
     @Field("creation_date")
-    private LocalDate trustCreationDate;
+    private LocalDate creationDate;
 
     @Field("unable_to_obtain_all_trust_info")
     private boolean unableToObtainAllTrustInfo;
@@ -44,12 +44,12 @@ public class TrustDataDao {
         this.trustName = trustName;
     }
 
-    public LocalDate getTrustCreationDate() {
-        return trustCreationDate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setTrustCreationDate(LocalDate trustCreationDate) {
-        this.trustCreationDate = trustCreationDate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public boolean isUnableToObtainAllTrustInfo() {

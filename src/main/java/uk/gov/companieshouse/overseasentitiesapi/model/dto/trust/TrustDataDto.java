@@ -13,14 +13,8 @@ public class TrustDataDto {
     @JsonProperty("trust_name")
     private String trustName;
 
-    @JsonProperty("trust_creation_date_day")
-    private String trustCreationDateDay;
-
-    @JsonProperty("trust_creation_date_month")
-    private String trustCreationDateMonth;
-
-    @JsonProperty("trust_creation_date_year")
-    private String trustCreationDateYear;
+    @JsonProperty("creation_date")
+    private LocalDate creationDate;
 
     @JsonProperty("unable_to_obtain_all_trust_info")
     private Boolean unableToObtainAllTrustInfo;
@@ -50,35 +44,12 @@ public class TrustDataDto {
         this.trustName = trustName;
     }
 
-    public String getTrustCreationDateDay() {
-        return trustCreationDateDay;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setTrustCreationDateDay(String trustCreationDateDay) {
-        this.trustCreationDateDay = trustCreationDateDay;
-    }
-
-    public String getTrustCreationDateMonth() {
-        return trustCreationDateMonth;
-    }
-
-    public void setTrustCreationDateMonth(String trustCreationDateMonth) {
-        this.trustCreationDateMonth = trustCreationDateMonth;
-    }
-
-    public String getTrustCreationDateYear() {
-        return trustCreationDateYear;
-    }
-
-    public void setTrustCreationDateYear(String trustCreationDateYear) {
-        this.trustCreationDateYear = trustCreationDateYear;
-    }
-
-    public LocalDate getTrustCreationDate() {
-        var year = Integer.parseInt(trustCreationDateYear);
-        var month = Integer.parseInt(trustCreationDateMonth);
-        var day = Integer.parseInt(trustCreationDateDay);
-        return LocalDate.of(year, month, day);
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Boolean getUnableToObtainAllTrustInfo() {

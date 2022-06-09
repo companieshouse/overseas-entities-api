@@ -555,14 +555,9 @@
         "trust_name": {
           "type": "string"
         },
-        "trust_creation_date_day": {
-          "type": "string"
-        },
-        "trust_creation_date_month": {
-          "type": "string"
-        },
-        "trust_creation_date_year": {
-          "type": "string"
+        "creation_date": {
+          "type": "string",
+          "format": "date"
         },
         "unable_to_obtain_all_trust_info": {
           "type": "boolean"
@@ -570,13 +565,13 @@
         "INDIVIDUAL": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/IndividualBeneficialOwner"
+            "$ref": "#/definitions/TrustIndividual"
           }
         },
         "CORPORATE": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/CorporateBeneficialOwner"
+            "$ref": "#/definitions/TrustCorporate"
           }
         },
         "HISTORICAL_BO": {
@@ -587,7 +582,7 @@
         }
       }
     },
-    "IndividualBeneficialOwner": {
+    "TrustIndividual": {
       "type": "object",
       "properties": {
         "type": {
@@ -602,14 +597,9 @@
         "surname": {
           "type": "string"
         },
-        "dob_day": {
-          "type": "string"
-        },
-        "dob_month": {
-          "type": "string"
-        },
-        "dob_year": {
-          "type": "string"
+        "date_of_birth": {
+          "type": "string",
+          "format": "date"
         },
         "nationality": {
           "type": "string"
@@ -668,18 +658,13 @@
         "ura_address_region": {
           "type": "string"
         },
-        "date_became_interested_person_day": {
-          "type": "string"
-        },
-        "date_became_interested_person_month": {
-          "type": "string"
-        },
-        "date_became_interested_person_year": {
-          "type": "string"
+        "date_became_interested_person": {
+          "type": "string",
+          "format": "date"
         }
       }
     },
-    "CorporateBeneficialOwner": {
+    "TrustCorporate": {
       "type": "object",
       "properties": {
         "type": {
@@ -757,14 +742,9 @@
         "identification_registration_number": {
           "type": "string"
         },
-        "date_became_interested_person_day": {
-          "type": "string"
-        },
-        "date_became_interested_person_month": {
-          "type": "string"
-        },
-        "date_became_interested_person_year": {
-          "type": "string"
+        "date_became_interested_person": {
+          "type": "string",
+          "format": "date"
         }
       }
     },
@@ -780,14 +760,9 @@
         "surname": {
           "type": "string"
         },
-        "ceased_date_day": {
-          "type": "string"
-        },
-        "ceased_date_month": {
-          "type": "string"
-        },
-        "ceased_date_year": {
-          "type": "string"
+        "ceased_date": {
+          "type": "string",
+          "format": "date"
         }
       }
     },

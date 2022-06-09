@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
@@ -19,14 +18,8 @@ public class IndividualDto {
     @JsonProperty("surname")
     private String surname;
 
-    @JsonProperty("dob_day")
-    private String dobDay;
-
-    @JsonProperty("dob_month")
-    private String dobMonth;
-
-    @JsonProperty("dob_year")
-    private String dobYear;
+    @JsonProperty("date_of_birth")
+    private LocalDate dateOfBirth;
 
     @JsonProperty("nationality")
     private String nationality;
@@ -85,14 +78,8 @@ public class IndividualDto {
     @JsonProperty("ura_address_region")
     private String uraAddressRegion;
 
-    @JsonProperty("date_became_interested_person_day")
-    private String dateBecameInterestedPersonDay;
-
-    @JsonProperty("date_became_interested_person_month")
-    private String dateBecameInterestedPersonMonth;
-
-    @JsonProperty("date_became_interested_person_year")
-    private String dateBecameInterestedPersonYear;
+    @JsonProperty("date_became_interested_person")
+    private LocalDate dateBecameInterestedPerson;
 
     public String getType() {
         return type;
@@ -126,33 +113,12 @@ public class IndividualDto {
         this.surname = surname;
     }
 
-    public String getDobDay() {
-        return dobDay;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDobDay(String dobDay) {
-        this.dobDay = dobDay;
-    }
-
-    public String getDobMonth() {
-        return dobMonth;
-    }
-
-    public void setDobMonth(String dobMonth) {
-        this.dobMonth = dobMonth;
-    }
-
-    public String getDobYear() {
-        return dobYear;
-    }
-
-    public void setDobYear(String dobYear) {
-        this.dobYear = dobYear;
-    }
-
-    public String getDateOfBirth() {
-        var dateFields = new String[]{dobYear, dobMonth, dobDay};
-        return String.join("-", dateFields);
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getNationality() {
@@ -335,41 +301,11 @@ public class IndividualDto {
         return address;
     }
 
-    public String getDateBecameInterestedPersonDay() {
-        return dateBecameInterestedPersonDay;
-    }
-
-    public void setDateBecameInterestedPersonDay(String dateBecameInterestedPersonDay) {
-        this.dateBecameInterestedPersonDay = dateBecameInterestedPersonDay;
-    }
-
-    public String getDateBecameInterestedPersonMonth() {
-        return dateBecameInterestedPersonMonth;
-    }
-
-    public void setDateBecameInterestedPersonMonth(String dateBecameInterestedPersonMonth) {
-        this.dateBecameInterestedPersonMonth = dateBecameInterestedPersonMonth;
-    }
-
-    public String getDateBecameInterestedPersonYear() {
-        return dateBecameInterestedPersonYear;
-    }
-
-    public void setDateBecameInterestedPersonYear(String dateBecameInterestedPersonYear) {
-        this.dateBecameInterestedPersonYear = dateBecameInterestedPersonYear;
-    }
-
     public LocalDate getDateBecameInterestedPerson() {
-        if (type.equals(BeneficialOwnerType.INTERESTED_PERSON.getValue())
-                && dateBecameInterestedPersonYear != null
-                && dateBecameInterestedPersonMonth != null
-                && dateBecameInterestedPersonDay != null
-        ) {
-            var year = Integer.parseInt(dateBecameInterestedPersonYear);
-            var month = Integer.parseInt(dateBecameInterestedPersonMonth);
-            var day = Integer.parseInt(dateBecameInterestedPersonDay);
-            return LocalDate.of(year, month, day);
-        }
-        return null;
+        return dateBecameInterestedPerson;
+    }
+
+    public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
+        this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
 }

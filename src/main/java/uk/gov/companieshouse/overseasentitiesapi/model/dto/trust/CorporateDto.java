@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
@@ -13,14 +12,8 @@ public class CorporateDto {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("date_became_interested_person_day")
-    private String dateBecameInterestedPersonDay;
-
-    @JsonProperty("date_became_interested_person_month")
-    private String dateBecameInterestedPersonMonth;
-
-    @JsonProperty("date_became_interested_person_year")
-    private String dateBecameInterestedPersonYear;
+    @JsonProperty("date_became_interested_person")
+    private LocalDate dateBecameInterestedPerson;
 
     @JsonProperty("ro_address_line_1")
     private String roAddressLine1;
@@ -107,42 +100,12 @@ public class CorporateDto {
         this.name = name;
     }
 
-    public String getDateBecameInterestedPersonDay() {
-        return dateBecameInterestedPersonDay;
-    }
-
-    public void setDateBecameInterestedPersonDay(String dateBecameInterestedPersonDay) {
-        this.dateBecameInterestedPersonDay = dateBecameInterestedPersonDay;
-    }
-
-    public String getDateBecameInterestedPersonMonth() {
-        return dateBecameInterestedPersonMonth;
-    }
-
-    public void setDateBecameInterestedPersonMonth(String dateBecameInterestedPersonMonth) {
-        this.dateBecameInterestedPersonMonth = dateBecameInterestedPersonMonth;
-    }
-
-    public String getDateBecameInterestedPersonYear() {
-        return dateBecameInterestedPersonYear;
-    }
-
-    public void setDateBecameInterestedPersonYear(String dateBecameInterestedPersonYear) {
-        this.dateBecameInterestedPersonYear = dateBecameInterestedPersonYear;
-    }
-
     public LocalDate getDateBecameInterestedPerson() {
-        if (type.equals(BeneficialOwnerType.INTERESTED_PERSON.getValue())
-                && dateBecameInterestedPersonYear != null
-                && dateBecameInterestedPersonMonth != null
-                && dateBecameInterestedPersonDay != null
-        ) {
-            var year = Integer.parseInt(dateBecameInterestedPersonYear);
-            var month = Integer.parseInt(dateBecameInterestedPersonMonth);
-            var day = Integer.parseInt(dateBecameInterestedPersonDay);
-            return LocalDate.of(year, month, day);
-        }
-        return null;
+        return dateBecameInterestedPerson;
+    }
+
+    public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
+        this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
 
     public String getRoAddressLine1() {

@@ -14,14 +14,8 @@ public class HistoricalBoDto {
     @JsonProperty("surname")
     private String surname;
 
-    @JsonProperty("ceased_date_day")
-    private String ceasedDateDay;
-
-    @JsonProperty("ceased_date_month")
-    private String ceasedDateMonth;
-
-    @JsonProperty("ceased_date_year")
-    private String ceasedDateYear;
+    @JsonProperty("ceased_date")
+    private LocalDate ceasedDate;
 
     public String getForename() {
         return forename;
@@ -47,34 +41,11 @@ public class HistoricalBoDto {
         this.surname = surname;
     }
 
-    public String getCeasedDateDay() {
-        return ceasedDateDay;
-    }
-
-    public void setCeasedDateDay(String ceasedDateDay) {
-        this.ceasedDateDay = ceasedDateDay;
-    }
-
-    public String getCeasedDateMonth() {
-        return ceasedDateMonth;
-    }
-
-    public void setCeasedDateMonth(String ceasedDateMonth) {
-        this.ceasedDateMonth = ceasedDateMonth;
-    }
-
-    public String getCeasedDateYear() {
-        return ceasedDateYear;
-    }
-
-    public void setCeasedDateYear(String ceasedDateYear) {
-        this.ceasedDateYear = ceasedDateYear;
-    }
-
     public LocalDate getCeasedDate() {
-        var year = Integer.parseInt(ceasedDateYear);
-        var month = Integer.parseInt(ceasedDateMonth);
-        var day = Integer.parseInt(ceasedDateDay);
-        return LocalDate.of(year, month, day);
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 }
