@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("managing_officers_corporate")
     private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
+
+    @Field("trusts")
+    private List<TrustDataDao> trusts;
 
     @Field("links")
     private Map<String, String> links;
@@ -121,6 +125,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setManagingOfficersCorporate(List<ManagingOfficerCorporateDao> managingOfficersCorporate) {
         this.managingOfficersCorporate = managingOfficersCorporate;
+    }
+
+    public List<TrustDataDao> getTrusts() {
+        return trusts;
+    }
+
+    public void setTrusts(List<TrustDataDao> trusts) {
+        this.trusts = trusts;
     }
 
     public Map<String, String> getLinks() {

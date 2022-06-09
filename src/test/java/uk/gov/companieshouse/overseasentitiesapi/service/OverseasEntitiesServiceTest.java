@@ -18,14 +18,18 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,6 +86,18 @@ class OverseasEntitiesServiceTest {
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         overseasEntitySubmissionDao.setId(submissionId);
 
+        var trustDataDto = new TrustDataDto();
+        trustDataDto.setTrustName("dto");
+        List<TrustDataDto> trustDataDtoList = new ArrayList<>();
+        trustDataDtoList.add(trustDataDto);
+        var mappedTrustDataDao = new TrustDataDao();
+        mappedTrustDataDao.setTrustName("mapped dto to dao");
+        List<TrustDataDao> trustDataDaoList = new ArrayList<>();
+        trustDataDaoList.add(mappedTrustDataDao);
+
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
+        overseasEntitySubmissionDao.setTrusts(trustDataDaoList);
+
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
@@ -102,6 +118,9 @@ class OverseasEntitiesServiceTest {
 
         // assert 'self' link is set on dao object
         assertEquals(submissionUri, overseasEntitySubmissionDao.getLinks().get("self"));
+
+        // assert trust data is added to submission
+        assertEquals(1, overseasEntitySubmissionDao.getTrusts().size());
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();

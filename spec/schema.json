@@ -218,6 +218,12 @@
           "items": {
             "$ref": "#/definitions/ManagingOfficerCorporate"
           }
+        },
+        "trusts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Trust"
+          }
         }
       },
       "required": [
@@ -339,6 +345,12 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -396,6 +408,12 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -438,6 +456,12 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
+        },
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -530,6 +554,230 @@
         "is_on_register_in_country_formed_in",
         "start_date"
       ]
+    },
+    "Trust": {
+      "type": "object",
+      "properties": {
+        "trust_id": {
+          "type": "string"
+        },
+        "trust_name": {
+          "type": "string"
+        },
+        "creation_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "unable_to_obtain_all_trust_info": {
+          "type": "boolean"
+        },
+        "INDIVIDUAL": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TrustIndividual"
+          }
+        },
+        "CORPORATE": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TrustCorporate"
+          }
+        },
+        "HISTORICAL_BO": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HistoricalBeneficialOwner"
+          }
+        }
+      }
+    },
+    "TrustIndividual": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "forename": {
+          "type": "string"
+        },
+        "other_forenames": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string"
+        },
+        "date_of_birth": {
+          "type": "string",
+          "format": "date"
+        },
+        "nationality": {
+          "type": "string"
+        },
+        "sa_address_line_1": {
+          "type": "string"
+        },
+        "sa_address_line_2": {
+          "type": "string"
+        },
+        "sa_address_care_of": {
+          "type": "string"
+        },
+        "sa_address_country": {
+          "type": "string"
+        },
+        "sa_address_locality": {
+          "type": "string"
+        },
+        "sa_address_po_box": {
+          "type": "string"
+        },
+        "sa_address_postal_code": {
+          "type": "string"
+        },
+        "sa_address_premises": {
+          "type": "string"
+        },
+        "sa_address_region": {
+          "type": "string"
+        },
+        "ura_address_line_1": {
+          "type": "string"
+        },
+        "ura_address_line_2": {
+          "type": "string"
+        },
+        "ura_address_care_of": {
+          "type": "string"
+        },
+        "ura_address_country": {
+          "type": "string"
+        },
+        "ura_address_locality": {
+          "type": "string"
+        },
+        "ura_address_po_box": {
+          "type": "string"
+        },
+        "ura_address_postal_code": {
+          "type": "string"
+        },
+        "ura_address_premises": {
+          "type": "string"
+        },
+        "ura_address_region": {
+          "type": "string"
+        },
+        "date_became_interested_person": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "TrustCorporate": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sa_address_line_1": {
+          "type": "string"
+        },
+        "sa_address_line_2": {
+          "type": "string"
+        },
+        "sa_address_care_of": {
+          "type": "string"
+        },
+        "sa_address_country": {
+          "type": "string"
+        },
+        "sa_address_locality": {
+          "type": "string"
+        },
+        "sa_address_po_box": {
+          "type": "string"
+        },
+        "sa_address_postal_code": {
+          "type": "string"
+        },
+        "sa_address_premises": {
+          "type": "string"
+        },
+        "sa_address_region": {
+          "type": "string"
+        },
+        "ro_address_line_1": {
+          "type": "string"
+        },
+        "ro_address_line_2": {
+          "type": "string"
+        },
+        "ro_address_care_of": {
+          "type": "string"
+        },
+        "ro_address_country": {
+          "type": "string"
+        },
+        "ro_address_locality": {
+          "type": "string"
+        },
+        "ro_address_po_box": {
+          "type": "string"
+        },
+        "ro_address_postal_code": {
+          "type": "string"
+        },
+        "ro_address_premises": {
+          "type": "string"
+        },
+        "ro_address_region": {
+          "type": "string"
+        },
+        "identification_country_registration": {
+          "type": "string"
+        },
+        "identification_legal_authority": {
+          "type": "string"
+        },
+        "identification_legal_form": {
+          "type": "string"
+        },
+        "identification_place_registered": {
+          "type": "string"
+        },
+        "identification_registration_number": {
+          "type": "string"
+        },
+        "date_became_interested_person": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "HistoricalBeneficialOwner": {
+      "type": "object",
+      "properties": {
+        "forename": {
+          "type": "string"
+        },
+        "other_forenames": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string"
+        },
+        "ceased_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "notified_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
     },
     "Address": {
       "type": "object",

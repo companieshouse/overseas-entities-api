@@ -38,6 +38,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     @Field("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
 
+    @Field("trust_ids")
+    private List<String> trustIds;
+
     public String getName() {
         return name;
     }
@@ -116,5 +119,13 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
 
     public void setOnSanctionsList(Boolean onSanctionsList) {
         isOnSanctionsList = onSanctionsList;
+    }
+
+    public List<String> getTrustIds() {
+        return trustIds;
+    }
+
+    public void setTrustIds(List<String> trustIds) {
+        this.trustIds = trustIds;
     }
 }

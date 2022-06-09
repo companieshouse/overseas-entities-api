@@ -16,12 +16,12 @@ import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmis
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-
-import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import java.net.URI;
 import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
@@ -70,6 +70,7 @@ public class OverseasEntitiesService {
         insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
         insertedSubmission.setHttpRequestId(requestId);
         insertedSubmission.setCreatedByUserId(userId);
+
         overseasEntitySubmissionsRepository.save(insertedSubmission);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)

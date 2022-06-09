@@ -25,6 +25,15 @@ public class AddressDao {
     @Field("postcode")
     private String postcode;
 
+    @Field("care_of")
+    private String careOf;
+
+    @Field("po_box")
+    private String poBox;
+
+    @Field("locality")
+    private String locality;
+
     public String getPropertyNameNumber() {
         return propertyNameNumber;
     }
@@ -79,5 +88,29 @@ public class AddressDao {
 
     public void setPostcode(String postcode) {
         this.postcode = postcode;
+    }
+
+    public String getCareOf() {
+        return careOf;
+    }
+
+    public void setCareOf(String careOf) {
+        this.careOf = careOf;
+    }
+
+    public String getPoBox() {
+        return poBox;
+    }
+
+    public void setPoBox(String poBox) {
+        this.poBox = poBox;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 }
