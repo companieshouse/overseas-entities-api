@@ -17,6 +17,9 @@ public class HistoricalBoDto {
     @JsonProperty("ceased_date")
     private LocalDate ceasedDate;
 
+    @JsonProperty("notified_date")
+    private LocalDate notifiedDate;
+
     public String getForename() {
         return forename;
     }
@@ -47,5 +50,13 @@ public class HistoricalBoDto {
 
     public void setCeasedDate(LocalDate ceasedDate) {
         this.ceasedDate = ceasedDate;
+    }
+
+    public LocalDate getNotifiedDate() {
+        return notifiedDate;
+    }
+
+    public void setNotifiedDate(LocalDate notifiedDate) {
+        this.notifiedDate = notifiedDate;
     }
 }

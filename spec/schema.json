@@ -346,8 +346,11 @@
         "is_on_sanctions_list": {
           "type": "boolean"
         },
-        "trust": {
-          "type": "string"
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -406,8 +409,11 @@
         "is_on_sanctions_list": {
           "type": "boolean"
         },
-        "trust": {
-          "type": "string"
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -451,8 +457,11 @@
         "is_on_sanctions_list": {
           "type": "boolean"
         },
-        "trust": {
-          "type": "string"
+        "trust_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -761,6 +770,10 @@
           "type": "string"
         },
         "ceased_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "notified_date": {
           "type": "string",
           "format": "date"
         }

@@ -18,6 +18,9 @@ public class HistoricalBeneficialOwnerDao {
     @Field("ceased_date")
     private LocalDate ceasedDate;
 
+    @Field("notified_date")
+    private LocalDate notifiedDate;
+
     public String getForename() {
         return forename;
     }
@@ -50,4 +53,11 @@ public class HistoricalBeneficialOwnerDao {
         this.ceasedDate = ceasedDate;
     }
 
+    public LocalDate getNotifiedDate() {
+        return notifiedDate;
+    }
+
+    public void setNotifiedDate(LocalDate notifiedDate) {
+        this.notifiedDate = notifiedDate;
+    }
 }
