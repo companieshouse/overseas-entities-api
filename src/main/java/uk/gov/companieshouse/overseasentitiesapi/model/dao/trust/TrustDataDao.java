@@ -22,11 +22,11 @@ public class TrustDataDao {
     @Field("historical_beneficial_owners")
     private List<HistoricalBeneficialOwnerDao> historicalBeneficialOwners;
 
-    @Field("individual_beneficial_owners")
-    private List<IndividualBeneficialOwnerDao> individualBeneficialOwners;
+    @Field("individuals")
+    private List<IndividualDao> individuals;
 
-    @Field("corporate_beneficial_owners")
-    private List<CorporateBeneficialOwnerDao> corporateBeneficialOwners;
+    @Field("corporates")
+    private List<CorporateDao> corporates;
 
     public String getId() {
         return trustId;
@@ -68,20 +68,20 @@ public class TrustDataDao {
         this.historicalBeneficialOwners = historicalBeneficialOwners;
     }
 
-    public List<IndividualBeneficialOwnerDao> getIndividualBeneficialOwners() {
-        return individualBeneficialOwners;
+    public List<IndividualDao> getIndividuals() {
+        return individuals;
     }
 
-    public void setIndividualBeneficialOwners(List<IndividualBeneficialOwnerDao> individualBeneficialOwners) {
-        this.individualBeneficialOwners = individualBeneficialOwners;
+    public void setIndividuals(List<IndividualDao> individuals) {
+        this.individuals = individuals;
     }
 
-    public List<CorporateBeneficialOwnerDao> getCorporateBeneficialOwners() {
-        return corporateBeneficialOwners;
+    public List<CorporateDao> getCorporates() {
+        return corporates;
     }
 
-    public void setCorporateBeneficialOwners(List<CorporateBeneficialOwnerDao> corporateBeneficialOwners) {
-        this.corporateBeneficialOwners = corporateBeneficialOwners;
+    public void setCorporates(List<CorporateDao> corporates) {
+        this.corporates = corporates;
     }
 
 }

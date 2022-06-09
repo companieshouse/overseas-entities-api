@@ -26,13 +26,13 @@ public class TrustDataDto {
     private Boolean unableToObtainAllTrustInfo;
 
     @JsonProperty("INDIVIDUAL")
-    private List<IndividualDto> individualBeneficialOwners;
+    private List<IndividualDto> individuals;
 
     @JsonProperty("HISTORICAL_BO")
     private List<HistoricalBoDto> historicalBeneficialOwners;
 
     @JsonProperty("CORPORATE")
-    private List<CorporateDto> corporateBeneficialOwners;
+    private List<CorporateDto> corporates;
 
     public String getTrustId() {
         return trustId;
@@ -89,12 +89,12 @@ public class TrustDataDto {
         this.unableToObtainAllTrustInfo = unableToObtainAllTrustInfo;
     }
 
-    public List<IndividualDto> getIndividualBeneficialOwners() {
-        return individualBeneficialOwners;
+    public List<IndividualDto> getIndividuals() {
+        return individuals;
     }
 
-    public void setIndividualBeneficialOwners(List<IndividualDto> individualDtos) {
-        this.individualBeneficialOwners = individualDtos;
+    public void setIndividuals(List<IndividualDto> individuals) {
+        this.individuals = individuals;
     }
 
     public List<HistoricalBoDto> getHistoricalBeneficialOwners() {
@@ -105,11 +105,11 @@ public class TrustDataDto {
         this.historicalBeneficialOwners = historicalBeneficialOwners;
     }
 
-    public List<CorporateDto> getCorporateBeneficialOwners() {
-        return corporateBeneficialOwners;
+    public List<CorporateDto> getCorporates() {
+        return corporates;
     }
 
-    public void setCorporateBeneficialOwners(List<CorporateDto> corporateDtos) {
-        this.corporateBeneficialOwners = corporateDtos;
+    public void setCorporates(List<CorporateDto> corporateDtos) {
+        this.corporates = corporateDtos;
     }
 }
