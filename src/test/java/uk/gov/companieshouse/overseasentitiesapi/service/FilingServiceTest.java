@@ -78,6 +78,32 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
+                when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID));
+    }
+
+    private void checkManagingOfficers(FilingApi filing) {
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualDto = (List<ManagingOfficerIndividualDto>) filing.getData().get(MANAGING_OFFICERS_INDIVIDUAL_FIELD);
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = managingOfficersIndividualDto.get(0);
+        assertEquals("Walter", managingOfficerIndividualDto.getFirstName());
+        assertEquals("Blanc", managingOfficerIndividualDto.getLastName());
+        assertEquals("French", managingOfficerIndividualDto.getNationality());
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateDto = (List<ManagingOfficerCorporateDto>) filing.getData().get(MANAGING_OFFICERS_CORPORATE_FIELD);
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = managingOfficersCorporateDto.get(0);
+        assertEquals("Corporate Man", managingOfficerCorporateDto.getName());
+        assertEquals("The Law", managingOfficerCorporateDto.getLawGoverned());
+        assertEquals("Legal FM", managingOfficerCorporateDto.getLegalForm());
+    }
+
+    private void checkBeneficialOwners(FilingApi filing) {
         final BeneficialOwnersStatementType beneficialOwnersStatement = (BeneficialOwnersStatementType)filing.getData().get(BENEFICIAL_OWNERS_STATEMENT);
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, beneficialOwnersStatement);
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
@@ -98,22 +124,5 @@ class FilingServiceTest {
         assertEquals("Top Class", beneficialOwnerCorporateDto.getLegalForm());
         assertTrue(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn());
         assertEquals(LocalDate.of(2020, 4, 23), beneficialOwnerCorporateDto.getStartDate());
-        List<ManagingOfficerIndividualDto> managingOfficersIndividualDto = (List<ManagingOfficerIndividualDto>) filing.getData().get(MANAGING_OFFICERS_INDIVIDUAL_FIELD);
-        ManagingOfficerIndividualDto managingOfficerIndividualDto = managingOfficersIndividualDto.get(0);
-        assertEquals("Walter", managingOfficerIndividualDto.getFirstName());
-        assertEquals("Blanc", managingOfficerIndividualDto.getLastName());
-        assertEquals("French", managingOfficerIndividualDto.getNationality());
-        List<ManagingOfficerCorporateDto> managingOfficersCorporateDto = (List<ManagingOfficerCorporateDto>) filing.getData().get(MANAGING_OFFICERS_CORPORATE_FIELD);
-        ManagingOfficerCorporateDto managingOfficerCorporateDto = managingOfficersCorporateDto.get(0);
-        assertEquals("Corporate Man", managingOfficerCorporateDto.getName());
-        assertEquals("The Law", managingOfficerCorporateDto.getLawGoverned());
-        assertEquals("Legal FM", managingOfficerCorporateDto.getLegalForm());
-    }
-
-    @Test
-    void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
-        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
-                when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID));
     }
 }
