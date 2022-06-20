@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,6 +67,7 @@ class FilingServiceTest {
     private static final String FILING_DESCRIPTION_IDENTIFIER = "Filing Description Id";
     private static final String FILING_DESCRIPTION = "Filing Description with registration date {registration date}";
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
+    private static final String ERROR_MESSAGE = "error message";
 
     @InjectMocks
     private FilingsService filingsService;
@@ -223,5 +226,42 @@ class FilingServiceTest {
 
         assertEquals(PAYMENT_METHOD, filing.getData().get("payment_method"));
         assertEquals(PAYMENT_REFERENCE, filing.getData().get("payment_reference"));
+    }
+
+    @Test
+    void testThrowsServiceExceptionWhenUnableToGetPayment() throws ApiErrorResponseException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenThrow(getApiErrorResponseException());
+
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+       ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
+       assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
+    }
+
+    @Test
+    void testThrowsServiceExceptionWhenUnableToGetPaymentReference() throws ApiErrorResponseException, URIValidationException {
+        when(apiClientService.getApiKeyAuthenticatedClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenThrow(getApiErrorResponseException());
+
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
+        assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
+    }
+
+    private ApiErrorResponseException getApiErrorResponseException() {
+        return new ApiErrorResponseException(
+                new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders())
+                        .setMessage(ERROR_MESSAGE));
     }
 }
