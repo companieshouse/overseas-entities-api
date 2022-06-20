@@ -14,10 +14,13 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
@@ -27,23 +30,32 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
 @Service
 public class FilingsService {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+    @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION_IDENTIFIER}")
+    private String filingDescriptionIdentifier;
 
     @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
     private String filingDescription;
 
     private final OverseasEntitiesService overseasEntitiesService;
-
     private final ApiClientService apiClientService;
-
+    private final Supplier<LocalDate> dateNowSupplier;
 
     @Autowired
-    public FilingsService(OverseasEntitiesService overseasEntitiesService, ApiClientService apiClientService) {
+    public FilingsService(OverseasEntitiesService overseasEntitiesService,
+                          ApiClientService apiClientService,
+                          Supplier<LocalDate> dateNowSupplier) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
+        this.dateNowSupplier = dateNowSupplier;
     }
 
     public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction)
@@ -61,7 +73,7 @@ public class FilingsService {
         setPaymentData(data, transaction, overseasEntityId);
 
         filing.setData(data);
-        setDescription(filing);
+        setDescriptionFields(filing);
     }
 
     private void setSubmissionData(Map<String, Object> data, String overseasEntityId) throws SubmissionNotFoundException {
@@ -125,8 +137,10 @@ public class FilingsService {
         }
     }
 
-    private void setDescription(FilingApi filing) {
-        filing.setDescriptionIdentifier(filingDescription);
+    private void setDescriptionFields(FilingApi filing) {
+        String formattedRegistrationDate = dateNowSupplier.get().format(formatter);
+        filing.setDescriptionIdentifier(filingDescriptionIdentifier);
+        filing.setDescription(filingDescription.replace("{registration date}", formattedRegistrationDate));
         Map<String, String> values = new HashMap<>();
         filing.setDescriptionValues(values);
     }
