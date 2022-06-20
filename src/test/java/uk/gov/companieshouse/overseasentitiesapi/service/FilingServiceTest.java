@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,7 +9,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.ApiClient;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
+import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.handler.payment.PaymentResourceHandler;
+import uk.gov.companieshouse.api.handler.payment.request.PaymentGet;
+import uk.gov.companieshouse.api.handler.transaction.TransactionsResourceHandler;
+import uk.gov.companieshouse.api.handler.transaction.request.TransactionsPaymentGet;
+import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
+import uk.gov.companieshouse.api.model.payment.PaymentApi;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.transaction.TransactionLinks;
+import uk.gov.companieshouse.api.model.transaction.TransactionPayment;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
@@ -30,6 +42,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
@@ -44,6 +57,9 @@ class FilingServiceTest {
 
     private static final String OVERSEAS_ENTITY_ID = "abc123";
     public static final String FILING_DESCRIPTION = "Test this";
+    private static final String TRANSACTION_ID = "3324324324-3243243-32424";
+    private static final String PAYMENT_METHOD = "credit-card";
+    private static final String PAYMENT_REFERENCE = "332432432423";
 
     @InjectMocks
     private FilingsService filingsService;
@@ -57,13 +73,61 @@ class FilingServiceTest {
     @Mock
     private ApiClient apiClient;
 
+    @Mock
+    private TransactionsResourceHandler transactionsResourceHandler;
+
+    @Mock
+    private TransactionsPaymentGet transactionsPaymentGet;
+
+    @Mock
+    private PaymentResourceHandler paymentResourceHandler;
+
+    @Mock
+    private PaymentGet paymentGet;
+
+    private Transaction transaction;
+
+    @BeforeEach
+    void init() {
+        transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        var transactionLinks = new TransactionLinks();
+        transactionLinks.setPayment("/12345678/payment");
+        transaction.setLinks(transactionLinks);
+    }
+
+    void initTransactionPaymentLinkMocks() throws ApiErrorResponseException, URIValidationException {
+        var transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference(PAYMENT_REFERENCE);
+
+        var transactionApiResponse = new ApiResponse<>(200, null, transactionPayment);
+
+        when(apiClientService.getApiKeyAuthenticatedClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenReturn(transactionApiResponse);
+    }
+
+    void initGetPaymentMocks() throws ApiErrorResponseException, URIValidationException {
+        var paymentApi = new PaymentApi();
+        paymentApi.setPaymentMethod(PAYMENT_METHOD);
+
+        var paymentApiResponse = new ApiResponse<>(200, null, paymentApi);
+
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenReturn(paymentApiResponse);
+    }
+
     @Test
-    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException {
+    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException, ApiErrorResponseException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
                 OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID);
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction);
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION, filing.getDescriptionIdentifier());
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
@@ -105,9 +169,24 @@ class FilingServiceTest {
     }
 
     @Test
+    void testFilingGenerationForPaymentWhenSuccessful() throws SubmissionNotFoundException, ServiceException, ApiErrorResponseException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction);
+
+        assertEquals(PAYMENT_METHOD, filing.getData().get("payment_method"));
+        assertEquals(PAYMENT_REFERENCE, filing.getData().get("payment_reference"));
+    }
+
+    @Test
     void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
                 when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID));
+        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
     }
 }

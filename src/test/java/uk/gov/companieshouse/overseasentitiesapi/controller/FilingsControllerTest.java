@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionLinks;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.service.FilingsService;
 
@@ -41,10 +42,10 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException {
+    void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException, ServiceException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenReturn(filing);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenReturn(filing);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
@@ -52,8 +53,8 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException {
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID)).thenThrow(SubmissionNotFoundException.class);
+    void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction)).thenThrow(SubmissionNotFoundException.class);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());

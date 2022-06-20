@@ -41,7 +41,7 @@ public class FilingsController {
         ApiLogger.infoContext(requestId, "Calling service to retrieve filing", logMap);
         ApiLogger.infoContext(requestId, "Transaction id is " + transaction.getId(), logMap);
         try {
-            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId);
+            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId, transaction);
             return ResponseEntity.ok(new FilingApi[]{filing});
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
