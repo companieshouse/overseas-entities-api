@@ -8,9 +8,12 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
@@ -25,14 +28,22 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_K
 @Service
 public class FilingsService {
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+    @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION_IDENTIFIER}")
+    private String filingDescriptionIdentifier;
+
     @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
     private String filingDescription;
 
     private final OverseasEntitiesService overseasEntitiesService;
+    private final Supplier<LocalDate> dateNowSupplier;
 
     @Autowired
-    public FilingsService(OverseasEntitiesService overseasEntitiesService) {
+    public FilingsService(OverseasEntitiesService overseasEntitiesService,
+                          Supplier<LocalDate> dateNowSupplier) {
         this.overseasEntitiesService = overseasEntitiesService;
+        this.dateNowSupplier = dateNowSupplier;
     }
 
     public FilingApi generateOverseasEntityFiling(String overseasEntityId)
@@ -66,13 +77,16 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
         filing.setData(data);
-        setDescription(filing);
+
+        setDescriptionFields(filing);
 
         ApiLogger.debug("Submission data has been set on filing");
     }
 
-    private void setDescription(FilingApi filing) {
-        filing.setDescriptionIdentifier(filingDescription);
+    private void setDescriptionFields(FilingApi filing) {
+        String formattedRegistrationDate = dateNowSupplier.get().format(formatter);
+        filing.setDescriptionIdentifier(filingDescriptionIdentifier);
+        filing.setDescription(filingDescription.replace("{registration date}", formattedRegistrationDate));
         Map<String, String> values = new HashMap<>();
         filing.setDescriptionValues(values);
     }
