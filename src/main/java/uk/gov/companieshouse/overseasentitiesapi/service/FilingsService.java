@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -102,20 +101,16 @@ public class FilingsService {
 
     private void setPaymentData(Map<String, Object> data, Transaction transaction, String overseasEntityId) throws ServiceException {
         var paymentLink = transaction.getLinks().getPayment();
-        var isPayable = !Objects.isNull(paymentLink);
+        var paymentReference = getPaymentReferenceFromTransaction(paymentLink);
+        var payment = getPayment(paymentReference);
 
-        if (isPayable) {
-            var paymentReference = getPaymentReferenceFromTransaction(paymentLink);
-            var payment = getPayment(paymentReference);
+        data.put("payment_reference", paymentReference);
+        data.put("payment_method", payment.getPaymentMethod());
 
-            data.put("payment_reference", paymentReference);
-            data.put("payment_method", payment.getPaymentMethod());
-
-            var logMap = new HashMap<String, Object>();
-            logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-            logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-            ApiLogger.debug("Payment data has been set on filing", logMap);
-        }
+        var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        ApiLogger.debug("Payment data has been set on filing", logMap);
     }
 
     private PaymentApi getPayment(String paymentReference) throws ServiceException {
