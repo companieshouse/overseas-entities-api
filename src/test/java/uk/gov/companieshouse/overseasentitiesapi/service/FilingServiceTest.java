@@ -199,16 +199,6 @@ class FilingServiceTest {
         assertEquals("Top Class", beneficialOwnerCorporateDto.getLegalForm());
         assertTrue(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn());
         assertEquals(LocalDate.of(2020, 4, 23), beneficialOwnerCorporateDto.getStartDate());
-        List<ManagingOfficerIndividualDto> managingOfficersIndividualDto = (List<ManagingOfficerIndividualDto>) filing.getData().get(MANAGING_OFFICERS_INDIVIDUAL_FIELD);
-        ManagingOfficerIndividualDto managingOfficerIndividualDto = managingOfficersIndividualDto.get(0);
-        assertEquals("Walter", managingOfficerIndividualDto.getFirstName());
-        assertEquals("Blanc", managingOfficerIndividualDto.getLastName());
-        assertEquals("French", managingOfficerIndividualDto.getNationality());
-        List<ManagingOfficerCorporateDto> managingOfficersCorporateDto = (List<ManagingOfficerCorporateDto>) filing.getData().get(MANAGING_OFFICERS_CORPORATE_FIELD);
-        ManagingOfficerCorporateDto managingOfficerCorporateDto = managingOfficersCorporateDto.get(0);
-        assertEquals("Corporate Man", managingOfficerCorporateDto.getName());
-        assertEquals("The Law", managingOfficerCorporateDto.getLawGoverned());
-        assertEquals("Legal FM", managingOfficerCorporateDto.getLegalForm());
     }
 
     @Test
