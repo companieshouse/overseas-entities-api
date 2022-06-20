@@ -61,7 +61,7 @@ public class FilingsService {
         setPaymentData(data, transaction, overseasEntityId);
 
         filing.setData(data);
-        setDescription(filing);:
+        setDescription(filing);
     }
 
     private void setSubmissionData(Map<String, Object> data, String overseasEntityId) throws SubmissionNotFoundException {
