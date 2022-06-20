@@ -69,14 +69,14 @@ public class FilingsService {
     private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction) throws SubmissionNotFoundException, ServiceException {
         Map<String, Object> data = new HashMap<>();
 
-        setSubmissionData(data, overseasEntityId);
+        setSubmissionData(data, transaction, overseasEntityId);
         setPaymentData(data, transaction, overseasEntityId);
 
         filing.setData(data);
         setDescriptionFields(filing);
     }
 
-    private void setSubmissionData(Map<String, Object> data, String overseasEntityId) throws SubmissionNotFoundException {
+    private void setSubmissionData(Map<String, Object> data, Transaction transaction, String overseasEntityId) throws SubmissionNotFoundException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
@@ -96,6 +96,7 @@ public class FilingsService {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 
