@@ -13,8 +13,8 @@ public class ApiLogger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OverseasEntitiesApiApplication.APP_NAMESPACE);
 
-    public static void debug(String message) {
-        LOGGER.debug(message);
+    public static void debug(String message, Map<String, Object> dataMap) {
+        LOGGER.debug(message, cloneMapData(dataMap));
     }
 
     public static void debugContext(String context, String message) {
