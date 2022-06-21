@@ -36,8 +36,8 @@ public class ManagingOfficerCorporateDao {
     @Field("start_date")
     private LocalDate startDate;
 
-    @Field("roles_and_responsibilities")
-    private String rolesAndResponsibilities;
+    @Field("role_and_responsibilities")
+    private String roleAndResponsibilities;
 
     @Field("contact_full_name")
     private String contactFullName;
@@ -126,12 +126,12 @@ public class ManagingOfficerCorporateDao {
     }
 
 
-    public String getRolesAndResponsibilities() {
-        return rolesAndResponsibilities;
+    public String getRoleAndResponsibilities() {
+        return roleAndResponsibilities;
     }
 
-    public void setRolesAndResponsibilities(String rolesAndResponsibilities) {
-        this.rolesAndResponsibilities = rolesAndResponsibilities;
+    public void setRoleAndResponsibilities(String roleAndResponsibilities) {
+        this.roleAndResponsibilities = roleAndResponsibilities;
     }
 
     public String getContactFullName() {
