@@ -66,16 +66,20 @@ public class FilingsService {
     }
 
     private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction) throws SubmissionNotFoundException, ServiceException {
+        var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+
         Map<String, Object> data = new HashMap<>();
 
-        setSubmissionData(data, transaction, overseasEntityId);
-        setPaymentData(data, transaction, overseasEntityId);
+        setSubmissionData(data, overseasEntityId, logMap);
+        setPaymentData(data, transaction, logMap);
 
         filing.setData(data);
         setDescriptionFields(filing);
     }
 
-    private void setSubmissionData(Map<String, Object> data, Transaction transaction, String overseasEntityId) throws SubmissionNotFoundException {
+    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
@@ -92,24 +96,16 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
-
-        var logMap = new HashMap<String, Object>();
-        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 
-    private void setPaymentData(Map<String, Object> data, Transaction transaction, String overseasEntityId) throws ServiceException {
+    private void setPaymentData(Map<String, Object> data, Transaction transaction, Map<String, Object> logMap) throws ServiceException {
         var paymentLink = transaction.getLinks().getPayment();
         var paymentReference = getPaymentReferenceFromTransaction(paymentLink);
         var payment = getPayment(paymentReference);
 
         data.put("payment_reference", paymentReference);
         data.put("payment_method", payment.getPaymentMethod());
-
-        var logMap = new HashMap<String, Object>();
-        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
         ApiLogger.debug("Payment data has been set on filing", logMap);
     }
 
