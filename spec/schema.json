@@ -538,6 +538,9 @@
           "type": "string",
           "format": "date"
         },
+        "roles_and_responsibilities": {
+          "type": "string"
+        },
         "contact_full_name": {
           "type": "string"
         },
@@ -552,7 +555,8 @@
         "legal_form",
         "law_governed",
         "is_on_register_in_country_formed_in",
-        "start_date"
+        "start_date",
+        "roles_and_responsibilities"
       ]
     },
     "Trust": {

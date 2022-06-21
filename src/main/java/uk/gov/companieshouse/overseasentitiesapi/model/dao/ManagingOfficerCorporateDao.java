@@ -36,6 +36,9 @@ public class ManagingOfficerCorporateDao {
     @Field("start_date")
     private LocalDate startDate;
 
+    @Field("roles_and_responsibilities")
+    private String rolesAndResponsibilities;
+
     @Field("contact_full_name")
     private String contactFullName;
 
@@ -120,6 +123,15 @@ public class ManagingOfficerCorporateDao {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+
+    public String getRolesAndResponsibilities() {
+        return rolesAndResponsibilities;
+    }
+
+    public void setRolesAndResponsibilities(String rolesAndResponsibilities) {
+        this.rolesAndResponsibilities = rolesAndResponsibilities;
     }
 
     public String getContactFullName() {

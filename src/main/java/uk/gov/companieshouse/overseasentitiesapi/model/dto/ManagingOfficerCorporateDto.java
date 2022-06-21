@@ -35,6 +35,9 @@ public class ManagingOfficerCorporateDto {
     @JsonProperty("start_date")
     private LocalDate startDate;
 
+    @JsonProperty("roles_and_responsibilities")
+    private String rolesAndResponsibilities;
+
     @JsonProperty("contact_full_name")
     private String contactFullName;
 
@@ -119,6 +122,14 @@ public class ManagingOfficerCorporateDto {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public String getRolesAndResponsibilities() {
+        return rolesAndResponsibilities;
+    }
+
+    public void setRolesAndResponsibilities(String rolesAndResponsibilities) {
+        this.rolesAndResponsibilities = rolesAndResponsibilities;
     }
 
     public String getContactFullName() {
