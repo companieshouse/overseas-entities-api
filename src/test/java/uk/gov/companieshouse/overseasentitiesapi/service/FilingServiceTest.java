@@ -37,6 +37,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +69,7 @@ class FilingServiceTest {
     private static final String FILING_DESCRIPTION = "Filing Description with registration date {registration date}";
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
+    private static final String PASS_THROUGH_HEADER = "432342353255";
 
     @InjectMocks
     private FilingsService filingsService;
@@ -107,13 +109,13 @@ class FilingServiceTest {
         transaction.setLinks(transactionLinks);
     }
 
-    void initTransactionPaymentLinkMocks() throws ApiErrorResponseException, URIValidationException {
+    void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {
         var transactionPayment = new TransactionPayment();
         transactionPayment.setPaymentReference(PAYMENT_REFERENCE);
 
         var transactionApiResponse = new ApiResponse<>(200, null, transactionPayment);
 
-        when(apiClientService.getApiKeyAuthenticatedClient()).thenReturn(apiClient);
+        when(apiClientService.getOauthAuthenticatedClient(PASS_THROUGH_HEADER)).thenReturn(apiClient);
         when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
         when(transactionsPaymentGet.execute()).thenReturn(transactionApiResponse);
@@ -131,7 +133,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException, ApiErrorResponseException, URIValidationException {
+    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -141,7 +143,7 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction);
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
@@ -162,7 +164,7 @@ class FilingServiceTest {
     void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
                 when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
+        assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
 
     private void checkManagingOfficers(FilingApi filing) {
@@ -202,7 +204,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationForPaymentWhenSuccessful() throws SubmissionNotFoundException, ServiceException, ApiErrorResponseException, URIValidationException {
+    void testFilingGenerationForPaymentWhenSuccessful() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -212,14 +214,14 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction);
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
 
         assertEquals(PAYMENT_METHOD, filing.getData().get("payment_method"));
         assertEquals(PAYMENT_REFERENCE, filing.getData().get("payment_reference"));
     }
 
     @Test
-    void testThrowsServiceExceptionWhenUnableToGetPayment() throws ApiErrorResponseException, URIValidationException {
+    void testThrowsServiceExceptionWhenUnableToGetPayment() throws IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
 
         when(apiClient.payment()).thenReturn(paymentResourceHandler);
@@ -230,13 +232,13 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-       ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
+       ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
        assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
     }
 
     @Test
-    void testThrowsServiceExceptionWhenUnableToGetPaymentReference() throws ApiErrorResponseException, URIValidationException {
-        when(apiClientService.getApiKeyAuthenticatedClient()).thenReturn(apiClient);
+    void testThrowsServiceExceptionWhenUnableToGetPaymentReference() throws IOException, URIValidationException {
+        when(apiClientService.getOauthAuthenticatedClient(PASS_THROUGH_HEADER)).thenReturn(apiClient);
         when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
         when(transactionsPaymentGet.execute()).thenThrow(getApiErrorResponseException());
@@ -245,7 +247,7 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-        ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction));
+        ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
         assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
     }
 
