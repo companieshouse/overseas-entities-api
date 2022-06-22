@@ -101,7 +101,6 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
-<<<<<<< HEAD
 
         // Convert trust data to JSON string
         ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
@@ -110,9 +109,6 @@ public class FilingsService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        filing.setData(data);
-        setDescription(filing);
-=======
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 
@@ -139,7 +135,6 @@ public class FilingsService {
         try {
             var transactionPaymentInfo = apiClientService
                     .getOauthAuthenticatedClient(passthroughTokenHeader).transactions().getPayment(uri).execute();
->>>>>>> 0498367dac23084d6a842f51357cf14a54d0f7d4
 
             return transactionPaymentInfo.getData().getPaymentReference();
         } catch (URIValidationException | IOException e) {
