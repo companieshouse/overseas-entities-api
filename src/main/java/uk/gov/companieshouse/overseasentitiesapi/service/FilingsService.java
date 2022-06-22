@@ -57,15 +57,15 @@ public class FilingsService {
         this.dateNowSupplier = dateNowSupplier;
     }
 
-    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passthroughTokenHeader)
+    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
             throws SubmissionNotFoundException, ServiceException {
         var filing = new FilingApi();
         filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
-        setFilingApiData(filing, overseasEntityId, transaction, passthroughTokenHeader);
+        setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader);
         return filing;
     }
 
-    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction, String passthroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
+    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction, String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
@@ -73,7 +73,7 @@ public class FilingsService {
         Map<String, Object> data = new HashMap<>();
 
         setSubmissionData(data, overseasEntityId, logMap);
-        setPaymentData(data, transaction, passthroughTokenHeader, logMap);
+        setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
         setDescriptionFields(filing);

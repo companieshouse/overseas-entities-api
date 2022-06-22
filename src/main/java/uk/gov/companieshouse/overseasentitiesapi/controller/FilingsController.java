@@ -39,14 +39,14 @@ public class FilingsController {
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
 
-        String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transactionId);
         ApiLogger.infoContext(requestId, "Calling service to retrieve filing", logMap);
         ApiLogger.infoContext(requestId, "Transaction id is " + transaction.getId(), logMap);
         try {
-            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId, transaction, passthroughTokenHeader);
+            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId, transaction, passThroughTokenHeader);
             return ResponseEntity.ok(new FilingApi[]{filing});
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
