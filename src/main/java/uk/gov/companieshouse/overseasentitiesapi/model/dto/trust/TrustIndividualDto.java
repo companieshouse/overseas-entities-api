@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
 
 public class TrustIndividualDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("type")
     private String type;
 
@@ -24,57 +26,81 @@ public class TrustIndividualDto {
     @JsonProperty("nationality")
     private String nationality;
 
+    @JsonProperty("service_address")
+    private AddressDto serviceAddress;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_line_1")
     private String saAddressLine1;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_line_2")
     private String saAddressLine2;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_care_of")
     private String saAddressCareOf;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_country")
     private String saAddressCountry;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_locality")
     private String saAddressLocality;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_po_box")
     private String saAddressPoBox;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_postal_code")
     private String saAddressPostalCode;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_premises")
     private String saAddressPremises;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
 
+    @JsonProperty("usual_residential_address")
+    private AddressDto usualResidentialAddress;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_line_1")
     private String uraAddressLine1;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_line_2")
     private String uraAddressLine2;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_care_of")
     private String uraAddressCareOf;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_country")
     private String uraAddressCountry;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_locality")
     private String uraAddressLocality;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_po_box")
     private String uraAddressPoBox;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_postal_code")
     private String uraAddressPostalCode;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_premises")
     private String uraAddressPremises;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ura_address_region")
     private String uraAddressRegion;
 
@@ -202,17 +228,24 @@ public class TrustIndividualDto {
     }
 
     public AddressDto getServiceAddress() {
-        var serviceAddress = new AddressDto();
-        serviceAddress.setPropertyNameNumber(saAddressPremises);
-        serviceAddress.setLine1(saAddressLine1);
-        serviceAddress.setLine2(saAddressLine2);
-        serviceAddress.setCounty(saAddressRegion);
-        serviceAddress.setLocality(saAddressLocality);
-        serviceAddress.setCountry(saAddressCountry);
-        serviceAddress.setCareOf(saAddressCareOf);
-        serviceAddress.setPoBox(saAddressPoBox);
-        serviceAddress.setPostcode(saAddressPostalCode);
+        // If the address is being set from the sa fields generate the address
+        if (saAddressPostalCode != null) {
+            serviceAddress = new AddressDto();
+            serviceAddress.setPropertyNameNumber(saAddressPremises);
+            serviceAddress.setLine1(saAddressLine1);
+            serviceAddress.setLine2(saAddressLine2);
+            serviceAddress.setCounty(saAddressRegion);
+            serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setCountry(saAddressCountry);
+            serviceAddress.setCareOf(saAddressCareOf);
+            serviceAddress.setPoBox(saAddressPoBox);
+            serviceAddress.setPostcode(saAddressPostalCode);
+        }
         return serviceAddress;
+    }
+
+    public void setServiceAddress(AddressDto serviceAddress) {
+        this.serviceAddress = serviceAddress;
     }
 
     public String getUraAddressLine1() {
@@ -288,17 +321,24 @@ public class TrustIndividualDto {
     }
 
     public AddressDto getUsualResidentialAddress() {
-        var address = new AddressDto();
-        address.setPropertyNameNumber(uraAddressPremises);
-        address.setLine1(uraAddressLine1);
-        address.setLine2(uraAddressLine2);
-        address.setCounty(uraAddressRegion);
-        address.setLocality(uraAddressLocality);
-        address.setCountry(uraAddressCountry);
-        address.setCareOf(uraAddressCareOf);
-        address.setPoBox(uraAddressPoBox);
-        address.setPostcode(uraAddressPostalCode);
-        return address;
+        // If the address is being set from the ura fields generate the address
+        if (uraAddressPostalCode != null) {
+            usualResidentialAddress = new AddressDto();
+            usualResidentialAddress.setPropertyNameNumber(uraAddressPremises);
+            usualResidentialAddress.setLine1(uraAddressLine1);
+            usualResidentialAddress.setLine2(uraAddressLine2);
+            usualResidentialAddress.setCounty(uraAddressRegion);
+            usualResidentialAddress.setLocality(uraAddressLocality);
+            usualResidentialAddress.setCountry(uraAddressCountry);
+            usualResidentialAddress.setCareOf(uraAddressCareOf);
+            usualResidentialAddress.setPoBox(uraAddressPoBox);
+            usualResidentialAddress.setPostcode(uraAddressPostalCode);
+        }
+        return usualResidentialAddress;
+    }
+
+    public void setUsualResidentialAddress(AddressDto usualResidentialAddress) {
+        this.usualResidentialAddress = usualResidentialAddress;
     }
 
     public LocalDate getDateBecameInterestedPerson() {

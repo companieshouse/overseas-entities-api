@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
 
 public class TrustCorporateDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("type")
     private String type;
 
@@ -15,57 +17,81 @@ public class TrustCorporateDto {
     @JsonProperty("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
+    @JsonProperty("registered_office_address")
+    private AddressDto registeredOfficeAddress;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_line_1")
     private String roAddressLine1;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_line_2")
     private String roAddressLine2;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_care_of")
     private String roAddressCareOf;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_country")
     private String roAddressCountry;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_locality")
     private String roAddressLocality;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_po_box")
     private String roAddressPoBox;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_postal_code")
     private String roAddressPostalCode;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_premises")
     private String roAddressPremises;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("ro_address_region")
     private String roAddressRegion;
 
+    @JsonProperty("service_address")
+    private AddressDto serviceAddress;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_line_1")
     private String saAddressLine1;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_line_2")
     private String saAddressLine2;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_care_of")
     private String saAddressCareOf;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_country")
     private String saAddressCountry;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_locality")
     private String saAddressLocality;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_po_box")
     private String saAddressPoBox;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_postal_code")
     private String saAddressPostalCode;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_premises")
     private String saAddressPremises;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
 
@@ -181,17 +207,24 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getRegisteredOfficeAddress() {
-        var address = new AddressDto();
-        address.setPropertyNameNumber(roAddressPremises);
-        address.setLine1(roAddressLine1);
-        address.setLine2(roAddressLine2);
-        address.setCounty(roAddressRegion);
-        address.setLocality(roAddressLocality);
-        address.setCountry(roAddressCountry);
-        address.setCareOf(roAddressCareOf);
-        address.setPoBox(roAddressPoBox);
-        address.setPostcode(roAddressPostalCode);
-        return address;
+        // If the address is being set from the ro fields generate the address
+        if (roAddressPostalCode != null) {
+            registeredOfficeAddress = new AddressDto();
+            registeredOfficeAddress.setPropertyNameNumber(saAddressPremises);
+            registeredOfficeAddress.setLine1(saAddressLine1);
+            registeredOfficeAddress.setLine2(saAddressLine2);
+            registeredOfficeAddress.setCounty(saAddressRegion);
+            registeredOfficeAddress.setLocality(saAddressLocality);
+            registeredOfficeAddress.setCountry(saAddressCountry);
+            registeredOfficeAddress.setCareOf(saAddressCareOf);
+            registeredOfficeAddress.setPoBox(saAddressPoBox);
+            registeredOfficeAddress.setPostcode(saAddressPostalCode);
+        }
+        return registeredOfficeAddress;
+    }
+
+    public void setRegisteredOfficeAddress(AddressDto registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public String getSaAddressLine1() {
@@ -267,17 +300,24 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getServiceAddress() {
-        var serviceAddress = new AddressDto();
-        serviceAddress.setPropertyNameNumber(saAddressPremises);
-        serviceAddress.setLine1(saAddressLine1);
-        serviceAddress.setLine2(saAddressLine2);
-        serviceAddress.setCounty(saAddressRegion);
-        serviceAddress.setLocality(saAddressLocality);
-        serviceAddress.setCountry(saAddressCountry);
-        serviceAddress.setCareOf(saAddressCareOf);
-        serviceAddress.setPoBox(saAddressPoBox);
-        serviceAddress.setPostcode(saAddressPostalCode);
+        // If the address is being set from the sa fields generate the address
+        if (saAddressPostalCode != null) {
+            serviceAddress = new AddressDto();
+            serviceAddress.setPropertyNameNumber(saAddressPremises);
+            serviceAddress.setLine1(saAddressLine1);
+            serviceAddress.setLine2(saAddressLine2);
+            serviceAddress.setCounty(saAddressRegion);
+            serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setCountry(saAddressCountry);
+            serviceAddress.setCareOf(saAddressCareOf);
+            serviceAddress.setPoBox(saAddressPoBox);
+            serviceAddress.setPostcode(saAddressPostalCode);
+        }
         return serviceAddress;
+    }
+
+    public void setServiceAddress(AddressDto serviceAddress) {
+        this.serviceAddress = serviceAddress;
     }
 
     public String getIdentificationCountryRegistration() {

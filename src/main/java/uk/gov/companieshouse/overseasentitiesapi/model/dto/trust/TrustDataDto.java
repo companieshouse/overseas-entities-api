@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.util.List;
 
 public class TrustDataDto {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("trust_id")
     private String trustId;
 
