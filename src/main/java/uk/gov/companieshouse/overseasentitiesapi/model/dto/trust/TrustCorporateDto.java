@@ -5,93 +5,96 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustCorporateDto {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("type")
     private String type;
 
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("date_became_interested_person")
+    @JsonInclude(NON_NULL)
     private LocalDate dateBecameInterestedPerson;
 
-    @JsonProperty("registered_office_address")
+    @JsonInclude(NON_NULL)
     private AddressDto registeredOfficeAddress;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_line_1")
     private String roAddressLine1;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_line_2")
     private String roAddressLine2;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_care_of")
     private String roAddressCareOf;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_country")
     private String roAddressCountry;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_locality")
     private String roAddressLocality;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_po_box")
     private String roAddressPoBox;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_postal_code")
     private String roAddressPostalCode;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_premises")
     private String roAddressPremises;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_region")
     private String roAddressRegion;
 
     @JsonProperty("service_address")
     private AddressDto serviceAddress;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_line_1")
     private String saAddressLine1;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_line_2")
     private String saAddressLine2;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_care_of")
     private String saAddressCareOf;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_country")
     private String saAddressCountry;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_locality")
     private String saAddressLocality;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_po_box")
     private String saAddressPoBox;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_postal_code")
     private String saAddressPostalCode;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_premises")
     private String saAddressPremises;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
 
@@ -208,7 +211,7 @@ public class TrustCorporateDto {
 
     public AddressDto getRegisteredOfficeAddress() {
         // If the address is being set from the ro fields generate the address
-        if (roAddressPostalCode != null) {
+        if (Objects.nonNull(roAddressPostalCode)) {
             registeredOfficeAddress = new AddressDto();
             registeredOfficeAddress.setPropertyNameNumber(saAddressPremises);
             registeredOfficeAddress.setLine1(saAddressLine1);
@@ -301,7 +304,7 @@ public class TrustCorporateDto {
 
     public AddressDto getServiceAddress() {
         // If the address is being set from the sa fields generate the address
-        if (saAddressPostalCode != null) {
+        if (Objects.nonNull(saAddressPostalCode)) {
             serviceAddress = new AddressDto();
             serviceAddress.setPropertyNameNumber(saAddressPremises);
             serviceAddress.setLine1(saAddressLine1);
