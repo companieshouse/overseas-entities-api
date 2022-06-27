@@ -18,9 +18,11 @@ public class TrustCorporateDto {
     private String name;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("registered_office_address")
     private AddressDto registeredOfficeAddress;
 
     @JsonInclude(NON_NULL)

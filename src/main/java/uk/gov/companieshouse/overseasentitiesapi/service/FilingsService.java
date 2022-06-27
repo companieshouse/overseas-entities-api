@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -101,17 +102,17 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
 
-        if (submissionDto.getTrusts() != null) {
-            // Convert trust data to JSON string if it exists on transaction else set it to an empty string
+        String trustData = "";
+        if (Objects.nonNull(submissionDto.getTrusts())) {
+            // Convert trust data to JSON string if it exists on transaction else it's to an empty string
             ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
             try {
-                data.put(TRUST_DATA, mapper.writeValueAsString(submissionDto.getTrusts()));
+                trustData = mapper.writeValueAsString(submissionDto.getTrusts());
             } catch (JsonProcessingException e) {
                 throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
             }
-        } else {
-            data.put(TRUST_DATA, "");
         }
+        data.put(TRUST_DATA, trustData);
 
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }

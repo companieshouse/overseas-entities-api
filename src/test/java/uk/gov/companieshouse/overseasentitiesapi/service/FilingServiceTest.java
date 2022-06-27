@@ -156,6 +156,9 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
         assertTrue((filing.getData().get("trusts")) instanceof String);
+        final String trustData = ((String) filing.getData().get("trusts"));
+        assertTrue(trustData.contains("\"trust_id\":\"ID\""));
+        assertTrue(trustData.contains("\"trust_name\":\"Name\""));
 
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
