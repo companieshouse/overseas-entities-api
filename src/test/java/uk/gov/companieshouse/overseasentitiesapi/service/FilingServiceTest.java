@@ -3,6 +3,9 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -133,7 +137,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+    void testFilingGenerationWhenSuccessfulWithTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -156,9 +160,11 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
         assertTrue((filing.getData().get("trusts")) instanceof String);
-        final String trustData = ((String) filing.getData().get("trusts"));
-        assertTrue(trustData.contains("\"trust_id\":\"ID\""));
-        assertTrue(trustData.contains("\"trust_name\":\"Name\""));
+        final String trustsData = ((String) filing.getData().get("trusts"));
+        final JSONArray trustsDataJSON = new JSONArray(trustsData);
+        final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
+        assertEquals("ID", trustDataJSON.get("trust_id"));
+        assertEquals("Name", trustDataJSON.get("trust_name"));
 
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
