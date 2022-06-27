@@ -210,7 +210,8 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getRegisteredOfficeAddress() {
-        // If the address is being set from the ro fields generate the address
+        // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
+        // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
         if (Objects.nonNull(roAddressPostalCode)) {
             registeredOfficeAddress = new AddressDto();
             registeredOfficeAddress.setPropertyNameNumber(roAddressPremises);
@@ -303,7 +304,8 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getServiceAddress() {
-        // If the address is being set from the sa fields generate the address
+        // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
+        // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
         if (Objects.nonNull(saAddressPostalCode)) {
             serviceAddress = new AddressDto();
             serviceAddress.setPropertyNameNumber(saAddressPremises);
