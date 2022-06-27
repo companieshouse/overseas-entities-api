@@ -83,7 +83,7 @@ public class FilingsService {
         setDescriptionFields(filing);
     }
 
-    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException {
+    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
@@ -101,13 +101,18 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
 
-        // Convert trust data to JSON string
-        ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-        try {
-            data.put(TRUST_DATA, mapper.writeValueAsString(submissionDto.getTrusts()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        if (submissionDto.getTrusts() != null) {
+            // Convert trust data to JSON string if it exists on transaction else set it to an empty string
+            ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
+            try {
+                data.put(TRUST_DATA, mapper.writeValueAsString(submissionDto.getTrusts()));
+            } catch (JsonProcessingException e) {
+                throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
+            }
+        } else {
+            data.put(TRUST_DATA, "");
         }
+
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 

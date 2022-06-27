@@ -213,15 +213,15 @@ public class TrustCorporateDto {
         // If the address is being set from the ro fields generate the address
         if (Objects.nonNull(roAddressPostalCode)) {
             registeredOfficeAddress = new AddressDto();
-            registeredOfficeAddress.setPropertyNameNumber(saAddressPremises);
-            registeredOfficeAddress.setLine1(saAddressLine1);
-            registeredOfficeAddress.setLine2(saAddressLine2);
-            registeredOfficeAddress.setCounty(saAddressRegion);
-            registeredOfficeAddress.setLocality(saAddressLocality);
-            registeredOfficeAddress.setCountry(saAddressCountry);
-            registeredOfficeAddress.setCareOf(saAddressCareOf);
-            registeredOfficeAddress.setPoBox(saAddressPoBox);
-            registeredOfficeAddress.setPostcode(saAddressPostalCode);
+            registeredOfficeAddress.setPropertyNameNumber(roAddressPremises);
+            registeredOfficeAddress.setLine1(roAddressLine1);
+            registeredOfficeAddress.setLine2(roAddressLine2);
+            registeredOfficeAddress.setCounty(roAddressRegion);
+            registeredOfficeAddress.setLocality(roAddressLocality);
+            registeredOfficeAddress.setCountry(roAddressCountry);
+            registeredOfficeAddress.setCareOf(roAddressCareOf);
+            registeredOfficeAddress.setPoBox(roAddressPoBox);
+            registeredOfficeAddress.setPostcode(roAddressPostalCode);
         }
         return registeredOfficeAddress;
     }

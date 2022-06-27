@@ -133,7 +133,36 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+    void testFilingGenerationWhenSuccessfulWithTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        assertTrue((filing.getData().get("trusts")) instanceof String);
+
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -155,6 +184,8 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        final String trustDataDto = ((String) filing.getData().get("trusts"));
+        assertEquals("", trustDataDto);
 
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
