@@ -1,71 +1,102 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustCorporateDto {
+    @JsonInclude(NON_NULL)
     @JsonProperty("type")
     private String type;
 
     @JsonProperty("name")
     private String name;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registered_office_address")
+    private AddressDto registeredOfficeAddress;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_line_1")
     private String roAddressLine1;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_line_2")
     private String roAddressLine2;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_care_of")
     private String roAddressCareOf;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_country")
     private String roAddressCountry;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_locality")
     private String roAddressLocality;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_po_box")
     private String roAddressPoBox;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_postal_code")
     private String roAddressPostalCode;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_premises")
     private String roAddressPremises;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ro_address_region")
     private String roAddressRegion;
 
+    @JsonProperty("service_address")
+    private AddressDto serviceAddress;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_line_1")
     private String saAddressLine1;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_line_2")
     private String saAddressLine2;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_care_of")
     private String saAddressCareOf;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_country")
     private String saAddressCountry;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_locality")
     private String saAddressLocality;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_po_box")
     private String saAddressPoBox;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_postal_code")
     private String saAddressPostalCode;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_premises")
     private String saAddressPremises;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
 
@@ -181,17 +212,25 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getRegisteredOfficeAddress() {
-        var address = new AddressDto();
-        address.setPropertyNameNumber(roAddressPremises);
-        address.setLine1(roAddressLine1);
-        address.setLine2(roAddressLine2);
-        address.setCounty(roAddressRegion);
-        address.setLocality(roAddressLocality);
-        address.setCountry(roAddressCountry);
-        address.setCareOf(roAddressCareOf);
-        address.setPoBox(roAddressPoBox);
-        address.setPostcode(roAddressPostalCode);
-        return address;
+        // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
+        // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
+        if (Objects.nonNull(roAddressPostalCode)) {
+            registeredOfficeAddress = new AddressDto();
+            registeredOfficeAddress.setPropertyNameNumber(roAddressPremises);
+            registeredOfficeAddress.setLine1(roAddressLine1);
+            registeredOfficeAddress.setLine2(roAddressLine2);
+            registeredOfficeAddress.setCounty(roAddressRegion);
+            registeredOfficeAddress.setLocality(roAddressLocality);
+            registeredOfficeAddress.setCountry(roAddressCountry);
+            registeredOfficeAddress.setCareOf(roAddressCareOf);
+            registeredOfficeAddress.setPoBox(roAddressPoBox);
+            registeredOfficeAddress.setPostcode(roAddressPostalCode);
+        }
+        return registeredOfficeAddress;
+    }
+
+    public void setRegisteredOfficeAddress(AddressDto registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public String getSaAddressLine1() {
@@ -267,17 +306,25 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getServiceAddress() {
-        var serviceAddress = new AddressDto();
-        serviceAddress.setPropertyNameNumber(saAddressPremises);
-        serviceAddress.setLine1(saAddressLine1);
-        serviceAddress.setLine2(saAddressLine2);
-        serviceAddress.setCounty(saAddressRegion);
-        serviceAddress.setLocality(saAddressLocality);
-        serviceAddress.setCountry(saAddressCountry);
-        serviceAddress.setCareOf(saAddressCareOf);
-        serviceAddress.setPoBox(saAddressPoBox);
-        serviceAddress.setPostcode(saAddressPostalCode);
+        // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
+        // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
+        if (Objects.nonNull(saAddressPostalCode)) {
+            serviceAddress = new AddressDto();
+            serviceAddress.setPropertyNameNumber(saAddressPremises);
+            serviceAddress.setLine1(saAddressLine1);
+            serviceAddress.setLine2(saAddressLine2);
+            serviceAddress.setCounty(saAddressRegion);
+            serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setCountry(saAddressCountry);
+            serviceAddress.setCareOf(saAddressCareOf);
+            serviceAddress.setPoBox(saAddressPoBox);
+            serviceAddress.setPostcode(saAddressPostalCode);
+        }
         return serviceAddress;
+    }
+
+    public void setServiceAddress(AddressDto serviceAddress) {
+        this.serviceAddress = serviceAddress;
     }
 
     public String getIdentificationCountryRegistration() {

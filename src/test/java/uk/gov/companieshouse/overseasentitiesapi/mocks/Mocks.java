@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +35,13 @@ public class Mocks {
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualInFiling);
         List<ManagingOfficerCorporateDto> managingOfficersCorporateInFiling = buildManagingOfficersCorporateInFiling();
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateInFiling);
+        return overseasEntitySubmissionDto;
+    }
+
+    public static OverseasEntitySubmissionDto buildSubmissionDtoWithTrusts() {
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
+        List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling();
+        overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
         return overseasEntitySubmissionDto;
     }
 
@@ -99,5 +107,15 @@ public class Mocks {
         managingOfficerCorporateDto.setLegalForm("Legal FM");
         managingOfficersCorporateInFiling.add(managingOfficerCorporateDto);
         return managingOfficersCorporateInFiling;
+    }
+
+    private static List<TrustDataDto> buildTrustDataInFiling() {
+        List<TrustDataDto> trustDataDtos = new ArrayList<>();
+        TrustDataDto trustDataDto = new TrustDataDto();
+        trustDataDto.setTrustName("Name");
+        trustDataDto.setTrustId("ID");
+        trustDataDto.setCreationDate(LocalDate.of(2020, 4, 23));
+        trustDataDtos.add(trustDataDto);
+        return trustDataDtos;
     }
 }

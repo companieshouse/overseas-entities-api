@@ -17,6 +17,7 @@ public class OverseasEntitySubmissionDto {
     public static final String BENEFICIAL_OWNERS_CORPORATE_FIELD = "beneficial_owners_corporate";
     public static final String MANAGING_OFFICERS_INDIVIDUAL_FIELD = "managing_officers_individual";
     public static final String MANAGING_OFFICERS_CORPORATE_FIELD = "managing_officers_corporate";
+    public static final String TRUST_DATA = "trusts";
 
     @JsonProperty(PRESENTER)
     private PresenterDto presenter;
@@ -42,7 +43,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(MANAGING_OFFICERS_CORPORATE_FIELD)
     private List<ManagingOfficerCorporateDto> managingOfficersCorporate;
 
-    @JsonProperty("trusts")
+    @JsonProperty(TRUST_DATA)
     private List<TrustDataDto> trusts;
 
     @JsonProperty("links")

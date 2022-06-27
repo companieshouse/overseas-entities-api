@@ -8,6 +8,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapp
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
@@ -17,6 +18,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -26,9 +32,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -122,6 +133,12 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDao.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDao);
 
+        List<TrustDataDao> trustDataDao = new ArrayList<>();
+        TrustDataDao trustData = TrustMock.getTrustDataDao();
+        trustDataDao.add(trustData);
+        overseasEntitySubmission.setTrusts(trustDataDao);
+
+
         return overseasEntitySubmission;
     }
 
@@ -188,6 +205,12 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDto.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDto);
 
+
+        List<TrustDataDto> trustDataDto = new ArrayList<>();
+        TrustDataDto trustData = TrustMock.getTrustDataDto();
+        trustDataDto.add(trustData);
+        overseasEntitySubmission.setTrusts(trustDataDto);
+
         return overseasEntitySubmission;
     }
 
@@ -222,6 +245,7 @@ class DtoDaoMappingTest {
         assertGovernmentBeneficialOwnersAreEqual(dto, dao);
         assertManagingOfficerIndividualAreEqual(dto, dao);
         assertManagingOfficerCorporateAreEqual(dto, dao);
+        assertTrustsAreEqual(dto, dao);
     }
 
     private void assertIndividualBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
@@ -312,6 +336,48 @@ class DtoDaoMappingTest {
 
         assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());
         assertAddressesAreEqual(mocDto.getServiceAddress(), mocDao.getServiceAddress());
+    }
+
+    private void assertTrustsAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
+        TrustDataDao trustDao = dao.getTrusts().get(0);
+        TrustDataDto trustDto = dto.getTrusts().get(0);
+
+        assertEquals(trustDto.getTrustName(), trustDao.getTrustName());
+        assertEquals(trustDto.getCreationDate(), trustDao.getCreationDate());
+        assertEquals(trustDto.getUnableToObtainAllTrustInfo(), trustDao.isUnableToObtainAllTrustInfo());
+
+        assertTrustIndividualsAreEqual(trustDto.getIndividuals().get(0), trustDao.getIndividuals().get(0));
+        assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(0), trustDao.getHistoricalBeneficialOwners().get(0));
+        assertTrustCorporatesAreEqual(trustDto.getCorporates().get(0), trustDao.getCorporates().get(0) );
+    }
+
+    private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {
+        assertEquals(dto.getDateBecameInterestedPerson(), dao.getDateBecameInterestedPerson());
+        assertEquals(dto.getDateOfBirth(), dao.getDateOfBirth());
+        assertEquals(dto.getNationality(), dao.getNationality());
+        assertEquals(dto.getForename(), dao.getForename());
+        assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
+        assertEquals(dto.getSurname(), dao.getSurname());
+        assertEquals(dto.getType().toLowerCase(), dao.getType().getValue().toLowerCase());
+    }
+
+    private void assertTrustHistoricalBeneficialOwnerAreEqual(HistoricalBeneficialOwnerDto dto, HistoricalBeneficialOwnerDao dao) {
+        assertEquals(dto.getForename(), dao.getForename());
+        assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
+        assertEquals(dto.getSurname(), dao.getSurname());
+        assertEquals(dto.getCeasedDate(), dao.getCeasedDate());
+        assertEquals(dto.getNotifiedDate(), dao.getNotifiedDate());
+    }
+
+    private void assertTrustCorporatesAreEqual(TrustCorporateDto dto, TrustCorporateDao dao) {
+        assertEquals(dto.getName(), dao.getName());
+        assertEquals(dto.getDateBecameInterestedPerson(), dao.getDateBecameInterestedPerson());
+        assertEquals(dto.getType().toLowerCase(), dao.getType().getValue().toLowerCase());
+        assertEquals(dto.getIdentificationCountryRegistration(), dao.getIdentificationCountryRegistration());
+        assertEquals(dto.getIdentificationLegalAuthority(), dao.getIdentificationLegalAuthority());
+        assertEquals(dto.getIdentificationLegalForm(), dao.getIdentificationLegalForm());
+        assertEquals(dto.getIdentificationPlaceRegistered(), dao.getIdentificationPlaceRegistered());
+        assertEquals(dto.getIdentificationRegistrationNumber(), dao.getIdentificationRegistrationNumber());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {

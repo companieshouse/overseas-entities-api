@@ -1,9 +1,12 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustDataDto {
 
@@ -19,12 +22,15 @@ public class TrustDataDto {
     @JsonProperty("unable_to_obtain_all_trust_info")
     private Boolean unableToObtainAllTrustInfo;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("INDIVIDUAL")
     private List<TrustIndividualDto> individuals;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("HISTORICAL_BO")
     private List<HistoricalBeneficialOwnerDto> historicalBeneficialOwners;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("CORPORATE")
     private List<TrustCorporateDto> corporates;
 

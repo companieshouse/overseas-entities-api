@@ -3,6 +3,9 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -133,7 +137,41 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessful() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+    void testFilingGenerationWhenSuccessfulWithTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        assertTrue((filing.getData().get("trusts")) instanceof String);
+        final String trustsData = ((String) filing.getData().get("trusts"));
+        final JSONArray trustsDataJSON = new JSONArray(trustsData);
+        final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
+        assertEquals("ID", trustDataJSON.get("trust_id"));
+        assertEquals("Name", trustDataJSON.get("trust_name"));
+
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -155,6 +193,8 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+        final String trustDataDto = ((String) filing.getData().get("trusts"));
+        assertEquals("", trustDataDto);
 
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
