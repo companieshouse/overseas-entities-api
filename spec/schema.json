@@ -828,9 +828,7 @@
       "type": "string",
       "enum": [
         "ALL_IDENTIFIED_ALL_DETAILS",
-        "ALL_IDENTIFIED_SOME_DETAILS",
         "SOME_IDENTIFIED_ALL_DETAILS",
-        "SOME_IDENTIFIED_SOME_DETAILS",
         "NONE_IDENTIFIED"
       ]
     },
