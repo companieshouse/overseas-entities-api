@@ -124,11 +124,7 @@ public class FilingsService {
                             throw new ServiceException("No trusts exist for this filing but a trust id is provided for BO Individual "
                                     + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName());
                         }
-                        System.out.println(submissionDto.getTrusts().size());
-                        System.out.println(submissionDto.getTrusts().get(0).getTrustName());
                         for (TrustDataDto trust : submissionDto.getTrusts()) {
-                            System.out.println("trust.getTrustId = " + trust.getTrustId());
-                            System.out.println("trustId = " + trustId);
                             if (trust.getTrustId().equals(trustId)) {
                                 trustData.add(trust);
                             }
