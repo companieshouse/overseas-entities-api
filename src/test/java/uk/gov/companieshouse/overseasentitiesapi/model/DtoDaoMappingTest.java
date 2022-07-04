@@ -18,7 +18,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.BeneficialOwnerType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
@@ -39,7 +38,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividual
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -329,7 +327,6 @@ class DtoDaoMappingTest {
         assertEquals(mocDto.getOnRegisterInCountryFormedIn(), mocDao.getOnRegisterInCountryFormedIn());
         assertEquals(mocDto.getPublicRegisterName(), mocDao.getPublicRegisterName());
         assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
-        assertEquals(mocDto.getStartDate(), mocDao.getStartDate());
         assertEquals(mocDto.getRoleAndResponsibilities(), mocDao.getRoleAndResponsibilities());
         assertEquals(mocDto.getContactFullName(), mocDao.getContactFullName());
         assertEquals(mocDto.getContactEmail(), mocDao.getContactEmail());

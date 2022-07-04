@@ -2,8 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDate;
-
 public class ManagingOfficerCorporateDto {
     @JsonProperty("name")
     private String name;
@@ -31,9 +29,6 @@ public class ManagingOfficerCorporateDto {
 
     @JsonProperty("registration_number")
     private String registrationNumber;
-
-    @JsonProperty("start_date")
-    private LocalDate startDate;
 
     @JsonProperty("role_and_responsibilities")
     private String roleAndResponsibilities;
@@ -114,14 +109,6 @@ public class ManagingOfficerCorporateDto {
 
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 
     public String getRoleAndResponsibilities() {

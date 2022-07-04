@@ -2,8 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
-
 public class ManagingOfficerCorporateDao {
 
     @Field("name")
@@ -32,9 +30,6 @@ public class ManagingOfficerCorporateDao {
 
     @Field("registration_number")
     private String registrationNumber;
-
-    @Field("start_date")
-    private LocalDate startDate;
 
     @Field("role_and_responsibilities")
     private String roleAndResponsibilities;
@@ -116,15 +111,6 @@ public class ManagingOfficerCorporateDao {
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
 
     public String getRoleAndResponsibilities() {
         return roleAndResponsibilities;

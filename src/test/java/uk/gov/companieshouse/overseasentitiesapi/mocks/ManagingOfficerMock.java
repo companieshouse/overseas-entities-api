@@ -49,7 +49,6 @@ public class ManagingOfficerMock {
         dto.setOnRegisterInCountryFormedIn(true);
         dto.setPublicRegisterName("Public register");
         dto.setRegistrationNumber("11223344");
-        dto.setStartDate(LocalDate.of(2015,1,1));
         dto.setRoleAndResponsibilities("role and responsibilities text");
         dto.setContactFullName("Joe Bloggs");
         dto.setContactEmail("jbloggs@bloggs.co.ru");
@@ -67,7 +66,6 @@ public class ManagingOfficerMock {
         dao.setOnRegisterInCountryFormedIn(true);
         dao.setPublicRegisterName("Public register");
         dao.setRegistrationNumber("11223344");
-        dao.setStartDate(LocalDate.of(2015,1,1));
         dao.setRoleAndResponsibilities("role and responsibilities text");
         dao.setContactFullName("Joe Bloggs");
         dao.setContactEmail("jbloggs@bloggs.co.ru");
