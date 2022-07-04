@@ -150,30 +150,32 @@ public class FilingsService {
     private List<TrustDataDto> getTrustData(OverseasEntitySubmissionDto submissionDto, List<String> trustIds, String noTrustsExceptionMessage) throws ServiceException {
         List<TrustDataDto> trustsDataForBO = new ArrayList<>();
         // Loop through each trustId(s) and lookup the information for that trust
-        if (Objects.nonNull(trustIds)) {
-            for (String trustId : trustIds) {
-                List<TrustDataDto> trustData = new ArrayList<>();
+        if (Objects.isNull(trustIds)) {
+            return trustsDataForBO;
+        }
 
-                if (Objects.isNull(submissionDto.getTrusts())) {
-                    throw new ServiceException(noTrustsExceptionMessage);
-                }
-                for (TrustDataDto trust : submissionDto.getTrusts()) {
-                    if (trust.getTrustId().equals(trustId)) {
-                        trustData.add(trust);
-                    }
-                }
+        for (String trustId : trustIds) {
+            List<TrustDataDto> trustData = new ArrayList<>();
 
-                // If there is more than one trust with the same ID throw an error
-                if (trustData.size() > 1) {
-                    throw new ServiceException("There is more than one trust with the ID: " + trustId);
-                }
-                // If there are is no trust with that ID throw an error
-                if (trustData.isEmpty()) {
-                    throw new ServiceException("There are no trusts for the ID: " + trustId);
-                }
-
-                trustsDataForBO.add(trustData.get(0));
+            if (Objects.isNull(submissionDto.getTrusts())) {
+                throw new ServiceException(noTrustsExceptionMessage);
             }
+            for (TrustDataDto trust : submissionDto.getTrusts()) {
+                if (trust.getTrustId().equals(trustId)) {
+                    trustData.add(trust);
+                }
+            }
+
+            // If there is more than one trust with the same ID throw an error
+            if (trustData.size() > 1) {
+                throw new ServiceException("There is more than one trust with the ID: " + trustId);
+            }
+            // If there are is no trust with that ID throw an error
+            if (trustData.isEmpty()) {
+                throw new ServiceException("There are no trusts for the ID: " + trustId);
+            }
+
+            trustsDataForBO.add(trustData.get(0));
         }
 
         return trustsDataForBO;
