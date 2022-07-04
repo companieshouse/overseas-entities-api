@@ -349,7 +349,8 @@
         "trust_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "example": "1"
           }
         }
       }
@@ -412,7 +413,8 @@
         "trust_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "example": "1"
           }
         }
       }
@@ -456,12 +458,6 @@
         },
         "is_on_sanctions_list": {
           "type": "boolean"
-        },
-        "trust_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -563,7 +559,8 @@
       "type": "object",
       "properties": {
         "trust_id": {
-          "type": "string"
+          "type": "string",
+          "example": "1"
         },
         "trust_name": {
           "type": "string"

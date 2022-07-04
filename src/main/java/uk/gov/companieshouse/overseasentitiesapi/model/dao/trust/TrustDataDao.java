@@ -28,7 +28,7 @@ public class TrustDataDao {
     @Field("corporates")
     private List<TrustCorporateDao> corporates;
 
-    public String getId() {
+    public String getTrustId() {
         return trustId;
     }
 

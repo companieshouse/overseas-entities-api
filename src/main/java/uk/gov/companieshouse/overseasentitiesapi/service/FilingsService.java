@@ -13,13 +13,18 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,7 +38,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -95,26 +99,124 @@ public class FilingsService {
 
         data.put(PRESENTER, submissionDto.getPresenter());
         data.put(ENTITY_FIELD, submissionDto.getEntity());
-        data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, submissionDto.getBeneficialOwnersIndividual());
+        data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, getBeneficialOwnersIndividualSubmissionData(submissionDto));
         data.put(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
-        data.put(BENEFICIAL_OWNERS_CORPORATE_FIELD, submissionDto.getBeneficialOwnersCorporate());
+        data.put(BENEFICIAL_OWNERS_CORPORATE_FIELD, getBeneficialOwnersCorporateSubmissionData(submissionDto));
         data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
 
-        String trustData = "";
-        if (Objects.nonNull(submissionDto.getTrusts())) {
-            // Convert trust data to JSON string if it exists on transaction else it's to an empty string
-            ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-            try {
-                trustData = mapper.writeValueAsString(submissionDto.getTrusts());
-            } catch (JsonProcessingException e) {
-                throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
+        ApiLogger.debug("Submission data has been set on filing", logMap);
+    }
+
+    private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+        List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualSubmissionData = new ArrayList<>();
+
+        if (Objects.nonNull(submissionDto.getBeneficialOwnersIndividual())) {
+            for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
+                List<TrustDataDto> trustsDataForBO = new ArrayList<>();
+                // Loop through each trustId(s) and lookup the information for that trust
+                if (Objects.nonNull(beneficialOwner.getTrustIds())) {
+                    for (String trustId : beneficialOwner.getTrustIds()) {
+                        List<TrustDataDto> trustData = new ArrayList<>();
+
+                        if (!Objects.nonNull(submissionDto.getTrusts())) {
+                            throw new ServiceException("No trusts exist for this filing but a trust id is provided for BO Individual "
+                                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName());
+                        }
+                        System.out.println(submissionDto.getTrusts().size());
+                        System.out.println(submissionDto.getTrusts().get(0).getTrustName());
+                        for (TrustDataDto trust : submissionDto.getTrusts()) {
+                            System.out.println("trust.getTrustId = " + trust.getTrustId());
+                            System.out.println("trustId = " + trustId);
+                            if (trust.getTrustId().equals(trustId)) {
+                                trustData.add(trust);
+                            }
+                        }
+
+                        // If there is more than one trust with the same ID throw an error
+                        if (trustData.size() > 1) {
+                            throw new ServiceException("There is more than one trust with the ID: " + trustId);
+                        }
+                        // If there are is no trust with that ID throw an error
+                        if (trustData.isEmpty()) {
+                            throw new ServiceException("There are no trusts for the ID: " + trustId);
+                        }
+
+                        trustsDataForBO.add(trustData.get(0));
+                    }
+                }
+
+                String trustData = "";
+                if (!trustsDataForBO.isEmpty()) {
+                    // Convert trust data to JSON string if it exists on transaction else it's to an empty string
+                    ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
+                    try {
+                        trustData = mapper.writeValueAsString(trustsDataForBO);
+                    } catch (JsonProcessingException e) {
+                        throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
+                    }
+                }
+
+                beneficialOwner.setTrustData(trustData);
+                beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
             }
         }
-        data.put(TRUST_DATA, trustData);
 
-        ApiLogger.debug("Submission data has been set on filing", logMap);
+        return beneficialOwnersIndividualSubmissionData;
+    }
+
+    private List<BeneficialOwnerCorporateDto> getBeneficialOwnersCorporateSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+        List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateSubmissionData = new ArrayList<>();
+
+        if (Objects.nonNull(submissionDto.getBeneficialOwnersCorporate())) {
+            for (BeneficialOwnerCorporateDto beneficialOwner : submissionDto.getBeneficialOwnersCorporate()) {
+                List<TrustDataDto> trustsDataForBO = new ArrayList<>();
+                // Loop through each trustId(s) and lookup the information for that trust
+                if (Objects.nonNull(beneficialOwner.getTrustIds())) {
+                    for (String trustId : beneficialOwner.getTrustIds()) {
+                        List<TrustDataDto> trustData = new ArrayList<>();
+
+                        if (!Objects.nonNull(submissionDto.getTrusts())) {
+                            throw new ServiceException("No trusts exist for this filing but a trust id is provided for BO Corporate "
+                                    + beneficialOwner.getPublicRegisterName());
+                        }
+                        for (TrustDataDto trust : submissionDto.getTrusts()) {
+                            if (trust.getTrustId().equals(trustId)) {
+                                trustData.add(trust);
+                            }
+                        }
+
+                        // If there is more than one trust with the same ID throw an error
+                        if (trustData.size() > 1) {
+                            throw new ServiceException("There is more than one trust with the ID: " + trustId);
+                        }
+                        // If there are is no trust with that ID throw an error
+                        if (trustData.isEmpty()) {
+                            throw new ServiceException("There are no trusts for the ID: " + trustId);
+                        }
+
+                        trustsDataForBO.add(trustData.get(0));
+                    }
+                }
+
+                String trustData = "";
+                if (!trustsDataForBO.isEmpty()) {
+                    // Convert trust data to JSON string if it exists on transaction else it's to an empty string
+                    ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
+                    try {
+                        trustData = mapper.writeValueAsString(trustsDataForBO);
+                    } catch (JsonProcessingException e) {
+                        throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
+                    }
+                }
+
+                beneficialOwner.setTrustData(trustData);
+                beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
+            }
+        }
+
+        return beneficialOwnersCorporateSubmissionData;
     }
 
     private void setPaymentData(Map<String, Object> data, Transaction transaction, String passthroughTokenHeader, Map<String, Object> logMap) throws ServiceException {
