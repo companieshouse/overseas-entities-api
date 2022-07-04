@@ -112,51 +112,17 @@ public class FilingsService {
     private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualSubmissionData = new ArrayList<>();
 
-        if (Objects.nonNull(submissionDto.getBeneficialOwnersIndividual())) {
-            for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
-                List<TrustDataDto> trustsDataForBO = new ArrayList<>();
-                // Loop through each trustId(s) and lookup the information for that trust
-                if (Objects.nonNull(beneficialOwner.getTrustIds())) {
-                    for (String trustId : beneficialOwner.getTrustIds()) {
-                        List<TrustDataDto> trustData = new ArrayList<>();
+        if (Objects.isNull(submissionDto.getBeneficialOwnersIndividual())) {
+            return beneficialOwnersIndividualSubmissionData;
+        }
 
-                        if (!Objects.nonNull(submissionDto.getTrusts())) {
-                            throw new ServiceException("No trusts exist for this filing but a trust id is provided for BO Individual "
-                                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName());
-                        }
-                        for (TrustDataDto trust : submissionDto.getTrusts()) {
-                            if (trust.getTrustId().equals(trustId)) {
-                                trustData.add(trust);
-                            }
-                        }
+        for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
+            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
+                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
 
-                        // If there is more than one trust with the same ID throw an error
-                        if (trustData.size() > 1) {
-                            throw new ServiceException("There is more than one trust with the ID: " + trustId);
-                        }
-                        // If there are is no trust with that ID throw an error
-                        if (trustData.isEmpty()) {
-                            throw new ServiceException("There are no trusts for the ID: " + trustId);
-                        }
-
-                        trustsDataForBO.add(trustData.get(0));
-                    }
-                }
-
-                String trustData = "";
-                if (!trustsDataForBO.isEmpty()) {
-                    // Convert trust data to JSON string if it exists on transaction else it's to an empty string
-                    ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-                    try {
-                        trustData = mapper.writeValueAsString(trustsDataForBO);
-                    } catch (JsonProcessingException e) {
-                        throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
-                    }
-                }
-
-                beneficialOwner.setTrustData(trustData);
-                beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
-            }
+            List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
+            beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
         }
 
         return beneficialOwnersIndividualSubmissionData;
@@ -165,54 +131,66 @@ public class FilingsService {
     private List<BeneficialOwnerCorporateDto> getBeneficialOwnersCorporateSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateSubmissionData = new ArrayList<>();
 
-        if (Objects.nonNull(submissionDto.getBeneficialOwnersCorporate())) {
-            for (BeneficialOwnerCorporateDto beneficialOwner : submissionDto.getBeneficialOwnersCorporate()) {
-                List<TrustDataDto> trustsDataForBO = new ArrayList<>();
-                // Loop through each trustId(s) and lookup the information for that trust
-                if (Objects.nonNull(beneficialOwner.getTrustIds())) {
-                    for (String trustId : beneficialOwner.getTrustIds()) {
-                        List<TrustDataDto> trustData = new ArrayList<>();
+        if (Objects.isNull(submissionDto.getBeneficialOwnersCorporate())) {
+            return beneficialOwnersCorporateSubmissionData;
+        }
 
-                        if (!Objects.nonNull(submissionDto.getTrusts())) {
-                            throw new ServiceException("No trusts exist for this filing but a trust id is provided for BO Corporate "
-                                    + beneficialOwner.getPublicRegisterName());
-                        }
-                        for (TrustDataDto trust : submissionDto.getTrusts()) {
-                            if (trust.getTrustId().equals(trustId)) {
-                                trustData.add(trust);
-                            }
-                        }
+        for (BeneficialOwnerCorporateDto beneficialOwner : submissionDto.getBeneficialOwnersCorporate()) {
+            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Corporate "
+                    + beneficialOwner.getPublicRegisterName();
 
-                        // If there is more than one trust with the same ID throw an error
-                        if (trustData.size() > 1) {
-                            throw new ServiceException("There is more than one trust with the ID: " + trustId);
-                        }
-                        // If there are is no trust with that ID throw an error
-                        if (trustData.isEmpty()) {
-                            throw new ServiceException("There are no trusts for the ID: " + trustId);
-                        }
-
-                        trustsDataForBO.add(trustData.get(0));
-                    }
-                }
-
-                String trustData = "";
-                if (!trustsDataForBO.isEmpty()) {
-                    // Convert trust data to JSON string if it exists on transaction else it's to an empty string
-                    ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-                    try {
-                        trustData = mapper.writeValueAsString(trustsDataForBO);
-                    } catch (JsonProcessingException e) {
-                        throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
-                    }
-                }
-
-                beneficialOwner.setTrustData(trustData);
-                beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
-            }
+            List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
+            beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
         }
 
         return beneficialOwnersCorporateSubmissionData;
+    }
+
+    private List<TrustDataDto> getTrustData(OverseasEntitySubmissionDto submissionDto, List<String> trustIds, String noTrustsExceptionMessage) throws ServiceException {
+        List<TrustDataDto> trustsDataForBO = new ArrayList<>();
+        // Loop through each trustId(s) and lookup the information for that trust
+        if (Objects.nonNull(trustIds)) {
+            for (String trustId : trustIds) {
+                List<TrustDataDto> trustData = new ArrayList<>();
+
+                if (Objects.isNull(submissionDto.getTrusts())) {
+                    throw new ServiceException(noTrustsExceptionMessage);
+                }
+                for (TrustDataDto trust : submissionDto.getTrusts()) {
+                    if (trust.getTrustId().equals(trustId)) {
+                        trustData.add(trust);
+                    }
+                }
+
+                // If there is more than one trust with the same ID throw an error
+                if (trustData.size() > 1) {
+                    throw new ServiceException("There is more than one trust with the ID: " + trustId);
+                }
+                // If there are is no trust with that ID throw an error
+                if (trustData.isEmpty()) {
+                    throw new ServiceException("There are no trusts for the ID: " + trustId);
+                }
+
+                trustsDataForBO.add(trustData.get(0));
+            }
+        }
+
+        return trustsDataForBO;
+    }
+
+    private String convertTrustDataToString(List<TrustDataDto> trustsDataForBO) throws ServiceException {
+        String trustData = "";
+        if (!trustsDataForBO.isEmpty()) {
+            // Convert trust data to JSON string if it exists on transaction else it's to an empty string
+            ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
+            try {
+                trustData = mapper.writeValueAsString(trustsDataForBO);
+            } catch (JsonProcessingException e) {
+                throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
+            }
+        }
+        return trustData;
     }
 
     private void setPaymentData(Map<String, Object> data, Transaction transaction, String passthroughTokenHeader, Map<String, Object> logMap) throws ServiceException {
