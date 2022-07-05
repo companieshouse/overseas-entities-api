@@ -2,9 +2,9 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
@@ -56,14 +56,17 @@ public class FilingsService {
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
     private final Supplier<LocalDate> dateNowSupplier;
+    private final ObjectMapper getObjectMapper;
 
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
                           ApiClientService apiClientService,
-                          Supplier<LocalDate> dateNowSupplier) {
+                          Supplier<LocalDate> dateNowSupplier,
+                          ObjectMapper getObjectMapper) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
+        this.getObjectMapper = getObjectMapper;
     }
 
     public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -185,9 +188,8 @@ public class FilingsService {
         String trustData = "";
         if (!trustsDataForBO.isEmpty()) {
             // Convert trust data to JSON string if it exists on transaction else it's to an empty string
-            ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
             try {
-                trustData = mapper.writeValueAsString(trustsDataForBO);
+                trustData = getObjectMapper.writeValueAsString(trustsDataForBO);
             } catch (JsonProcessingException e) {
                 throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
             }
