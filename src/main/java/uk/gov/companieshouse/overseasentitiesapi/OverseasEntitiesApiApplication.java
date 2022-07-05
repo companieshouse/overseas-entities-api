@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +17,10 @@ public class OverseasEntitiesApiApplication {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return JsonMapper.builder().findAndAddModules().build();
+        ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return objectMapper;
     }
 
     public static void main(String[] args) {
