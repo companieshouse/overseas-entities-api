@@ -47,6 +47,9 @@ public class BeneficialOwnerIndividualDto {
     @JsonProperty("trust_ids")
     private List<String> trustIds;
 
+    @JsonProperty("trust_data")
+    private String trustData;
+
     public String getFirstName() {
         return firstName;
     }
@@ -149,5 +152,13 @@ public class BeneficialOwnerIndividualDto {
 
     public void setTrustIds(List<String> trustIds) {
         this.trustIds = trustIds;
+    }
+
+    public String getTrustData() {
+        return trustData;
+    }
+
+    public void setTrustData(String trustData) {
+        this.trustData = trustData;
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import org.json.JSONArray;
@@ -49,6 +50,7 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,6 +78,9 @@ class FilingServiceTest {
 
     @InjectMocks
     private FilingsService filingsService;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
@@ -136,40 +141,6 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
-        initTransactionPaymentLinkMocks();
-        initGetPaymentMocks();
-        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
-        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
-        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithTrusts();
-        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
-        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-
-        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-
-        verify(localDateSupplier, times(1)).get();
-        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
-        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
-        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
-        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
-        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
-        assertEquals("user@domain.roe", presenterInFiling.getEmail());
-        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
-        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
-        assertTrue((filing.getData().get("trusts")) instanceof String);
-        final String trustsData = ((String) filing.getData().get("trusts"));
-        final JSONArray trustsDataJSON = new JSONArray(trustsData);
-        final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
-        assertEquals("ID", trustDataJSON.get("trust_id"));
-        assertEquals("Name", trustDataJSON.get("trust_name"));
-
-        checkBeneficialOwners(filing);
-        checkManagingOfficers(filing);
-    }
-
-    @Test
     void testFilingGenerationWhenSuccessfulWithoutTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
@@ -192,11 +163,317 @@ class FilingServiceTest {
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
-        final String trustDataDto = ((String) filing.getData().get("trusts"));
-        assertEquals("", trustDataDto);
 
+        checkTrustDataIsEmpty(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithBOIndividualTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataIndividual(filing, 0, "1");
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoIndividualTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataIndividual(filing, 0, "1");
+        checkTrustDataIndividual(filing, 1, "2");
+        checkTrustDataIndividual(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithBOCorporateTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataCorporate(filing, 0, "1");
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataCorporate(filing, 0, "1");
+        checkTrustDataCorporate(filing, 1, "2");
+        checkTrustDataCorporate(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrustsAndThreeIndividualTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]",
+                "[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataCorporate(filing, 0, "1");
+        checkTrustDataCorporate(filing, 1, "2");
+        checkTrustDataCorporate(filing, 2, "3");
+
+        checkTrustDataIndividual(filing, 0, "1");
+        checkTrustDataIndividual(filing, 1, "2");
+        checkTrustDataIndividual(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithThreeTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
+                        "{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
+                        "{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataIndividualWithThreeTrusts(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithThreeTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+                "[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
+                        "{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
+                        "{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]"
+        );
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkTrustDataCorporateWithThreeTrusts(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOIndividualMoreThanOneTrustID() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithTwoTrustsSameID();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOIndividualNoTrustExists() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualNoTrustExists();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOIndividualTrustDataIsEmpty() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrustDataIsEmpty();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOCorporateMoreThanOneTrustID() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithTwoTrustsSameID();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOCorporateNoTrustExists() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateNoTrustExists();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testFilingGenerationThrowsExceptionWithBOCorporateTrustDataIsEmpty() {
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrustDataIsEmpty();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
 
     @Test
@@ -204,6 +481,69 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
                 when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+    }
+
+    private void checkTrustDataIsEmpty(FilingApi filing) {
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        assertEquals("", beneficialOwnerIndividualDto.getTrustData());
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.get(0);
+        assertEquals("", beneficialOwnerCorporateDto.getTrustData());
+    }
+
+    private void checkTrustDataIndividual(FilingApi filing, int boIndex, String trustId) throws JSONException {
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
+        final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerIndividualDto.getTrustData());
+        final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
+        assertEquals(trustId, trustDataJSON.get("trust_id"));
+        assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
+    }
+
+    private void checkTrustDataIndividualWithThreeTrusts(FilingApi filing) throws JSONException {
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerIndividualDto.getTrustData());
+
+        final JSONObject trustDataJSON1 = trustsDataJSON.getJSONObject(0);
+        assertEquals("1", trustDataJSON1.get("trust_id"));
+        assertEquals("Trust Name 1", trustDataJSON1.get("trust_name"));
+
+        final JSONObject trustDataJSON2 = trustsDataJSON.getJSONObject(1);
+        assertEquals("2", trustDataJSON2.get("trust_id"));
+        assertEquals("Trust Name 2", trustDataJSON2.get("trust_name"));
+
+        final JSONObject trustDataJSON3 = trustsDataJSON.getJSONObject(2);
+        assertEquals("3", trustDataJSON3.get("trust_id"));
+        assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
+    }
+
+    private void checkTrustDataCorporate(FilingApi filing, int boIndex, String trustId) throws JSONException {
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
+        final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerCorporateDto.getTrustData());
+        final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
+        assertEquals(trustId, trustDataJSON.get("trust_id"));
+        assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
+    }
+
+    private void checkTrustDataCorporateWithThreeTrusts(FilingApi filing) throws JSONException {
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(0);
+        final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerCorporateDto.getTrustData());
+
+        final JSONObject trustDataJSON1 = trustsDataJSON.getJSONObject(0);
+        assertEquals("1", trustDataJSON1.get("trust_id"));
+        assertEquals("Trust Name 1", trustDataJSON1.get("trust_name"));
+
+        final JSONObject trustDataJSON2 = trustsDataJSON.getJSONObject(1);
+        assertEquals("2", trustDataJSON2.get("trust_id"));
+        assertEquals("Trust Name 2", trustDataJSON2.get("trust_name"));
+
+        final JSONObject trustDataJSON3 = trustsDataJSON.getJSONObject(2);
+        assertEquals("3", trustDataJSON3.get("trust_id"));
+        assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
     private void checkManagingOfficers(FilingApi filing) {

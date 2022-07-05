@@ -1,11 +1,14 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class OverseasEntitySubmissionDto {
 
@@ -43,6 +46,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(MANAGING_OFFICERS_CORPORATE_FIELD)
     private List<ManagingOfficerCorporateDto> managingOfficersCorporate;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty(TRUST_DATA)
     private List<TrustDataDto> trusts;
 
