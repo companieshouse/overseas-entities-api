@@ -56,17 +56,17 @@ public class FilingsService {
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
     private final Supplier<LocalDate> dateNowSupplier;
-    private final ObjectMapper getObjectMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
                           ApiClientService apiClientService,
                           Supplier<LocalDate> dateNowSupplier,
-                          ObjectMapper getObjectMapper) {
+                          ObjectMapper objectMapper) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
-        this.getObjectMapper = getObjectMapper;
+        this.objectMapper = objectMapper;
     }
 
     public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -189,7 +189,7 @@ public class FilingsService {
         if (!trustsDataForBO.isEmpty()) {
             // Convert trust data to JSON string if it exists on transaction else it's to an empty string
             try {
-                trustData = getObjectMapper.writeValueAsString(trustsDataForBO);
+                trustData = objectMapper.writeValueAsString(trustsDataForBO);
             } catch (JsonProcessingException e) {
                 throw new ServiceException("Error converting trust data to JSON " + e.getMessage(), e);
             }

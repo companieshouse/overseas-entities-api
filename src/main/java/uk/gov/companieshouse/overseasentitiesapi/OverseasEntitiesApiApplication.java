@@ -15,7 +15,7 @@ public class OverseasEntitiesApiApplication {
     public static final String APP_NAMESPACE = "overseas-entities-api";
 
     @Bean
-    public ObjectMapper getObjectMapper() {
+    public ObjectMapper objectMapper() {
         return JsonMapper.builder().findAndAddModules().build();
     }
 
