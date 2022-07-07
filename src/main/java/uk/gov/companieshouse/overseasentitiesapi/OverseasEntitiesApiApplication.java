@@ -1,11 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
@@ -14,14 +10,6 @@ import java.util.TimeZone;
 public class OverseasEntitiesApiApplication {
 
     public static final String APP_NAMESPACE = "overseas-entities-api";
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        return objectMapper;
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(OverseasEntitiesApiApplication.class, args);
