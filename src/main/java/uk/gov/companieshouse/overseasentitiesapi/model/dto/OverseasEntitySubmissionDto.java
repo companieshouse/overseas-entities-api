@@ -3,7 +3,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.DueDiligenceDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;

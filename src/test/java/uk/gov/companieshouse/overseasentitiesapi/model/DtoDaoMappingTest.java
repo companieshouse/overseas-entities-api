@@ -17,7 +17,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateD
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
