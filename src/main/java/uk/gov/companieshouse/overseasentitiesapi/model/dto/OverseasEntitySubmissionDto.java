@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.DueDiligenceDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public class OverseasEntitySubmissionDto {
 
     public static final String PRESENTER = "presenter";
     public static final String ENTITY_FIELD = "entity";
+
+    public static final String DUE_DILIGENCE = "due_diligence";
     public static final String BENEFICIAL_OWNERS_STATEMENT = "beneficial_owners_statement";
     public static final String BENEFICIAL_OWNERS_INDIVIDUAL_FIELD = "beneficial_owners_individual";
     public static final String BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD = "beneficial_owners_government_or_public_authority";
@@ -27,6 +30,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(ENTITY_FIELD)
     private EntityDto entity;
+
+    @JsonProperty(DUE_DILIGENCE)
+    private DueDiligenceDto dueDiligence;
 
     @JsonProperty(BENEFICIAL_OWNERS_STATEMENT)
     private BeneficialOwnersStatementType beneficialOwnersStatement;
@@ -67,6 +73,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setEntity(EntityDto entity) {
         this.entity = entity;
+    }
+
+    public DueDiligenceDto getDueDiligence() {
+        return dueDiligence;
+    }
+
+    public void setDueDiligence(DueDiligenceDto dueDiligence) {
+        this.dueDiligence = dueDiligence;
     }
 
     public BeneficialOwnersStatementType getBeneficialOwnersStatement() {

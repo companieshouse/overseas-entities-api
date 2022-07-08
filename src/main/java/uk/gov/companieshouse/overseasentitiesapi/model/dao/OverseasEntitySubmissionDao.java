@@ -31,6 +31,9 @@ public class OverseasEntitySubmissionDao {
     @Field("entity")
     private EntityDao entity;
 
+    @Field("due_diligence")
+    private DueDiligenceDao dueDiligence;
+
     @Field("beneficial_owners_statement")
     private BeneficialOwnersStatementType beneficialOwnersStatement;
 
@@ -77,6 +80,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setEntity(EntityDao entity) {
         this.entity = entity;
+    }
+
+    public DueDiligenceDao getDueDiligence() {
+        return dueDiligence;
+    }
+
+    public void setDueDiligence(DueDiligenceDao dueDiligence) {
+        this.dueDiligence = dueDiligence;
     }
 
     public BeneficialOwnersStatementType getBeneficialOwnersStatement() {
