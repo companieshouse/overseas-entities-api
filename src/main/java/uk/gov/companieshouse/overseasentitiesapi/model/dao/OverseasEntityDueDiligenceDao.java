@@ -4,7 +4,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 
-public class DueDiligenceDao {
+public class OverseasEntityDueDiligenceDao {
+
     @Field("identity_date")
     private LocalDate identityDate;
     @Field("name")
@@ -17,12 +18,8 @@ public class DueDiligenceDao {
     private String supervisoryName;
     @Field("aml_number")
     private String amlNumber;
-    @Field("agent_code")
-    private String agentCode;
     @Field("partner_name")
     private String partnerName;
-    @Field("diligence")
-    private String diligence;
 
     public LocalDate getIdentityDate() {
         return identityDate;
@@ -72,27 +69,11 @@ public class DueDiligenceDao {
         this.amlNumber = amlNumber;
     }
 
-    public String getAgentCode() {
-        return agentCode;
-    }
-
-    public void setAgentCode(String agentCode) {
-        this.agentCode = agentCode;
-    }
-
     public String getPartnerName() {
         return partnerName;
     }
 
     public void setPartnerName(String partnerName) {
         this.partnerName = partnerName;
-    }
-
-    public String getDiligence() {
-        return diligence;
-    }
-
-    public void setDiligence(String diligence) {
-        this.diligence = diligence;
     }
 }

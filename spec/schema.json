@@ -189,6 +189,9 @@
         "due_diligence" : {
           "$ref": "#/definitions/DueDiligence"
         },
+        "overseas_entity_due_diligence" : {
+          "$ref": "#/definitions/OverseasEntityDueDiligence"
+        },
         "beneficial_owners_statement": {
           "$ref": "#/definitions/BeneficialOwnersStatementType"
         },
@@ -309,7 +312,7 @@
         "name": {
           "type": "string"
         },
-        "address": {
+        "identity_address": {
           "$ref": "#/definitions/Address"
         },
         "email": {
@@ -328,6 +331,33 @@
           "type": "string"
         },
         "diligence": {
+          "type": "string"
+        }
+      }
+    },
+    "OverseasEntityDueDiligence": {
+      "type": "object",
+      "properties": {
+        "identity_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "name": {
+          "type": "string"
+        },
+        "identity_address": {
+          "$ref": "#/definitions/Address"
+        },
+        "email": {
+          "type": "string"
+        },
+        "supervisory_name": {
+          "type": "string"
+        },
+        "aml_number": {
+          "type": "string"
+        },
+        "partner_name": {
           "type": "string"
         }
       }

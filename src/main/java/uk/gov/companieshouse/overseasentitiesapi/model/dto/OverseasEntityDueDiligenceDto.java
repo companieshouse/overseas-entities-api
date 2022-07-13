@@ -1,28 +1,25 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.dao;
+package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 
-public class DueDiligenceDao {
-    @Field("identity_date")
+public class OverseasEntityDueDiligenceDto {
+
+    @JsonProperty("identity_date")
     private LocalDate identityDate;
-    @Field("name")
+    @JsonProperty("name")
     private String name;
-    @Field("identity_address")
-    private AddressDao address;
-    @Field("email")
+    @JsonProperty("identity_address")
+    private AddressDto address;
+    @JsonProperty("email")
     private String email;
-    @Field("supervisory_name")
+    @JsonProperty("supervisory_name")
     private String supervisoryName;
-    @Field("aml_number")
+    @JsonProperty("aml_number")
     private String amlNumber;
-    @Field("agent_code")
-    private String agentCode;
-    @Field("partner_name")
+    @JsonProperty("partner_name")
     private String partnerName;
-    @Field("diligence")
-    private String diligence;
 
     public LocalDate getIdentityDate() {
         return identityDate;
@@ -40,11 +37,11 @@ public class DueDiligenceDao {
         this.name = name;
     }
 
-    public AddressDao getAddress() {
+    public AddressDto getAddress() {
         return address;
     }
 
-    public void setAddress(AddressDao address) {
+    public void setAddress(AddressDto address) {
         this.address = address;
     }
 
@@ -72,27 +69,11 @@ public class DueDiligenceDao {
         this.amlNumber = amlNumber;
     }
 
-    public String getAgentCode() {
-        return agentCode;
-    }
-
-    public void setAgentCode(String agentCode) {
-        this.agentCode = agentCode;
-    }
-
     public String getPartnerName() {
         return partnerName;
     }
 
     public void setPartnerName(String partnerName) {
         this.partnerName = partnerName;
-    }
-
-    public String getDiligence() {
-        return diligence;
-    }
-
-    public void setDiligence(String diligence) {
-        this.diligence = diligence;
     }
 }
