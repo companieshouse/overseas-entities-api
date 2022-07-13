@@ -26,6 +26,7 @@ public class Mocks {
         overseasEntitySubmissionDto.setPresenter(presenter);
         DueDiligenceDto dueDiligence = buildDueDiligenceDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligence);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto());
         BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS;
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = buildBeneficialOwnersIndividualInFiling();

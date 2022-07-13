@@ -6,27 +6,35 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import java.time.LocalDate;
 
 public class OverseasEntityDueDiligenceMock {
+
+    public static final LocalDate IDENTITY_DATE = LocalDate.of(2022,1,1);
+    public static final String NAME = "ABC Checking Ltd";
+    public static final String EMAIL = "investigations@abc.com";
+    public static final String SUPERVISOR_NAME = "Super Supervisor";
+    public static final String AML_NUMBER = "abc123";
+    public static final String PARTNER_NAME = "John Smith";
+
     public static OverseasEntityDueDiligenceDao getOverseasEntityDueDiligenceDao() {
-        OverseasEntityDueDiligenceDao dueDiligenceDao = new OverseasEntityDueDiligenceDao();
-        dueDiligenceDao.setIdentityDate(LocalDate.of(2022,1,1));
-        dueDiligenceDao.setAddress(AddressMock.getAddressDao());
-        dueDiligenceDao.setName("ABC Checking Ltd");
-        dueDiligenceDao.setEmail("investigations@abc.com");
-        dueDiligenceDao.setSupervisoryName("Super Supervisor");
-        dueDiligenceDao.setAmlNumber("abc123");
-        dueDiligenceDao.setPartnerName("John Smith");
-        return dueDiligenceDao;
+        OverseasEntityDueDiligenceDao overseasEntityDueDiligenceDao = new OverseasEntityDueDiligenceDao();
+        overseasEntityDueDiligenceDao.setIdentityDate(IDENTITY_DATE);
+        overseasEntityDueDiligenceDao.setAddress(AddressMock.getAddressDao());
+        overseasEntityDueDiligenceDao.setName(NAME);
+        overseasEntityDueDiligenceDao.setEmail(EMAIL);
+        overseasEntityDueDiligenceDao.setSupervisoryName(SUPERVISOR_NAME);
+        overseasEntityDueDiligenceDao.setAmlNumber(AML_NUMBER);
+        overseasEntityDueDiligenceDao.setPartnerName(PARTNER_NAME);
+        return overseasEntityDueDiligenceDao;
     }
 
     public static OverseasEntityDueDiligenceDto getOverseasEntityDueDiligenceDto() {
-        OverseasEntityDueDiligenceDto dueDiligenceDto = new OverseasEntityDueDiligenceDto();
-        dueDiligenceDto.setIdentityDate(LocalDate.of(2022,1,1));
-        dueDiligenceDto.setAddress(AddressMock.getAddressDto());
-        dueDiligenceDto.setName("ABC Checking Ltd");
-        dueDiligenceDto.setEmail("investigations@abc.com");
-        dueDiligenceDto.setSupervisoryName("Super Supervisor");
-        dueDiligenceDto.setAmlNumber("abc123");
-        dueDiligenceDto.setPartnerName("John Smith");
-        return dueDiligenceDto;
+        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = new OverseasEntityDueDiligenceDto();
+        overseasEntityDueDiligenceDto.setIdentityDate(IDENTITY_DATE);
+        overseasEntityDueDiligenceDto.setAddress(AddressMock.getAddressDto());
+        overseasEntityDueDiligenceDto.setName(NAME);
+        overseasEntityDueDiligenceDto.setEmail(EMAIL);
+        overseasEntityDueDiligenceDto.setSupervisoryName(SUPERVISOR_NAME);
+        overseasEntityDueDiligenceDto.setAmlNumber(AML_NUMBER);
+        overseasEntityDueDiligenceDto.setPartnerName(PARTNER_NAME);
+        return overseasEntityDueDiligenceDto;
     }
 }
