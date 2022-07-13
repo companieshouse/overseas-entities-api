@@ -4,27 +4,36 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class AddressMock {
+
+    public static final String PROPERTY_NAME_NUMBER = "100";
+    public static final String LINE1 = "No Street";
+    public static final String LINE2 = "";
+    public static final String TOWN = "Notown";
+    public static final String COUNTY = "Noshire";
+    public static final String COUNTRY = "Eutopia";
+    public static final String POST_CODE = "NOW 3RE";
+
     public static AddressDto getAddressDto() {
         AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("100");
-        addressDto.setLine1("No Street");
-        addressDto.setLine2("");
-        addressDto.setTown("Notown");
-        addressDto.setCounty("Noshire");
-        addressDto.setCountry("Eutopia");
-        addressDto.setPostcode("NOW 3RE");
+        addressDto.setPropertyNameNumber(PROPERTY_NAME_NUMBER);
+        addressDto.setLine1(LINE1);
+        addressDto.setLine2(LINE2);
+        addressDto.setTown(TOWN);
+        addressDto.setCounty(COUNTY);
+        addressDto.setCountry(COUNTRY);
+        addressDto.setPostcode(POST_CODE);
         return addressDto;
     }
 
     public static AddressDao getAddressDao() {
         AddressDao addressDao = new AddressDao();
-        addressDao.setPropertyNameNumber("100");
-        addressDao.setLine1("No Street");
-        addressDao.setLine2("");
-        addressDao.setTown("Notown");
-        addressDao.setCounty("Noshire");
-        addressDao.setCountry("Eutopia");
-        addressDao.setPostcode("NOW 3RE");
+        addressDao.setPropertyNameNumber(PROPERTY_NAME_NUMBER);
+        addressDao.setLine1(LINE1);
+        addressDao.setLine2(LINE2);
+        addressDao.setTown(TOWN);
+        addressDao.setCounty(COUNTY);
+        addressDao.setCountry(COUNTRY);
+        addressDao.setPostcode(POST_CODE);
         return addressDao;
     }
 }

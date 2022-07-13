@@ -30,7 +30,9 @@ import uk.gov.companieshouse.api.model.transaction.TransactionPayment;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -38,6 +40,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
@@ -64,6 +67,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
@@ -144,7 +148,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithoutTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -168,13 +172,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataIsEmpty(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithBOIndividualTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -201,13 +207,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataIndividual(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -236,13 +244,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataIndividual(filing, 0, "1");
         checkTrustDataIndividual(filing, 1, "2");
         checkTrustDataIndividual(filing, 2, "3");
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithBOCorporateTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithBOCorporateTrustAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -269,13 +279,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -304,13 +316,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkTrustDataCorporate(filing, 1, "2");
         checkTrustDataCorporate(filing, 2, "3");
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrust() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrustAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -342,6 +356,7 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkTrustDataCorporate(filing, 1, "2");
         checkTrustDataCorporate(filing, 2, "3");
@@ -352,7 +367,8 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -381,13 +397,15 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataIndividualWithThreeTrusts(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrusts() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+    void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrustsAndWithIdentityChecks()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -416,6 +434,7 @@ class FilingServiceTest {
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
         checkTrustDataCorporateWithThreeTrusts(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -598,18 +617,34 @@ class FilingServiceTest {
         assertEquals(LocalDate.of(2021,12,31), dueDiligenceDtoInFiling.getIdentityDate());
         assertEquals("ABC Checking limited", dueDiligenceDtoInFiling.getName());
         assertEquals("lorem@ipsum.com", dueDiligenceDtoInFiling.getEmail());
-        AddressDto addressDto = dueDiligenceDtoInFiling.getAddress();
-        assertEquals("100", addressDto.getPropertyNameNumber());
-        assertEquals("No Street", addressDto.getLine1());
-        assertEquals("Notown", addressDto.getTown());
-        assertEquals("Noshire", addressDto.getCounty());
-        assertEquals("Eutopia", addressDto.getCountry());
-        assertEquals("NOW 3RE", addressDto.getPostcode());
         assertEquals("abc123", dueDiligenceDtoInFiling.getAmlNumber());
         assertEquals("agent567", dueDiligenceDtoInFiling.getAgentCode());
         assertEquals("Super supervisor", dueDiligenceDtoInFiling.getSupervisoryName());
         assertEquals("Mr Partner", dueDiligenceDtoInFiling.getPartnerName());
         assertEquals("agreed", dueDiligenceDtoInFiling.getDiligence());
+        checkAddress(dueDiligenceDtoInFiling.getAddress());
+    }
+
+    private void checkOverseasEntityDueDiligence(FilingApi filing) {
+        OverseasEntityDueDiligenceDto oeDueDiligenceDtoInFiling =
+                (OverseasEntityDueDiligenceDto) filing.getData().get(OVERSEAS_ENTITY_DUE_DILIGENCE);
+        assertEquals(OverseasEntityDueDiligenceMock.IDENTITY_DATE, oeDueDiligenceDtoInFiling.getIdentityDate());
+        assertEquals(OverseasEntityDueDiligenceMock.NAME, oeDueDiligenceDtoInFiling.getName());
+        assertEquals(OverseasEntityDueDiligenceMock.EMAIL, oeDueDiligenceDtoInFiling.getEmail());
+        assertEquals(OverseasEntityDueDiligenceMock.SUPERVISOR_NAME, oeDueDiligenceDtoInFiling.getSupervisoryName());
+        assertEquals(OverseasEntityDueDiligenceMock.AML_NUMBER, oeDueDiligenceDtoInFiling.getAmlNumber());
+        assertEquals(OverseasEntityDueDiligenceMock.PARTNER_NAME, oeDueDiligenceDtoInFiling.getPartnerName());
+        checkAddress(oeDueDiligenceDtoInFiling.getAddress());
+    }
+
+    private void checkAddress(AddressDto addressDto) {
+        assertEquals(AddressMock.PROPERTY_NAME_NUMBER, addressDto.getPropertyNameNumber());
+        assertEquals(AddressMock.LINE1, addressDto.getLine1());
+        assertEquals(AddressMock.LINE2, addressDto.getLine2());
+        assertEquals(AddressMock.TOWN, addressDto.getTown());
+        assertEquals(AddressMock.COUNTY, addressDto.getCounty());
+        assertEquals(AddressMock.COUNTRY, addressDto.getCountry());
+        assertEquals(AddressMock.POST_CODE, addressDto.getPostcode());
     }
 
     @Test
