@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.time.LocalDate;
@@ -23,6 +24,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setEntity(entity);
         PresenterDto presenter = PresenterMock.getPresenterDto();
         overseasEntitySubmissionDto.setPresenter(presenter);
+        DueDiligenceDto dueDiligence = buildDueDiligenceDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligence);
         BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS;
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = buildBeneficialOwnersIndividualInFiling();
@@ -187,6 +190,20 @@ public class Mocks {
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         return entityDto;
+    }
+
+    private static DueDiligenceDto buildDueDiligenceDto() {
+        DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+        dueDiligenceDto.setIdentityDate(LocalDate.of(2021, 12, 31));
+        dueDiligenceDto.setName("ABC Checking limited");
+        dueDiligenceDto.setEmail("lorem@ipsum.com");
+        dueDiligenceDto.setAddress(AddressMock.getAddressDto());
+        dueDiligenceDto.setAmlNumber("abc123");
+        dueDiligenceDto.setAgentCode("agent567");
+        dueDiligenceDto.setSupervisoryName("Super supervisor");
+        dueDiligenceDto.setPartnerName("Mr Partner");
+        dueDiligenceDto.setDiligence("agreed");
+        return dueDiligenceDto;
     }
 
     private static List<BeneficialOwnerIndividualDto> buildBeneficialOwnersIndividualInFiling() {

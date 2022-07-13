@@ -40,6 +40,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -61,6 +63,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
@@ -164,6 +167,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataIsEmpty(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -196,6 +200,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataIndividual(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -230,6 +235,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataIndividual(filing, 0, "1");
         checkTrustDataIndividual(filing, 1, "2");
         checkTrustDataIndividual(filing, 2, "3");
@@ -262,6 +268,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -296,6 +303,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkTrustDataCorporate(filing, 1, "2");
         checkTrustDataCorporate(filing, 2, "3");
@@ -333,6 +341,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataCorporate(filing, 0, "1");
         checkTrustDataCorporate(filing, 1, "2");
         checkTrustDataCorporate(filing, 2, "3");
@@ -371,6 +380,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataIndividualWithThreeTrusts(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -405,6 +415,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
+        checkDueDiligence(filing);
         checkTrustDataCorporateWithThreeTrusts(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
@@ -580,6 +591,25 @@ class FilingServiceTest {
         assertEquals("Top Class", beneficialOwnerCorporateDto.getLegalForm());
         assertTrue(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn());
         assertEquals(LocalDate.of(2020, 4, 23), beneficialOwnerCorporateDto.getStartDate());
+    }
+
+    private void checkDueDiligence(FilingApi filing) {
+        DueDiligenceDto dueDiligenceDtoInFiling = (DueDiligenceDto)filing.getData().get(DUE_DILIGENCE);
+        assertEquals(LocalDate.of(2021,12,31), dueDiligenceDtoInFiling.getIdentityDate());
+        assertEquals("ABC Checking limited", dueDiligenceDtoInFiling.getName());
+        assertEquals("lorem@ipsum.com", dueDiligenceDtoInFiling.getEmail());
+        AddressDto addressDto = dueDiligenceDtoInFiling.getAddress();
+        assertEquals("100", addressDto.getPropertyNameNumber());
+        assertEquals("No Street", addressDto.getLine1());
+        assertEquals("Notown", addressDto.getTown());
+        assertEquals("Noshire", addressDto.getCounty());
+        assertEquals("Eutopia", addressDto.getCountry());
+        assertEquals("NOW 3RE", addressDto.getPostcode());
+        assertEquals("abc123", dueDiligenceDtoInFiling.getAmlNumber());
+        assertEquals("agent567", dueDiligenceDtoInFiling.getAgentCode());
+        assertEquals("Super supervisor", dueDiligenceDtoInFiling.getSupervisoryName());
+        assertEquals("Mr Partner", dueDiligenceDtoInFiling.getPartnerName());
+        assertEquals("agreed", dueDiligenceDtoInFiling.getDiligence());
     }
 
     @Test
