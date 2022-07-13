@@ -11,7 +11,7 @@ public class DueDiligenceDao {
     @Field("name")
     private String name;
     @Field("identity_address")
-    private AddressDto address;
+    private AddressDao address;
     @Field("email")
     private String email;
     @Field("supervisory_name")
@@ -41,11 +41,11 @@ public class DueDiligenceDao {
         this.name = name;
     }
 
-    public AddressDto getAddress() {
+    public AddressDao getAddress() {
         return address;
     }
 
-    public void setAddress(AddressDto address) {
+    public void setAddress(AddressDao address) {
         this.address = address;
     }
 
