@@ -3,7 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 public enum BeneficialOwnerType {
     INTERESTED_PERSON("Interested Person"),
     GRANTOR("Grantor"),
-    SETTLER("Settler"),
+    SETTLOR("Settlor"),
     BENEFICIARY("Beneficiary");
 
     private final String value;
@@ -14,7 +14,7 @@ public enum BeneficialOwnerType {
 
     public static BeneficialOwnerType findByBeneficialOwnerTypeString(String beneficialOwnerType) {
         for (BeneficialOwnerType type : values()) {
-            if(type.value.equals(beneficialOwnerType)) {
+            if(type.value.equalsIgnoreCase(beneficialOwnerType)) {
                 return type;
             }
         }

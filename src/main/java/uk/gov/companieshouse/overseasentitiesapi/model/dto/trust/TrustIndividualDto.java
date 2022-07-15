@@ -10,25 +10,30 @@ import java.util.Objects;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustIndividualDto {
-    @JsonInclude(NON_NULL)
     @JsonProperty("type")
     private String type;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("forename")
     private String forename;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("other_forenames")
     private String otherForenames;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("surname")
     private String surname;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("nationality")
     private String nationality;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("service_address")
     private AddressDto serviceAddress;
 
@@ -107,6 +112,7 @@ public class TrustIndividualDto {
     @JsonProperty("ura_address_region")
     private String uraAddressRegion;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
