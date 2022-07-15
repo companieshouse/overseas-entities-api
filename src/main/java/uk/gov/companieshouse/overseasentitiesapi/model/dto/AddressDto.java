@@ -1,36 +1,49 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class AddressDto {
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("property_name_number")
     private String propertyNameNumber;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("line_1")
     private String line1;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("line_2")
     private String line2;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("town")
     private String town;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("county")
     private String county;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("locality")
     private String locality;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("country")
     private String country;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("po_box")
     private String poBox;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("care_of")
     private String careOf;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("postcode")
     private String postcode;
 

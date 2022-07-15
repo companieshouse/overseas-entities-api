@@ -10,10 +10,10 @@ import java.util.Objects;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustCorporateDto {
-    @JsonInclude(NON_NULL)
     @JsonProperty("type")
     private String type;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("name")
     private String name;
 
@@ -61,6 +61,7 @@ public class TrustCorporateDto {
     @JsonProperty("ro_address_region")
     private String roAddressRegion;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("service_address")
     private AddressDto serviceAddress;
 
@@ -100,18 +101,23 @@ public class TrustCorporateDto {
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("identification_country_registration")
     private String identificationCountryRegistration;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("identification_legal_authority")
     private String identificationLegalAuthority;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("identification_legal_form")
     private String identificationLegalForm;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("identification_place_registered")
     private String identificationPlaceRegistered;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("identification_registration_number")
     private String identificationRegistrationNumber;
 
