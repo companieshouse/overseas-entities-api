@@ -5,32 +5,39 @@ import org.junit.jupiter.api.Test;
 
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapperImpl;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.DueDiligenceDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerCorporateDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntityDueDiligenceDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
@@ -99,6 +106,12 @@ class DtoDaoMappingTest {
         overseasEntitySubmission.setPresenter(presenter);
 
         overseasEntitySubmission.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
+
+        DueDiligenceDao dueDiligenceDao = DueDiligenceMock.getDueDiligenceDao();
+        overseasEntitySubmission.setDueDiligence(dueDiligenceDao);
+
+        OverseasEntityDueDiligenceDao overseasEntityDueDiligenceDao = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDao();
+        overseasEntitySubmission.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDao);
 
         List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual = new ArrayList<>();
         BeneficialOwnerIndividualDao individualBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDao();
@@ -170,6 +183,12 @@ class DtoDaoMappingTest {
 
         overseasEntitySubmission.setPresenter(presenter);
 
+        DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+        overseasEntitySubmission.setDueDiligence(dueDiligenceDto);
+
+        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+        overseasEntitySubmission.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+
         overseasEntitySubmission.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
 
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividual = new ArrayList<>();
@@ -236,6 +255,9 @@ class DtoDaoMappingTest {
         assertEquals(presenterDto.getFullName(), presenterDao.getFullName());
         assertEquals(presenterDto.getEmail(), presenterDao.getEmail());
 
+        assertDueDiligenceIsEqual(dao.getDueDiligence(), dto.getDueDiligence());
+        assertOverseasEntityDueDiligenceIsEqual(dao.getOverseasEntityDueDiligence(), dto.getOverseasEntityDueDiligence());
+
         assertEquals(dto.getBeneficialOwnersStatement(), dao.getBeneficialOwnersStatement());
 
         assertIndividualBeneficialOwnersAreEqual(dto, dao);
@@ -244,6 +266,30 @@ class DtoDaoMappingTest {
         assertManagingOfficerIndividualAreEqual(dto, dao);
         assertManagingOfficerCorporateAreEqual(dto, dao);
         assertTrustsAreEqual(dto, dao);
+    }
+
+    private void assertDueDiligenceIsEqual(DueDiligenceDao dueDiligenceDao, DueDiligenceDto dueDiligenceDto) {
+        assertEquals(dueDiligenceDto.getIdentityDate(), dueDiligenceDao.getIdentityDate());
+        assertEquals(dueDiligenceDto.getName(), dueDiligenceDao.getName());
+        assertEquals(dueDiligenceDto.getEmail(), dueDiligenceDao.getEmail());
+        assertEquals(dueDiligenceDto.getSupervisoryName(), dueDiligenceDao.getSupervisoryName());
+        assertEquals(dueDiligenceDto.getAmlNumber(), dueDiligenceDao.getAmlNumber());
+        assertEquals( dueDiligenceDto.getAgentCode(), dueDiligenceDao.getAgentCode());
+        assertEquals(dueDiligenceDto.getPartnerName(), dueDiligenceDao.getPartnerName());
+        assertEquals( dueDiligenceDto.getDiligence(), dueDiligenceDao.getDiligence());
+    }
+
+    private void assertOverseasEntityDueDiligenceIsEqual(
+            OverseasEntityDueDiligenceDao overseasEntityDueDiligenceDao, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
+
+        assertEquals(overseasEntityDueDiligenceDto.getIdentityDate(), overseasEntityDueDiligenceDao.getIdentityDate());
+        assertEquals(overseasEntityDueDiligenceDto.getName(), overseasEntityDueDiligenceDao.getName());
+        assertEquals(overseasEntityDueDiligenceDto.getEmail(), overseasEntityDueDiligenceDao.getEmail());
+        assertEquals(overseasEntityDueDiligenceDto.getSupervisoryName(), overseasEntityDueDiligenceDao.getSupervisoryName());
+        assertEquals(overseasEntityDueDiligenceDto.getAmlNumber(), overseasEntityDueDiligenceDao.getAmlNumber());
+        assertEquals(overseasEntityDueDiligenceDto.getPartnerName(), overseasEntityDueDiligenceDao.getPartnerName());
+
+        assertAddressesAreEqual(overseasEntityDueDiligenceDto.getAddress(), overseasEntityDueDiligenceDao.getAddress());
     }
 
     private void assertIndividualBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
