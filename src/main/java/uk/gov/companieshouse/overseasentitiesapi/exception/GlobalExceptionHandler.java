@@ -14,6 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
         HashMap<String, Object> logMap = new HashMap<>();
+        logMap.put("message", ex.getMessage());
         logMap.put("error", ex.getClass());
         ApiLogger.error(ex.getMessage(), ex, logMap);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
