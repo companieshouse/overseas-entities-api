@@ -74,6 +74,7 @@ public class TrustIndividualDto {
     private String saAddressRegion;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("usual_residential_address")
     private AddressDto usualResidentialAddress;
 
     @JsonInclude(NON_NULL)
