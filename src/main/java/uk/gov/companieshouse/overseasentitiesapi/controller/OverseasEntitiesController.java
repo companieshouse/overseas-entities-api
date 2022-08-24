@@ -19,6 +19,8 @@ import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
+import uk.gov.companieshouse.service.ServiceResult;
+import uk.gov.companieshouse.service.rest.err.Errors;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -52,8 +54,13 @@ public class OverseasEntitiesController {
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             HttpServletRequest request) {
 
-        // Add feature flag here
-        overseasEntitySubmissionDtoValidator.
+        // Add feature flag here for validation
+        Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors());
+
+        if (validationErrors.hasErrors()) {
+            ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
