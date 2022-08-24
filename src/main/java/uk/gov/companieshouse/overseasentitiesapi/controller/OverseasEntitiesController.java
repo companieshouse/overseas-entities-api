@@ -17,6 +17,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +35,13 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 public class OverseasEntitiesController {
 
     private final OverseasEntitiesService overseasEntitiesService;
+    private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
     @Autowired
-    public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService) {
+    public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,
+                                      OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator) {
         this.overseasEntitiesService = overseasEntitiesService;
+        this.overseasEntitySubmissionDtoValidator = overseasEntitySubmissionDtoValidator;
     }
 
     @PostMapping
@@ -47,6 +51,10 @@ public class OverseasEntitiesController {
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             HttpServletRequest request) {
+
+        // Add feature flag here
+        overseasEntitySubmissionDtoValidator.
+
         String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();
