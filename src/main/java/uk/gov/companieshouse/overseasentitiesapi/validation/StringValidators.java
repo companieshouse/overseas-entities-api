@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static uk.gov.companieshouse.overseasentitiesapi.validation.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.UtilsValidators.validateNotNull;
 
 public final class StringValidators {
 
@@ -13,24 +15,6 @@ public final class StringValidators {
 
     public static boolean validateStringNotBlank(String toTest, String location, Errors errs, String loggingContext) {
         return validateNotNull(toTest, location, errs, loggingContext) && validateStringNotEmpty(toTest, location, errs, loggingContext);
-    }
-
-    public static boolean validateStringNotEmpty(String toTest, String location, Errors errs, String loggingContext) {
-        if (toTest.trim().isEmpty()) {
-            setErrorMsgToLocation(errs, location,location + ValidationMessages.NOT_EMPTY_ERROR_MESSAGE);
-            ApiLogger.infoContext(loggingContext, location + " Field is empty");
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean validateNotNull(String toTest, String location, Errors errs, String loggingContext) {
-        if (toTest == null) {
-            setErrorMsgToLocation(errs, location,location + ValidationMessages.NOT_NULL_ERROR_MESSAGE);
-            ApiLogger.infoContext(loggingContext , location + " Field is null");
-            return false;
-        }
-        return true;
     }
 
     public static boolean validateLength(String toTest, Integer maxLength, String location, Errors errs, String loggingContext) {
@@ -71,8 +55,12 @@ public final class StringValidators {
         return true;
     }
 
-    private static void setErrorMsgToLocation(Errors errors, String location, String msg){
-        final Err error = Err.invalidBodyBuilderWithLocation(location).withError(msg).build();
-        errors.addError(error);
+    private static boolean validateStringNotEmpty(String toTest, String location, Errors errs, String loggingContext) {
+        if (toTest.trim().isEmpty()) {
+            setErrorMsgToLocation(errs, location,location + ValidationMessages.NOT_EMPTY_ERROR_MESSAGE);
+            ApiLogger.infoContext(loggingContext, location + " Field is empty");
+            return false;
+        }
+        return true;
     }
 }
