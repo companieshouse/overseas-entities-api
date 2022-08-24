@@ -15,11 +15,8 @@ public class OverseasEntitySubmissionDtoValidator {
         this.entityDtoValidator = entityDtoValidator;
     }
 
-    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errs) {
-
-        entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errs);
-
-
+    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errs, String loggingContext) {
+        entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errs, loggingContext  );
         return errs;
     }
 

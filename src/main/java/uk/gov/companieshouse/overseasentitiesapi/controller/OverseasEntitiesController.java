@@ -19,7 +19,6 @@ import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
-import uk.gov.companieshouse.service.ServiceResult;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +54,7 @@ public class OverseasEntitiesController {
             HttpServletRequest request) {
 
         // Add feature flag here for validation
-        Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors());
+        Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
         if (validationErrors.hasErrors()) {
             ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
