@@ -9,6 +9,7 @@ public class EntityDtoValidator {
 
     public Errors validate(EntityDto entityDto, Errors errs) {
 
+
        // entityDto.getName()
         return errs;
     }

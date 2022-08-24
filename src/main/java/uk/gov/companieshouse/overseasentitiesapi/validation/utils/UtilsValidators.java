@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation;
+package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Err;

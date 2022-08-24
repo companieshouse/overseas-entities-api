@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation;
+package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -6,8 +6,8 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static uk.gov.companieshouse.overseasentitiesapi.validation.UtilsValidators.setErrorMsgToLocation;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.UtilsValidators.validateNotNull;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.validateNotNull;
 
 public final class StringValidators {
 
