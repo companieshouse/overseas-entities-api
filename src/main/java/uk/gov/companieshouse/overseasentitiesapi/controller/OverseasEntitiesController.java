@@ -53,25 +53,26 @@ public class OverseasEntitiesController {
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             HttpServletRequest request) {
 
-        // Add feature flag here for validation
-        Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
-
-        if (validationErrors.hasErrors()) {
-            ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-        ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
         try {
+            // Add feature flag here for validation
+            Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+
+            if (validationErrors.hasErrors()) {
+                ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+
+            ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
+
             return this.overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
-                    passthroughTokenHeader,
+                    passThroughTokenHeader,
                     requestId,
                     userId);
         } catch (Exception e) {
