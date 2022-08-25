@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -48,6 +49,8 @@ class OverseasEntitiesControllerTest {
 
     @BeforeEach
     void init() {
+        setValidationEnabledFeatureFlag(false);
+
         mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.addHeader("ERIC-Access-Token", PASSTHROUGH);
 
@@ -95,5 +98,9 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.isValid(SUBMISSION_ID)).thenThrow(SubmissionNotFoundException.class);
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
         assertEquals(ResponseEntity.notFound().build(), response);
+    }
+
+    private void setValidationEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitiesController, "isValidationEnabled", value);
     }
 }

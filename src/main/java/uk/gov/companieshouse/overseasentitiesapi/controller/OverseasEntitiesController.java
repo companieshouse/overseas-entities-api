@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,9 @@ public class OverseasEntitiesController {
     private final OverseasEntitiesService overseasEntitiesService;
     private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
+    @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
+    private boolean isValidationEnabled;
+
     @Autowired
     public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,
                                       OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator) {
@@ -57,12 +61,13 @@ public class OverseasEntitiesController {
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         try {
-            // Add feature flag here for validation
-            Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+            if(isValidationEnabled) {
+                Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
-            if (validationErrors.hasErrors()) {
-                ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                if (validationErrors.hasErrors()) {
+                    ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
             }
 
             String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
