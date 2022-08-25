@@ -15,10 +15,14 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
+import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +43,9 @@ class OverseasEntitiesControllerTest {
     @Mock
     private Transaction transaction;
 
+    @Mock
+    private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
+
     @InjectMocks
     private OverseasEntitiesController overseasEntitiesController;
 
@@ -56,6 +63,10 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() throws ServiceException {
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
