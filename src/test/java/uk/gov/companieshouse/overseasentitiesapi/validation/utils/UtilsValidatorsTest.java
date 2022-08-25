@@ -34,9 +34,9 @@ public class UtilsValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
                 .withError(LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE).build();
 
-        boolean isNotBlank = UtilsValidators.validateNotNull(null, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotNull = UtilsValidators.validateNotNull(null, LOCATION, errors, LOGGING_CONTEXT);
 
-        assertFalse(isNotBlank);
+        assertFalse(isNotNull);
         assertEquals(1, errors.size());
         assertTrue(errors.containsError(err));
     }
