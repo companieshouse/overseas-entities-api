@@ -92,6 +92,39 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
+    void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
+
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(CREATED_SUCCESS_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
+    }
+
+    @Test
     void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
         Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();

@@ -11,7 +11,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 
 public final class StringValidators {
 
-    private StringValidators() {}
 
     public static boolean validateStringNotBlank(String toTest, String location, Errors errs, String loggingContext) {
         return validateNotNull(toTest, location, errs, loggingContext) && validateStringNotEmpty(toTest, location, errs, loggingContext);
