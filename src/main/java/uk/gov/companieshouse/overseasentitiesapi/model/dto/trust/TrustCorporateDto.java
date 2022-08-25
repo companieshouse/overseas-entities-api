@@ -220,7 +220,7 @@ public class TrustCorporateDto {
     public AddressDto getRegisteredOfficeAddress() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
-        if (Objects.nonNull(roAddressPostalCode)) {
+        if (areAnyStringsNonNull(roAddressPremises, roAddressLine1, roAddressLine2, roAddressRegion, roAddressLocality, roAddressCountry, roAddressCareOf, roAddressPoBox, roAddressPostalCode)) {
             registeredOfficeAddress = new AddressDto();
             registeredOfficeAddress.setPropertyNameNumber(roAddressPremises);
             registeredOfficeAddress.setLine1(roAddressLine1);
@@ -314,7 +314,7 @@ public class TrustCorporateDto {
     public AddressDto getServiceAddress() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
-        if (Objects.nonNull(saAddressPostalCode)) {
+        if (areAnyStringsNonNull(saAddressPremises, saAddressLine1, saAddressLine2, saAddressRegion, saAddressLocality, saAddressCountry, saAddressCareOf, saAddressPoBox, saAddressPostalCode)) {
             serviceAddress = new AddressDto();
             serviceAddress.setPropertyNameNumber(saAddressPremises);
             serviceAddress.setLine1(saAddressLine1);
@@ -371,5 +371,14 @@ public class TrustCorporateDto {
 
     public void setIdentificationRegistrationNumber(String identificationRegistrationNumber) {
         this.identificationRegistrationNumber = identificationRegistrationNumber;
+    }
+
+    public static boolean areAnyStringsNonNull(String... objects) {
+        for (Object o: objects) {
+            if (Objects.nonNull(o)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto.areAnyStringsNonNull;
 
 public class TrustIndividualDto {
     @JsonProperty("type")
@@ -240,7 +241,7 @@ public class TrustIndividualDto {
     public AddressDto getServiceAddress() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
-        if (Objects.nonNull(saAddressPostalCode)) {
+        if (areAnyStringsNonNull(saAddressPremises, saAddressLine1, saAddressLine2, saAddressRegion, saAddressLocality, saAddressCountry, saAddressCareOf, saAddressPoBox, saAddressPostalCode)) {
             serviceAddress = new AddressDto();
             serviceAddress.setPropertyNameNumber(saAddressPremises);
             serviceAddress.setLine1(saAddressLine1);
@@ -334,7 +335,7 @@ public class TrustIndividualDto {
     public AddressDto getUsualResidentialAddress() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
-        if (Objects.nonNull(uraAddressPostalCode)) {
+        if (areAnyStringsNonNull(uraAddressPremises, uraAddressLine1, uraAddressLine2, uraAddressRegion, uraAddressLocality, uraAddressCountry, uraAddressCareOf, uraAddressPoBox, uraAddressPostalCode)) {
             usualResidentialAddress = new AddressDto();
             usualResidentialAddress.setPropertyNameNumber(uraAddressPremises);
             usualResidentialAddress.setLine1(uraAddressLine1);
