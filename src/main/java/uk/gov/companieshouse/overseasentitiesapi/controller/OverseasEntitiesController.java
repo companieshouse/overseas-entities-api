@@ -62,7 +62,7 @@ public class OverseasEntitiesController {
 
         try {
             if(isValidationEnabled) {
-                Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+                var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);

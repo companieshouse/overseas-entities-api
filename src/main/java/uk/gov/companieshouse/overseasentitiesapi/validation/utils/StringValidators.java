@@ -28,10 +28,10 @@ public final class StringValidators {
     }
 
     public static boolean validateCharacters(String toTest, String location, Errors errs, String loggingContext) {
-        String regex = "^[-,.:; 0-9A-Z&@$£¥€'\"«»''\"\"?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zÀÖØſƒǺẀỲàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
+        var regex = "^[-,.:; 0-9A-Z&@$£¥€'\"«»''\"\"?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zÀÖØſƒǺẀỲàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
 
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(toTest);
+        var pattern = Pattern.compile(regex);
+        var matcher = pattern.matcher(toTest);
 
         if (!matcher.matches()) {
             setErrorMsgToLocation(errs, location, location + ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE);
@@ -42,10 +42,10 @@ public final class StringValidators {
     }
 
     public static boolean validateEmail(String email, String location, Errors errs, String loggingContext) {
-        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(email);
+        var pattern = Pattern.compile(regex);
+        var matcher = pattern.matcher(email);
 
         if (!matcher.matches()) {
             setErrorMsgToLocation(errs, location, ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", location));

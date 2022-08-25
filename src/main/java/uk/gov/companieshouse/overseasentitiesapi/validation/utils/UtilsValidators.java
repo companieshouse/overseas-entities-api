@@ -18,7 +18,7 @@ public class UtilsValidators {
     }
 
     public static void setErrorMsgToLocation(Errors errors, String location, String msg){
-        final Err error = Err.invalidBodyBuilderWithLocation(location).withError(msg).build();
+        final var error = Err.invalidBodyBuilderWithLocation(location).withError(msg).build();
         errors.addError(error);
     }
 
