@@ -16,10 +16,15 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
+import uk.gov.companieshouse.service.rest.err.Err;
+import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +44,9 @@ class OverseasEntitiesControllerTest {
 
     @Mock
     private Transaction transaction;
+
+    @Mock
+    private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
     @InjectMocks
     private OverseasEntitiesController overseasEntitiesController;
@@ -81,6 +89,27 @@ class OverseasEntitiesControllerTest {
                 PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
+    }
+
+    @Test
+    void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
+
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors(err));
+
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
 
     @Test
