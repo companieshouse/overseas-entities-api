@@ -22,12 +22,13 @@ public class DateValidators {
     }
 
     public static boolean validateDateIsWithinLast3Months(LocalDate compareToDate, String location, Errors errs, String loggingContext) {
-        if (!compareToDate.isAfter(LocalDate.now()) && compareToDate.isBefore(LocalDate.now().plusMonths(3))) {
-            setErrorMsgToLocation(errs, location, location + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE);
-            ApiLogger.infoContext(loggingContext, location + " date should be in the past");
-            return false;
+        LocalDate localDateNow = LocalDate.now();
+        if (compareToDate.isBefore(localDateNow) && compareToDate.isAfter(localDateNow.minusMonths(3))) {
+            return true;
         }
 
-        return true;
+        setErrorMsgToLocation(errs, location, location + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE);
+        ApiLogger.infoContext(loggingContext, location + " date should be in the past");
+        return false;
     }
 }

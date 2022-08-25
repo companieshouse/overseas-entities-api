@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StringValidatorsTest {
+class StringValidatorsTest {
     private static final String TO_TEST = "toTest";
     private static final String EMAIL_TEST = "validemailaddress@valid.com";
     private static final String LOCATION = "location";
