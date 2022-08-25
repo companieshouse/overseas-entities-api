@@ -4,37 +4,49 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EntityDto {
 
-    @JsonProperty("name")
+    public static final String NAME_FIELD = "name";
+    public static final String INCORPORATION_COUNTRY_FIELD = "incorporation_country";
+    public static final String PRINCIPAL_ADDRESS_FIELD = "principal_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
+    public static final String EMAIL_PROPERTY_FIELD = "email";
+    public static final String LEGAL_FORM_FIELD = "legal_form";
+    public static final String LAW_GOVERNED_FIELD = "law_governed";
+    public static final String PUBLIC_REGISTER_NAME_FIELD = "public_register_name";
+    public static final String REGISTRATION_NUMBER_FIELD = "registration_number";
+    public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
+
+    @JsonProperty(NAME_FIELD)
     private String name;
 
-    @JsonProperty("incorporation_country")
+    @JsonProperty(INCORPORATION_COUNTRY_FIELD)
     private String incorporationCountry;
 
-    @JsonProperty("principal_address")
+    @JsonProperty(PRINCIPAL_ADDRESS_FIELD)
     private AddressDto principalAddress;
 
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
-    @JsonProperty("is_service_address_same_as_principal_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
-    @JsonProperty("email")
+    @JsonProperty(EMAIL_PROPERTY_FIELD)
     private String email;
 
-    @JsonProperty("legal_form")
+    @JsonProperty(LEGAL_FORM_FIELD)
     private String legalForm;
 
-    @JsonProperty("law_governed")
+    @JsonProperty(LAW_GOVERNED_FIELD)
     private String lawGoverned;
 
-    @JsonProperty("public_register_name")
+    @JsonProperty(PUBLIC_REGISTER_NAME_FIELD)
     private String publicRegisterName;
 
-    @JsonProperty("registration_number")
+    @JsonProperty(REGISTRATION_NUMBER_FIELD)
     private String registrationNumber;
 
-    @JsonProperty("is_on_register_in_country_formed_in")
+    @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD)
     private boolean isOnRegisterInCountryFormedIn;
 
     public String getName() {
