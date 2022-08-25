@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,9 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
+import uk.gov.companieshouse.service.rest.err.Errors;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -34,10 +37,16 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 public class OverseasEntitiesController {
 
     private final OverseasEntitiesService overseasEntitiesService;
+    private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
+
+    @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
+    private boolean isValidationEnabled;
 
     @Autowired
-    public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService) {
+    public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,
+                                      OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator) {
         this.overseasEntitiesService = overseasEntitiesService;
+        this.overseasEntitySubmissionDtoValidator = overseasEntitySubmissionDtoValidator;
     }
 
     @PostMapping
@@ -47,17 +56,28 @@ public class OverseasEntitiesController {
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             HttpServletRequest request) {
-        String passthroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-        ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
         try {
+            if(isValidationEnabled) {
+                Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+
+                if (validationErrors.hasErrors()) {
+                    ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+
+            ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
+
             return this.overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
-                    passthroughTokenHeader,
+                    passThroughTokenHeader,
                     requestId,
                     userId);
         } catch (Exception e) {
