@@ -41,8 +41,12 @@ public final class StringValidators {
     }
 
     public static boolean validateEmail(String email, String location, Errors errs, String loggingContext) {
-        // Changed )*@ to be )*+@ to fix sonar issue highlighting * greedy qualifies uses recursion where *+ (possessive) does not
-        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*+@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,15}$";
+        // The email regex is taken from OWASP https://owasp.org/www-community/OWASP_Validation_Regex_Repository
+        // ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,15}$
+        // Sonar has highlighted issues with the * and + grouping quantifiers causing backstepping (recursion)
+        // so we are modifying them to be ++ and *+ (possessive = no backstepping)
+
+        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*+@(?:[a-zA-Z0-9-]+\\.)++[a-zA-Z]{2,15}$";
 
         var pattern = Pattern.compile(regex);
         var matcher = pattern.matcher(email);
