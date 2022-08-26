@@ -41,7 +41,8 @@ public final class StringValidators {
     }
 
     public static boolean validateEmail(String email, String location, Errors errs, String loggingContext) {
-        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        // Changed )*@ to be )*+@ to fix sonar issue highlighting * greedy qualifies uses recursion where *+ (possessive) does not
+        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*+@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,15}$";
 
         var pattern = Pattern.compile(regex);
         var matcher = pattern.matcher(email);
