@@ -49,8 +49,14 @@
               "$ref": "#/definitions/OverseasEntitySubmissionCreatedResponse"
             }
           },
+          "400":{
+            "description": "Bad Request"
+          },
           "401":{
             "description": "Unauthorised"
+          },
+          "500":{
+            "description": "Internal Server Error"
           }
         }
       }
