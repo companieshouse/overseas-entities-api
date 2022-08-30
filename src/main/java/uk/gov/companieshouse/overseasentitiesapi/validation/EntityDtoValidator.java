@@ -24,9 +24,17 @@ public class EntityDtoValidator {
         validateIncorporationCountry(entityDto.getIncorporationCountry(), errs, loggingContext);
         validatePrincipalAddress(entityDto.getPrincipalAddress(), errs, loggingContext);
         validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errs, loggingContext);
+        if (!entityDto.getServiceAddressSameAsPrincipalAddress()) {
+            validateServiceAddress(entityDto.getServiceAddress(), errs, loggingContext);
+        }
         validateEmail(entityDto.getEmail(), errs, loggingContext);
         validateLegalForm(entityDto.getLegalForm(), errs, loggingContext);
         validateLawGoverned(entityDto.getLawGoverned(), errs, loggingContext);
+
+        if (entityDto.isOnRegisterInCountryFormedIn()) {
+            validatePublicRegisterName(entityDto.getPublicRegisterName(), errs, loggingContext);
+            validateRegistrationNumber(entityDto.getRegistrationNumber(), errs, loggingContext);
+        }
         return errs;
     }
 
@@ -79,6 +87,21 @@ public class EntityDtoValidator {
                 && StringValidators.validateLength(lawGoverned, 4000, location, errs, loggingContext)
                 && StringValidators.validateCharacters(lawGoverned, location, errs, loggingContext);
     }
+
+    private boolean validatePublicRegisterName(String publicRegisterName, Errors errs, String loggingContext) {
+        String location = getEntityFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        return StringValidators.validateStringNotBlank(publicRegisterName, location, errs, loggingContext)
+                && StringValidators.validateLength(publicRegisterName, 4000, location, errs, loggingContext)
+                && StringValidators.validateCharacters(publicRegisterName, location, errs, loggingContext);
+    }
+
+    private boolean validateRegistrationNumber(String registrationNumber, Errors errs, String loggingContext) {
+        String location = getEntityFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
+        return StringValidators.validateStringNotBlank(registrationNumber, location, errs, loggingContext)
+                && StringValidators.validateLength(registrationNumber, 32, location, errs, loggingContext)
+                && StringValidators.validateCharacters(registrationNumber, location, errs, loggingContext);
+    }
+
 
     private String getEntityFieldName(String fieldName) {
         return String.format("%s.%s", OverseasEntitySubmissionDto.ENTITY_FIELD, fieldName);
