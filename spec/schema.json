@@ -1,13 +1,14 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.1",
   "info": {
+    "title": "Companies House - Overseas Entities API",
     "description": "An API to allow registration of overseas entities",
-    "version": "1.0.0",
-    "title": "Companies House - Overseas Entities API"
+    "version": "1.0.0"
   },
-  "host": "api.companieshouse.gov.uk",
-  "schemes": [
-    "https"
+  "servers": [
+    {
+      "url": "https://api.companieshouse.gov.uk/"
+    }
   ],
   "tags": [
     {
@@ -16,85 +17,93 @@
   ],
   "paths": {
     "/transactions/{transaction_id}/overseas-entity": {
-      "parameters": [
-        {
-          "name": "transaction_id",
-          "in": "path",
-          "required" : true,
-          "type" : "string"
-        }
-      ],
       "post": {
-        "summary": "Create an overseas entity registration submission",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "Overseas Entity Submission",
-            "in": "body",
-            "required" : true,
-            "schema": {
-              "$ref": "#/definitions/OverseasEntitySubmission"
-            }
-          }
-        ],
         "tags": [
           "Overseas Entity"
         ],
+        "summary": "Create an overseas entity registration submission",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/OverseasEntitySubmission"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "description": "Overseas Entity Submission has been successfully created.",
-            "schema": {
-              "$ref": "#/definitions/OverseasEntitySubmissionCreatedResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverseasEntitySubmissionCreatedResponse"
+                }
+              }
             }
           },
-          "400":{
+          "400": {
             "description": "Bad Request"
           },
-          "401":{
+          "401": {
             "description": "Unauthorised"
           },
-          "500":{
+          "500": {
             "description": "Internal Server Error"
           }
         }
       }
     },
     "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/validation-status": {
-      "parameters": [
-        {
-          "name": "transaction_id",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "overseas_entity_id",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
       "get": {
-        "summary": "Verify that the specified Overseas Entities Submission is valid",
-        "produces": [
-          "application/json"
-        ],
         "tags": [
           "Validation Status"
+        ],
+        "summary": "Verify that the specified Overseas Entities Submission is valid",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overseas_entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "The specified Overseas Entities Submission is valid.",
-            "schema": {
-              "$ref": "#/definitions/ValidationStatusResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationStatusResponse"
+                }
+              }
             }
           },
           "400": {
             "description": "A provided url id failed validation"
           },
-          "401":{
+          "401": {
             "description": "Unauthorised"
           },
           "404": {
@@ -104,39 +113,44 @@
       }
     },
     "/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/filings": {
-      "parameters": [
-        {
-          "name": "transaction_id",
-          "in": "path",
-          "required" : true,
-          "type" : "string"
-        },
-        {
-          "name": "overseas_entity_id",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
       "get": {
-        "summary": "Gets filing data ready to send to CHIPS",
-        "produces": [
-          "application/json"
-        ],
         "tags": [
           "Filings"
+        ],
+        "summary": "Gets filing data ready to send to CHIPS",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overseas_entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Filing data",
-            "schema": {
-              "$ref": "#/definitions/FilingAPIResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilingAPIResponse"
+                }
+              }
             }
           },
           "400": {
             "description": "A provided url id failed validation"
           },
-          "401":{
+          "401": {
             "description": "Unauthorised"
           },
           "404": {
@@ -146,890 +160,898 @@
       }
     },
     "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/costs": {
-      "parameters": [
-        {
-          "name": "transaction_id",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "overseas_entity_id",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
       "get": {
-        "summary": "Get payment costs for registering an overseas entity",
-        "produces": [
-          "application/json"
-        ],
         "tags": [
           "Costs"
+        ],
+        "summary": "Get payment costs for registering an overseas entity",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overseas_entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "List of costs",
-            "schema": {
-              "$ref": "#/definitions/CostsResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostsResponse"
+                }
+              }
             }
           },
-          "401":{
+          "401": {
             "description": "Unauthorised"
           }
         }
       }
     }
   },
-  "definitions": {
-    "OverseasEntitySubmission": {
-      "type": "object",
-      "properties": {
-        "presenter": {
-          "$ref": "#/definitions/Presenter"
-        },
-        "entity": {
-          "$ref": "#/definitions/Entity"
-        },
-        "due_diligence" : {
-          "$ref": "#/definitions/DueDiligence"
-        },
-        "overseas_entity_due_diligence" : {
-          "$ref": "#/definitions/OverseasEntityDueDiligence"
-        },
-        "beneficial_owners_statement": {
-          "$ref": "#/definitions/BeneficialOwnersStatementType"
-        },
-        "beneficial_owners_individual": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/BeneficialOwnerIndividual"
-          }
-        },
-        "beneficial_owners_corporate": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/BeneficialOwnerCorporate"
-          }
-        },
-        "beneficial_owners_government_or_public_authority": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/BeneficialOwnerGovernmentOrPublicAuthority"
-          }
-        },
-        "managing_officers_individual": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ManagingOfficerIndividual"
-          }
-        },
-        "managing_officers_corporate": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ManagingOfficerCorporate"
-          }
-        },
-        "trusts": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Trust"
-          }
-        }
-      },
-      "required": [
-        "presenter",
-        "entity"
-      ]
-    },
-    "Presenter": {
-      "type": "object",
-      "properties": {
-        "full_name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "full_name",
-        "email"
-      ]
-    },
-    "Entity": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "incorporation_country": {
-          "type": "string"
-        },
-        "principal_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_principal_address": {
-          "type": "boolean"
-        },
-        "email": {
-          "type": "string"
-        },
-        "legal_form": {
-          "type": "string"
-        },
-        "law_governed": {
-          "type": "string"
-        },
-        "public_register_name": {
-          "type": "string"
-        },
-        "registration_number": {
-          "type": "string"
-        },
-        "is_on_register_in_country_formed_in": {
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "name",
-        "incorporation_country",
-        "principal_address",
-        "is_service_address_same_as_principal_address",
-        "email",
-        "legal_form",
-        "law_governed",
-        "public_register_name",
-        "registration_number",
-        "is_on_register_in_country_formed_in"
-      ]
-    },
-    "DueDiligence": {
-      "type": "object",
-      "properties": {
-        "identity_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "name": {
-          "type": "string"
-        },
-        "identity_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "email": {
-          "type": "string"
-        },
-        "supervisory_name": {
-          "type": "string"
-        },
-        "aml_number": {
-          "type": "string"
-        },
-        "agent_code": {
-          "type": "string"
-        },
-        "partner_name": {
-          "type": "string"
-        },
-        "diligence": {
-          "type": "string"
-        }
-      }
-    },
-    "OverseasEntityDueDiligence": {
-      "type": "object",
-      "properties": {
-        "identity_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "name": {
-          "type": "string"
-        },
-        "identity_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "email": {
-          "type": "string"
-        },
-        "supervisory_name": {
-          "type": "string"
-        },
-        "aml_number": {
-          "type": "string"
-        },
-        "partner_name": {
-          "type": "string"
-        }
-      }
-    },
-    "BeneficialOwnerIndividual": {
-      "type": "object",
-      "properties": {
-        "first_name": {
-          "type": "string"
-        },
-        "last_name": {
-          "type": "string"
-        },
-        "date_of_birth": {
-          "type": "string",
-          "format": "date"
-        },
-        "nationality": {
-          "type": "string"
-        },
-        "usual_residential_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_usual_residential_address": {
-          "type": "boolean"
-        },
-        "start_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "beneficial_owner_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "trustees_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "non_legal_firm_members_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "is_on_sanctions_list": {
-          "type": "boolean"
-        },
-        "trust_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "1"
-          }
-        }
-      }
-    },
-    "BeneficialOwnerCorporate": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "principal_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_principal_address": {
-          "type": "boolean"
-        },
-        "legal_form": {
-          "type": "string"
-        },
-        "law_governed": {
-          "type": "string"
-        },
-        "is_on_register_in_country_formed_in": {
-          "type": "boolean"
-        },
-        "public_register_name": {
-          "type": "string"
-        },
-        "registration_number": {
-          "type": "string"
-        },
-        "start_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "beneficial_owner_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "trustees_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "non_legal_firm_members_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "is_on_sanctions_list": {
-          "type": "boolean"
-        },
-        "trust_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "1"
-          }
-        }
-      }
-    },
-    "BeneficialOwnerGovernmentOrPublicAuthority": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "principal_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_principal_address": {
-          "type": "boolean"
-        },
-        "legal_form": {
-          "type": "string"
-        },
-        "law_governed": {
-          "type": "string"
-        },
-        "start_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "beneficial_owner_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "non_legal_firm_members_nature_of_control_types": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NatureOfControlType"
-          }
-        },
-        "is_on_sanctions_list": {
-          "type": "boolean"
-        }
-      }
-    },
-    "ManagingOfficerIndividual": {
-      "type": "object",
-      "properties": {
-        "first_name": {
-          "type": "string"
-        },
-        "last_name": {
-          "type": "string"
-        },
-        "has_former_names": {
-          "type": "boolean"
-        },
-        "former_names": {
-          "type": "string"
-        },
-        "date_of_birth": {
-          "type": "string",
-          "format": "date"
-        },
-        "nationality": {
-          "type": "string"
-        },
-        "usual_residential_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_usual_residential_address": {
-          "type": "boolean"
-        },
-        "occupation": {
-          "type": "string"
-        },
-        "role_and_responsibilities": {
-          "type": "string"
-        }
-      }
-    },
-    "ManagingOfficerCorporate": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "principal_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "service_address": {
-          "$ref": "#/definitions/Address"
-        },
-        "is_service_address_same_as_principal_address": {
-          "type": "boolean"
-        },
-        "legal_form": {
-          "type": "string"
-        },
-        "law_governed": {
-          "type": "string"
-        },
-        "is_on_register_in_country_formed_in": {
-          "type": "boolean"
-        },
-        "public_register_name": {
-          "type": "string"
-        },
-        "registration_number": {
-          "type": "string"
-        },
-        "role_and_responsibilities": {
-          "type": "string"
-        },
-        "contact_full_name": {
-          "type": "string"
-        },
-        "contact_email": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "name",
-        "principal_address",
-        "is_service_address_same_as_principal_address",
-        "legal_form",
-        "law_governed",
-        "is_on_register_in_country_formed_in",
-        "role_and_responsibilities"
-      ]
-    },
-    "Trust": {
-      "type": "object",
-      "properties": {
-        "trust_id": {
-          "type": "string",
-          "example": "1"
-        },
-        "trust_name": {
-          "type": "string"
-        },
-        "creation_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "unable_to_obtain_all_trust_info": {
-          "type": "boolean"
-        },
-        "INDIVIDUAL": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/TrustIndividual"
-          }
-        },
-        "CORPORATE": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/TrustCorporate"
-          }
-        },
-        "HISTORICAL_BO": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HistoricalBeneficialOwner"
-          }
-        }
-      }
-    },
-    "TrustIndividual": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "forename": {
-          "type": "string"
-        },
-        "other_forenames": {
-          "type": "string"
-        },
-        "surname": {
-          "type": "string"
-        },
-        "date_of_birth": {
-          "type": "string",
-          "format": "date"
-        },
-        "nationality": {
-          "type": "string"
-        },
-        "sa_address_line_1": {
-          "type": "string"
-        },
-        "sa_address_line_2": {
-          "type": "string"
-        },
-        "sa_address_care_of": {
-          "type": "string"
-        },
-        "sa_address_country": {
-          "type": "string"
-        },
-        "sa_address_locality": {
-          "type": "string"
-        },
-        "sa_address_po_box": {
-          "type": "string"
-        },
-        "sa_address_postal_code": {
-          "type": "string"
-        },
-        "sa_address_premises": {
-          "type": "string"
-        },
-        "sa_address_region": {
-          "type": "string"
-        },
-        "ura_address_line_1": {
-          "type": "string"
-        },
-        "ura_address_line_2": {
-          "type": "string"
-        },
-        "ura_address_care_of": {
-          "type": "string"
-        },
-        "ura_address_country": {
-          "type": "string"
-        },
-        "ura_address_locality": {
-          "type": "string"
-        },
-        "ura_address_po_box": {
-          "type": "string"
-        },
-        "ura_address_postal_code": {
-          "type": "string"
-        },
-        "ura_address_premises": {
-          "type": "string"
-        },
-        "ura_address_region": {
-          "type": "string"
-        },
-        "date_became_interested_person": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    },
-    "TrustCorporate": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "sa_address_line_1": {
-          "type": "string"
-        },
-        "sa_address_line_2": {
-          "type": "string"
-        },
-        "sa_address_care_of": {
-          "type": "string"
-        },
-        "sa_address_country": {
-          "type": "string"
-        },
-        "sa_address_locality": {
-          "type": "string"
-        },
-        "sa_address_po_box": {
-          "type": "string"
-        },
-        "sa_address_postal_code": {
-          "type": "string"
-        },
-        "sa_address_premises": {
-          "type": "string"
-        },
-        "sa_address_region": {
-          "type": "string"
-        },
-        "ro_address_line_1": {
-          "type": "string"
-        },
-        "ro_address_line_2": {
-          "type": "string"
-        },
-        "ro_address_care_of": {
-          "type": "string"
-        },
-        "ro_address_country": {
-          "type": "string"
-        },
-        "ro_address_locality": {
-          "type": "string"
-        },
-        "ro_address_po_box": {
-          "type": "string"
-        },
-        "ro_address_postal_code": {
-          "type": "string"
-        },
-        "ro_address_premises": {
-          "type": "string"
-        },
-        "ro_address_region": {
-          "type": "string"
-        },
-        "identification_country_registration": {
-          "type": "string"
-        },
-        "identification_legal_authority": {
-          "type": "string"
-        },
-        "identification_legal_form": {
-          "type": "string"
-        },
-        "identification_place_registered": {
-          "type": "string"
-        },
-        "identification_registration_number": {
-          "type": "string"
-        },
-        "date_became_interested_person": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    },
-    "HistoricalBeneficialOwner": {
-      "type": "object",
-      "properties": {
-        "forename": {
-          "type": "string"
-        },
-        "other_forenames": {
-          "type": "string"
-        },
-        "surname": {
-          "type": "string"
-        },
-        "ceased_date": {
-          "type": "string",
-          "format": "date"
-        },
-        "notified_date": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    },
-    "Address": {
-      "type": "object",
-      "properties": {
-        "property_name_number": {
-          "type": "string"
-        },
-        "line_1": {
-          "type": "string"
-        },
-        "line_2": {
-          "type": "string"
-        },
-        "town": {
-          "type": "string"
-        },
-        "county": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
-        },
-        "postcode": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "line_1",
-        "town",
-        "county",
-        "postcode"
-      ]
-    },
-    "NatureOfControlType": {
-      "type": "string",
-      "enum": [
-        "OVER_25_PERCENT_OF_SHARES",
-        "OVER_25_PERCENT_OF_VOTING_RIGHTS",
-        "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS",
-        "SIGNIFICANT_INFLUENCE_OR_CONTROL"
-      ]
-    },
-    "BeneficialOwnersStatementType": {
-      "type": "string",
-      "enum": [
-        "ALL_IDENTIFIED_ALL_DETAILS",
-        "SOME_IDENTIFIED_ALL_DETAILS",
-        "NONE_IDENTIFIED"
-      ]
-    },
-    "OverseasEntitySubmissionCreatedResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "FilingAPIResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/Data"
-        },
-        "description": {
-          "type": "string"
-        },
-        "description_identifier": {
-          "type": "string"
-        },
-        "description_values": {
-          "$ref": "#/definitions/Description"
-        },
-        "kind": {
-          "type": "string"
-        }
-      }
-    },
-    "Data": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
-          "type": "object"
-        }
-      }
-    },
-    "Description": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "ValidationStatusResponse": {
-      "type": "object",
-      "properties": {
-        "is_valid": {
-          "type": "boolean"
-        },
-        "errors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ValidationStatusError"
-          }
-        }
-      }
-    },
-    "ValidationStatusError": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "location": {
-          "type": "string"
-        },
-        "location_type": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
-    "CostsResponse": {
-      "type": "object",
-      "properties": {
-        "amount": {
-          "type": "string"
-        },
-        "availablePaymentMethods": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "classOfPayment": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "descriptionIdentifier": {
-          "type": "string"
-        },
-        "descriptionValues": {
-          "type": "object",
-          "properties": {
-            "key": {
-              "type": "string"
-            },
-            "value": {
-              "type": "string"
+  "components": {
+    "schemas": {
+      "OverseasEntitySubmission": {
+        "required": [
+          "entity",
+          "presenter"
+        ],
+        "type": "object",
+        "properties": {
+          "presenter": {
+            "$ref": "#/components/schemas/Presenter"
+          },
+          "entity": {
+            "$ref": "#/components/schemas/Entity"
+          },
+          "due_diligence": {
+            "$ref": "#/components/schemas/DueDiligence"
+          },
+          "overseas_entity_due_diligence": {
+            "$ref": "#/components/schemas/OverseasEntityDueDiligence"
+          },
+          "beneficial_owners_statement": {
+            "$ref": "#/components/schemas/BeneficialOwnersStatementType"
+          },
+          "beneficial_owners_individual": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficialOwnerIndividual"
+            }
+          },
+          "beneficial_owners_corporate": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficialOwnerCorporate"
+            }
+          },
+          "beneficial_owners_government_or_public_authority": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficialOwnerGovernmentOrPublicAuthority"
+            }
+          },
+          "managing_officers_individual": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManagingOfficerIndividual"
+            }
+          },
+          "managing_officers_corporate": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManagingOfficerCorporate"
+            }
+          },
+          "trusts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trust"
             }
           }
-        },
-        "isVariablePayment": {
-          "type": "boolean"
-        },
-        "kind": {
-          "type": "string"
-        },
-        "resourceKind": {
-          "type": "string"
-        },
-        "productType": {
-          "type": "string"
-        },
-        "links": {
-          "type": "object",
-          "properties": {
-            "self": {
+        }
+      },
+      "Presenter": {
+        "required": [
+          "email",
+          "full_name"
+        ],
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "Entity": {
+        "required": [
+          "email",
+          "incorporation_country",
+          "is_on_register_in_country_formed_in",
+          "is_service_address_same_as_principal_address",
+          "law_governed",
+          "legal_form",
+          "name",
+          "principal_address",
+          "public_register_name",
+          "registration_number"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "incorporation_country": {
+            "type": "string"
+          },
+          "principal_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_principal_address": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "string"
+          },
+          "legal_form": {
+            "type": "string"
+          },
+          "law_governed": {
+            "type": "string"
+          },
+          "public_register_name": {
+            "type": "string"
+          },
+          "registration_number": {
+            "type": "string"
+          },
+          "is_on_register_in_country_formed_in": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DueDiligence": {
+        "type": "object",
+        "properties": {
+          "identity_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "name": {
+            "type": "string"
+          },
+          "identity_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "email": {
+            "type": "string"
+          },
+          "supervisory_name": {
+            "type": "string"
+          },
+          "aml_number": {
+            "type": "string"
+          },
+          "agent_code": {
+            "type": "string"
+          },
+          "partner_name": {
+            "type": "string"
+          },
+          "diligence": {
+            "type": "string"
+          }
+        }
+      },
+      "OverseasEntityDueDiligence": {
+        "type": "object",
+        "properties": {
+          "identity_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "name": {
+            "type": "string"
+          },
+          "identity_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "email": {
+            "type": "string"
+          },
+          "supervisory_name": {
+            "type": "string"
+          },
+          "aml_number": {
+            "type": "string"
+          },
+          "partner_name": {
+            "type": "string"
+          }
+        }
+      },
+      "BeneficialOwnerIndividual": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "usual_residential_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_usual_residential_address": {
+            "type": "boolean"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "beneficial_owner_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "trustees_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_members_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "is_on_sanctions_list": {
+            "type": "boolean"
+          },
+          "trust_ids": {
+            "type": "array",
+            "items": {
               "type": "string",
-              "format": "uuid"
+              "example": "1"
+            }
+          }
+        }
+      },
+      "BeneficialOwnerCorporate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "principal_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_principal_address": {
+            "type": "boolean"
+          },
+          "legal_form": {
+            "type": "string"
+          },
+          "law_governed": {
+            "type": "string"
+          },
+          "is_on_register_in_country_formed_in": {
+            "type": "boolean"
+          },
+          "public_register_name": {
+            "type": "string"
+          },
+          "registration_number": {
+            "type": "string"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "beneficial_owner_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "trustees_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_members_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "is_on_sanctions_list": {
+            "type": "boolean"
+          },
+          "trust_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        }
+      },
+      "BeneficialOwnerGovernmentOrPublicAuthority": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "principal_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_principal_address": {
+            "type": "boolean"
+          },
+          "legal_form": {
+            "type": "string"
+          },
+          "law_governed": {
+            "type": "string"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "beneficial_owner_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_members_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "is_on_sanctions_list": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ManagingOfficerIndividual": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "has_former_names": {
+            "type": "boolean"
+          },
+          "former_names": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "usual_residential_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_usual_residential_address": {
+            "type": "boolean"
+          },
+          "occupation": {
+            "type": "string"
+          },
+          "role_and_responsibilities": {
+            "type": "string"
+          }
+        }
+      },
+      "ManagingOfficerCorporate": {
+        "required": [
+          "is_on_register_in_country_formed_in",
+          "is_service_address_same_as_principal_address",
+          "law_governed",
+          "legal_form",
+          "name",
+          "principal_address",
+          "role_and_responsibilities"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "principal_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "service_address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "is_service_address_same_as_principal_address": {
+            "type": "boolean"
+          },
+          "legal_form": {
+            "type": "string"
+          },
+          "law_governed": {
+            "type": "string"
+          },
+          "is_on_register_in_country_formed_in": {
+            "type": "boolean"
+          },
+          "public_register_name": {
+            "type": "string"
+          },
+          "registration_number": {
+            "type": "string"
+          },
+          "role_and_responsibilities": {
+            "type": "string"
+          },
+          "contact_full_name": {
+            "type": "string"
+          },
+          "contact_email": {
+            "type": "string"
+          }
+        }
+      },
+      "Trust": {
+        "type": "object",
+        "properties": {
+          "trust_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "trust_name": {
+            "type": "string"
+          },
+          "creation_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "unable_to_obtain_all_trust_info": {
+            "type": "boolean"
+          },
+          "INDIVIDUAL": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustIndividual"
+            }
+          },
+          "CORPORATE": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustCorporate"
+            }
+          },
+          "HISTORICAL_BO": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricalBeneficialOwner"
+            }
+          }
+        }
+      },
+      "TrustIndividual": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "forename": {
+            "type": "string"
+          },
+          "other_forenames": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "sa_address_line_1": {
+            "type": "string"
+          },
+          "sa_address_line_2": {
+            "type": "string"
+          },
+          "sa_address_care_of": {
+            "type": "string"
+          },
+          "sa_address_country": {
+            "type": "string"
+          },
+          "sa_address_locality": {
+            "type": "string"
+          },
+          "sa_address_po_box": {
+            "type": "string"
+          },
+          "sa_address_postal_code": {
+            "type": "string"
+          },
+          "sa_address_premises": {
+            "type": "string"
+          },
+          "sa_address_region": {
+            "type": "string"
+          },
+          "ura_address_line_1": {
+            "type": "string"
+          },
+          "ura_address_line_2": {
+            "type": "string"
+          },
+          "ura_address_care_of": {
+            "type": "string"
+          },
+          "ura_address_country": {
+            "type": "string"
+          },
+          "ura_address_locality": {
+            "type": "string"
+          },
+          "ura_address_po_box": {
+            "type": "string"
+          },
+          "ura_address_postal_code": {
+            "type": "string"
+          },
+          "ura_address_premises": {
+            "type": "string"
+          },
+          "ura_address_region": {
+            "type": "string"
+          },
+          "date_became_interested_person": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "TrustCorporate": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sa_address_line_1": {
+            "type": "string"
+          },
+          "sa_address_line_2": {
+            "type": "string"
+          },
+          "sa_address_care_of": {
+            "type": "string"
+          },
+          "sa_address_country": {
+            "type": "string"
+          },
+          "sa_address_locality": {
+            "type": "string"
+          },
+          "sa_address_po_box": {
+            "type": "string"
+          },
+          "sa_address_postal_code": {
+            "type": "string"
+          },
+          "sa_address_premises": {
+            "type": "string"
+          },
+          "sa_address_region": {
+            "type": "string"
+          },
+          "ro_address_line_1": {
+            "type": "string"
+          },
+          "ro_address_line_2": {
+            "type": "string"
+          },
+          "ro_address_care_of": {
+            "type": "string"
+          },
+          "ro_address_country": {
+            "type": "string"
+          },
+          "ro_address_locality": {
+            "type": "string"
+          },
+          "ro_address_po_box": {
+            "type": "string"
+          },
+          "ro_address_postal_code": {
+            "type": "string"
+          },
+          "ro_address_premises": {
+            "type": "string"
+          },
+          "ro_address_region": {
+            "type": "string"
+          },
+          "identification_country_registration": {
+            "type": "string"
+          },
+          "identification_legal_authority": {
+            "type": "string"
+          },
+          "identification_legal_form": {
+            "type": "string"
+          },
+          "identification_place_registered": {
+            "type": "string"
+          },
+          "identification_registration_number": {
+            "type": "string"
+          },
+          "date_became_interested_person": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "HistoricalBeneficialOwner": {
+        "type": "object",
+        "properties": {
+          "forename": {
+            "type": "string"
+          },
+          "other_forenames": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "ceased_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "notified_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "Address": {
+        "required": [
+          "county",
+          "line_1",
+          "postcode",
+          "town"
+        ],
+        "type": "object",
+        "properties": {
+          "property_name_number": {
+            "type": "string"
+          },
+          "line_1": {
+            "type": "string"
+          },
+          "line_2": {
+            "type": "string"
+          },
+          "town": {
+            "type": "string"
+          },
+          "county": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postcode": {
+            "type": "string"
+          }
+        }
+      },
+      "NatureOfControlType": {
+        "type": "string",
+        "enum": [
+          "OVER_25_PERCENT_OF_SHARES",
+          "OVER_25_PERCENT_OF_VOTING_RIGHTS",
+          "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS",
+          "SIGNIFICANT_INFLUENCE_OR_CONTROL"
+        ]
+      },
+      "BeneficialOwnersStatementType": {
+        "type": "string",
+        "enum": [
+          "ALL_IDENTIFIED_ALL_DETAILS",
+          "SOME_IDENTIFIED_ALL_DETAILS",
+          "NONE_IDENTIFIED"
+        ]
+      },
+      "OverseasEntitySubmissionCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "FilingAPIResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Data"
+          },
+          "description": {
+            "type": "string"
+          },
+          "description_identifier": {
+            "type": "string"
+          },
+          "description_values": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "kind": {
+            "type": "string"
+          }
+        }
+      },
+      "Data": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "Description": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidationStatusResponse": {
+        "type": "object",
+        "properties": {
+          "is_valid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationStatusError"
+            }
+          }
+        }
+      },
+      "ValidationStatusError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "location_type": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "CostsResponse": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "availablePaymentMethods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "classOfPayment": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "descriptionIdentifier": {
+            "type": "string"
+          },
+          "descriptionValues": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "isVariablePayment": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "resourceKind": {
+            "type": "string"
+          },
+          "productType": {
+            "type": "string"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uuid"
+              }
             }
           }
         }
