@@ -185,13 +185,84 @@ class EntityDtoValidatorTest {
     void testValidateLawGoverned() {
         entityDto.setLawGoverned("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
         assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
+    @Test
+    void testValidatePublicRegisterNameIsEmpty() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName("  ");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testValidatePublicRegisterNameIsNull() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(null);
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testValidatePublicRegisterNameLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 4001));
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, " must be 4000 characters or less", errors);
+    }
+
+    @Test
+    void testValidatePublicRegisterName() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName("Дракон");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testValidateRegistrationNumberIsEmpty() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setRegistrationNumber("  ");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testValidateRegistrationNumberIsNull() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setRegistrationNumber(null);
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testValidateRegistrationNumberLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setRegistrationNumber(StringUtils.repeat("A", 33));
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, " must be 32 characters or less", errors);
+    }
+
+    @Test
+    void testValidateRegistrationNumber() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setRegistrationNumber("Дракон");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+    }
     private void assertError(String fieldName, String message, Errors errors) {
         String location = OverseasEntitySubmissionDto.ENTITY_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(location).withError(location + message).build();
         assertTrue(errors.containsError(err));
     }
-
 }

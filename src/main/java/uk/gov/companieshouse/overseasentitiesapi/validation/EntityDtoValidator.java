@@ -23,8 +23,8 @@ public class EntityDtoValidator {
         validateName(entityDto.getName(), errs, loggingContext);
         validateIncorporationCountry(entityDto.getIncorporationCountry(), errs, loggingContext);
         validatePrincipalAddress(entityDto.getPrincipalAddress(), errs, loggingContext);
-        validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errs, loggingContext);
-        if (!entityDto.getServiceAddressSameAsPrincipalAddress()) {
+        boolean sameFlagValid = validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errs, loggingContext);
+        if (sameFlagValid && !entityDto.getServiceAddressSameAsPrincipalAddress()) {
             validateServiceAddress(entityDto.getServiceAddress(), errs, loggingContext);
         }
         validateEmail(entityDto.getEmail(), errs, loggingContext);
