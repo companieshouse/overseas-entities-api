@@ -280,16 +280,43 @@
       },
       "Entity": {
         "required": [
-          "email",
-          "incorporation_country",
-          "is_on_register_in_country_formed_in",
-          "is_service_address_same_as_principal_address",
-          "law_governed",
-          "legal_form",
           "name",
+          "incorporation_country",
           "principal_address",
-          "public_register_name",
-          "registration_number"
+          "is_service_address_same_as_principal_address",
+          "email",
+          "legal_form",
+          "law_governed",
+          "is_on_register_in_country_formed_in"
+        ],
+        "oneOf" : [
+          {
+            "not" : {
+              "required" : [
+                "service_address",
+                "public_register_name",
+                "registration_number"
+              ]
+            }
+          },
+          {
+            "required" : [
+              "service_address"
+            ]
+          },
+          {
+            "required" : [
+              "public_register_name",
+              "registration_number"
+            ]
+          },
+          {
+            "required" : [
+              "service_address",
+              "public_register_name",
+              "registration_number"
+            ]
+          }
         ],
         "type": "object",
         "properties": {
@@ -868,12 +895,6 @@
         }
       },
       "Address": {
-        "required": [
-          "county",
-          "line_1",
-          "postcode",
-          "town"
-        ],
         "type": "object",
         "properties": {
           "property_name_number": {
@@ -897,7 +918,25 @@
           "postcode": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "line_1",
+          "town",
+          "country"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "property_name_number"
+            ]
+          },
+          {
+            "required": [
+              "county",
+              "postcode"
+            ]
+          }
+        ]
       },
       "NatureOfControlType": {
         "type": "string",
