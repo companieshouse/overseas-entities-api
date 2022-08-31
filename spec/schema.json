@@ -999,22 +999,10 @@
           }
         },
         "required": [
+          "property_name_number",
           "line_1",
           "town",
           "country"
-        ],
-        "oneOf": [
-          {
-            "required": [
-              "property_name_number"
-            ]
-          },
-          {
-            "required": [
-              "county",
-              "postcode"
-            ]
-          }
         ]
       },
       "NatureOfControlType": {
@@ -1180,18 +1168,7 @@
       },
       "Country": {
         "type": "string",
-        "oneOf": [
-          {
-            "enum": [
-              "United Kingdom",
-              "England",
-              "Scotland",
-              "Wales",
-              "Northern Ireland"
-            ]
-          },
-          {
-            "enum": [
+        "enum": [
               "Afghanistan",
               "Aland Islands",
               "Albania",
@@ -1445,8 +1422,6 @@
               "Zambia",
               "Zimbabwe"
             ]
-          }
-        ]
       }
     }
   }
