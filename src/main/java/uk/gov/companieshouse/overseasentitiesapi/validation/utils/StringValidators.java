@@ -53,7 +53,7 @@ public final class StringValidators {
 
         if (!matcher.matches()) {
             setErrorMsgToLocation(errs, location, ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", location));
-            ApiLogger.infoContext(loggingContext, "Email address is not in the correct format for " + location);
+            ApiLogger.infoContext(loggingContext, "Enter an email address in the correct format for " + location);
             return false;
         }
         return true;

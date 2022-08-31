@@ -44,7 +44,7 @@ class EntityDtoValidatorTest {
         entityDto.setName("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -52,7 +52,7 @@ class EntityDtoValidatorTest {
         entityDto.setName(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.NAME_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.NAME_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -60,7 +60,7 @@ class EntityDtoValidatorTest {
         entityDto.setName(StringUtils.repeat("A", 161));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.NAME_FIELD, " must be 160 characters or less", errors);
+        assertError(EntityDto.NAME_FIELD, " must be 160 characters or less", errors, true);
     }
 
     @Test
@@ -68,7 +68,7 @@ class EntityDtoValidatorTest {
         entityDto.setName("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.NAME_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(EntityDto.NAME_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -76,7 +76,7 @@ class EntityDtoValidatorTest {
         entityDto.setIncorporationCountry("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -84,7 +84,7 @@ class EntityDtoValidatorTest {
         entityDto.setIncorporationCountry(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
 
@@ -93,14 +93,14 @@ class EntityDtoValidatorTest {
         entityDto.setServiceAddressSameAsPrincipalAddress(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
     @Test
     void testValidateEmailIsEmpty() {
         entityDto.setEmail("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -108,7 +108,7 @@ class EntityDtoValidatorTest {
         entityDto.setEmail(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -116,14 +116,15 @@ class EntityDtoValidatorTest {
         entityDto.setEmail(StringUtils.repeat("A", 251) + "@long.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD, " must be 250 characters or less", errors);
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD, " must be 250 characters or less", errors, true);
     }
 
     @Test
     void testValidateEmail() {
         entityDto.setEmail("wrong.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD, ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE, errors);
+
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD,  "Enter an email address in the correct format for entity.email, like name@example.com", errors, false);
     }
 
     @Test
@@ -131,7 +132,7 @@ class EntityDtoValidatorTest {
         entityDto.setLegalForm("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -139,7 +140,7 @@ class EntityDtoValidatorTest {
         entityDto.setLegalForm(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -147,14 +148,14 @@ class EntityDtoValidatorTest {
         entityDto.setLegalForm(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LEGAL_FORM_FIELD, " must be 4000 characters or less", errors);
+        assertError(EntityDto.LEGAL_FORM_FIELD, " must be 4000 characters or less", errors, true);
     }
 
     @Test
     void testValidateLegalForm() {
         entityDto.setLegalForm("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
-        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -162,7 +163,7 @@ class EntityDtoValidatorTest {
         entityDto.setLawGoverned("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -170,7 +171,7 @@ class EntityDtoValidatorTest {
         entityDto.setLawGoverned(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -178,7 +179,7 @@ class EntityDtoValidatorTest {
         entityDto.setLawGoverned(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LAW_GOVERNED_FIELD, " must be 4000 characters or less", errors);
+        assertError(EntityDto.LAW_GOVERNED_FIELD, " must be 4000 characters or less", errors, true);
     }
 
     @Test
@@ -186,7 +187,7 @@ class EntityDtoValidatorTest {
         entityDto.setLawGoverned("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(EntityDto.LAW_GOVERNED_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -195,7 +196,7 @@ class EntityDtoValidatorTest {
         entityDto.setPublicRegisterName("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -204,7 +205,7 @@ class EntityDtoValidatorTest {
         entityDto.setPublicRegisterName(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -213,7 +214,7 @@ class EntityDtoValidatorTest {
         entityDto.setPublicRegisterName(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, " must be 4000 characters or less", errors);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, " must be 4000 characters or less", errors, true);
     }
 
     @Test
@@ -222,7 +223,7 @@ class EntityDtoValidatorTest {
         entityDto.setPublicRegisterName("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -231,7 +232,7 @@ class EntityDtoValidatorTest {
         entityDto.setRegistrationNumber("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -240,7 +241,7 @@ class EntityDtoValidatorTest {
         entityDto.setRegistrationNumber(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
 
     @Test
@@ -249,7 +250,7 @@ class EntityDtoValidatorTest {
         entityDto.setRegistrationNumber(StringUtils.repeat("A", 33));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, " must be 32 characters or less", errors);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, " must be 32 characters or less", errors, true);
     }
 
     @Test
@@ -258,11 +259,12 @@ class EntityDtoValidatorTest {
         entityDto.setRegistrationNumber("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
-    private void assertError(String fieldName, String message, Errors errors) {
+    private void assertError(String fieldName, String message, Errors errors, boolean prefix) {
         String location = OverseasEntitySubmissionDto.ENTITY_FIELD + "." + fieldName;
-        Err err = Err.invalidBodyBuilderWithLocation(location).withError(location + message).build();
+        String errorString = (prefix)? location + message : message;
+        Err err = Err.invalidBodyBuilderWithLocation(location).withError(errorString).build();
         assertTrue(errors.containsError(err));
     }
 }
