@@ -321,12 +321,17 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "maxLength": 160,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "incorporation_country": {
-            "type": "string"
+            "$ref": "#/components/schemas/Country"
           },
           "principal_address": {
             "$ref": "#/components/schemas/Address"
@@ -343,24 +348,44 @@
             "maxLength": 250
           },
           "legal_form": {
-            "type": "string",
-            "maxLength": 4000,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 4000
+              }
+            ]
           },
           "law_governed": {
-            "type": "string",
-            "maxLength": 4000,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 4000
+              }
+            ]
           },
           "public_register_name": {
-            "type": "string",
-            "maxLength": 4000,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 4000
+              }
+            ]
           },
           "registration_number": {
-            "type": "string",
-            "maxLength": 32,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 32
+              }
+            ]
           },
           "is_on_register_in_country_formed_in": {
             "type": "boolean"
@@ -910,38 +935,67 @@
         "type": "object",
         "properties": {
           "property_name_number": {
-            "type": "string",
-            "maxLength": 50,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "line_1": {
-            "type": "string",
-            "maxLength": 50,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "line_2": {
-            "type": "string",
-            "maxLength": 50,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "town": {
-            "type": "string",
-            "maxLength": 50,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "county": {
-            "type": "string",
-            "maxLength": 50,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "country": {
-            "type": "string",
             "$ref": "#/components/schemas/Country"
           },
           "postcode": {
-            "type": "string",
-            "maxLength": 20,
-            "$ref": "#/components/schemas/FieldPattern"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 20
+              }
+            ]
           }
         },
         "required": [
@@ -1121,6 +1175,7 @@
         }
       },
       "FieldPattern": {
+        "type": "string",
         "pattern": "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$"
       },
       "Country": {
