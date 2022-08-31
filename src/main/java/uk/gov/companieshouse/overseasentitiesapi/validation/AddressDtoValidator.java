@@ -59,7 +59,8 @@ public class AddressDtoValidator {
 
     private boolean validatePostcode(String field, String postcode, Errors errs, String loggingContext) {
         String location = getAddressFieldName(field, AddressDto.POSTCODE);
-        return StringValidators.validateLength(postcode, 20, location, errs, loggingContext);
+        return StringValidators.validateLength(postcode, 20, location, errs, loggingContext)
+                && StringValidators.validateCharacters(postcode, location, errs, loggingContext);
     }
 
     private String getAddressFieldName(String field, String fieldName) {

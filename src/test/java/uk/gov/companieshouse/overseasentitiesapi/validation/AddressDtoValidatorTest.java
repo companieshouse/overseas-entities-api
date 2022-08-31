@@ -200,6 +200,15 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
+    void testValidatePostcode(){
+        addressDto.setPostcode("Дракон");
+        String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
+
+        assertError(field, AddressDto.POSTCODE, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+    }
+
+    @Test
     void testValidateServiceAddressField(){
         addressDto.setPostcode(StringUtils.repeat("A", 21));
         String field = EntityDto.SERVICE_ADDRESS_FIELD;
