@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
@@ -36,9 +35,6 @@ public class OverseasEntitiesService {
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
-
-    @Value("${FEATURE_FLAG_ENABLE_PAYMENT_16052022}")
-    private boolean isPaymentEnabled;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
@@ -98,10 +94,7 @@ public class OverseasEntitiesService {
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
         linksMap.put("validation_status", submissionUri + VALIDATION_STATUS_URI_SUFFIX);
-
-        if (isPaymentEnabled) {
-            linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
-        }
+        linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
 
         overseasEntityResource.setLinks(linksMap);
         return overseasEntityResource;
