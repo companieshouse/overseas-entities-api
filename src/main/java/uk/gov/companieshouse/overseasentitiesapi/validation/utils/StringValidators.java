@@ -16,7 +16,7 @@ public final class StringValidators {
         return validateNotNull(toTest, location, errs, loggingContext) && validateStringNotEmpty(toTest, location, errs, loggingContext);
     }
 
-    public static boolean validateLength(String toTest, Integer maxLength, String location, Errors errs, String loggingContext) {
+    public static boolean validateMaxLength(String toTest, Integer maxLength, String location, Errors errs, String loggingContext) {
         if (toTest.length() > maxLength) {
             setErrorMsgToLocation(errs, location,
                     location + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", maxLength.toString()));
@@ -53,7 +53,7 @@ public final class StringValidators {
 
         if (!matcher.matches()) {
             setErrorMsgToLocation(errs, location, ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", location));
-            ApiLogger.infoContext(loggingContext, "Enter an email address in the correct format for " + location);
+            ApiLogger.infoContext(loggingContext, "Email address is not in the correct format for " + location);
             return false;
         }
         return true;

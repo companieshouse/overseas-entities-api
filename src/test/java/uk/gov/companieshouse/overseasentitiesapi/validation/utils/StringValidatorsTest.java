@@ -57,7 +57,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not over the max length successfully")
     void validateLength_Successful() {
-        assertTrue(StringValidators.validateLength(TO_TEST, 10, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.validateMaxLength(TO_TEST, 10, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -66,7 +66,7 @@ class StringValidatorsTest {
         String errMsg = LOCATION + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "5");
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isNotOverMaxLength = StringValidators.validateLength(TO_TEST, 5, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotOverMaxLength = StringValidators.validateMaxLength(TO_TEST, 5, LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotOverMaxLength);
         assertEquals(1, errors.size());

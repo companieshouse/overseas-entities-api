@@ -12,10 +12,11 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMess
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class AddressDtoValidatorTest {
+class AddressDtoValidatorTest {
 
     private static final String CONTEXT = "12345";
 
@@ -29,7 +30,13 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidatePropertyNameNumberIsEmpty(){
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrect() {
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenPropertyNameNumberFieldContainsEmptySpace() {
         addressDto.setPropertyNameNumber(" ");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -38,7 +45,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidatePropertyNameNumberIsNull(){
+    void testErrorReportedWhenPropertyNameNumberFieldIsNull() {
         addressDto.setPropertyNameNumber(null);
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -47,7 +54,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidatePropertyNameNumberLength(){
+    void testErrorReportedWhenPropertyNameNumberFieldExceedsMaxLength() {
         addressDto.setPropertyNameNumber(StringUtils.repeat("A", 51));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -56,7 +63,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidatePropertyNameNumber(){
+    void testErrorReportedWhenPropertyNameNumberFieldContainsInvalidCharacters() {
         addressDto.setPropertyNameNumber("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -65,7 +72,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine1IsEmpty(){
+    void testErrorReportedWhenLine1FieldIsEmpty() {
         addressDto.setLine1(" ");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -74,7 +81,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine1IsNull(){
+    void testErrorReportedWhenLine1FieldIsNull() {
         addressDto.setLine1(null);
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -83,7 +90,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine1Length(){
+    void testErrorReportedWhenLine1FieldExceedsMaxLength() {
         addressDto.setLine1(StringUtils.repeat("A", 51));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -92,7 +99,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine1(){
+    void testErrorReportedWhenLine1ContainsInvalidCharacters() {
         addressDto.setLine1("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -101,7 +108,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine2Length(){
+    void testErrorReportedWhenLine2FieldExceedsMaxLength() {
         addressDto.setLine2(StringUtils.repeat("A", 51));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -110,7 +117,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateLine2(){
+    void testErrorReportedWhenLine2FieldContainsInvalidCharacters() {
         addressDto.setLine2("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -119,7 +126,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateTownIsEmpty(){
+    void testErrorReportedWhenTownFieldIsEmpty() {
         addressDto.setTown(" ");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -128,7 +135,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateTownIsNull(){
+    void testErrorReportedWhenTownFieldIsNull() {
         addressDto.setTown(null);
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -137,7 +144,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateTownLength(){
+    void testErrorReportedWhenTownFieldExceedsMaxLength() {
         addressDto.setTown(StringUtils.repeat("A", 51));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -146,7 +153,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateTown(){
+    void testErrorReportedWhenTownFieldContainsInvalidCharacters() {
         addressDto.setTown("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -155,7 +162,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateCountyLength(){
+    void testErrorReportedWhenCountyFieldExceedsMaxLength() {
         addressDto.setCounty(StringUtils.repeat("A", 51));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -164,7 +171,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateCounty(){
+    void testErrorReportedWhenCountyFieldContainsInvalidCharacters() {
         addressDto.setCounty("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -173,25 +180,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateCountryIsEmpty(){
-        addressDto.setCountry(" ");
-        String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
-
-        assertError(field, AddressDto.COUNTRY, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testValidateCountryIsNull(){
-        addressDto.setCountry(null);
-        String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
-
-        assertError(field, AddressDto.COUNTRY, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testValidatePostcodeLength(){
+    void testErrorReportedWhenPostcodeFieldExceedsMaxLength() {
         addressDto.setPostcode(StringUtils.repeat("A", 21));
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -200,7 +189,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidatePostcode(){
+    void testErrorReportedWhenPostcodeFieldContainsInvalidCharacters() {
         addressDto.setPostcode("Дракон");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
@@ -209,7 +198,7 @@ public class AddressDtoValidatorTest {
     }
 
     @Test
-    void testValidateServiceAddressField(){
+    void testErrorReportedForServiceAddressField() {
         addressDto.setPostcode(StringUtils.repeat("A", 21));
         String field = EntityDto.SERVICE_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);

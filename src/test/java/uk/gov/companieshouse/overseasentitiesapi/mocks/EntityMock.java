@@ -8,7 +8,7 @@ public class EntityMock {
     public static EntityDto getEntityDto() {
         EntityDto entityDto = new EntityDto();
         entityDto.setName("ABC Entity");
-        entityDto.setIncorporationCountry("Noland");
+        entityDto.setIncorporationCountry("France");
         entityDto.setServiceAddressSameAsPrincipalAddress(Boolean.TRUE);
         entityDto.setEmail("jbloggs@jb.com");
         entityDto.setLegalForm("LF");

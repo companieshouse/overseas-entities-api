@@ -34,13 +34,13 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateEntityDtoNoErrors() {
+    void testNoErrorReportedWhenEntityDtoValuesAreCorrect() {
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testValidateNameIsEmpty() {
+    void testErrorReportedWhenNameFieldIsEmpty() {
         entityDto.setName("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -48,7 +48,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateNameIsNull() {
+    void testErrorReportedWhenNameFieldIsNull() {
         entityDto.setName(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -56,7 +56,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateNameLength() {
+    void testErrorReportedWhenNameFieldExceedsMaxLength() {
         entityDto.setName(StringUtils.repeat("A", 161));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -64,7 +64,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateNameCharacters() {
+    void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         entityDto.setName("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -72,7 +72,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateIncorporationCountryIsEmpty() {
+    void testErrorReportedWhenIncorporationCountryFieldIsEmpty() {
         entityDto.setIncorporationCountry("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -80,7 +80,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateIncorporationCountryIsNull() {
+    void testErrorReportedWhenIncorporationCountryFieldIsNull() {
         entityDto.setIncorporationCountry(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -89,14 +89,14 @@ class EntityDtoValidatorTest {
 
 
     @Test
-    void testValidateSameAddressIsNull() {
+    void testErrorReportedWhenSameAddressFieldIsNull() {
         entityDto.setServiceAddressSameAsPrincipalAddress(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
         assertError(EntityDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
     }
     @Test
-    void testValidateEmailIsEmpty() {
+    void testErrorReportedWhenEmailFieldIsEmpty() {
         entityDto.setEmail("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -104,7 +104,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateEmailIsNull() {
+    void testErrorReportedWhenEmailFieldIsNull() {
         entityDto.setEmail(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -112,7 +112,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateEmailLength() {
+    void testErrorReportedWhenEmailFieldExceedsMaxLength() {
         entityDto.setEmail(StringUtils.repeat("A", 251) + "@long.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -120,15 +120,15 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateEmail() {
+    void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         entityDto.setEmail("wrong.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD,  "Enter an email address in the correct format for entity.email, like name@example.com", errors, false);
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD,  "Email address is not in the correct format for entity.email, like name@example.com", errors, false);
     }
 
     @Test
-    void testValidateLegalFormIsEmpty() {
+    void testErrorReportedWhenLegalFormIsEmpty() {
         entityDto.setLegalForm("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -136,7 +136,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLegalFormIsNull() {
+    void testErrorReportedWhenLegalFormIsNull() {
         entityDto.setLegalForm(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -144,7 +144,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLegalFormLength() {
+    void testErrorReportedWhenLegalFormFieldExceedsMaxLength() {
         entityDto.setLegalForm(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -152,14 +152,14 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLegalForm() {
+    void testErrorReportedWhenLegalFormContainsInvalidCharacters() {
         entityDto.setLegalForm("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
         assertError(EntityDto.LEGAL_FORM_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
 
     @Test
-    void testValidateLawGovernedIsEmpty() {
+    void testErrorReportedWhenLawGovernedFieldIsEmpty() {
         entityDto.setLawGoverned("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -167,7 +167,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLawGovernedIsNull() {
+    void testErrorReportedWhenLawGovernedFieldIsNull() {
         entityDto.setLawGoverned(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -175,7 +175,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLawGovernedLength() {
+    void testErrorReportedWhenLawGovernedFieldExceedsMaxLength() {
         entityDto.setLawGoverned(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -183,7 +183,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateLawGoverned() {
+    void testErrorReportedWhenLawGovernedFieldContainsInvalidCharacters() {
         entityDto.setLawGoverned("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
 
@@ -191,7 +191,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidatePublicRegisterNameIsEmpty() {
+    void testErrorReportedWhenPublicRegisterNameFieldIsEmpty() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPublicRegisterName("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -200,7 +200,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidatePublicRegisterNameIsNull() {
+    void testErrorReportedWhenPublicRegisterNameFieldIsNull() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPublicRegisterName(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -209,7 +209,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidatePublicRegisterNameLength() {
+    void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPublicRegisterName(StringUtils.repeat("A", 4001));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -218,7 +218,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidatePublicRegisterName() {
+    void testErrorReportedWhenPublicRegisterNameFieldContainsInvalidCharcaters() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPublicRegisterName("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -227,7 +227,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateRegistrationNumberIsEmpty() {
+    void testErrorReportedWhenRegistrationNumberFieldIsEmpty() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setRegistrationNumber("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -236,7 +236,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateRegistrationNumberIsNull() {
+    void testErrorReportedWhenRegistrationNumberFieldIsNull() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setRegistrationNumber(null);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -245,7 +245,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateRegistrationNumberLength() {
+    void testErrorReportedWhenRegistrationNumberFieldExceedsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setRegistrationNumber(StringUtils.repeat("A", 33));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
@@ -254,7 +254,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateRegistrationNumber() {
+    void testErrorReportedWhenRegistrationNumberFieldContainsInvalidCharacters() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setRegistrationNumber("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
