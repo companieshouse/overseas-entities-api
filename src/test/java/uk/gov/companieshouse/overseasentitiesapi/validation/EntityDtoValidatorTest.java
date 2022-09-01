@@ -217,7 +217,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenPublicRegisterNameFieldContainsInvalidCharcaters() {
+    void testErrorReportedWhenPublicRegisterNameFieldContainsInvalidCharacters() {
         entityDto.setOnRegisterInCountryFormedIn(true);
         entityDto.setPublicRegisterName("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
