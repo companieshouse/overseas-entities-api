@@ -7,44 +7,55 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class AddressDto {
 
+    public static final String PROPERTY_NAME_NUMBER_FIELD = "property_name_number";
+    public static final String LINE_1 = "line_1";
+    public static final String LINE_2 = "line_2";
+    public static final String TOWN = "town";
+    public static final String COUNTY = "county";
+    public static final String LOCALITY = "locality";
+    public static final String COUNTRY = "country";
+    public static final String PO_BOX = "po_box";
+    public static final String CARE_OF = "care_of";
+    public static final String POSTCODE = "postcode";
+
     @JsonInclude(NON_NULL)
-    @JsonProperty("property_name_number")
+    @JsonProperty(PROPERTY_NAME_NUMBER_FIELD)
     private String propertyNameNumber;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("line_1")
+    @JsonProperty(LINE_1)
     private String line1;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("line_2")
+    @JsonProperty(LINE_2)
     private String line2;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("town")
+    @JsonProperty(TOWN)
     private String town;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("county")
+    @JsonProperty(COUNTY)
     private String county;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("locality")
+    @JsonProperty(LOCALITY)
     private String locality;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("country")
+    @JsonProperty(COUNTRY)
     private String country;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("po_box")
+    @JsonProperty(PO_BOX)
     private String poBox;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("care_of")
+    @JsonProperty(CARE_OF)
     private String careOf;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("postcode")
+    @JsonProperty(POSTCODE)
     private String postcode;
 
     public String getPropertyNameNumber() {
