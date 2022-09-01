@@ -12,8 +12,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMess
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AddressDtoValidatorTest {
@@ -204,6 +203,19 @@ class AddressDtoValidatorTest {
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
         assertError(field, AddressDto.POSTCODE, " must be 20 characters or less", errors);
+    }
+
+    @Test
+    void testErrorsReportedWhenMultipleFieldsAreInvalid() {
+        addressDto.setLine1(StringUtils.repeat("A", 51));
+        addressDto.setTown(null);
+
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+
+        assertEquals(2, errors.size());
+        assertError(parentField, AddressDto.LINE_1, " must be 50 characters or less", errors);
+        assertError(parentField, AddressDto.TOWN, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
     }
 
     private void assertError(String addressField, String fieldName, String message, Errors errors) {

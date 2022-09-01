@@ -13,8 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMess
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class EntityDtoValidatorTest {
@@ -261,6 +260,25 @@ class EntityDtoValidatorTest {
 
         assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
     }
+
+    @Test
+    void testErrorsReportedWhenMultipleFieldsAreInvalid() {
+        entityDto.setName(StringUtils.repeat("A", 161));
+        entityDto.setIncorporationCountry(null);
+        entityDto.setLawGoverned(StringUtils.repeat("A", 4001));
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(" ");
+        entityDto.setRegistrationNumber("Дракон");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), CONTEXT);
+
+        assertEquals(5, errors.size());
+        assertError(EntityDto.NAME_FIELD, " must be 160 characters or less", errors, true);
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors, true);
+        assertError(EntityDto.LAW_GOVERNED_FIELD, " must be 4000 characters or less", errors, true);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors, true);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors, true);
+    }
+
     private void assertError(String fieldName, String message, Errors errors, boolean prefix) {
         String location = OverseasEntitySubmissionDto.ENTITY_FIELD + "." + fieldName;
         String errorString = (prefix)? location + message : message;

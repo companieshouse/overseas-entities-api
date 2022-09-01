@@ -272,8 +272,8 @@ public enum Country {
                 return true;
             }
         }
-        setErrorMsgToLocation(errs, location, ValidationMessages.COUNTRY);
-        ApiLogger.infoContext(loggingContext, ValidationMessages.COUNTRY);
+        setErrorMsgToLocation(errs, location, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
+        ApiLogger.infoContext(loggingContext, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
         return false;
     }
 }
