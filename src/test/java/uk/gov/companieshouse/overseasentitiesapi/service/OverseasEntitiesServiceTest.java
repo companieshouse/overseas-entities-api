@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
@@ -34,7 +32,6 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,11 +66,6 @@ class OverseasEntitiesServiceTest {
 
     @InjectMocks
     private OverseasEntitiesService overseasEntitiesService;
-
-    @BeforeEach
-    void init() {
-        setPaymentEnabledFeatureFlag(true);
-    }
 
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfully() throws ServiceException {
@@ -136,50 +128,6 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testOverseasEntitySubmissionCreatedSuccessfullyHasNoCostsLinkWhenFeatureFlagFalse() throws ServiceException {
-        setPaymentEnabledFeatureFlag(false);
-
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-
-        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
-        overseasEntitySubmissionDao.setId(SUBMISSION_ID);
-
-        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
-        when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
-        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
-
-        // make the call to test
-        var response = overseasEntitiesService.createOverseasEntity(
-                transaction,
-                overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
-                REQUEST_ID,
-                USER_ID);
-
-        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
-        verify(localDateTimeSupplier, times(1)).get();
-
-        String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());
-
-        // assert 'self' link is set on dao object
-        assertEquals(submissionUri, overseasEntitySubmissionDao.getLinks().get("self"));
-
-        // assert transaction resources are updated to point to submission
-        Transaction transactionSent = transactionApiCaptor.getValue();
-        assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
-        assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
-        assertNull(transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
-
-        // assert response
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        OverseasEntitySubmissionCreatedResponseDto responseDto = ((OverseasEntitySubmissionCreatedResponseDto) response.getBody());
-        assertNotNull(responseDto);
-        assertEquals(SUBMISSION_ID, responseDto.getId());
-    }
-
-    @Test
     void testOverseasEntitySubmissionCannotBeCreatedWhenExistingOverseasEntitySubmissionInTransaction() throws ServiceException {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
@@ -219,9 +167,5 @@ class OverseasEntitiesServiceTest {
     void testValidationStatusWhenSubmissionIsNotPresent() {
         when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.isValid(SUBMISSION_ID));
-    }
-
-    private void setPaymentEnabledFeatureFlag(boolean value) {
-        ReflectionTestUtils.setField(overseasEntitiesService, "isPaymentEnabled", value);
     }
 }
