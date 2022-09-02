@@ -258,19 +258,6 @@ public enum Country {
     YEMEN("Yemen"),
     ZAMBIA("Zambia"),
     ZIMBABWE("Zimbabwe");
-    enum UkCountry {
-        UNITED_KINGDOM("United Kingdom"),
-        ENGLAND("England"),
-        SCOTLAND("Scotland"),
-        WALES("Wales"),
-        NORTHERN_IRELAND("Northern Ireland");
-
-        public final String countryName;
-
-        UkCountry(String country) {
-            this.countryName = country;
-        }
-    };
 
     public final String countryName;
 
@@ -278,17 +265,9 @@ public enum Country {
         this.countryName = country;
     }
 
-    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext, boolean includeUk) {
+    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
 
-        if(includeUk) {
-            for(UkCountry ukCountry : UkCountry.values()) {
-                if(ukCountry.countryName.equalsIgnoreCase(countryIn)) {
-                    return true;
-                }
-            }
-        }
-
-        for(Country country : values()) {
+       for(Country country : values()) {
             if(country.countryName.equalsIgnoreCase(countryIn)) {
                 return true;
             }
