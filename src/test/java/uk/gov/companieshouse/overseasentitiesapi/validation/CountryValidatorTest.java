@@ -15,7 +15,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class OverseasCountryValidatorTest {
+class CountryValidatorTest {
 
     private static final String CONTEXT = "12345";
 
