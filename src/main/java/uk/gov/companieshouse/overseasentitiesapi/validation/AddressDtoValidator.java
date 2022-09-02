@@ -2,7 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.OverseasCountry;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -61,7 +61,7 @@ public class AddressDtoValidator {
 
     private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
         String location = getQualifiedAddressFieldName(parentAddressField, AddressDto.COUNTRY);
-        return OverseasCountry.isValid(country, location, errors, loggingContext);
+        return Country.isValid(country, location, errors, loggingContext, false);
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {

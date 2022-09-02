@@ -5,7 +5,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 
-public enum OverseasCountry {
+public enum Country {
     AFGHANISTAN("Afghanistan"),
     ALAND_ISLANDS("Aland Islands"),
     ALBANIA("Albania"),
@@ -258,17 +258,38 @@ public enum OverseasCountry {
     YEMEN("Yemen"),
     ZAMBIA("Zambia"),
     ZIMBABWE("Zimbabwe");
+    enum UkCountry {
+        UNITED_KINGDOM("United Kingdom"),
+        ENGLAND("England"),
+        SCOTLAND("Scotland"),
+        WALES("Wales"),
+        NORTHERN_IRELAND("Northern Ireland");
+
+        public final String countryName;
+
+        UkCountry(String country) {
+            this.countryName = country;
+        }
+    };
 
     public final String countryName;
 
-    OverseasCountry(String country) {
+    Country(String country) {
         this.countryName = country;
     }
 
-    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
+    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext, boolean includeUk) {
 
-        for(OverseasCountry overseasCountry : values()) {
-            if(overseasCountry.countryName.equalsIgnoreCase(countryIn)) {
+        if(includeUk) {
+            for(UkCountry ukCountry : UkCountry.values()) {
+                if(ukCountry.countryName.equalsIgnoreCase(countryIn)) {
+                    return true;
+                }
+            }
+        }
+
+        for(Country country : values()) {
+            if(country.countryName.equalsIgnoreCase(countryIn)) {
                 return true;
             }
         }
