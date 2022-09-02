@@ -5,7 +5,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 
-public enum Country {
+public enum OverseasCountry {
     AFGHANISTAN("Afghanistan"),
     ALAND_ISLANDS("Aland Islands"),
     ALBANIA("Albania"),
@@ -261,14 +261,14 @@ public enum Country {
 
     public final String countryName;
 
-    Country(String country) {
+    OverseasCountry(String country) {
         this.countryName = country;
     }
 
     public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
 
-        for(Country country : values()) {
-            if(country.countryName.equalsIgnoreCase(countryIn)) {
+        for(OverseasCountry overseasCountry : values()) {
+            if(overseasCountry.countryName.equalsIgnoreCase(countryIn)) {
                 return true;
             }
         }

@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
@@ -12,7 +14,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CountryValidatorTest {
+class OverseasCountryValidatorTest {
 
     private static final String CONTEXT = "12345";
 
@@ -34,18 +36,14 @@ class CountryValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    @Test
-    void testCountryEnumForNonexistentCountry() {
-        addressDto.setCountry("Utopia");
-        String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
-
-        assertError(EntityDto.PRINCIPAL_ADDRESS_FIELD, AddressDto.COUNTRY, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testCountryEnumForCountryWithInvalidCharacters() {
-        addressDto.setCountry("Росси́я");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Utopia",
+            "Росси́я",
+            " "
+    })
+    void testInvalidCountries(String countryName) {
+        addressDto.setCountry(countryName);
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
@@ -55,15 +53,6 @@ class CountryValidatorTest {
     @Test
     void testCountryEnumForCountryWithNull() {
         addressDto.setCountry(null);
-        String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
-
-        assertError(EntityDto.PRINCIPAL_ADDRESS_FIELD, AddressDto.COUNTRY, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testCountryEnumForCountryWithEmpty() {
-        addressDto.setCountry(" ");
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 

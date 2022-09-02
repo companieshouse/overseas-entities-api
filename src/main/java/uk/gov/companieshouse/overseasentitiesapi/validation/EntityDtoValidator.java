@@ -24,7 +24,7 @@ public class EntityDtoValidator {
         validateIncorporationCountry(entityDto.getIncorporationCountry(), errors, loggingContext);
         validateAddress(EntityDto.PRINCIPAL_ADDRESS_FIELD, entityDto.getPrincipalAddress(), errors, loggingContext);
         boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
-        if (sameAddressFlagValid && !entityDto.getServiceAddressSameAsPrincipalAddress()) {
+        if (sameAddressFlagValid && Boolean.FALSE.equals(entityDto.getServiceAddressSameAsPrincipalAddress())) {
             validateAddress(EntityDto.SERVICE_ADDRESS_FIELD, entityDto.getServiceAddress(), errors, loggingContext);
         }
         validateEmail(entityDto.getEmail(), errors, loggingContext);
@@ -95,7 +95,6 @@ public class EntityDtoValidator {
                 && StringValidators.validateMaxLength(registrationNumber, 32, location, errors, loggingContext)
                 && StringValidators.validateCharacters(registrationNumber, location, errors, loggingContext);
     }
-
 
     private String getQualifiedEntityFieldName(String fieldName) {
         return String.format("%s.%s", OverseasEntitySubmissionDto.ENTITY_FIELD, fieldName);

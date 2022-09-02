@@ -2,7 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.OverseasCountry;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -12,11 +12,17 @@ public class AddressDtoValidator {
     public Errors validate(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
         validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
         validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
-        validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
+        if(addressDto.getLine2() != null) {
+            validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
+        }
         validateTown(parentAddressField, addressDto.getTown(), errors, loggingContext);
-        validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
+        if(addressDto.getCounty() != null) {
+            validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
+        }
         validateCountry(parentAddressField, addressDto.getCountry(), errors, loggingContext);
-        validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+        if(addressDto.getPostcode() != null) {
+            validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+        }
         return errors;
     }
 
@@ -55,7 +61,7 @@ public class AddressDtoValidator {
 
     private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
         String location = getQualifiedAddressFieldName(parentAddressField, AddressDto.COUNTRY);
-        return Country.isValid(country, location, errors, loggingContext);
+        return OverseasCountry.isValid(country, location, errors, loggingContext);
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
