@@ -25,7 +25,7 @@ class UtilsValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null successfully")
     void validateNotNull_Successful() {
-        assertTrue(UtilsValidators.validateNotNull(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(UtilsValidators.isValidNotNull(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -34,7 +34,7 @@ class UtilsValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
                 .withError(LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE).build();
 
-        boolean isNotNull = UtilsValidators.validateNotNull(null, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotNull = UtilsValidators.isValidNotNull(null, LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotNull);
         assertEquals(1, errors.size());

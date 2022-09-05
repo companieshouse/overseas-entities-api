@@ -49,7 +49,7 @@ class CountryValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(EntityDto.PRINCIPAL_ADDRESS_FIELD, AddressDto.COUNTRY, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+        assertError(EntityDto.PRINCIPAL_ADDRESS_FIELD, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
     }
 
     private void assertError(String addressField, String fieldName, String message, Errors errors) {

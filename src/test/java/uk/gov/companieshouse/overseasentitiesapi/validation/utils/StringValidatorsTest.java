@@ -25,7 +25,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null and not empty successfully")
     void validateNotBlank_Successful() {
-        assertTrue(StringValidators.validateStringNotBlank(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidNotBlank(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -34,7 +34,7 @@ class StringValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
                 .withError(LOCATION + ValidationMessages.NOT_EMPTY_ERROR_MESSAGE).build();
 
-        boolean isNotBlank = StringValidators.validateStringNotBlank("     ", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isValidNotBlank("     ", LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -47,7 +47,7 @@ class StringValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
                 .withError(LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE).build();
 
-        boolean isNotBlank = StringValidators.validateStringNotBlank(null, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isValidNotBlank(null, LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -57,7 +57,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not over the max length successfully")
     void validateLength_Successful() {
-        assertTrue(StringValidators.validateMaxLength(TO_TEST, 10, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidMaxLength(TO_TEST, 10, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -66,7 +66,7 @@ class StringValidatorsTest {
         String errMsg = LOCATION + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "5");
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isNotOverMaxLength = StringValidators.validateMaxLength(TO_TEST, 5, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotOverMaxLength = StringValidators.isValidMaxLength(TO_TEST, 5, LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotOverMaxLength);
         assertEquals(1, errors.size());
@@ -76,7 +76,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string with allowed successfully")
     void validateCharacters_Successful() {
-        assertTrue(StringValidators.validateCharacters(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidCharacters(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -85,7 +85,7 @@ class StringValidatorsTest {
         String errMsg = LOCATION + ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE;
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isValidCharacters = StringValidators.validateCharacters("Дракон", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidCharacters = StringValidators.isValidCharacters("Дракон", LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidCharacters);
         assertEquals(1, errors.size());
@@ -95,7 +95,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate Email successfully")
     void validateEmail_Successful() {
-        assertTrue(StringValidators.validateEmail(EMAIL_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidEmailAddress(EMAIL_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -104,7 +104,7 @@ class StringValidatorsTest {
         String errMsg = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", LOCATION);
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isValidEmail = StringValidators.validateEmail("lorem@ipsum", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidEmail = StringValidators.isValidEmailAddress("lorem@ipsum", LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidEmail);
         assertEquals(1, errors.size());

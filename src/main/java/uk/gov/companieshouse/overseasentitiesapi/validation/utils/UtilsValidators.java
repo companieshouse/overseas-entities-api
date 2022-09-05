@@ -8,17 +8,17 @@ public class UtilsValidators {
 
     private UtilsValidators() { }
 
-    public static boolean validateNotNull(Object toTest, String location, Errors errs, String loggingContext) {
+    public static boolean isValidNotNull(Object toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest == null) {
-            setErrorMsgToLocation(errs, location,location + ValidationMessages.NOT_NULL_ERROR_MESSAGE);
-            ApiLogger.infoContext(loggingContext , location + " Field is null");
+            setErrorMsgToLocation(errs, qualifiedFieldName,qualifiedFieldName + ValidationMessages.NOT_NULL_ERROR_MESSAGE);
+            ApiLogger.infoContext(loggingContext , qualifiedFieldName + " Field is null");
             return false;
         }
         return true;
     }
 
-    public static void setErrorMsgToLocation(Errors errors, String location, String msg){
-        final var error = Err.invalidBodyBuilderWithLocation(location).withError(msg).build();
+    public static void setErrorMsgToLocation(Errors errors, String qualifiedFieldName, String msg){
+        final var error = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(msg).build();
         errors.addError(error);
     }
 
