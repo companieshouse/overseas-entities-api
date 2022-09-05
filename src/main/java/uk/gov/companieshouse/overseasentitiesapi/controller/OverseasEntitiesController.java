@@ -61,11 +61,11 @@ public class OverseasEntitiesController {
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         try {
-            if(isValidationEnabled) {
+            if (isValidationEnabled) {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.infoContext(requestId, "Validation errors : " + validationErrors);
+                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             }

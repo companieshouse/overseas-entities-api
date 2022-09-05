@@ -76,7 +76,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_1, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.LINE_1_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -85,7 +85,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_1, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.LINE_1_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -94,7 +94,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_1, " must be 50 characters or less", errors);
+        assertError(field, AddressDto.LINE_1_FIELD, " must be 50 characters or less", errors);
     }
 
     @Test
@@ -103,7 +103,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_1, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.LINE_1_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -112,7 +112,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_2, " must be 50 characters or less", errors);
+        assertError(field, AddressDto.LINE_2_FIELD, " must be 50 characters or less", errors);
     }
 
     @Test
@@ -121,7 +121,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.LINE_2, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.LINE_2_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -130,7 +130,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.TOWN, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.TOWN_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -139,7 +139,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.TOWN, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.TOWN_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -148,7 +148,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.TOWN, " must be 50 characters or less", errors);
+        assertError(field, AddressDto.TOWN_FIELD, " must be 50 characters or less", errors);
     }
 
     @Test
@@ -157,7 +157,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.TOWN, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.TOWN_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -166,7 +166,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.COUNTY, " must be 50 characters or less", errors);
+        assertError(field, AddressDto.COUNTY_FIELD, " must be 50 characters or less", errors);
     }
 
     @Test
@@ -175,7 +175,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.COUNTY, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.COUNTY_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -184,7 +184,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.POSTCODE, " must be 20 characters or less", errors);
+        assertError(field, AddressDto.POSTCODE_FIELD, " must be 20 characters or less", errors);
     }
 
     @Test
@@ -193,7 +193,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.POSTCODE, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
+        assertError(field, AddressDto.POSTCODE_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, errors);
     }
 
     @Test
@@ -202,7 +202,7 @@ class AddressDtoValidatorTest {
         String field = EntityDto.SERVICE_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(field, addressDto, new Errors(), CONTEXT);
 
-        assertError(field, AddressDto.POSTCODE, " must be 20 characters or less", errors);
+        assertError(field, AddressDto.POSTCODE_FIELD, " must be 20 characters or less", errors);
     }
 
     @Test
@@ -214,8 +214,8 @@ class AddressDtoValidatorTest {
         Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
 
         assertEquals(2, errors.size());
-        assertError(parentField, AddressDto.LINE_1, " must be 50 characters or less", errors);
-        assertError(parentField, AddressDto.TOWN, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
+        assertError(parentField, AddressDto.LINE_1_FIELD, " must be 50 characters or less", errors);
+        assertError(parentField, AddressDto.TOWN_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE, errors);
     }
 
     private void assertError(String addressField, String fieldName, String message, Errors errors) {

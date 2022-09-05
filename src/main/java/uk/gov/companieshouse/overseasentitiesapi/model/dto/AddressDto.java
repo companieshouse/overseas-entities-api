@@ -8,54 +8,54 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class AddressDto {
 
     public static final String PROPERTY_NAME_NUMBER_FIELD = "property_name_number";
-    public static final String LINE_1 = "line_1";
-    public static final String LINE_2 = "line_2";
-    public static final String TOWN = "town";
-    public static final String COUNTY = "county";
-    public static final String LOCALITY = "locality";
-    public static final String COUNTRY = "country";
-    public static final String PO_BOX = "po_box";
-    public static final String CARE_OF = "care_of";
-    public static final String POSTCODE = "postcode";
+    public static final String LINE_1_FIELD = "line_1";
+    public static final String LINE_2_FIELD = "line_2";
+    public static final String TOWN_FIELD = "town";
+    public static final String COUNTY_FIELD = "county";
+    public static final String LOCALITY_FIELD = "locality";
+    public static final String COUNTRY_FIELD = "country";
+    public static final String PO_BOX_FIELD = "po_box";
+    public static final String CARE_OF_FIELD = "care_of";
+    public static final String POSTCODE_FIELD = "postcode";
 
     @JsonInclude(NON_NULL)
     @JsonProperty(PROPERTY_NAME_NUMBER_FIELD)
     private String propertyNameNumber;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(LINE_1)
+    @JsonProperty(LINE_1_FIELD)
     private String line1;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(LINE_2)
+    @JsonProperty(LINE_2_FIELD)
     private String line2;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(TOWN)
+    @JsonProperty(TOWN_FIELD)
     private String town;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(COUNTY)
+    @JsonProperty(COUNTY_FIELD)
     private String county;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(LOCALITY)
+    @JsonProperty(LOCALITY_FIELD)
     private String locality;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(COUNTRY)
+    @JsonProperty(COUNTRY_FIELD)
     private String country;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(PO_BOX)
+    @JsonProperty(PO_BOX_FIELD)
     private String poBox;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(CARE_OF)
+    @JsonProperty(CARE_OF_FIELD)
     private String careOf;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(POSTCODE)
+    @JsonProperty(POSTCODE_FIELD)
     private String postcode;
 
     public String getPropertyNameNumber() {

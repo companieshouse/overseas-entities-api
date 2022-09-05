@@ -11,24 +11,24 @@ public class DateValidators {
 
     private DateValidators() { }
 
-    public static boolean validateDateIsInPast(LocalDate compareToDate, String location, Errors errs, String loggingContext) {
+    public static boolean isValidDateIsInPast(LocalDate compareToDate, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (compareToDate.isAfter(LocalDate.now())) {
-            setErrorMsgToLocation(errs, location, location + ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE);
-            ApiLogger.infoContext(loggingContext, location + " date should be in the past");
+            setErrorMsgToLocation(errs, qualifiedFieldName, qualifiedFieldName + ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE);
+            ApiLogger.infoContext(loggingContext, qualifiedFieldName + " date should be in the past");
             return false;
         }
 
         return true;
     }
 
-    public static boolean validateDateIsWithinLast3Months(LocalDate compareToDate, String location, Errors errs, String loggingContext) {
+    public static boolean isValidDateIsWithinLast3Months(LocalDate compareToDate, String qualifiedFieldName, Errors errs, String loggingContext) {
         var localDateNow = LocalDate.now();
         if (compareToDate.isBefore(localDateNow) && compareToDate.isAfter(localDateNow.minusMonths(3))) {
             return true;
         }
 
-        setErrorMsgToLocation(errs, location, location + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE);
-        ApiLogger.infoContext(loggingContext, location + " date should be in the past");
+        setErrorMsgToLocation(errs, qualifiedFieldName, qualifiedFieldName + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE);
+        ApiLogger.infoContext(loggingContext, qualifiedFieldName + " date should be in the past");
         return false;
     }
 }

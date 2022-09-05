@@ -27,7 +27,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is in the past successfully")
     void validateDateIsInPast_Successful() {
-        assertTrue(DateValidators.validateDateIsInPast(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isValidDateIsInPast(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -36,7 +36,7 @@ class DateValidatorsTest {
         String errMsg = LOCATION + ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE;
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.validateDateIsInPast(FUTURE_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isValidDateIsInPast(FUTURE_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
@@ -46,7 +46,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is within last 3 months successfully")
     void validateDateIsWithinLast3Months_Successful() {
-        assertTrue(DateValidators.validateDateIsWithinLast3Months(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isValidDateIsWithinLast3Months(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -55,7 +55,7 @@ class DateValidatorsTest {
         String errMsg = LOCATION + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE;
         Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.validateDateIsWithinLast3Months(LocalDate.now().minusMonths(5), LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isValidDateIsWithinLast3Months(LocalDate.now().minusMonths(5), LOCATION, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
