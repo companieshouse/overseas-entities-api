@@ -8,9 +8,9 @@ public class UtilsValidators {
 
     private UtilsValidators() { }
 
-    public static boolean isValidNotNull(Object toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+    public static boolean isNotNull(Object toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest == null) {
-            setErrorMsgToLocation(errs, qualifiedFieldName,qualifiedFieldName + ValidationMessages.NOT_NULL_ERROR_MESSAGE);
+            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext , qualifiedFieldName + " Field is null");
             return false;
         }
