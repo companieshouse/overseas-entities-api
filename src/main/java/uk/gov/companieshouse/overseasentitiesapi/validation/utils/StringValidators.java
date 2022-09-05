@@ -33,7 +33,7 @@ public final class StringValidators {
         var matcher = pattern.matcher(toTest);
 
         if (!matcher.matches()) {
-            setErrorMsgToLocation(errs, qualifiedFieldName, qualifiedFieldName + ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE);
+            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, "Invalid characters for " + qualifiedFieldName);
             return false;
         }
@@ -69,7 +69,7 @@ public final class StringValidators {
 
     private static boolean isValidNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.trim().isEmpty()) {
-            setErrorMsgToLocation(errs, qualifiedFieldName,qualifiedFieldName + ValidationMessages.NOT_EMPTY_ERROR_MESSAGE);
+            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field is empty");
             return false;
         }

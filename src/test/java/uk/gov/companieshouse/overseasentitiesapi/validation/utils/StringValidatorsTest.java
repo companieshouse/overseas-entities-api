@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StringValidatorsTest {
     private static final String TO_TEST = "toTest";
     private static final String EMAIL_TEST = "validemailaddress@valid.com";
-    private static final String LOCATION = "location";
+    private static final String DUMMY_PARENT_FIELD = "parentField";
     private static final String LOGGING_CONTEXT ="12345";
     private Errors errors;
 
@@ -25,16 +25,16 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null and not empty successfully")
     void validateNotBlank_Successful() {
-        assertTrue(StringValidators.isValidNotBlank(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidNotBlank(TO_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate a string is not null and not empty unsuccessfully - empty string")
     void validateNotBlank_Unsuccessful_EmptyTrimmedString() {
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
-                .withError(LOCATION + ValidationMessages.NOT_EMPTY_ERROR_MESSAGE).build();
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD)
+                .withError(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD)).build();
 
-        boolean isNotBlank = StringValidators.isValidNotBlank("     ", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isValidNotBlank("     ", DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -44,10 +44,10 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null and not empty unsuccessfully - null string")
     void validateNotBlank_Unsuccessful_NullString() {
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
-                .withError(LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE).build();
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD)
+                .withError(ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD)).build();
 
-        boolean isNotBlank = StringValidators.isValidNotBlank(null, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isValidNotBlank(null, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -57,16 +57,16 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not over the max length successfully")
     void validateLength_Successful() {
-        assertTrue(StringValidators.isValidMaxLength(TO_TEST, 10, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidMaxLength(TO_TEST, 10, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate a string length is not over the max length unsuccessfully - over 5 characters")
     void validateLength_Unsuccessful_Over_MaxValue() {
-        String errMsg = LOCATION + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "5");
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
+        String errMsg = DUMMY_PARENT_FIELD + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "5");
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isNotOverMaxLength = StringValidators.isValidMaxLength(TO_TEST, 5, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotOverMaxLength = StringValidators.isValidMaxLength(TO_TEST, 5, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotOverMaxLength);
         assertEquals(1, errors.size());
@@ -76,16 +76,16 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string with allowed successfully")
     void validateCharacters_Successful() {
-        assertTrue(StringValidators.isValidCharacters(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidCharacters(TO_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate a string with not allowed unsuccessfully - russian characters")
     void validateCharacters_Unsuccessful_Over_MaxValue() {
-        String errMsg = LOCATION + ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE;
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
+        String errMsg = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidCharacters = StringValidators.isValidCharacters("Дракон", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidCharacters = StringValidators.isValidCharacters("Дракон", DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidCharacters);
         assertEquals(1, errors.size());
@@ -95,16 +95,16 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate Email successfully")
     void validateEmail_Successful() {
-        assertTrue(StringValidators.isValidEmailAddress(EMAIL_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isValidEmailAddress(EMAIL_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate Email unsuccessfully")
     void validateEmail_Unsuccessful() {
-        String errMsg = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", LOCATION);
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
+        String errMsg = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidEmail = StringValidators.isValidEmailAddress("lorem@ipsum", LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidEmail = StringValidators.isValidEmailAddress("lorem@ipsum", DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidEmail);
         assertEquals(1, errors.size());

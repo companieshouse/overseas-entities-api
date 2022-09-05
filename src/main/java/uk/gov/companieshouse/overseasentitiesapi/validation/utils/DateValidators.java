@@ -13,7 +13,7 @@ public class DateValidators {
 
     public static boolean isValidDateIsInPast(LocalDate compareToDate, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (compareToDate.isAfter(LocalDate.now())) {
-            setErrorMsgToLocation(errs, qualifiedFieldName, qualifiedFieldName + ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE);
+            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " date should be in the past");
             return false;
         }
@@ -27,7 +27,7 @@ public class DateValidators {
             return true;
         }
 
-        setErrorMsgToLocation(errs, qualifiedFieldName, qualifiedFieldName + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE);
+        setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
         ApiLogger.infoContext(loggingContext, qualifiedFieldName + " date should be in the past");
         return false;
     }

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UtilsValidatorsTest {
 
     private static final String TO_TEST = "toTest";
-    private static final String LOCATION = "location";
+    private static final String DUMMY_PARENT_FIELD = "parentField";
     private static final String LOGGING_CONTEXT ="12345";
     private Errors errors;
 
@@ -25,16 +25,16 @@ class UtilsValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null successfully")
     void validateNotNull_Successful() {
-        assertTrue(UtilsValidators.isValidNotNull(TO_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(UtilsValidators.isValidNotNull(TO_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate a string is not null unsuccessfully - null object")
     void validateNotNull_Unsuccessful() {
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION)
-                .withError(LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE).build();
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD)
+                .withError(ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD)).build();
 
-        boolean isNotNull = UtilsValidators.isValidNotNull(null, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isNotNull = UtilsValidators.isValidNotNull(null, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotNull);
         assertEquals(1, errors.size());
@@ -44,10 +44,10 @@ class UtilsValidatorsTest {
     @Test
     @DisplayName("Check the error object has been updated successfully")
     void checkSetErrorMsgToLocation_Correctly() {
-        String msgErr = LOCATION + ValidationMessages.NOT_NULL_ERROR_MESSAGE;
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(msgErr).build();
+        String msgErr = DUMMY_PARENT_FIELD + ValidationMessages.NOT_NULL_ERROR_MESSAGE;
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(msgErr).build();
 
-        UtilsValidators.setErrorMsgToLocation(errors, LOCATION, msgErr);
+        UtilsValidators.setErrorMsgToLocation(errors, DUMMY_PARENT_FIELD, msgErr);
 
         assertEquals(1, errors.size());
         assertTrue(errors.containsError(err));

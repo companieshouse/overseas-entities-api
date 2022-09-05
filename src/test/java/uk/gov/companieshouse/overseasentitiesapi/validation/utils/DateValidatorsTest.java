@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DateValidatorsTest {
     private static final LocalDate PAST_DATE_TEST = LocalDate.now().minusDays(3);
     private static final LocalDate FUTURE_DATE_TEST = LocalDate.now().plusDays(3);
-    private static final String LOCATION = "location";
+    private static final String DUMMY_PARENT_FIELD = "parentField";
     private static final String LOGGING_CONTEXT ="12345";
     private Errors errors;
 
@@ -27,16 +27,16 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is in the past successfully")
     void validateDateIsInPast_Successful() {
-        assertTrue(DateValidators.isValidDateIsInPast(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isValidDateIsInPast(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate date is in the past unsuccessfully - date in the future")
     void validateDateIsInPast_Unsuccessful() {
-        String errMsg = LOCATION + ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE;
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
+        String errMsg = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isValidDateIsInPast(FUTURE_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isValidDateIsInPast(FUTURE_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
@@ -46,16 +46,16 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is within last 3 months successfully")
     void validateDateIsWithinLast3Months_Successful() {
-        assertTrue(DateValidators.isValidDateIsWithinLast3Months(PAST_DATE_TEST, LOCATION, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isValidDateIsWithinLast3Months(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate date is within last 3 months unsuccessfully - past 5 months")
     void validateDateIsWithinLast3Months_Unsuccessful() {
-        String errMsg = LOCATION + ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE;
-        Err err = Err.invalidBodyBuilderWithLocation(LOCATION).withError(errMsg).build();
+        String errMsg = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isValidDateIsWithinLast3Months(LocalDate.now().minusMonths(5), LOCATION, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isValidDateIsWithinLast3Months(LocalDate.now().minusMonths(5), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
