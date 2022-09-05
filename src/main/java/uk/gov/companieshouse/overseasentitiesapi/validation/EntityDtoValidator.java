@@ -40,14 +40,14 @@ public class EntityDtoValidator {
 
     private boolean validateName(String entityName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.NAME_FIELD);
-        return StringValidators.isValidNotBlank(entityName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(entityName, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateIncorporationCountry(String country, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.INCORPORATION_COUNTRY_FIELD);
-        return StringValidators.isValidNotBlank(country, qualifiedFieldName, errors, loggingContext);
+        return StringValidators.isNotBlank(country, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
@@ -58,41 +58,41 @@ public class EntityDtoValidator {
 
     private boolean validateServiceAddressSameAsPrincipalAddress(Boolean same, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
-        return UtilsValidators.isValidNotNull(same, qualifiedFieldName, errors, loggingContext);
+        return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateEmail(String email, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.EMAIL_PROPERTY_FIELD);
-        return StringValidators.isValidNotBlank(email, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(email, 250, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(email, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(email, 250, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidEmailAddress(email, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateLegalForm(String legalForm, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.LEGAL_FORM_FIELD);
-        return StringValidators.isValidNotBlank(legalForm, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(legalForm, 4000, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(legalForm, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(legalForm, 4000, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(legalForm, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateLawGoverned(String lawGoverned, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.LAW_GOVERNED_FIELD);
-        return StringValidators.isValidNotBlank(lawGoverned, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(lawGoverned, 4000, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(lawGoverned, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(lawGoverned, 4000, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(lawGoverned, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validatePublicRegisterName(String publicRegisterName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD);
-        return StringValidators.isValidNotBlank(publicRegisterName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(publicRegisterName, 4000, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(publicRegisterName, 4000, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateRegistrationNumber(String registrationNumber, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedEntityFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
-        return StringValidators.isValidNotBlank(registrationNumber, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidMaxLength(registrationNumber, 32, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(registrationNumber, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(registrationNumber, 32, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(registrationNumber, qualifiedFieldName, errors, loggingContext);
     }
 

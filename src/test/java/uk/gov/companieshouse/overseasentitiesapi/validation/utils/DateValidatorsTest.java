@@ -27,7 +27,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is in the past successfully")
     void validateDateIsInPast_Successful() {
-        assertTrue(DateValidators.isValidDateIsInPast(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isDateIsInPast(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -36,7 +36,7 @@ class DateValidatorsTest {
         String errMsg = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isValidDateIsInPast(FUTURE_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isDateIsInPast(FUTURE_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
@@ -46,7 +46,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is within last 3 months successfully")
     void validateDateIsWithinLast3Months_Successful() {
-        assertTrue(DateValidators.isValidDateIsWithinLast3Months(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isDateIsWithinLast3Months(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -55,7 +55,7 @@ class DateValidatorsTest {
         String errMsg = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isValidDateIsWithinLast3Months(LocalDate.now().minusMonths(5), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isDateIsWithinLast3Months(LocalDate.now().minusMonths(5), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());

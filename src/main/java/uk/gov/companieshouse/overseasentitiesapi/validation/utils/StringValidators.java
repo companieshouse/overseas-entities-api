@@ -6,17 +6,17 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import java.util.regex.Pattern;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.isValidNotNull;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.isNotNull;
 
 public final class StringValidators {
 
     private StringValidators() {}
 
-    public static boolean isValidNotBlank(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
-        return isValidNotNull(toTest, qualifiedFieldName, errs, loggingContext) && isValidNotEmpty(toTest, qualifiedFieldName, errs, loggingContext);
+    public static boolean isNotBlank(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+        return isNotNull(toTest, qualifiedFieldName, errs, loggingContext) && isNotEmpty(toTest, qualifiedFieldName, errs, loggingContext);
     }
 
-    public static boolean isValidMaxLength(String toTest, Integer maxLength, String qualifiedFieldName, Errors errs, String loggingContext) {
+    public static boolean isLessThanOrEqualToMaxLength(String toTest, Integer maxLength, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.length() > maxLength) {
             setErrorMsgToLocation(errs, qualifiedFieldName,
                     qualifiedFieldName + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", maxLength.toString()));
@@ -67,7 +67,7 @@ public final class StringValidators {
         return true;
     }
 
-    private static boolean isValidNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+    private static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.trim().isEmpty()) {
             setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field is empty");

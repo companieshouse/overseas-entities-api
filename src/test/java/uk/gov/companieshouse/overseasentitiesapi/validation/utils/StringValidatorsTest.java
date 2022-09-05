@@ -25,7 +25,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not null and not empty successfully")
     void validateNotBlank_Successful() {
-        assertTrue(StringValidators.isValidNotBlank(TO_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isNotBlank(TO_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -34,7 +34,7 @@ class StringValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD)
                 .withError(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD)).build();
 
-        boolean isNotBlank = StringValidators.isValidNotBlank("     ", DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isNotBlank("     ", DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -47,7 +47,7 @@ class StringValidatorsTest {
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD)
                 .withError(ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD)).build();
 
-        boolean isNotBlank = StringValidators.isValidNotBlank(null, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isNotBlank = StringValidators.isNotBlank(null, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotBlank);
         assertEquals(1, errors.size());
@@ -57,7 +57,7 @@ class StringValidatorsTest {
     @Test
     @DisplayName("Validate a string is not over the max length successfully")
     void validateLength_Successful() {
-        assertTrue(StringValidators.isValidMaxLength(TO_TEST, 10, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(StringValidators.isLessThanOrEqualToMaxLength(TO_TEST, 10, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -66,7 +66,7 @@ class StringValidatorsTest {
         String errMsg = DUMMY_PARENT_FIELD + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "5");
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isNotOverMaxLength = StringValidators.isValidMaxLength(TO_TEST, 5, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isNotOverMaxLength = StringValidators.isLessThanOrEqualToMaxLength(TO_TEST, 5, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isNotOverMaxLength);
         assertEquals(1, errors.size());
