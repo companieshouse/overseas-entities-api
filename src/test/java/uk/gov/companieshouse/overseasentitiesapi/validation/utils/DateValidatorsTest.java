@@ -50,6 +50,12 @@ class DateValidatorsTest {
     }
 
     @Test
+    @DisplayName("Validate date when date is today successfully")
+    void validateDateIsWithinLast3Months_WithTodaysDate() {
+        assertTrue(DateValidators.isDateIsWithinLast3Months(LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+    }
+
+    @Test
     @DisplayName("Validate date is within last 3 months unsuccessfully - past 5 months")
     void validateDateIsWithinLast3Months_Unsuccessful() {
         String errMsg = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);

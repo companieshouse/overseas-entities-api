@@ -23,7 +23,7 @@ public class DateValidators {
 
     public static boolean isDateIsWithinLast3Months(LocalDate compareToDate, String qualifiedFieldName, Errors errs, String loggingContext) {
         var localDateNow = LocalDate.now();
-        if (compareToDate.isBefore(localDateNow) && compareToDate.isAfter(localDateNow.minusMonths(3))) {
+        if (compareToDate.isBefore(localDateNow.plusDays(1)) && compareToDate.isAfter(localDateNow.minusMonths(3))) {
             return true;
         }
 
