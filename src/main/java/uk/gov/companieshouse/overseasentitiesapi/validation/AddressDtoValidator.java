@@ -6,17 +6,25 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.Objects;
+
 @Component
 public class AddressDtoValidator {
 
     public Errors validate(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
         validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
         validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
-        validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
+        if(Objects.nonNull(addressDto.getLine2())) {
+            validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
+        }
         validateTown(parentAddressField, addressDto.getTown(), errors, loggingContext);
-        validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
+        if(Objects.nonNull(addressDto.getCounty())) {
+            validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
+        }
         validateCountry(parentAddressField, addressDto.getCountry(), errors, loggingContext);
-        validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+        if(Objects.nonNull(addressDto.getPostcode())) {
+            validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+        }
         return errors;
     }
 

@@ -267,7 +267,7 @@ public enum Country {
 
     public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
 
-        for(Country country : values()) {
+       for(Country country : values()) {
             if(country.countryName.equalsIgnoreCase(countryIn)) {
                 return true;
             }
