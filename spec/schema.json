@@ -1168,7 +1168,18 @@
       },
       "Country": {
         "type": "string",
-        "enum": [
+        "anyOf": [
+          {
+            "enum": [
+              "United Kingdom",
+              "England",
+              "Scotland",
+              "Wales",
+              "Northern Ireland"
+            ]
+          },
+          {
+            "enum": [
               "Afghanistan",
               "Aland Islands",
               "Albania",
@@ -1422,6 +1433,8 @@
               "Zambia",
               "Zimbabwe"
             ]
+          }
+        ]
       }
     }
   }

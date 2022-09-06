@@ -10,7 +10,7 @@ public class AddressMock {
     public static final String LINE2 = "";
     public static final String TOWN = "Notown";
     public static final String COUNTY = "Noshire";
-    public static final String COUNTRY = "Eutopia";
+    public static final String COUNTRY = "France";
     public static final String POST_CODE = "NOW 3RE";
 
     public static AddressDto getAddressDto() {
