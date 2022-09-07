@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 
 @ExtendWith(MockitoExtension.class)
-public class PresenterDtoValidatorTest {
+class PresenterDtoValidatorTest {
 
     private static final String CONTEXT = "12345";
 
