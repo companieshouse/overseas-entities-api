@@ -271,10 +271,20 @@
         "type": "object",
         "properties": {
           "full_name": {
-            "type": "string"
+            "type": "string",
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email",
+            "maxLength": 250
           }
         }
       },
