@@ -37,7 +37,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
@@ -101,7 +101,7 @@ public class FilingsService {
                         new SubmissionNotFoundException(
                                 String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
 
-        data.put(PRESENTER, submissionDto.getPresenter());
+        data.put(PRESENTER_FIELD, submissionDto.getPresenter());
         data.put(ENTITY_FIELD, submissionDto.getEntity());
         data.put(DUE_DILIGENCE, submissionDto.getDueDiligence());
         data.put(OVERSEAS_ENTITY_DUE_DILIGENCE, submissionDto.getOverseasEntityDueDiligence());

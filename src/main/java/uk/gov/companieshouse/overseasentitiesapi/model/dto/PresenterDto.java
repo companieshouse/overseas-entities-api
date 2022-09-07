@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PresenterDto {
 
-    @JsonProperty("full_name")
+    public static final String FULL_NAME_FIELD = "full_name";
+
+    public static final String EMAIL_PROPERTY_FIELD = "email";
+
+    @JsonProperty(FULL_NAME_FIELD)
     private String fullName;
 
-    @JsonProperty("email")
+    @JsonProperty(EMAIL_PROPERTY_FIELD)
     private String email;
 
     public String getFullName() {
