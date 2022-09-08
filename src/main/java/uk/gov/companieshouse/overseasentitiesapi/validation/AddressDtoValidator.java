@@ -8,6 +8,8 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
 @Component
 public class AddressDtoValidator {
 
@@ -29,50 +31,46 @@ public class AddressDtoValidator {
     }
 
     private boolean validatePropertyNameNumber(String parentAddressField, String propertyNameNumber, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
         return StringValidators.isNotBlank(propertyNameNumber, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(propertyNameNumber, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(propertyNameNumber, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateLine1(String parentAddressField, String line1, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.LINE_1_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.LINE_1_FIELD);
         return StringValidators.isNotBlank(line1, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(line1, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(line1, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateLine2(String parentAddressField, String line2, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.LINE_2_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.LINE_2_FIELD);
         return StringValidators.isLessThanOrEqualToMaxLength(line2, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(line2, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateTown(String parentAddressField, String town, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.TOWN_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.TOWN_FIELD);
         return StringValidators.isNotBlank(town, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(town, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(town, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateCounty(String parentAddressField, String county, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.COUNTY_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTY_FIELD);
         return StringValidators.isLessThanOrEqualToMaxLength(county, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(county, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
         return Country.isValid(country, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedAddressFieldName(parentAddressField, AddressDto.POSTCODE_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD);
         return StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
-    }
-
-    private String getQualifiedAddressFieldName(String parentAddressField, String fieldName) {
-        return String.format("%s.%s", parentAddressField, fieldName);
     }
 }

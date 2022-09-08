@@ -6,19 +6,27 @@ import java.time.LocalDate;
 
 public class OverseasEntityDueDiligenceDto {
 
-    @JsonProperty("identity_date")
+    public static final String IDENTITY_DATE_FIELD = "identity_date";
+    public static final String NAME_FIELD = "name";
+    public static final String IDENTITY_ADDRESS_FIELD = "identity_address";
+    public static final String EMAIL_FIELD = "email";
+    public static final String SUPERVISORY_NAME_FIELD = "supervisory_name";
+    public static final String AML_NUMBER_FIELD = "aml_number";
+    public static final String PARTNER_NAME_FIELD = "partner_name";
+
+    @JsonProperty(IDENTITY_DATE_FIELD)
     private LocalDate identityDate;
-    @JsonProperty("name")
+    @JsonProperty(NAME_FIELD)
     private String name;
-    @JsonProperty("identity_address")
+    @JsonProperty(IDENTITY_ADDRESS_FIELD)
     private AddressDto address;
-    @JsonProperty("email")
+    @JsonProperty(EMAIL_FIELD)
     private String email;
-    @JsonProperty("supervisory_name")
+    @JsonProperty(SUPERVISORY_NAME_FIELD)
     private String supervisoryName;
-    @JsonProperty("aml_number")
+    @JsonProperty(AML_NUMBER_FIELD)
     private String amlNumber;
-    @JsonProperty("partner_name")
+    @JsonProperty(PARTNER_NAME_FIELD)
     private String partnerName;
 
     public LocalDate getIdentityDate() {

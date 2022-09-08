@@ -28,7 +28,7 @@ public class DateValidators {
         }
 
         setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
-        ApiLogger.infoContext(loggingContext, qualifiedFieldName + " date should be in the past");
+        ApiLogger.infoContext(loggingContext, qualifiedFieldName + " must be in the past 3 months");
         return false;
     }
 }
