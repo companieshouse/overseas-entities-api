@@ -33,7 +33,9 @@ public class OverseasEntityDueDiligenceValidator {
         if (Objects.nonNull(overseasEntityDueDiligenceDto.getSupervisoryName())) {
             validateSupervisoryName(overseasEntityDueDiligenceDto.getSupervisoryName(), errors, loggingContext);
         }
-        validateAmlNumber(overseasEntityDueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        if (Objects.nonNull(overseasEntityDueDiligenceDto.getAmlNumber())) {
+            validateAmlNumber(overseasEntityDueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        }
         if (Objects.nonNull(overseasEntityDueDiligenceDto.getPartnerName())) {
             validatePartnerName(overseasEntityDueDiligenceDto.getPartnerName(), errors, loggingContext);
         }

@@ -9,15 +9,13 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMess
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 
-public class OverseasEntityDueDiligenceValidatorTest {
+class OverseasEntityDueDiligenceValidatorTest {
 
     private static final String CONTEXT = "12345";
     private AddressDtoValidator addressDtoValidator;
@@ -25,16 +23,10 @@ public class OverseasEntityDueDiligenceValidatorTest {
     private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto;
 
     @BeforeEach
-    public void init() {
+    void init() {
         addressDtoValidator = new AddressDtoValidator();
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
-    }
-
-    @Test
-    void testExceptionThrownWhenIdentityDateFieldIsInvalid() {
-        assertThrows(DateTimeException.class, () ->
-                overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 7, 34)));
     }
 
     @Test
