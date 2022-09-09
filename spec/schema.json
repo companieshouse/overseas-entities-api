@@ -438,7 +438,8 @@
       "OverseasEntityDueDiligence": {
         "required": [
           "name",
-          "email"
+          "email",
+          "identity_address"
         ],
         "type": "object",
         "properties": {
@@ -447,7 +448,6 @@
             "format": "date"
           },
           "name": {
-            "type": "string",
             "allOf" : [
               {
                 "$ref": "#/components/schemas/FieldPattern"
@@ -466,7 +466,6 @@
             "maxLength": 256
           },
           "supervisory_name": {
-            "type": "string",
             "allOf" : [
               {
                 "$ref": "#/components/schemas/FieldPattern"
@@ -481,7 +480,6 @@
             "maxLength": 256
           },
           "partner_name": {
-            "type": "string",
             "allOf" : [
               {
                 "$ref": "#/components/schemas/FieldPattern"
