@@ -8,12 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,19 +33,23 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Mock
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
+    private EntityDto entityDto = EntityMock.getEntityDto();
+    private PresenterDto presenterDto = PresenterMock.getPresenterDto();
+
+    private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
     @Test
     void testOverseasEntityDueDiligenceValidator() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(any(),any(),any());
-        verify(presenterDtoValidator, times(1)).validate(any(),any(),any());
-        verify(overseasEntityDueDiligenceValidator, times(1)).validate(any(),any(),any());
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
+        verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto),any(),any());
     }
 
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntity(EntityMock.getEntityDto());
-        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto());
+        overseasEntitySubmissionDto.setEntity(entityDto);
+        overseasEntitySubmissionDto.setPresenter(presenterDto);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
     }
 }
