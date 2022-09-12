@@ -206,7 +206,8 @@
       "OverseasEntitySubmission": {
         "required": [
           "entity",
-          "presenter"
+          "presenter",
+          "beneficial_owners_statement"
         ],
         "type": "object",
         "properties": {

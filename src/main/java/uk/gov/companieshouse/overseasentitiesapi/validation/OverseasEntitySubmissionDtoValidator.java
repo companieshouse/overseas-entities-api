@@ -2,10 +2,14 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.Objects;
+
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class OverseasEntitySubmissionDtoValidator {
@@ -24,14 +28,18 @@ public class OverseasEntitySubmissionDtoValidator {
         this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
     }
 
-    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errs, String loggingContext) {
-        entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errs, loggingContext);
-        presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errs, loggingContext);
+    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
+        presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         if(Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
-            overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errs, loggingContext);
+            overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
         }
-        return errs;
+        validateBeneficialOwnersStatement(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+        return errors;
     }
 
-
+    private boolean validateBeneficialOwnersStatement(BeneficialOwnersStatementType beneficialOwnersStatement, Errors errors, String loggingContext) {
+        String qualifiedFieldName = OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
+        return UtilsValidators.isNotNull(beneficialOwnersStatement, qualifiedFieldName, errors, loggingContext);
+    }
 }
