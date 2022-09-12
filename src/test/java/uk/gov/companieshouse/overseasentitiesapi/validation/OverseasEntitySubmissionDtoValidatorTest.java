@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.verify;
 class OverseasEntitySubmissionDtoValidatorTest {
 
     private static final String CONTEXT = "12345";
+    @InjectMocks
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
     @Mock
     private AddressDtoValidator addressDtoValidator;
@@ -34,8 +36,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntityDueDiligenceValidator() {
-        overseasEntitySubmissionDtoValidator = new OverseasEntitySubmissionDtoValidator(
-                entityDtoValidator, presenterDtoValidator, overseasEntityDueDiligenceValidator);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
         verify(entityDtoValidator, times(1)).validate(any(),any(),any());

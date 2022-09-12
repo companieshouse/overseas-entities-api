@@ -18,6 +18,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class OverseasEntityDueDiligenceValidator {
 
+    public static final int MAX_LENGTH = 256;
     private final AddressDtoValidator addressDtoValidator;
 
     @Autowired
@@ -56,7 +57,7 @@ public class OverseasEntityDueDiligenceValidator {
                 OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.NAME_FIELD);
         return StringValidators.isNotBlank(name, qualifiedFieldName, errors, loggingContext) &&
-               StringValidators.isLessThanOrEqualToMaxLength(name, 256, qualifiedFieldName, errors, loggingContext) &&
+               StringValidators.isLessThanOrEqualToMaxLength(name, MAX_LENGTH, qualifiedFieldName, errors, loggingContext) &&
                StringValidators.isValidCharacters(name, qualifiedFieldName, errors, loggingContext);
     }
 
