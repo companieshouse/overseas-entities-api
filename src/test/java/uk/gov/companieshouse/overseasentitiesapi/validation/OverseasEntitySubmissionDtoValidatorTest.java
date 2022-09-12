@@ -32,11 +32,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
     @Mock
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
-
     private EntityDto entityDto = EntityMock.getEntityDto();
     private PresenterDto presenterDto = PresenterMock.getPresenterDto();
-
     private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+
     @Test
     void testOverseasEntityDueDiligenceValidator() {
         buildOverseasEntitySubmissionDto();
