@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -34,10 +35,14 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Mock
     private OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
     @Mock
+    private BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
+    @Mock
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
     private EntityDto entityDto = EntityMock.getEntityDto();
     private PresenterDto presenterDto = PresenterMock.getPresenterDto();
     private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+
+    private BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.NONE_IDENTIFIED;
 
     @Test
     void testOverseasEntityDueDiligenceValidator() {
@@ -46,15 +51,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
         verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto),any(),any());
-    }
-
-    @Test
-    void testErrorReportedWhenBeneficialOwnersStatementIsNull() {
-        overseasEntitySubmissionDto.setBeneficialOwnersStatement(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT);
-        Err err = Err.invalidBodyBuilderWithLocation(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT).withError(validationMessage).build();
-        assertTrue(errors.containsError(err));
+        verify(beneficialOwnersStatementValidator, times(1)).validate(eq(beneficialOwnersStatement),any(),any());
     }
 
     private void buildOverseasEntitySubmissionDto() {
@@ -62,5 +59,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setEntity(entityDto);
         overseasEntitySubmissionDto.setPresenter(presenterDto);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
     }
 }

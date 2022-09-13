@@ -16,16 +16,18 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private final EntityDtoValidator entityDtoValidator;
     private final PresenterDtoValidator presenterDtoValidator;
-
     private final OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
+    private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
 
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityDtoValidator entityDtoValidator,
                                                 PresenterDtoValidator presenterDtoValidator,
-                                                OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator) {
+                                                OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator,
+                                                BeneficialOwnersStatementValidator beneficialOwnersStatementValidator) {
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
+        this.beneficialOwnersStatementValidator = beneficialOwnersStatementValidator;
     }
 
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -34,12 +36,9 @@ public class OverseasEntitySubmissionDtoValidator {
         if(Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
             overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
         }
-        validateBeneficialOwnersStatement(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+        beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
         return errors;
     }
 
-    private boolean validateBeneficialOwnersStatement(BeneficialOwnersStatementType beneficialOwnersStatement, Errors errors, String loggingContext) {
-        String qualifiedFieldName = OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
-        return UtilsValidators.isNotNull(beneficialOwnersStatement, qualifiedFieldName, errors, loggingContext);
-    }
+
 }
