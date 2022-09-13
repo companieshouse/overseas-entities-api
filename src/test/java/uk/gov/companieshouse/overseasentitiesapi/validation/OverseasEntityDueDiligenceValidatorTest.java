@@ -27,6 +27,7 @@ class OverseasEntityDueDiligenceValidatorTest {
         addressDtoValidator = new AddressDtoValidator();
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+        overseasEntityDueDiligenceDto.getAddress().setCountry("England");
     }
 
     @Test
@@ -39,7 +40,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
-        overseasEntityDueDiligenceDto.getAddress().setCountry("England");
+        overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
         assertFalse(errors.hasErrors());
     }

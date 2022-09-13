@@ -227,7 +227,7 @@ public enum Country {
     SWEDEN("Sweden"),
     SWITZERLAND("Switzerland"),
     SYRIA("Syria"),
-    TAIWAN("Taiwan"),
+    TAIWAN_PROVINCE_OF_CHINA("Taiwan, Province of China"),
     TAJIKISTAN("Tajikistan"),
     TANZANIA("Tanzania"),
     THAILAND("Thailand"),
