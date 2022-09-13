@@ -12,6 +12,7 @@ public enum UkCountry {
     WALES("Wales");
 
     public final String countryName;
+
     UkCountry(String country) {
         this.countryName = country;
     }
