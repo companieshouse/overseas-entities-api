@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class BeneficialOwnersStatementValidatorTest {
+class BeneficialOwnersStatementValidatorTest {
 
     private static final String CONTEXT = "12345";
     private BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;

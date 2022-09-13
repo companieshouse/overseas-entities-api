@@ -9,12 +9,12 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
-import uk.gov.companieshouse.service.rest.err.Err;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
