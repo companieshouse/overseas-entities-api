@@ -437,6 +437,11 @@
         }
       },
       "OverseasEntityDueDiligence": {
+        "required": [
+          "name",
+          "email",
+          "identity_address"
+        ],
         "type": "object",
         "properties": {
           "identity_date": {
@@ -444,22 +449,46 @@
             "format": "date"
           },
           "name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "identity_address": {
             "$ref": "#/components/schemas/Address"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email",
+            "maxLength": 256
           },
           "supervisory_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "aml_number": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 256
           },
           "partner_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           }
         }
       },
