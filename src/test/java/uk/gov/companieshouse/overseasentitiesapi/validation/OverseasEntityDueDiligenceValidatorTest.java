@@ -30,8 +30,16 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsNow() {
+    void testNoErrorReportedWhenIdentityDateFieldIsNow() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenCountryIsInTheUk() {
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
+        overseasEntityDueDiligenceDto.getAddress().setCountry("England");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
         assertFalse(errors.hasErrors());
     }
