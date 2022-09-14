@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.net.URI;
 import java.util.function.Supplier;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.dao.StatusType.COMPLETE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dao.StatusType.IN_PROGRESS;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
@@ -48,6 +49,26 @@ public class OverseasEntitiesService {
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
         this.dateTimeNowSupplier = dateTimeNowSupplier;
+    }
+
+    public ResponseEntity<Object> completeInProgressOverseasEntity(Transaction transaction,
+                                                                  String requestId) {
+        ApiLogger.debugContext(requestId, "Called completeInProgressOverseasEntity(...)");
+
+        // Controller POST and PUT methods should have been called before getting here...
+        if (!hasExistingOverseasEntitySubmission(transaction)) {
+            return ResponseEntity.badRequest().body(String.format("Transaction id: %s does NOT have an existing Overseas Entity submission", transaction.getId()));
+        }
+
+        String overseasEntityId = getOverseasEntityIdFromTransaction(transaction);
+
+        OverseasEntitySubmissionDao submissionDao = overseasEntitySubmissionsRepository.findById(overseasEntityId).get();
+
+        submissionDao.setStatus(COMPLETE);
+
+        overseasEntitySubmissionsRepository.save(submissionDao);
+
+        return ResponseEntity.accepted().build();
     }
 
     public ResponseEntity<Object> replaceInProgressOverseasEntity(Transaction transaction,
@@ -108,7 +129,7 @@ public class OverseasEntitiesService {
                                                                      String requestId,
                                                                      String userId,
                                                                      String overseasEntityId) throws ServiceException {
-        // add the overseas entity submission into MongoDB
+        // Create or update the overseas entity submission in MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setStatus(IN_PROGRESS);
@@ -124,7 +145,7 @@ public class OverseasEntitiesService {
         var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), submissionDao.getId());
         submissionDao.setLinks(Collections.singletonMap("self", submissionUri));
 
-        // Maybe this shouldn't change every time submission is updated? Could move up...
+        // Maybe a lot of this shouldn't be done every time submission is updated? Could move up into 'create' block...
         submissionDao.setCreatedOn(dateTimeNowSupplier.get());
 
         submissionDao.setHttpRequestId(requestId);

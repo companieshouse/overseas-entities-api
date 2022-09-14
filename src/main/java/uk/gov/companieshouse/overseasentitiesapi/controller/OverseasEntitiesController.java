@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,6 +49,18 @@ public class OverseasEntitiesController {
                                       OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.overseasEntitySubmissionDtoValidator = overseasEntitySubmissionDtoValidator;
+    }
+
+    @PatchMapping
+    public ResponseEntity<Object> completeInProgressSubmission(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            HttpServletRequest request) {
+
+        return this.overseasEntitiesService.completeInProgressOverseasEntity(
+                transaction,
+                requestId);
     }
 
     @PutMapping
