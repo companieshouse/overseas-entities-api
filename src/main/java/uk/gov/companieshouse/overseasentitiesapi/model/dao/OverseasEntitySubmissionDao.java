@@ -61,6 +61,9 @@ public class OverseasEntitySubmissionDao {
     @Field("links")
     private Map<String, String> links;
 
+    @Field("status")
+    private StatusType status;
+
     public String getId() {
         return id;
     }
@@ -187,5 +190,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setHttpRequestId(String httpRequestId) {
         this.httpRequestId = httpRequestId;
+    }
+
+    public StatusType getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusType status) {
+        this.status = status;
     }
 }

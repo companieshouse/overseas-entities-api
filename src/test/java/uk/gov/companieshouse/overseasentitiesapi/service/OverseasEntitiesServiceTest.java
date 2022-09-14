@@ -96,7 +96,7 @@ class OverseasEntitiesServiceTest {
 
 
         // make the call to test
-        var response = overseasEntitiesService.createOverseasEntity(
+        var response = overseasEntitiesService.createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH_TOKEN_HEADER,
@@ -140,7 +140,7 @@ class OverseasEntitiesServiceTest {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
 
         // make the call to test
-        var response = overseasEntitiesService.createOverseasEntity(
+        var response = overseasEntitiesService.createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH_TOKEN_HEADER,

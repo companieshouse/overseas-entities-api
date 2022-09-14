@@ -50,7 +50,7 @@ public class OverseasEntitiesController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createNewSubmission(
+    public ResponseEntity<Object> createNewInProgressSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
@@ -62,19 +62,23 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
-                if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+                // Comment out API validation for now as POST end-point will be used for the initial submission to create
+                // a new OE from the first screen (Land Sold Filter page) and model will be incomplete at this stage
+
+//                var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+//
+//                if (validationErrors.hasErrors()) {
+//                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
+//                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//                }
             }
 
             String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
             ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
-            return this.overseasEntitiesService.createOverseasEntity(
+            return this.overseasEntitiesService.createInProgressOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
                     passThroughTokenHeader,

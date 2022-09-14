@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.net.URI;
 import java.util.function.Supplier;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.dao.StatusType.IN_PROGRESS;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
@@ -47,11 +48,11 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
-                                                       OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                       String passthroughTokenHeader,
-                                                       String requestId,
-                                                       String userId) throws ServiceException {
+    public ResponseEntity<Object> createInProgressOverseasEntity(Transaction transaction,
+                                                                 OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                                 String passthroughTokenHeader,
+                                                                 String requestId,
+                                                                 String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
@@ -60,6 +61,9 @@ public class OverseasEntitiesService {
 
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+
+        overseasEntitySubmissionDao.setStatus(IN_PROGRESS);
+
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
         var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
         insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));

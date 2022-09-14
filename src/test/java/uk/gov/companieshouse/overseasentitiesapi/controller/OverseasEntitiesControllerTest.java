@@ -67,13 +67,13 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
-        var response = overseasEntitiesController.createNewSubmission(
+        var response = overseasEntitiesController.createNewInProgressSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -83,7 +83,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
@@ -100,13 +100,13 @@ class OverseasEntitiesControllerTest {
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
 
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
-        var response = overseasEntitiesController.createNewSubmission(
+        var response = overseasEntitiesController.createNewInProgressSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -116,7 +116,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createInProgressOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
@@ -135,7 +135,7 @@ class OverseasEntitiesControllerTest {
                 eq(REQUEST_ID)
         )).thenReturn(new Errors(err));
 
-        var response = overseasEntitiesController.createNewSubmission(
+        var response = overseasEntitiesController.createNewInProgressSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
