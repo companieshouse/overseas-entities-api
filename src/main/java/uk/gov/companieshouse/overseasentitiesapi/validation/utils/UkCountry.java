@@ -17,10 +17,10 @@ public enum UkCountry {
         this.countryName = country;
     }
 
-    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
+    public static boolean isValid(String countryName, String location, Errors errs, String loggingContext) {
 
-        for(UkCountry ukCountry : values()) {
-            if(ukCountry.countryName.equalsIgnoreCase(countryIn)) {
+        for (UkCountry ukCountry : values()) {
+            if (ukCountry.countryName.equalsIgnoreCase(countryName)) {
                 return true;
             }
         }

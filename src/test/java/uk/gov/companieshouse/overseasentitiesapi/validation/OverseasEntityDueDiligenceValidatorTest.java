@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -34,6 +36,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     void testNoErrorReportedWhenIdentityDateFieldIsNow() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
+
         assertFalse(errors.hasErrors());
     }
 
@@ -42,7 +45,19 @@ class OverseasEntityDueDiligenceValidatorTest {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
         overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
+
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenCountryIsNotInTheUk() {
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
+        overseasEntityDueDiligenceDto.getAddress().setCountry("France");
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
+        String qualifiedFieldName = OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
+        String validationMessage = ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
@@ -61,6 +76,7 @@ class OverseasEntityDueDiligenceValidatorTest {
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
         assertError(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
     }
 
