@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -49,6 +50,33 @@ public class OverseasEntitiesController {
         this.overseasEntitySubmissionDtoValidator = overseasEntitySubmissionDtoValidator;
     }
 
+    @PutMapping
+    public ResponseEntity<Object> replaceInProgressSubmission(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            HttpServletRequest request) {
+
+        var logMap = new HashMap<String, Object>();
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+
+        ApiLogger.infoContext(requestId, "Calling service to replace the in progress Overseas Entity Submission", logMap);
+
+        try {
+            return this.overseasEntitiesService.replaceInProgressOverseasEntity(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    passThroughTokenHeader,
+                    requestId,
+                    userId);
+        } catch (Exception e) {
+            ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Object> createNewInProgressSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
@@ -76,7 +104,7 @@ public class OverseasEntitiesController {
 
             String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
 
-            ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
+            ApiLogger.infoContext(requestId, "Calling service to create an in progress Overseas Entity Submission", logMap);
 
             return this.overseasEntitiesService.createInProgressOverseasEntity(
                     transaction,

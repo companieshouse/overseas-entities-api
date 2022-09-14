@@ -9,6 +9,7 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import java.net.URI;
@@ -48,39 +50,96 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
+    public ResponseEntity<Object> replaceInProgressOverseasEntity(Transaction transaction,
+                                                                  OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                                  String passthroughTokenHeader,
+                                                                  String requestId,
+                                                                  String userId) throws ServiceException {
+        ApiLogger.debugContext(requestId, "Called replaceInProgressOverseasEntity(...)");
+
+        // Controller POST method and 'createInProgressOverseasEntity()' method should have been called before getting here...
+        if (!hasExistingOverseasEntitySubmission(transaction)) {
+            return ResponseEntity.badRequest().body(String.format("Transaction id: %s does NOT have an existing Overseas Entity submission", transaction.getId()));
+        }
+
+        String overseasEntityId = getOverseasEntityIdFromTransaction(transaction);
+
+        ApiLogger.debugContext(requestId, "Updating Overseas Entity with id " + overseasEntityId);
+
+        return createUpdateOverseasEntityInMongo(transaction, overseasEntitySubmissionDto, passthroughTokenHeader,
+                requestId, userId, overseasEntityId);
+    }
+
+
+    // *** THIS IS A TERRIBLE HACK!! ***
+    //
+    // TODO Does OE id come in within the OverseasEntitySubmissionDto or is it populated as a request attribute on the
+    //      controller method in a more elegant fashion? If the former, then it will need to be added to the DTO model.
+    //
+    //      For now, plucking this out of one of the transaction resources in a VERY dubious manner...
+    private String getOverseasEntityIdFromTransaction(Transaction transaction) {
+        String overseasEntityResource = transaction.getResources().entrySet().stream().findFirst().get().getValue()
+                .getLinks().get("resource");
+
+        ApiLogger.debugContext("Overseas entity resource link from transaction = " + overseasEntityResource, null);
+
+        int locationOfUnderscore = overseasEntityResource.lastIndexOf("/") + 1;
+
+        return overseasEntityResource.substring(locationOfUnderscore);
+    }
+
     public ResponseEntity<Object> createInProgressOverseasEntity(Transaction transaction,
                                                                  OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                                  String passthroughTokenHeader,
                                                                  String requestId,
                                                                  String userId) throws ServiceException {
-        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
+        ApiLogger.debugContext(requestId, "Called createInProgressOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
             return ResponseEntity.badRequest().body(String.format("Transaction id: %s has an existing Overseas Entity submission", transaction.getId()));
         }
 
+        return createUpdateOverseasEntityInMongo(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, null);
+    }
+
+    private ResponseEntity<Object> createUpdateOverseasEntityInMongo(Transaction transaction,
+                                                                     OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                                     String passthroughTokenHeader,
+                                                                     String requestId,
+                                                                     String userId,
+                                                                     String overseasEntityId) throws ServiceException {
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setStatus(IN_PROGRESS);
 
-        var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
-        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
-        insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
-        insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
-        insertedSubmission.setHttpRequestId(requestId);
-        insertedSubmission.setCreatedByUserId(userId);
+        OverseasEntitySubmissionDao submissionDao;
+        if (Objects.isNull(overseasEntityId)) {
+            submissionDao = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
+        } else {
+            overseasEntitySubmissionDao.setId(overseasEntityId);
+            submissionDao = overseasEntitySubmissionsRepository.save(overseasEntitySubmissionDao);
+        }
 
-        overseasEntitySubmissionsRepository.save(insertedSubmission);
+        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), submissionDao.getId());
+        submissionDao.setLinks(Collections.singletonMap("self", submissionUri));
+
+        // Maybe this shouldn't change every time submission is updated? Could move up...
+        submissionDao.setCreatedOn(dateTimeNowSupplier.get());
+
+        submissionDao.setHttpRequestId(requestId);
+        submissionDao.setCreatedByUserId(userId);
+
+        overseasEntitySubmissionsRepository.save(submissionDao);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
         // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
         addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
 
-        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), submissionDao.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
-        overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
+        overseasEntitySubmissionCreatedResponseDto.setId(submissionDao.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
 
