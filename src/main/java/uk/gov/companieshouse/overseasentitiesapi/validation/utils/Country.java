@@ -1,9 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
-import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 
 public enum Country {
     AFGHANISTAN("Afghanistan"),
@@ -265,15 +262,13 @@ public enum Country {
         this.countryName = country;
     }
 
-    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
+    public static boolean isValid(String countryIn) {
 
        for(Country country : values()) {
             if(country.countryName.equalsIgnoreCase(countryIn)) {
                 return true;
             }
         }
-        setErrorMsgToLocation(errs, location, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
-        ApiLogger.infoContext(loggingContext, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
         return false;
     }
 }

@@ -2,9 +2,11 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UkCountry;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -68,12 +70,7 @@ public class AddressDtoValidator {
 
     private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
-        String oeDueDiligenceAdddressPath = getQualifiedFieldName(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE, OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD);
-        if (parentAddressField.equalsIgnoreCase(oeDueDiligenceAdddressPath)) {
-            return UkCountry.isValid(country, qualifiedFieldName, errors, loggingContext);
-        } else {
-            return Country.isValid(country, qualifiedFieldName, errors, loggingContext);
-        }
+        return CountryValidators.checkListofCountries(parentAddressField, country, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
