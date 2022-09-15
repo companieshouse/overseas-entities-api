@@ -493,20 +493,43 @@
         }
       },
       "BeneficialOwnerIndividual": {
+        "required": [
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "nationality",
+          "is_service_address_same_as_usual_residential_address",
+          "start_date",
+          "is_on_sanctions_list"
+        ],
         "type": "object",
         "properties": {
           "first_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "last_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "date_of_birth": {
             "type": "string",
             "format": "date"
           },
           "nationality": {
-            "type": "string"
+            "$ref": "#/components/schemas/FieldPattern"
           },
           "usual_residential_address": {
             "$ref": "#/components/schemas/Address"
