@@ -11,13 +11,15 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 
 public class CountryValidators {
 
+    private CountryValidators() {}
+
     public static boolean checkListofCountries(String parentAddressField, String country, String qualifiedFieldName, Errors errors, String loggingContext) {
 
         String entityPrincipalAdddressPath = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PRINCIPAL_ADDRESS_FIELD);
         String entityServiceAdddressPath = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.SERVICE_ADDRESS_FIELD);
         String oeDueDiligenceAdddressPath = getQualifiedFieldName(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE, OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD);
 
-        boolean isValid = false;
+        var isValid = false;
         if (!(parentAddressField.equalsIgnoreCase(entityPrincipalAdddressPath) ||
                 parentAddressField.equalsIgnoreCase(entityServiceAdddressPath))) {
             isValid = UkCountry.isValid(country);

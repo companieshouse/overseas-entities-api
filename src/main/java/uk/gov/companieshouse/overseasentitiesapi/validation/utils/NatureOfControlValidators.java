@@ -10,6 +10,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 
 public class NatureOfControlValidators {
 
+    private NatureOfControlValidators() {}
+
     public static boolean checkAtLeastOneFieldHasValue(List<NatureOfControlType> fields, String qualifiedFieldName, Errors errs, String loggingContext) {
 
         if (fields.isEmpty()) {

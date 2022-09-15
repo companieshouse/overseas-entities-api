@@ -2,13 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UkCountry;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.Objects;
