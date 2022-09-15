@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
-import uk.gov.companieshouse.service.rest.err.Errors;
-
 public enum Country {
     AFGHANISTAN("Afghanistan"),
     ALAND_ISLANDS("Aland Islands"),

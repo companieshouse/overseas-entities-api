@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.NatureOfControlValidators;
@@ -22,7 +21,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class BeneficialOwnerIndividualValidator {
 
-    public static String NATURE_OF_CONTROL_FIELDS = "nature_of_control";
+    public static final String NATURE_OF_CONTROL_FIELDS = "nature_of_control";
 
     private final AddressDtoValidator addressDtoValidator;
 
