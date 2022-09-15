@@ -58,6 +58,8 @@ public class OverseasEntitiesController {
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             HttpServletRequest request) {
 
+        // Maybe do API validation here, at end of the journey, when completing?
+
         return this.overseasEntitiesService.completeInProgressOverseasEntity(
                 transaction,
                 requestId);
