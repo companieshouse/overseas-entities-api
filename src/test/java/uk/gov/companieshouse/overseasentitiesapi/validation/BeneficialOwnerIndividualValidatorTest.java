@@ -164,10 +164,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.DATE_OF_BIRTH);
+                BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.DATE_OF_BIRTH, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -176,10 +176,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY);
+                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.NATIONALITY, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -188,10 +188,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY);
+                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.NATIONALITY, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -200,10 +200,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY);
+                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.NATIONALITY, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -238,10 +238,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.START_DATE);
+                BeneficialOwnerIndividualDto.START_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.START_DATE, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.START_DATE_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -290,10 +290,10 @@ class BeneficialOwnerIndividualValidatorTest {
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST);
+                BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST, validationMessage, errors);
+        assertError(BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST_FIELD, validationMessage, errors);
     }
 
     private void assertError(String fieldName, String message, Errors errors) {

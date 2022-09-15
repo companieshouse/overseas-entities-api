@@ -15,6 +15,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -37,16 +38,16 @@ public class BeneficialOwnerIndividualValidator {
             validateLastName(beneficialOwnerIndividualDto.getLastName(), errors, loggingContext);
             validateDateOfBirth(beneficialOwnerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(beneficialOwnerIndividualDto.getNationality(), errors, loggingContext);
-            validateAddress(BeneficialOwnerIndividualDto.USUAL_RESIDENTIAL_ADDRESS, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
+            validateAddress(BeneficialOwnerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             boolean sameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
-                validateAddress(BeneficialOwnerIndividualDto.SERVICE_ADDRESS, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
+                validateAddress(BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             }
             validateStartDate(beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
             validateIsOnSanctionsList(beneficialOwnerIndividualDto.getOnSanctionsList(), errors, loggingContext);
 
             List<NatureOfControlType> fields = new ArrayList<>();
-            if (beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes() != null) {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
             }
             if (beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes() != null) {
@@ -78,13 +79,13 @@ public class BeneficialOwnerIndividualValidator {
     private boolean validateDateOfBirth(LocalDate dateOfBirth, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.DATE_OF_BIRTH);
+                BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD);
         return UtilsValidators.isNotNull(dateOfBirth, qualifiedFieldName, errors, loggingContext) &&
                 DateValidators.isDateIsInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
                && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
     }
@@ -103,13 +104,13 @@ public class BeneficialOwnerIndividualValidator {
     private boolean validateStartDate(LocalDate startDate, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.START_DATE);
+                BeneficialOwnerIndividualDto.START_DATE_FIELD);
         return UtilsValidators.isNotNull(startDate, qualifiedFieldName, errors, loggingContext) &&
                 DateValidators.isDateIsInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateIsOnSanctionsList(Boolean isOnSanctionsList, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.IS_ON_SANCTIONS_LIST_FIELD);
         return UtilsValidators.isNotNull(isOnSanctionsList, qualifiedFieldName, errors, loggingContext);
     }
 

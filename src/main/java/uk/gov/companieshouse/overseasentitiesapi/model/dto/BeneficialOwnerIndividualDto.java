@@ -10,59 +10,59 @@ public class BeneficialOwnerIndividualDto {
 
     public static final String FIRST_NAME_FIELD = "first_name";
     public static final String LAST_NAME_FIELD = "last_name";
-    public static final String DATE_OF_BIRTH = "date_of_birth";
-    public static final String NATIONALITY = "nationality";
-    public static final String USUAL_RESIDENTIAL_ADDRESS = "usual_residential_address";
-    public static final String SERVICE_ADDRESS = "service_address";
+    public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
+    public static final String NATIONALITY_FIELD = "nationality";
+    public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
-    public static final String START_DATE = "start_date";
-    public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES = "trustees_nature_of_control_types";
-    public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES = "non_legal_firm_members_nature_of_control_types";
-    public static final String IS_ON_SANCTIONS_LIST = "is_on_sanctions_list";
-    public static final String TRUST_IDS = "trust_ids";
-    public static final String TRUST_DATA = "trust_data";
+    public static final String START_DATE_FIELD = "start_date";
+    public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
+    public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD = "trustees_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+    public static final String TRUST_IDS_FIELD = "trust_ids";
+    public static final String TRUST_DATA_FIELD = "trust_data";
 
-    public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES = "beneficial_owner_nature_of_control_types";
     @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
 
     @JsonProperty(LAST_NAME_FIELD)
     private String lastName;
 
-    @JsonProperty(DATE_OF_BIRTH)
+    @JsonProperty(DATE_OF_BIRTH_FIELD)
     private LocalDate dateOfBirth;
 
-    @JsonProperty(NATIONALITY)
+    @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
 
-    @JsonProperty(USUAL_RESIDENTIAL_ADDRESS)
+    @JsonProperty(USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private AddressDto usualResidentialAddress;
 
-    @JsonProperty(SERVICE_ADDRESS)
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
     @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
-    @JsonProperty(START_DATE)
+    @JsonProperty(START_DATE_FIELD)
     private LocalDate startDate;
 
-    @JsonProperty(BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES)
+    @JsonProperty(BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> beneficialOwnerNatureOfControlTypes;
 
-    @JsonProperty(TRUSTEES_NATURE_OF_CONTROL_TYPES)
+    @JsonProperty(TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> trusteesNatureOfControlTypes;
 
-    @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES)
+    @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
-    @JsonProperty(IS_ON_SANCTIONS_LIST)
+    @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
 
-    @JsonProperty(TRUST_IDS)
+    @JsonProperty(TRUST_IDS_FIELD)
     private List<String> trustIds;
 
-    @JsonProperty(TRUST_DATA)
+    @JsonProperty(TRUST_DATA_FIELD)
     private String trustData;
 
     public String getFirstName() {
