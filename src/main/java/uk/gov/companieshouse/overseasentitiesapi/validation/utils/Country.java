@@ -227,7 +227,7 @@ public enum Country {
     SWEDEN("Sweden"),
     SWITZERLAND("Switzerland"),
     SYRIA("Syria"),
-    TAIWAN_PROVINCE_OF_CHINA("Taiwan, Province of China"),
+    TAIWAN("Taiwan"),
     TAJIKISTAN("Tajikistan"),
     TANZANIA("Tanzania"),
     THAILAND("Thailand"),
@@ -265,15 +265,15 @@ public enum Country {
         this.countryName = country;
     }
 
-    public static boolean isValid(String countryIn, String location, Errors errs, String loggingContext) {
+    public static boolean isValid(String countryName, String location, Errors errs, String loggingContext) {
 
-       for(Country country : values()) {
-            if(country.countryName.equalsIgnoreCase(countryIn)) {
+       for (Country country : values()) {
+            if (country.countryName.equalsIgnoreCase(countryName)) {
                 return true;
             }
-        }
-        setErrorMsgToLocation(errs, location, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
-        ApiLogger.infoContext(loggingContext, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
-        return false;
+       }
+       setErrorMsgToLocation(errs, location, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
+       ApiLogger.infoContext(loggingContext, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
+       return false;
     }
 }
