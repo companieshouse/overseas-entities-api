@@ -4,6 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -59,20 +62,6 @@ class AddressDtoValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenAddressDtoValuesAreCorrectUkAllCountries() {
-        addressDto.setCountry("Scotland");
-        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testNoErrorReportedWhenAddressDtoValuesAreCorrectOverseasCountries() {
-        addressDto.setCountry("Slovakia");
-        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
     void testErrorReportedWhenUkCountryIsNotOnList() {
         addressDto.setCountry("England");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
@@ -90,27 +79,11 @@ class AddressDtoValidatorTest {
         assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
     }
 
-    @Test
-    void testErrorReportedWhenFictionalCountryIsNotOnAnyList() {
-        addressDto.setCountry("Utopia");
-        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
-
-        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenEmptyCountryIsNotOnAnyList() {
-        addressDto.setCountry("");
-        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
-
-        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNullCountryIsNotOnAnyList() {
-        addressDto.setCountry(null);
+    @ParameterizedTest
+    @ValueSource(strings = {"Utopia", "" })
+    @NullSource
+    void testErrorReportedWhenFictionalCountryIsNotOnAnyList(String input) {
+        addressDto.setCountry(input);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
 
