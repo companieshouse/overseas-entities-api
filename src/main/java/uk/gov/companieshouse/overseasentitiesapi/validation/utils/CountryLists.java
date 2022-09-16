@@ -6,9 +6,11 @@ import java.util.List;
 
 public class CountryLists {
 
-        public static List<String> overseasEntityCountryList;
-        public static List<String> ukCountryList;
-        public static List<String> allCountriesList;
+        public static final List<String> overseasEntityCountryList;
+        public static final List<String> ukCountryList;
+        public static final List<String> allCountriesList;
+
+        private CountryLists() {}
 
         static {
             List<String> oeTempList = new ArrayList<>();
