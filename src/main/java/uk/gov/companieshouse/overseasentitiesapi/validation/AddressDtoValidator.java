@@ -2,18 +2,21 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryValidators;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class AddressDtoValidator {
 
-    public Errors validate(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
+    public Errors validate(String parentAddressField, AddressDto addressDto, List<String> listOfCountries, Errors errors, String loggingContext) {
         validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
         validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
         if (Objects.nonNull(addressDto.getLine2())) {
@@ -23,7 +26,7 @@ public class AddressDtoValidator {
         if (Objects.nonNull(addressDto.getCounty())) {
             validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
         }
-        validateCountry(parentAddressField, addressDto.getCountry(), errors, loggingContext);
+        validateCountry(parentAddressField, addressDto.getCountry(), listOfCountries, errors, loggingContext);
         if(Objects.nonNull(addressDto.getPostcode())) {
             validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
         }
@@ -63,9 +66,14 @@ public class AddressDtoValidator {
                 && StringValidators.isValidCharacters(county, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
+    private boolean validateCountry(String parentAddressField, String country, List<String> listOfCountries, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
-        return CountryValidators.checkListofCountries(parentAddressField, country, qualifiedFieldName, errors, loggingContext);
+        boolean isOnList = listOfCountries.contains(country);
+        if (!isOnList) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, qualifiedFieldName + " " + ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
+        }
+        return isOnList;
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {

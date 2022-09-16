@@ -6,10 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.NatureOfControlValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.*;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
@@ -92,7 +89,7 @@ public class BeneficialOwnerIndividualValidator {
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, addressField);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, errors, loggingContext);
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.allCountriesList, errors, loggingContext);
         return errors;
     }
 

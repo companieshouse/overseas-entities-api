@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -62,7 +63,7 @@ public class OverseasEntityDueDiligenceValidator {
     private Errors validateAddress(AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, errors, loggingContext);
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.ukCountryList, errors, loggingContext);
         return errors;
     }
 

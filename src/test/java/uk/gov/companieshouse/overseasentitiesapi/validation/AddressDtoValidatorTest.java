@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -30,16 +31,97 @@ class AddressDtoValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenAddressDtoValuesAreCorrect() {
-        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, new Errors(), CONTEXT);
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectAllCountriesWithUkCountry() {
+        addressDto.setCountry("England");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectAllCountriesWithOverseasCountry() {
+        addressDto.setCountry("Slovakia");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectUkCountries() {
+        addressDto.setCountry("Wales");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.ukCountryList, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectOverseasAllCountries() {
+        addressDto.setCountry("Slovakia");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.overseasEntityCountryList, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectUkAllCountries() {
+        addressDto.setCountry("Scotland");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenAddressDtoValuesAreCorrectOverseasCountries() {
+        addressDto.setCountry("Slovakia");
+        Errors errors = addressDtoValidator.validate(EntityDto.PRINCIPAL_ADDRESS_FIELD, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenUkCountryIsNotOnList() {
+        addressDto.setCountry("England");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.overseasEntityCountryList, new Errors(), CONTEXT);
+
+        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOverseasCountryIsNotOnList() {
+        addressDto.setCountry("Luxembourg");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.ukCountryList, new Errors(), CONTEXT);
+
+        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenFictionalCountryIsNotOnAnyList() {
+        addressDto.setCountry("Utopia");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+
+        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenEmptyCountryIsNotOnAnyList() {
+        addressDto.setCountry("");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+
+        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenNullCountryIsNotOnAnyList() {
+        addressDto.setCountry(null);
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
+
+        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
     }
 
     @Test
     void testErrorReportedWhenPropertyNameNumberFieldContainsEmptySpace() {
         addressDto.setPropertyNameNumber(" ");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -50,7 +132,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenPropertyNameNumberFieldIsNull() {
         addressDto.setPropertyNameNumber(null);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -61,7 +143,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenPropertyNameNumberFieldExceedsMaxLength() {
         addressDto.setPropertyNameNumber(StringUtils.repeat("A", 51));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
 
         assertError(parentField, AddressDto.PROPERTY_NAME_NUMBER_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
@@ -71,7 +153,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenPropertyNameNumberFieldContainsInvalidCharacters() {
         addressDto.setPropertyNameNumber("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.PROPERTY_NAME_NUMBER_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -82,7 +164,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine1FieldIsEmpty() {
         addressDto.setLine1(" ");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_1_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -93,7 +175,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine1FieldIsNull() {
         addressDto.setLine1(null);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_1_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -104,7 +186,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine1FieldExceedsMaxLength() {
         addressDto.setLine1(StringUtils.repeat("A", 51));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_1_FIELD);
 
         assertError(parentField, AddressDto.LINE_1_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
@@ -114,7 +196,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine1ContainsInvalidCharacters() {
         addressDto.setLine1("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_1_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -125,7 +207,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine2FieldExceedsMaxLength() {
         addressDto.setLine2(StringUtils.repeat("A", 51));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_2_FIELD);
 
         assertError(parentField, AddressDto.LINE_2_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
@@ -135,7 +217,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenLine2FieldContainsInvalidCharacters() {
         addressDto.setLine2("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.LINE_2_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -146,7 +228,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenTownFieldIsEmpty() {
         addressDto.setTown(" ");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.TOWN_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -157,7 +239,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenTownFieldIsNull() {
         addressDto.setTown(null);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.TOWN_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -168,7 +250,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenTownFieldExceedsMaxLength() {
         addressDto.setTown(StringUtils.repeat("A", 51));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.TOWN_FIELD);
 
         assertError(parentField, AddressDto.TOWN_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
@@ -178,7 +260,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenTownFieldContainsInvalidCharacters() {
         addressDto.setTown("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.TOWN_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(parentField, AddressDto.TOWN_FIELD, validationMessage, errors);
@@ -188,7 +270,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenCountyFieldExceedsMaxLength() {
         addressDto.setCounty(StringUtils.repeat("A", 51));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.COUNTY_FIELD);
 
         assertError(parentField, AddressDto.COUNTY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
@@ -198,7 +280,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenCountyFieldContainsInvalidCharacters() {
         addressDto.setCounty("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.COUNTY_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -209,7 +291,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenPostcodeFieldExceedsMaxLength() {
         addressDto.setPostcode(StringUtils.repeat("A", 21));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.POSTCODE_FIELD);
         assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 20 characters or less", errors);
@@ -219,7 +301,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedWhenPostcodeFieldContainsInvalidCharacters() {
         addressDto.setPostcode("Дракон");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.POSTCODE_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -230,7 +312,7 @@ class AddressDtoValidatorTest {
     void testErrorReportedForServiceAddressField() {
         addressDto.setPostcode(StringUtils.repeat("A", 21));
         String parentField = EntityDto.SERVICE_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.POSTCODE_FIELD);
 
         assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 20 characters or less", errors);
@@ -242,7 +324,7 @@ class AddressDtoValidatorTest {
         addressDto.setTown(null);
 
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, new Errors(), CONTEXT);
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.allCountriesList, new Errors(), CONTEXT);
 
         String qualifiedFieldNameLine1 = getQualifiedFieldName(parentField, AddressDto.LINE_1_FIELD);
         String qualifiedFieldNameTown = getQualifiedFieldName(parentField, AddressDto.TOWN_FIELD);
