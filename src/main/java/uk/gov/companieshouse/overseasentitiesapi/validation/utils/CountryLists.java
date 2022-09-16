@@ -6,9 +6,9 @@ import java.util.List;
 
 public class CountryLists {
 
-        public static final List<String> overseasEntityCountryList;
-        public static final List<String> ukCountryList;
-        public static final List<String> allCountriesList;
+        private static final List<String> overseasCountries;
+        private static final List<String> ukCountries;
+        private static final List<String> allCountries;
 
         private CountryLists() {}
 
@@ -266,23 +266,32 @@ public class CountryLists {
             oeTempList.add("Yemen");
             oeTempList.add("Zambia");
             oeTempList.add("Zimbabwe");
-            overseasEntityCountryList = Collections.unmodifiableList(oeTempList);
-        }
+            overseasCountries = Collections.unmodifiableList(oeTempList);
 
-        static {
             List<String> ukTempList = new ArrayList<>();
             ukTempList.add("United Kingdom");
             ukTempList.add("England");
             ukTempList.add("Northern Ireland");
             ukTempList.add("Scotland");
             ukTempList.add("Wales");
-            ukCountryList = Collections.unmodifiableList(ukTempList);
+            ukCountries = Collections.unmodifiableList(ukTempList);
+
+            List<String> allCountriesTempList = new ArrayList<>();
+            allCountriesTempList.addAll(overseasCountries);
+            allCountriesTempList.addAll(ukCountries);
+            allCountries = Collections.unmodifiableList(allCountriesTempList);
         }
 
-        static {
-            List<String> allCountriesTempList = new ArrayList<>();
-            allCountriesTempList.addAll(overseasEntityCountryList);
-            allCountriesTempList.addAll(ukCountryList);
-            allCountriesList = Collections.unmodifiableList(allCountriesTempList);
+
+        public static List<String> getOverseasCountries() {
+           return overseasCountries;
+        }
+
+        public static List<String> getUkCountries() {
+           return ukCountries;
+        }
+
+        public static List<String> getAllCountries() {
+            return allCountries;
         }
 }

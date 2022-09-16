@@ -55,7 +55,7 @@ public class EntityDtoValidator {
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, addressField);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.overseasEntityCountryList, errors, loggingContext);
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getOverseasCountries(), errors, loggingContext);
         return errors;
     }
 

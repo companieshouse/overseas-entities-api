@@ -51,10 +51,10 @@ public class BeneficialOwnerIndividualValidator {
             if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
             }
-            if (beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes() != null) {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
             }
-            if (beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes() != null) {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
             validateNatureOfControl(fields, errors, loggingContext);
@@ -88,12 +88,13 @@ public class BeneficialOwnerIndividualValidator {
     private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
+               && StringValidators.isLessThanOrEqualToMaxLength(nationality,  50, qualifiedFieldName, errors, loggingContext)
                && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, addressField);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.allCountriesList, errors, loggingContext);
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors, loggingContext);
         return errors;
     }
 

@@ -63,7 +63,7 @@ public class OverseasEntityDueDiligenceValidator {
     private Errors validateAddress(AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.ukCountryList, errors, loggingContext);
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getUkCountries(), errors, loggingContext);
         return errors;
     }
 

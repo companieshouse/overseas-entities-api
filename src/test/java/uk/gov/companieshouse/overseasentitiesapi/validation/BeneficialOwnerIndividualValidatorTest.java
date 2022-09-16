@@ -195,6 +195,17 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenNationalityFieldExceedsMaxLength() {
+        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 51));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
+
+        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
+    }
+
+    @Test
     void testErrorReportedWhenNationalityFieldContainsInvalidCharacters() {
         beneficialOwnerIndividualDtoList.get(0).setNationality("Дракон");
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), CONTEXT);
