@@ -1270,7 +1270,11 @@
         "anyOf": [
           {
             "enum": [
-              "United Kingdom",
+              "United Kingdom"
+            ]
+          },
+          {
+            "enum": [
               "England",
               "Scotland",
               "Wales",
