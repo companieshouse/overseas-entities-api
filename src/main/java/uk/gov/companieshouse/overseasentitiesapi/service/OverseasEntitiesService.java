@@ -123,6 +123,7 @@ public class OverseasEntitiesService {
         return createUpdateOverseasEntityInMongo(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, null);
     }
 
+    // TODO This should really be two separate methods of course
     private ResponseEntity<Object> createUpdateOverseasEntityInMongo(Transaction transaction,
                                                                      OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                                      String passthroughTokenHeader,
@@ -135,30 +136,34 @@ public class OverseasEntitiesService {
         overseasEntitySubmissionDao.setStatus(IN_PROGRESS);
 
         OverseasEntitySubmissionDao submissionDao;
+        String submissionUri;
         if (Objects.isNull(overseasEntityId)) {
             submissionDao = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
+
+            submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), submissionDao.getId());
+            submissionDao.setLinks(Collections.singletonMap("self", submissionUri));
+
+            // Maybe a lot of this shouldn't be done every time submission is updated? Could move up into 'create' block...
+            submissionDao.setCreatedOn(dateTimeNowSupplier.get());
+
+            submissionDao.setHttpRequestId(requestId);
+            submissionDao.setCreatedByUserId(userId);
+
+            overseasEntitySubmissionsRepository.save(submissionDao);
+
+            // create the Resource to be added to the Transaction (includes various links to the resource)
+            var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
+            // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
+            addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
+
+            ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), submissionDao.getId()));
         } else {
             overseasEntitySubmissionDao.setId(overseasEntityId);
             submissionDao = overseasEntitySubmissionsRepository.save(overseasEntitySubmissionDao);
+            submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), submissionDao.getId());
+            ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission updated for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), submissionDao.getId()));
         }
 
-        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), submissionDao.getId());
-        submissionDao.setLinks(Collections.singletonMap("self", submissionUri));
-
-        // Maybe a lot of this shouldn't be done every time submission is updated? Could move up into 'create' block...
-        submissionDao.setCreatedOn(dateTimeNowSupplier.get());
-
-        submissionDao.setHttpRequestId(requestId);
-        submissionDao.setCreatedByUserId(userId);
-
-        overseasEntitySubmissionsRepository.save(submissionDao);
-
-        // create the Resource to be added to the Transaction (includes various links to the resource)
-        var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
-        // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
-        addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
-
-        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), submissionDao.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(submissionDao.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
