@@ -11,6 +11,6 @@ public class ValidationMessages {
     public static final String INVALID_EMAIL_ERROR_MESSAGE = "Email address is not in the correct format for %s, like name@example.com";
     public static final String DATE_NOT_IN_PAST_ERROR_MESSAGE = "%s must be in the past";
     public static final String DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE = "%s must be in the past 3 months";
-    public static final String COUNTRY_NOT_ON_LIST_ERROR_MESSAGE = "Country is not on the list";
+    public static final String COUNTRY_NOT_ON_LIST_ERROR_MESSAGE = "%s is not on the list of allowed countries";
 
 }

@@ -62,21 +62,25 @@ class AddressDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenUkCountryIsNotOnList() {
-        addressDto.setCountry("England");
+    void testErrorReportedWhenUkCountrySuppliedAsAnOverseasCountry() {
+        final String invalidCountry = "England";
+        addressDto.setCountry(invalidCountry);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getOverseasCountries(), new Errors(), CONTEXT);
 
-        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
     @Test
-    void testErrorReportedWhenOverseasCountryIsNotOnList() {
-        addressDto.setCountry("Luxembourg");
+    void testErrorReportedWhenOverseasCountrySuppliedAsAUkCountries() {
+        final String invalidCountry = "Luxembourg";
+        addressDto.setCountry(invalidCountry);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getUkCountries(), new Errors(), CONTEXT);
 
-        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
     @ParameterizedTest
@@ -87,7 +91,8 @@ class AddressDtoValidatorTest {
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), CONTEXT);
 
-        assertError(parentField, AddressDto.COUNTRY_FIELD, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, errors);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, input);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
     @Test

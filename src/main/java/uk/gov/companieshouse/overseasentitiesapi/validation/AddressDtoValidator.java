@@ -16,7 +16,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class AddressDtoValidator {
 
-    public Errors validate(String parentAddressField, AddressDto addressDto, List<String> listOfCountries, Errors errors, String loggingContext) {
+    public Errors validate(String parentAddressField, AddressDto addressDto, List<String> allowedCountries, Errors errors, String loggingContext) {
         validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
         validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
         if (Objects.nonNull(addressDto.getLine2())) {
@@ -26,7 +26,7 @@ public class AddressDtoValidator {
         if (Objects.nonNull(addressDto.getCounty())) {
             validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
         }
-        validateCountry(parentAddressField, addressDto.getCountry(), listOfCountries, errors, loggingContext);
+        validateCountry(parentAddressField, addressDto.getCountry(), allowedCountries, errors, loggingContext);
         if(Objects.nonNull(addressDto.getPostcode())) {
             validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
         }
@@ -66,14 +66,15 @@ public class AddressDtoValidator {
                 && StringValidators.isValidCharacters(county, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateCountry(String parentAddressField, String country, List<String> listOfCountries, Errors errors, String loggingContext) {
+    private boolean validateCountry(String parentAddressField, String country, List<String> allowedCountries, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
-        boolean isOnList = listOfCountries.contains(country);
+        boolean isOnList = allowedCountries.contains(country);
         if (!isOnList) {
-            setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
-            ApiLogger.infoContext(loggingContext, qualifiedFieldName + " " + ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE);
+            String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+            setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
+            ApiLogger.infoContext(loggingContext, validationMessage);
         }
-        return isOnList;
+        return true;
     }
 
     private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
