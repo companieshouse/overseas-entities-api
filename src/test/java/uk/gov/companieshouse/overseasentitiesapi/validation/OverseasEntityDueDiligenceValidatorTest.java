@@ -29,6 +29,7 @@ class OverseasEntityDueDiligenceValidatorTest {
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
         overseasEntityDueDiligenceDto.getAddress().setCountry("England");
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().minusMonths(1));
     }
 
     @Test
@@ -41,7 +42,6 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
-        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
         overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
 
@@ -50,7 +50,6 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @Test
     void testErrorReportedWhenCountryIsNotInTheUk() {
-        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
         final String invalidCountry = "France";
         overseasEntityDueDiligenceDto.getAddress().setCountry(invalidCountry);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
