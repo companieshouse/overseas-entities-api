@@ -2,21 +2,21 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.Country;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UkCountry;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class AddressDtoValidator {
 
-    public Errors validate(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
+    public Errors validate(String parentAddressField, AddressDto addressDto, List<String> allowedCountries, Errors errors, String loggingContext) {
         validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
         validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
         if (Objects.nonNull(addressDto.getLine2())) {
@@ -26,7 +26,7 @@ public class AddressDtoValidator {
         if (Objects.nonNull(addressDto.getCounty())) {
             validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
         }
-        validateCountry(parentAddressField, addressDto.getCountry(), errors, loggingContext);
+        validateCountry(parentAddressField, addressDto.getCountry(), allowedCountries, errors, loggingContext);
         if(Objects.nonNull(addressDto.getPostcode())) {
             validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
         }
@@ -66,19 +66,20 @@ public class AddressDtoValidator {
                 && StringValidators.isValidCharacters(county, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateCountry(String parentAddressField, String country, Errors errors, String loggingContext) {
+    private void validateCountry(String parentAddressField, String country, List<String> allowedCountries, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
-        String oeDueDiligenceAdddressPath = getQualifiedFieldName(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE, OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD);
-        if (parentAddressField.equalsIgnoreCase(oeDueDiligenceAdddressPath)) {
-            return UkCountry.isValid(country, qualifiedFieldName, errors, loggingContext);
-        } else {
-            return Country.isValid(country, qualifiedFieldName, errors, loggingContext);
+        boolean isOnList = allowedCountries.contains(country);
+        if (!isOnList) {
+            var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+            setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
+            ApiLogger.infoContext(loggingContext, validationMessage);
         }
     }
 
-    private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
+    private void validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD);
-        return StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
+
+        StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext);
+        StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
     }
 }

@@ -50,10 +50,11 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @Test
     void testErrorReportedWhenCountryIsNotInTheUk() {
-        overseasEntityDueDiligenceDto.getAddress().setCountry("France");
+        final String invalidCountry = "France";
+        overseasEntityDueDiligenceDto.getAddress().setCountry(invalidCountry);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
         String qualifiedFieldName = OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
-        String validationMessage = ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }

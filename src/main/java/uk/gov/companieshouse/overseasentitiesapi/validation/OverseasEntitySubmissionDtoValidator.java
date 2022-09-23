@@ -13,16 +13,20 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
     private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
+    private final BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
 
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityDtoValidator entityDtoValidator,
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator,
-                                                BeneficialOwnersStatementValidator beneficialOwnersStatementValidator) {
+                                                BeneficialOwnersStatementValidator beneficialOwnersStatementValidator,
+                                                BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator) {
+
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
         this.beneficialOwnersStatementValidator = beneficialOwnersStatementValidator;
+        this.beneficialOwnerIndividualValidator = beneficialOwnerIndividualValidator;
     }
 
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -32,6 +36,7 @@ public class OverseasEntitySubmissionDtoValidator {
             overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
         }
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+        beneficialOwnerIndividualValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersIndividual(), errors, loggingContext);
         return errors;
     }
 
