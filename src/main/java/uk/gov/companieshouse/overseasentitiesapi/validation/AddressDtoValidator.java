@@ -66,20 +66,20 @@ public class AddressDtoValidator {
                 && StringValidators.isValidCharacters(county, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateCountry(String parentAddressField, String country, List<String> allowedCountries, Errors errors, String loggingContext) {
+    private void validateCountry(String parentAddressField, String country, List<String> allowedCountries, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
         boolean isOnList = allowedCountries.contains(country);
         if (!isOnList) {
-            String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+            var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
             setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
             ApiLogger.infoContext(loggingContext, validationMessage);
         }
-        return true;
     }
 
-    private boolean validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
+    private void validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD);
-        return StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
+
+        StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext);
+        StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
     }
 }
