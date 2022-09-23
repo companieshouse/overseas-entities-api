@@ -545,6 +545,7 @@
           "last_name",
           "date_of_birth",
           "nationality",
+          "usual_residential_address",
           "is_service_address_same_as_usual_residential_address",
           "start_date",
           "is_on_sanctions_list"
