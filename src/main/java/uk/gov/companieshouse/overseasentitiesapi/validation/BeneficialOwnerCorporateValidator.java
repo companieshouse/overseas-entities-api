@@ -29,7 +29,7 @@ public class BeneficialOwnerCorporateValidator {
     }
 
     public Errors validate(List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList, Errors errors, String loggingContext) {
-        for(BeneficialOwnerCorporateDto beneficialOwnerCorporateDto : beneficialOwnerCorporateDtoList) {
+        for (BeneficialOwnerCorporateDto beneficialOwnerCorporateDto : beneficialOwnerCorporateDtoList) {
 
             validateName(beneficialOwnerCorporateDto.getName(), errors, loggingContext);
             validateAddress(BeneficialOwnerCorporateDto.PRINCIPAL_ADDRESS_FIELD, beneficialOwnerCorporateDto.getPrincipalAddress(), errors, loggingContext);
