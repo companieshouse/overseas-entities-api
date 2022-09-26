@@ -43,7 +43,7 @@ public class BeneficialOwnerCorporateValidator {
             validateLawGoverned(beneficialOwnerCorporateDto.getLawGoverned(), errors, loggingContext);
 
             boolean onRegister = validateOnRegisterInCountryFormedIn(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn(),errors, loggingContext);
-            if (onRegister && Boolean.FALSE.equals(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn())) {
+            if (onRegister && Boolean.TRUE.equals(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn())) {
                 validatePublicRegisterName(beneficialOwnerCorporateDto.getPublicRegisterName(), errors, loggingContext);
                 validateRegistrationNumber(beneficialOwnerCorporateDto.getRegistrationNumber(), errors, loggingContext);
             }

@@ -9,7 +9,6 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -91,6 +90,18 @@ class BeneficialOwnerCorporateValidatorTest {
                 BeneficialOwnerCorporateDto.NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSameAddressFieldIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -219,6 +230,113 @@ class BeneficialOwnerCorporateValidatorTest {
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenIsOnPublicRegisterNameFieldIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameFieldIsEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("  ");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameFieldIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName(StringUtils.repeat("A", 161));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameFieldContainsInvalidCharacters() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("Дракон");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenRegistrationNumberFieldIsEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("  ");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenRegistrationNumberFieldIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenRegistrationNumberFieldExceedsMaxLength() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber(StringUtils.repeat("A", 161));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenRegistrationNumberFieldContainsInvalidCharacters() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("Дракон");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 
     @Test
