@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -30,6 +29,7 @@ class OverseasEntityDueDiligenceValidatorTest {
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
         overseasEntityDueDiligenceDto.getAddress().setCountry("England");
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().minusMonths(1));
     }
 
     @Test
@@ -42,7 +42,6 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
-        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
         overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
 
@@ -51,11 +50,11 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @Test
     void testErrorReportedWhenCountryIsNotInTheUk() {
-        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
-        overseasEntityDueDiligenceDto.getAddress().setCountry("France");
+        final String invalidCountry = "France";
+        overseasEntityDueDiligenceDto.getAddress().setCountry(invalidCountry);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);
         String qualifiedFieldName = OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
-        String validationMessage = ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }

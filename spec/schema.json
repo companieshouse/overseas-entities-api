@@ -272,7 +272,6 @@
         "type": "object",
         "properties": {
           "full_name": {
-            "type": "string",
             "allOf" : [
               {
                 "$ref": "#/components/schemas/FieldPattern"
@@ -405,34 +404,82 @@
       },
       "DueDiligence": {
         "type": "object",
+        "required": [
+          "identity_date",
+          "name",
+          "identity_address",
+          "email",
+          "supervisory_name",
+          "agent_code",
+          "partner_name",
+          "diligence"
+        ],
         "properties": {
           "identity_date": {
             "type": "string",
             "format": "date"
           },
           "name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "identity_address": {
             "$ref": "#/components/schemas/Address"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email",
+            "maxLength": 256
           },
           "supervisory_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "aml_number": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "agent_code": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "partner_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "diligence": {
-            "type": "string"
+            "type": "string",
+            "enum": [ "agree" ]
           }
         }
       },
@@ -493,20 +540,44 @@
         }
       },
       "BeneficialOwnerIndividual": {
+        "required": [
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "nationality",
+          "usual_residential_address",
+          "is_service_address_same_as_usual_residential_address",
+          "start_date",
+          "is_on_sanctions_list"
+        ],
         "type": "object",
         "properties": {
           "first_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "last_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "date_of_birth": {
             "type": "string",
             "format": "date"
           },
           "nationality": {
-            "type": "string"
+            "$ref": "#/components/schemas/FieldPattern"
           },
           "usual_residential_address": {
             "$ref": "#/components/schemas/Address"
@@ -1039,10 +1110,22 @@
           }
         },
         "required": [
-          "property_name_number",
           "line_1",
           "town",
           "country"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "property_name_number"
+            ]
+          },
+          {
+            "required": [
+              "county",
+              "postcode"
+            ]
+          }
         ]
       },
       "NatureOfControlType": {
@@ -1211,7 +1294,11 @@
         "anyOf": [
           {
             "enum": [
-              "United Kingdom",
+              "United Kingdom"
+            ]
+          },
+          {
+            "enum": [
               "England",
               "Scotland",
               "Wales",

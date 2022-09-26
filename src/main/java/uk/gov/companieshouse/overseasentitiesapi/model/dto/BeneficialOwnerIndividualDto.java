@@ -8,46 +8,61 @@ import java.util.List;
 
 public class BeneficialOwnerIndividualDto {
 
-    @JsonProperty("first_name")
+    public static final String FIRST_NAME_FIELD = "first_name";
+    public static final String LAST_NAME_FIELD = "last_name";
+    public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
+    public static final String NATIONALITY_FIELD = "nationality";
+    public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
+    public static final String START_DATE_FIELD = "start_date";
+    public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
+    public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD = "trustees_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+    public static final String TRUST_IDS_FIELD = "trust_ids";
+    public static final String TRUST_DATA_FIELD = "trust_data";
+
+    @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
 
-    @JsonProperty("last_name")
+    @JsonProperty(LAST_NAME_FIELD)
     private String lastName;
 
-    @JsonProperty("date_of_birth")
+    @JsonProperty(DATE_OF_BIRTH_FIELD)
     private LocalDate dateOfBirth;
 
-    @JsonProperty("nationality")
+    @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
 
-    @JsonProperty("usual_residential_address")
+    @JsonProperty(USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private AddressDto usualResidentialAddress;
 
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
-    @JsonProperty("is_service_address_same_as_usual_residential_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
-    @JsonProperty("start_date")
+    @JsonProperty(START_DATE_FIELD)
     private LocalDate startDate;
 
-    @JsonProperty("beneficial_owner_nature_of_control_types")
+    @JsonProperty(BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> beneficialOwnerNatureOfControlTypes;
 
-    @JsonProperty("trustees_nature_of_control_types")
+    @JsonProperty(TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> trusteesNatureOfControlTypes;
 
-    @JsonProperty("non_legal_firm_members_nature_of_control_types")
+    @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
-    @JsonProperty("is_on_sanctions_list")
+    @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
 
-    @JsonProperty("trust_ids")
+    @JsonProperty(TRUST_IDS_FIELD)
     private List<String> trustIds;
 
-    @JsonProperty("trust_data")
+    @JsonProperty(TRUST_DATA_FIELD)
     private String trustData;
 
     public String getFirstName() {

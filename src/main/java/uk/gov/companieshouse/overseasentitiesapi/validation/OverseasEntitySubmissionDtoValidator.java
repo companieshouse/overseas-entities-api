@@ -13,6 +13,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
     private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
+    private final BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
     private final DueDiligenceValidator dueDiligenceValidator;
 
     @Autowired
@@ -20,11 +21,13 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator,
                                                 BeneficialOwnersStatementValidator beneficialOwnersStatementValidator,
+                                                BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator,
                                                 DueDiligenceValidator dueDiligenceValidator) {
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
         this.beneficialOwnersStatementValidator = beneficialOwnersStatementValidator;
+        this.beneficialOwnerIndividualValidator = beneficialOwnerIndividualValidator;
         this.dueDiligenceValidator = dueDiligenceValidator;
     }
 
@@ -38,6 +41,7 @@ public class OverseasEntitySubmissionDtoValidator {
             dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
         }
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+        beneficialOwnerIndividualValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersIndividual(), errors, loggingContext);
         return errors;
     }
 
