@@ -8,52 +8,69 @@ import java.util.List;
 
 public class BeneficialOwnerCorporateDto {
 
-    @JsonProperty("name")
+    public static final String NAME_FIELD = "name";
+    public static final String PRINCIPAL_ADDRESS_FIELD = "principal_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
+    public static final String LEGAL_FORM_FIELD = "legal_form";
+    public static final String LAW_GOVERNED_FIELD = "law_governed";
+    public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
+    public static final String PUBLIC_REGISTER_NAME_FIELD = "public_register_name";
+    public static final String REGISTRATION_NUMBER_FIELD = "registration_number";
+    public static final String START_DATE_FIELD = "start_date";
+    public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
+    public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD = "trustees_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+    public static final String TRUST_IDS_FIELD = "trust_ids";
+    public static final String TRUST_DATA_FIELD = "trust_data";
+
+    @JsonProperty(NAME_FIELD)
     private String name;
 
-    @JsonProperty("principal_address")
+    @JsonProperty(PRINCIPAL_ADDRESS_FIELD)
     private AddressDto principalAddress;
 
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
-    @JsonProperty("is_service_address_same_as_principal_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
-    @JsonProperty("legal_form")
+    @JsonProperty(LEGAL_FORM_FIELD)
     private String legalForm;
 
-    @JsonProperty("law_governed")
+    @JsonProperty(LAW_GOVERNED_FIELD)
     private String lawGoverned;
 
-    @JsonProperty("is_on_register_in_country_formed_in")
+    @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD)
     private Boolean isOnRegisterInCountryFormedIn;
 
-    @JsonProperty("public_register_name")
+    @JsonProperty(PUBLIC_REGISTER_NAME_FIELD)
     private String publicRegisterName;
 
-    @JsonProperty("registration_number")
+    @JsonProperty(REGISTRATION_NUMBER_FIELD)
     private String registrationNumber;
 
-    @JsonProperty("start_date")
+    @JsonProperty(START_DATE_FIELD)
     private LocalDate startDate;
 
-    @JsonProperty("beneficial_owner_nature_of_control_types")
+    @JsonProperty(BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> beneficialOwnerNatureOfControlTypes;
 
-    @JsonProperty("trustees_nature_of_control_types")
+    @JsonProperty(TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> trusteesNatureOfControlTypes;
 
-    @JsonProperty("non_legal_firm_members_nature_of_control_types")
+    @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
-    @JsonProperty("is_on_sanctions_list")
+    @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
 
-    @JsonProperty("trust_ids")
+    @JsonProperty(TRUST_IDS_FIELD)
     private List<String> trustIds;
 
-    @JsonProperty("trust_data")
+    @JsonProperty(TRUST_DATA_FIELD)
     private String trustData;
 
     public String getName() {
