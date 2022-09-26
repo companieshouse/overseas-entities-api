@@ -30,11 +30,11 @@ public class DueDiligenceValidatorTest {
         dueDiligenceValidator = new DueDiligenceValidator(addressDtoValidator);
         dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
         dueDiligenceDto.getAddress().setCountry("England");
+        dueDiligenceDto.setIdentityDate(LocalDate.now().minusMonths(1));
     }
 
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsNow() {
-        dueDiligenceDto.setIdentityDate(LocalDate.now());
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
 
         assertFalse(errors.hasErrors());
@@ -42,7 +42,6 @@ public class DueDiligenceValidatorTest {
 
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
-        dueDiligenceDto.setIdentityDate(LocalDate.now());
         dueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
 
@@ -51,11 +50,11 @@ public class DueDiligenceValidatorTest {
 
     @Test
     void testErrorReportedWhenCountryIsNotInTheUk() {
-        dueDiligenceDto.setIdentityDate(LocalDate.now());
-        dueDiligenceDto.getAddress().setCountry("France");
+        final String invalidCountry = "France";
+        dueDiligenceDto.getAddress().setCountry(invalidCountry);
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
         String qualifiedFieldName = DueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
-        String validationMessage = ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }
