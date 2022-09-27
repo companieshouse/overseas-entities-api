@@ -550,6 +550,24 @@
           "start_date",
           "is_on_sanctions_list"
         ],
+        "anyOf": [
+          {
+            "required": [
+              "beneficial_owner_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trustees_nature_of_control_types",
+              "trust_ids"
+            ]
+          },
+          {
+            "required": [
+              "non_legal_firm_members_nature_of_control_types"
+            ]
+          }
+        ],
         "type": "object",
         "properties": {
           "first_name": {
