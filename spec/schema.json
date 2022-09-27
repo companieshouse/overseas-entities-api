@@ -626,7 +626,7 @@
         "required": [
           "name",
           "principal_address",
-          "is_service_address_same_as_prinicpal_address",
+          "is_service_address_same_as_principal_address",
           "start_date",
           "law_governed",
           "legal_form",

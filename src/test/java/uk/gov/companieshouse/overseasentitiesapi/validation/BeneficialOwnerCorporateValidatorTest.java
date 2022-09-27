@@ -27,15 +27,13 @@ class BeneficialOwnerCorporateValidatorTest {
 
     private static final String CONTEXT = "12345";
 
-    private AddressDtoValidator addressDtoValidator;
     private BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
 
     private List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList;
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator();
-        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(addressDtoValidator);
+        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(new AddressDtoValidator());
         beneficialOwnerCorporateDtoList = new ArrayList<>();
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());
