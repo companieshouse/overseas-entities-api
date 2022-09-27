@@ -65,7 +65,7 @@ public class BeneficialOwnerIndividualValidator {
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.FIRST_NAME_FIELD);
-        return StringValidators.isNotBlank (firstName, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotBlank(firstName, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(firstName, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(firstName, qualifiedFieldName, errors, loggingContext);
     }
