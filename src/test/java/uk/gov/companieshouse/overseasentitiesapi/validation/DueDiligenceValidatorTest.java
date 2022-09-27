@@ -20,7 +20,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 
 @ExtendWith(MockitoExtension.class)
 class DueDiligenceValidatorTest {
-    private static final String CONTEXT = "12345";
+    private static final String LOGGING_CONTEXT = "12345";
     private DueDiligenceValidator dueDiligenceValidator;
     private DueDiligenceDto dueDiligenceDto;
 
@@ -35,7 +35,7 @@ class DueDiligenceValidatorTest {
 
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsNow() {
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -43,7 +43,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         dueDiligenceDto.getAddress().setCountry("Wales");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -52,7 +52,7 @@ class DueDiligenceValidatorTest {
     void testErrorReportedWhenCountryIsNotInTheUk() {
         final String invalidCountry = "France";
         dueDiligenceDto.getAddress().setCountry(invalidCountry);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = DueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
         String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
 
@@ -62,7 +62,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenIdentityDateFieldIsInTheFuture() {
         dueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -72,7 +72,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
         dueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -82,7 +82,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsEmpty() {
         dueDiligenceDto.setName("  ");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -92,7 +92,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsNull() {
         dueDiligenceDto.setName(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -102,7 +102,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         dueDiligenceDto.setName(StringUtils.repeat("A", 257));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.NAME_FIELD);
 
         assertError(DueDiligenceDto.NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -111,7 +111,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         dueDiligenceDto.setName("Дракон");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -121,7 +121,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsEmpty() {
         dueDiligenceDto.setEmail("  ");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -131,7 +131,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsNull() {
         dueDiligenceDto.setEmail(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -141,7 +141,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldExceedsMaxLength() {
         dueDiligenceDto.setEmail(StringUtils.repeat("A", 257) + "@long.com");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.EMAIL_FIELD);
 
         assertError(DueDiligenceDto.EMAIL_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -150,7 +150,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         dueDiligenceDto.setEmail("wrong.com");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -160,7 +160,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenSupervisoryNameFieldIsNull() {
         dueDiligenceDto.setSupervisoryName(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.SUPERVISORY_NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -170,7 +170,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenSupervisoryNameFieldExceedsMaxLength() {
         dueDiligenceDto.setSupervisoryName(StringUtils.repeat("A", 257));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.SUPERVISORY_NAME_FIELD);
 
         assertError(DueDiligenceDto.SUPERVISORY_NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -179,7 +179,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenSupervisoryNameFieldContainsInvalidCharacters() {
         dueDiligenceDto.setSupervisoryName("Дракон");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.SUPERVISORY_NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -189,7 +189,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAmlNumberFieldExceedsMaxLength() {
         dueDiligenceDto.setAmlNumber(StringUtils.repeat("A", 257));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.AML_NUMBER_FIELD);
 
         assertError(DueDiligenceDto.AML_NUMBER_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -198,7 +198,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAgentCodeFieldIsNull() {
         dueDiligenceDto.setAgentCode(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.AGENT_CODE_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -208,7 +208,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAgentCodeFieldContainsInvalidCharacters() {
         dueDiligenceDto.setAgentCode("Дракон");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.AGENT_CODE_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -218,7 +218,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAgentCodeFieldExceedsMaxLength() {
         dueDiligenceDto.setAgentCode(StringUtils.repeat("A", 257));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.AGENT_CODE_FIELD);
 
         assertError(DueDiligenceDto.AGENT_CODE_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -227,7 +227,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenPartnerNameFieldIsNull() {
         dueDiligenceDto.setPartnerName(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.PARTNER_NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -237,7 +237,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenPartnerNameFieldExceedsMaxLength() {
         dueDiligenceDto.setPartnerName(StringUtils.repeat("A", 257));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.PARTNER_NAME_FIELD);
 
         assertError(DueDiligenceDto.PARTNER_NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -246,7 +246,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenPartnerNameFieldContainsInvalidCharacters() {
         dueDiligenceDto.setPartnerName("Дракон");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.PARTNER_NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -256,7 +256,7 @@ class DueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenDiligenceFieldIsNull() {
         dueDiligenceDto.setDiligence(null);
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), CONTEXT);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
