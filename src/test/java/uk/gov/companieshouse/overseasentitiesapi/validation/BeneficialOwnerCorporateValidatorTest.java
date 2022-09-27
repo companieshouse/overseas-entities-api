@@ -25,7 +25,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @ExtendWith(MockitoExtension.class)
 class BeneficialOwnerCorporateValidatorTest {
 
-    private static final String CONTEXT = "12345";
+    private static final String LOGGING_CONTEXT = "12345";
 
     private BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
 
@@ -42,36 +42,36 @@ class BeneficialOwnerCorporateValidatorTest {
 
     @Test
     void testNoErrorReportedWhenAllFieldsAreCorrect() {
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenNameFieldIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setName("  ");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenNameFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setName(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 51));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
@@ -82,22 +82,22 @@ class BeneficialOwnerCorporateValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         beneficialOwnerCorporateDtoList.get(0).setName("Дракон");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, validationMessage, errors);
     }
@@ -105,29 +105,29 @@ class BeneficialOwnerCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormFieldIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setLegalForm("  ");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenLegalFormFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setLegalForm(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenLegalFormFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setLegalForm(StringUtils.repeat("A", 161));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD);
@@ -138,40 +138,40 @@ class BeneficialOwnerCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormFieldContainsInvalidCharacters() {
         beneficialOwnerCorporateDtoList.get(0).setLegalForm("Дракон");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LEGAL_FORM_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenLawGovernedFieldIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setLawGoverned("  ");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenLawGovernedFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setLawGoverned(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenLawGovernedFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setLawGoverned(StringUtils.repeat("A", 161));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD);
@@ -182,11 +182,11 @@ class BeneficialOwnerCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLawGovernedFieldContainsInvalidCharacters() {
         beneficialOwnerCorporateDtoList.get(0).setLawGoverned("Дракон");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.LAW_GOVERNED_FIELD, validationMessage, errors);
     }
 
@@ -195,11 +195,11 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateValidator.NATURE_OF_CONTROL_FIELDS);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
@@ -209,11 +209,11 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateValidator.NATURE_OF_CONTROL_FIELDS);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
@@ -226,18 +226,18 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(null);
 
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenIsOnPublicRegisterNameFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD, validationMessage, errors);
     }
 
@@ -245,11 +245,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenPublicRegisterNameFieldIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("  ");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
     }
 
@@ -257,11 +257,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenPublicRegisterNameFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
     }
 
@@ -269,7 +269,7 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName(StringUtils.repeat("A", 161));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
@@ -281,11 +281,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenPublicRegisterNameFieldContainsInvalidCharacters() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("Дракон");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
     }
 
@@ -293,11 +293,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenRegistrationNumberFieldIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("  ");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 
@@ -305,11 +305,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenRegistrationNumberFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 
@@ -317,7 +317,7 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenRegistrationNumberFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber(StringUtils.repeat("A", 161));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
@@ -329,36 +329,36 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenRegistrationNumberFieldContainsInvalidCharacters() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("Дракон");
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedWhenStartFieldIsInThePast() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.of(1970,1, 1));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenStartFieldIsNow() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now());
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenIdentityStartIsInTheFuture() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.START_DATE_FIELD);
-        String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateDto.START_DATE_FIELD, validationMessage, errors);
     }
@@ -366,11 +366,11 @@ class BeneficialOwnerCorporateValidatorTest {
     @Test
     void testErrorReportedWhenOnSanctionListFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnSanctionsList(null);
-        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), CONTEXT);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.IS_ON_SANCTIONS_LIST_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.IS_ON_SANCTIONS_LIST_FIELD, validationMessage, errors);
     }
 
