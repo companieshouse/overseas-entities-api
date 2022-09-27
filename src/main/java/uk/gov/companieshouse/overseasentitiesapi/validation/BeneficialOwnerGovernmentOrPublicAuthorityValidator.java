@@ -36,11 +36,11 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
                            Errors errors, String loggingContext) {
         for (BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto : beneficialOwnerGovernmentOrPublicAuthorityDtoList) {
             validateName(beneficialOwnerGovernmentOrPublicAuthorityDto.getName(), errors, loggingContext);
-            validateAddress(beneficialOwnerGovernmentOrPublicAuthorityDto.PRINCIPAL_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(), errors, loggingContext);
+            validateAddress(BeneficialOwnerGovernmentOrPublicAuthorityDto.PRINCIPAL_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(), errors, loggingContext);
 
             boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress())) {
-                validateAddress(beneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(), errors, loggingContext);
+                validateAddress(BeneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(), errors, loggingContext);
             }
 
             validateLegalForm(beneficialOwnerGovernmentOrPublicAuthorityDto.getLegalForm(), errors,  loggingContext);
