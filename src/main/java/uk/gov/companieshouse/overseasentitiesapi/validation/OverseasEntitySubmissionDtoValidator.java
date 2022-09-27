@@ -15,6 +15,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
     private final BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
     private final BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
+    private final DueDiligenceValidator dueDiligenceValidator;
 
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityDtoValidator entityDtoValidator,
@@ -22,14 +23,15 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator,
                                                 BeneficialOwnersStatementValidator beneficialOwnersStatementValidator,
                                                 BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator,
-                                                BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator) {
-
+                                                BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator,
+                                                DueDiligenceValidator dueDiligenceValidator) {
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
         this.beneficialOwnersStatementValidator = beneficialOwnersStatementValidator;
         this.beneficialOwnerIndividualValidator = beneficialOwnerIndividualValidator;
         this.beneficialOwnerCorporateValidator = beneficialOwnerCorporateValidator;
+        this.dueDiligenceValidator = dueDiligenceValidator;
     }
 
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -37,6 +39,9 @@ public class OverseasEntitySubmissionDtoValidator {
         presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         if(Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
             overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
+        }
+        if(Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence())) {
+            dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
         }
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
         beneficialOwnerIndividualValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersIndividual(), errors, loggingContext);

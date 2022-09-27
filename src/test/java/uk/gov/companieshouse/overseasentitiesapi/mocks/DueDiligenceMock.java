@@ -11,6 +11,7 @@ public class DueDiligenceMock {
         DueDiligenceDao dueDiligenceDao = new DueDiligenceDao();
         dueDiligenceDao.setIdentityDate(LocalDate.of(2022,1,1));
         dueDiligenceDao.setName("ABC Checking Ltd");
+        dueDiligenceDao.setAddress(AddressMock.getAddressDao());
         dueDiligenceDao.setEmail("investigations@abc.com");
         dueDiligenceDao.setSupervisoryName("Super Supervisor");
         dueDiligenceDao.setAmlNumber("abc123");
@@ -24,6 +25,7 @@ public class DueDiligenceMock {
         DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
         dueDiligenceDto.setIdentityDate(LocalDate.of(2022,1,1));
         dueDiligenceDto.setName("ABC Checking Ltd");
+        dueDiligenceDto.setAddress(AddressMock.getAddressDto());
         dueDiligenceDto.setEmail("investigations@abc.com");
         dueDiligenceDto.setSupervisoryName("Super Supervisor");
         dueDiligenceDto.setAmlNumber("abc123");

@@ -66,7 +66,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
@@ -613,7 +613,7 @@ class FilingServiceTest {
     }
 
     private void checkDueDiligence(FilingApi filing) {
-        DueDiligenceDto dueDiligenceDtoInFiling = (DueDiligenceDto)filing.getData().get(DUE_DILIGENCE);
+        DueDiligenceDto dueDiligenceDtoInFiling = (DueDiligenceDto)filing.getData().get(DUE_DILIGENCE_FIELD);
         assertEquals(LocalDate.of(2021,12,31), dueDiligenceDtoInFiling.getIdentityDate());
         assertEquals("ABC Checking limited", dueDiligenceDtoInFiling.getName());
         assertEquals("lorem@ipsum.com", dueDiligenceDtoInFiling.getEmail());
