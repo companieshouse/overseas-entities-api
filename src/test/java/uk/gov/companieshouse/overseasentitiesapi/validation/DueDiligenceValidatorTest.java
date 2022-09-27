@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 
 @ExtendWith(MockitoExtension.class)
-public class DueDiligenceValidatorTest {
+class DueDiligenceValidatorTest {
     private static final String CONTEXT = "12345";
     private DueDiligenceValidator dueDiligenceValidator;
     private DueDiligenceDto dueDiligenceDto;
