@@ -8,34 +8,45 @@ import java.util.List;
 
 public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
-    @JsonProperty("name")
+    public static final String NAME_FIELD = "name";
+    public static final String PRINCIPAL_ADDRESS_FIELD = "principal_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
+    public static final String LEGAL_FORM_FIELD = "legal_form";
+    public static final String LAW_GOVERNED_FIELD = "law_governed";
+    public static final String START_DATE_FIELD = "start_date";
+    public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+
+    @JsonProperty(NAME_FIELD)
     private String name;
 
-    @JsonProperty("principal_address")
+    @JsonProperty(PRINCIPAL_ADDRESS_FIELD)
     private AddressDto principalAddress;
 
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
-    @JsonProperty("is_service_address_same_as_principal_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
-    @JsonProperty("legal_form")
+    @JsonProperty(LEGAL_FORM_FIELD)
     private String legalForm;
 
-    @JsonProperty("law_governed")
+    @JsonProperty(LAW_GOVERNED_FIELD)
     private String lawGoverned;
 
-    @JsonProperty("start_date")
+    @JsonProperty(START_DATE_FIELD)
     private LocalDate startDate;
 
-    @JsonProperty("beneficial_owner_nature_of_control_types")
+    @JsonProperty(BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> beneficialOwnerNatureOfControlTypes;
 
-    @JsonProperty("non_legal_firm_members_nature_of_control_types")
+    @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
-    @JsonProperty("is_on_sanctions_list")
+    @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
 
     public String getName() {
