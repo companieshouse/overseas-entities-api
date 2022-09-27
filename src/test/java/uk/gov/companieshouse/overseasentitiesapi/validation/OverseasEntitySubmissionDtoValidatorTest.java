@@ -11,10 +11,11 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenc
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.ArrayList;
@@ -32,8 +33,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @InjectMocks
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
     @Mock
-    private AddressDtoValidator addressDtoValidator;
-    @Mock
     private EntityDtoValidator entityDtoValidator;
     @Mock
     private PresenterDtoValidator presenterDtoValidator;
@@ -45,6 +44,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
     @Mock
     private BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
+    @Mock
+    private BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
 
     private EntityDto entityDto = EntityMock.getEntityDto();
     private PresenterDto presenterDto = PresenterMock.getPresenterDto();
@@ -53,6 +54,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
     {
         beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+    };
+    private List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+    {
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
     };
 
     @Test
@@ -64,6 +69,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto),any(),any());
         verify(beneficialOwnersStatementValidator, times(1)).validate(eq(beneficialOwnersStatement),any(),any());
         verify(beneficialOwnerIndividualValidator, times(1)).validate(eq(beneficialOwnerIndividualDtoList), any(),any());
+        verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList),any(),any());
     }
 
     private void buildOverseasEntitySubmissionDto() {
@@ -73,5 +79,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
     }
 }

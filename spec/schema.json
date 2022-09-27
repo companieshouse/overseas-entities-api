@@ -550,6 +550,24 @@
           "start_date",
           "is_on_sanctions_list"
         ],
+        "anyOf": [
+          {
+            "required": [
+              "beneficial_owner_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trustees_nature_of_control_types",
+              "trust_ids"
+            ]
+          },
+          {
+            "required": [
+              "non_legal_firm_members_nature_of_control_types"
+            ]
+          }
+        ],
         "type": "object",
         "properties": {
           "first_name": {
@@ -623,10 +641,44 @@
         }
       },
       "BeneficialOwnerCorporate": {
+        "required": [
+          "name",
+          "principal_address",
+          "is_service_address_same_as_principal_address",
+          "start_date",
+          "law_governed",
+          "legal_form",
+          "is_on_sanctions_list"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "beneficial_owner_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trustees_nature_of_control_types",
+              "trust_ids"
+            ]
+          },
+          {
+            "required": [
+              "non_legal_firm_members_nature_of_control_types"
+            ]
+          }
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "principal_address": {
             "$ref": "#/components/schemas/Address"
@@ -637,11 +689,25 @@
           "is_service_address_same_as_principal_address": {
             "type": "boolean"
           },
-          "legal_form": {
-            "type": "string"
-          },
           "law_governed": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
+          },
+          "legal_form": {
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "is_on_register_in_country_formed_in": {
             "type": "boolean"
