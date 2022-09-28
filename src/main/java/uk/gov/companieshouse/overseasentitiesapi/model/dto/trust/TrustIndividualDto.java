@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto.areAnyStringsNonNull;

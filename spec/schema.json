@@ -753,6 +753,33 @@
         }
       },
       "BeneficialOwnerGovernmentOrPublicAuthority": {
+        "required": [
+          "name",
+          "principal_address",
+          "is_service_address_same_as_principal_address",
+          "start_date",
+          "law_governed",
+          "legal_form",
+          "is_on_sanctions_list"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "beneficial_owner_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trustees_nature_of_control_types",
+              "trust_ids"
+            ]
+          },
+          {
+            "required": [
+              "non_legal_firm_members_nature_of_control_types"
+            ]
+          }
+        ],
         "type": "object",
         "properties": {
           "name": {
