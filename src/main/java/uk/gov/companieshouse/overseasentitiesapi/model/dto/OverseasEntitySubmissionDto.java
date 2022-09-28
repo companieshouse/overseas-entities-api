@@ -14,7 +14,7 @@ public class OverseasEntitySubmissionDto {
 
     public static final String PRESENTER_FIELD = "presenter";
     public static final String ENTITY_FIELD = "entity";
-    public static final String DUE_DILIGENCE = "due_diligence";
+    public static final String DUE_DILIGENCE_FIELD = "due_diligence";
     public static final String OVERSEAS_ENTITY_DUE_DILIGENCE = "overseas_entity_due_diligence";
     public static final String BENEFICIAL_OWNERS_STATEMENT = "beneficial_owners_statement";
     public static final String BENEFICIAL_OWNERS_INDIVIDUAL_FIELD = "beneficial_owners_individual";
@@ -30,7 +30,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(ENTITY_FIELD)
     private EntityDto entity;
 
-    @JsonProperty(DUE_DILIGENCE)
+    @JsonProperty(DUE_DILIGENCE_FIELD)
     private DueDiligenceDto dueDiligence;
 
     @JsonProperty(OVERSEAS_ENTITY_DUE_DILIGENCE)
