@@ -1,9 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -30,6 +32,20 @@ public class AddressDtoValidator {
         if(Objects.nonNull(addressDto.getPostcode())) {
             validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
         }
+        return errors;
+    }
+
+    public Errors validateOtherAddressIsNotSupplied(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
+        StringValidators.checkisEmpty(addressDto.getPropertyNameNumber(), getQualifiedFieldName(parentAddressField, AddressDto.PROPERTY_NAME_NUMBER_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getLine1(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_1_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getLine2(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_2_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getTown(), getQualifiedFieldName(parentAddressField, AddressDto.TOWN_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getCounty(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTY_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getCountry(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getPostcode(), getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getCareOf(), getQualifiedFieldName(parentAddressField, AddressDto.CARE_OF_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getLocality(), getQualifiedFieldName(parentAddressField, AddressDto.LOCALITY_FIELD), errors, loggingContext);
+        StringValidators.checkisEmpty(addressDto.getPoBox(), getQualifiedFieldName(parentAddressField, AddressDto.PO_BOX_FIELD), errors, loggingContext);
         return errors;
     }
 

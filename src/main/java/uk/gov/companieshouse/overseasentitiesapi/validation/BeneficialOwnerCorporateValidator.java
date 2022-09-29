@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
@@ -41,6 +42,8 @@ public class BeneficialOwnerCorporateValidator {
             boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(beneficialOwnerCorporateDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(beneficialOwnerCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
                 validateAddress(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, beneficialOwnerCorporateDto.getServiceAddress(), errors, loggingContext);
+            } else {
+                validateOtherAddressIsNotSupplied(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, beneficialOwnerCorporateDto.getServiceAddress(), errors, loggingContext);
             }
 
             validateLegalForm(beneficialOwnerCorporateDto.getLegalForm(), errors,  loggingContext);
@@ -88,6 +91,12 @@ public class BeneficialOwnerCorporateValidator {
     private boolean validateServiceAddressSameAsPrincipalAddress(Boolean same, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private Errors validateOtherAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, addressField);
+        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
+        return errors;
     }
 
     private boolean validateLegalForm(String legalForm, Errors errors, String loggingContext) {
