@@ -4,8 +4,6 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
-import java.util.Objects;
-
 public class UtilsValidators {
 
     private UtilsValidators() { }
