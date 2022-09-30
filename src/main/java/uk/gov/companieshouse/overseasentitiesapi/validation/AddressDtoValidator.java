@@ -34,16 +34,18 @@ public class AddressDtoValidator {
     }
 
     public Errors validateOtherAddressIsNotSupplied(String parentAddressField, AddressDto addressDto, Errors errors, String loggingContext) {
-        StringValidators.checkIsEmpty(addressDto.getPropertyNameNumber(), getQualifiedFieldName(parentAddressField, AddressDto.PROPERTY_NAME_NUMBER_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getLine1(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_1_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getLine2(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_2_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getTown(), getQualifiedFieldName(parentAddressField, AddressDto.TOWN_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getCounty(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTY_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getCountry(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getPostcode(), getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getCareOf(), getQualifiedFieldName(parentAddressField, AddressDto.CARE_OF_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getLocality(), getQualifiedFieldName(parentAddressField, AddressDto.LOCALITY_FIELD), errors, loggingContext);
-        StringValidators.checkIsEmpty(addressDto.getPoBox(), getQualifiedFieldName(parentAddressField, AddressDto.PO_BOX_FIELD), errors, loggingContext);
+        if (Objects.nonNull(addressDto)) {
+            StringValidators.checkIsEmpty(addressDto.getPropertyNameNumber(), getQualifiedFieldName(parentAddressField, AddressDto.PROPERTY_NAME_NUMBER_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getLine1(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_1_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getLine2(), getQualifiedFieldName(parentAddressField, AddressDto.LINE_2_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getTown(), getQualifiedFieldName(parentAddressField, AddressDto.TOWN_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getCounty(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTY_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getCountry(), getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getPostcode(), getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getCareOf(), getQualifiedFieldName(parentAddressField, AddressDto.CARE_OF_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getLocality(), getQualifiedFieldName(parentAddressField, AddressDto.LOCALITY_FIELD), errors, loggingContext);
+            StringValidators.checkIsEmpty(addressDto.getPoBox(), getQualifiedFieldName(parentAddressField, AddressDto.PO_BOX_FIELD), errors, loggingContext);
+        }
         return errors;
     }
 
