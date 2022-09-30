@@ -21,7 +21,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @ExtendWith(MockitoExtension.class)
-public class ManagingOfficerCorporateValidatorTest {
+class ManagingOfficerCorporateValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
