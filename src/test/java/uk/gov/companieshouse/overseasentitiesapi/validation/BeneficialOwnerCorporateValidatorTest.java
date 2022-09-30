@@ -382,7 +382,7 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenOnRegisterFlagFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
         beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("123456");
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);

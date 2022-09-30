@@ -285,7 +285,7 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenOnRegisterFlagFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
         entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
         entityDto.setRegistrationNumber("123456");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
