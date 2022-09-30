@@ -76,7 +76,7 @@ public final class StringValidators {
         return true;
     }
 
-    public static void checkisEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+    public static void checkIsEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest != null && !toTest.trim().isEmpty()) {
             setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field should not be populated");
