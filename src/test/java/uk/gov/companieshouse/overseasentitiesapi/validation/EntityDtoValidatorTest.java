@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 
-
 @ExtendWith(MockitoExtension.class)
 class EntityDtoValidatorTest {
     private static final String LOGGING_CONTEXT = "12345";
@@ -274,6 +273,27 @@ class EntityDtoValidatorTest {
 
         assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
     }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterNameFieldNotEmpty() {
+        entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        entityDto.setPublicRegisterName("Name");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+        entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        entityDto.setRegistrationNumber("123456");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
 
     @Test
     void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {

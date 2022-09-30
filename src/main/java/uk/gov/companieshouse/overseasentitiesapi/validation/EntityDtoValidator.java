@@ -39,6 +39,9 @@ public class EntityDtoValidator {
         if (entityDto.isOnRegisterInCountryFormedIn()) {
             validatePublicRegisterName(entityDto.getPublicRegisterName(), errors, loggingContext);
             validateRegistrationNumber(entityDto.getRegistrationNumber(), errors, loggingContext);
+        } else {
+            validatePublicRegisterNameIsNotSupplied(entityDto.getPublicRegisterName(), errors, loggingContext);
+            validateRegistrationNumberIsNotSupplied(entityDto.getRegistrationNumber(), errors, loggingContext);
         }
         return errors;
     }
@@ -105,5 +108,17 @@ public class EntityDtoValidator {
         return StringValidators.isNotBlank(registrationNumber, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(registrationNumber, 32, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(registrationNumber, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private Errors validatePublicRegisterNameIsNotSupplied(String publicRegisterName, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        StringValidators.checkIsEmpty(publicRegisterName, qualifiedFieldName, errors, loggingContext);
+        return errors;
+    }
+
+    private Errors validateRegistrationNumberIsNotSupplied(String registrationNumber, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.REGISTRATION_NUMBER_FIELD);
+        StringValidators.checkIsEmpty(registrationNumber, qualifiedFieldName, errors, loggingContext);
+        return errors;
     }
 }
