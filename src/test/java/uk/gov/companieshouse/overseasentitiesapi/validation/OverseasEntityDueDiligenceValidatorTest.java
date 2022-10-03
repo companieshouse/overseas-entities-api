@@ -41,6 +41,24 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
+    void testIsEmptyFalseWhenAllFieldsSupplied() {
+        assertFalse(overseasEntityDueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyFalseWhenOneFieldSupplied() {
+        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = new OverseasEntityDueDiligenceDto();
+        overseasEntityDueDiligenceDto.setName("Test");
+        assertFalse(overseasEntityDueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyTrueWhenNoFieldsSupplied() {
+        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = new OverseasEntityDueDiligenceDto();
+        assertTrue(overseasEntityDueDiligenceDto.isEmpty());
+    }
+
+    @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), CONTEXT);

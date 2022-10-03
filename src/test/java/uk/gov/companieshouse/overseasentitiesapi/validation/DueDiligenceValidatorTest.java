@@ -41,6 +41,24 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testIsEmptyFalseWhenAllFieldsSupplied() {
+        assertFalse(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyFalseWhenOneFieldSupplied() {
+        DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+        dueDiligenceDto.setName("Test");
+        assertFalse(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyTrueWhenNoFieldsSupplied() {
+        DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+        assertTrue(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         dueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);

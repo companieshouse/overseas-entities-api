@@ -3,7 +3,9 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceOptionValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
+
 import java.util.Objects;
 
 @Component
@@ -41,11 +43,18 @@ public class OverseasEntitySubmissionDtoValidator {
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
         presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
-        if(Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
-            overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
-        }
-        if(Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence())) {
-            dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
+
+        if (DueDiligenceOptionValidators.bothDueDiligenceOptionsNotSupplied(
+                overseasEntitySubmissionDto.getDueDiligence(), overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                errors,
+                loggingContext)) {
+
+            if (Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
+                overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
+            }
+            if (Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence())) {
+                dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
+            }
         }
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
         beneficialOwnerIndividualValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersIndividual(), errors, loggingContext);
