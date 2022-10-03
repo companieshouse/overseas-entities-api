@@ -41,6 +41,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
             boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress())) {
                 validateAddress(BeneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(), errors, loggingContext);
+            } else {
+                validateOtherAddressIsNotSupplied(BeneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD, beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(), errors, loggingContext);
             }
 
             validateLegalForm(beneficialOwnerGovernmentOrPublicAuthorityDto.getLegalForm(), errors,  loggingContext);
@@ -72,6 +74,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, addressField);
         addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors, loggingContext);
+        return errors;
+    }
+
+    private Errors validateOtherAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, addressField);
+        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
     }
 

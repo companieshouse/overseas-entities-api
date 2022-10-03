@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
@@ -33,7 +34,7 @@ public final class StringValidators {
         var matcher = pattern.matcher(toTest);
 
         if (!matcher.matches()) {
-            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, "Invalid characters for " + qualifiedFieldName);
             return false;
         }
@@ -60,7 +61,7 @@ public final class StringValidators {
         var matcher = pattern.matcher(email);
 
         if (!matcher.matches()) {
-            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, "Email address is not in the correct format for " + qualifiedFieldName);
             return false;
         }
@@ -69,10 +70,17 @@ public final class StringValidators {
 
     private static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.trim().isEmpty()) {
-            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field is empty");
             return false;
         }
         return true;
+    }
+
+    public static void checkIsEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+        if (Objects.nonNull(toTest) && !toTest.trim().isEmpty()) {
+            setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field should not be populated");
+        }
     }
 }

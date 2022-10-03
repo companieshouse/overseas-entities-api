@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -37,6 +38,7 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList = new ArrayList<>();
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());
+        beneficialOwnerCorporateDto.setServiceAddress(new AddressDto());
         beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
     }
 
@@ -100,6 +102,36 @@ class BeneficialOwnerCorporateValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSameAddressFlagIsFalseWhenServiceAddressIsEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(false);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertTrue(errors.size() > 0);
+    }
+
+    @Test
+    void testErrorReportedWhenSameAddressFlagIsTrueWhenServiceAddressNotEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(true);
+        beneficialOwnerCorporateDtoList.get(0).setServiceAddress(AddressMock.getAddressDto());
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD);
+
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.LINE_1_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.LINE_1_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.TOWN_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.TOWN_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.COUNTY_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.COUNTY_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.COUNTRY_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.COUNTRY_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.POSTCODE_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.POSTCODE_FIELD), validationMessage, errors);
     }
 
     @Test
@@ -334,6 +366,30 @@ class BeneficialOwnerCorporateValidatorTest {
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterNameFieldNotEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("Name");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("123456");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
         assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 

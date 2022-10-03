@@ -42,8 +42,11 @@ public class BeneficialOwnerIndividualValidator {
             validateAddress(BeneficialOwnerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             boolean sameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
-                validateAddress(BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
+                validateAddress(BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD, beneficialOwnerIndividualDto.getServiceAddress(), errors, loggingContext);
+            } else {
+                validateOtherAddressIsNotSupplied(BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD, beneficialOwnerIndividualDto.getServiceAddress(), errors, loggingContext);
             }
+
             validateStartDate(beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
             validateIsOnSanctionsList(beneficialOwnerIndividualDto.getOnSanctionsList(), errors, loggingContext);
 
@@ -101,6 +104,12 @@ public class BeneficialOwnerIndividualValidator {
     private boolean validateServiceAddressSameAsUsualResidentialAddress(Boolean same, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private Errors validateOtherAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, addressField);
+        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
+        return errors;
     }
 
     private boolean validateStartDate(LocalDate startDate, Errors errors, String loggingContext) {
