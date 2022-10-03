@@ -71,6 +71,13 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 160));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);

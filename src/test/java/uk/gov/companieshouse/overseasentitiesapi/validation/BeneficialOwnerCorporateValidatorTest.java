@@ -71,6 +71,13 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 160));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
