@@ -370,6 +370,30 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterNameFieldNotEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        beneficialOwnerCorporateDtoList.get(0).setPublicRegisterName("Name");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+        beneficialOwnerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        beneficialOwnerCorporateDtoList.get(0).setRegistrationNumber("123456");
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenStartFieldIsInThePast() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.of(1970,1, 1));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
