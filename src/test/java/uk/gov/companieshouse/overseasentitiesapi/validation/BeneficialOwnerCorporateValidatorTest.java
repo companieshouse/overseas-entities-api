@@ -72,12 +72,12 @@ class BeneficialOwnerCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 51));
+        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
-        String validationMessage = qualifiedFieldName + " must be 50 characters or less";
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 

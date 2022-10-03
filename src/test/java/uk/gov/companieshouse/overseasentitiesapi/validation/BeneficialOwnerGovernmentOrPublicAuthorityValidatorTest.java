@@ -72,12 +72,12 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
 
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 51));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
                 BeneficialOwnerGovernmentOrPublicAuthorityDto.NAME_FIELD);
-        String validationMessage = qualifiedFieldName + " must be 50 characters or less";
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.NAME_FIELD, validationMessage, errors);
     }
 
