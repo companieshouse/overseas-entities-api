@@ -12,7 +12,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE;
 
-public class DueDiligenceOptionValidators {
+public class DueDiligenceDataBlockValidators {
+
+     private DueDiligenceDataBlockValidators(){}
 
      public static boolean onlyOneDueDiligencePresent(DueDiligenceDto dueDiligenceDto,
                                                       OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
