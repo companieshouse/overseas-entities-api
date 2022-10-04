@@ -7,7 +7,8 @@ public class ValidationMessages {
     public static final String NOT_NULL_ERROR_MESSAGE = "%s must not be null";
     public static final String NOT_EMPTY_ERROR_MESSAGE = "%s must not be empty and must not only consist of whitespace";
     public static final String SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE = "%s should not be populated";
-    public static final String SHOULD_NOT_BOTH_BE_POPULATED_ERROR_MESSAGE = "%s should not both be populated";
+    public static final String SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE = "%s should not both be present, only one should be present";
+    public static final String SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE = "%s should not both be absent, one should be present";
     public static final String MAX_LENGTH_EXCEEDED_ERROR_MESSAGE = " must be %s characters or less";
     public static final String INVALID_CHARACTERS_ERROR_MESSAGE = "%s must only include letters a to z, numbers, and special characters such as hyphens, spaces and apostrophes";
     public static final String INVALID_EMAIL_ERROR_MESSAGE = "Email address is not in the correct format for %s, like name@example.com";

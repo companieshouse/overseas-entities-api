@@ -108,14 +108,27 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testOverseasEntitySubmissionValidatorFailsWhenBothOverseasEntitiesAreSupplied() {
+    void testOverseasEntitySubmissionValidatorFailsWhenBothOverseasEntitiesArePresent() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
 
         String qualifiedFieldName = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-        String message = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        String message = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, qualifiedFieldName);
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testOverseasEntitySubmissionValidatorFailsWhenBothOverseasEntitiesAreAbsent() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(new DueDiligenceDto());
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(new OverseasEntityDueDiligenceDto());
+        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
+
+        String qualifiedFieldName = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
+        String message = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, qualifiedFieldName);
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
     }

@@ -48,7 +48,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
         DueDiligenceDto dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        if (DueDiligenceOptionValidators.bothDueDiligenceOptionsNotSupplied(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+        if (DueDiligenceOptionValidators.onlyOneDueDiligencePresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
 
             if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
                 overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
