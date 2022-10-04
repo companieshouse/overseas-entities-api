@@ -27,7 +27,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is in the past successfully")
     void validateDateIsInPast_Successful() {
-        assertTrue(DateValidators.isDateIsInPast(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isDateInPast(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -36,7 +36,7 @@ class DateValidatorsTest {
         String errMsg = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isDateIsInPast(FUTURE_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isDateInPast(FUTURE_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());
@@ -46,13 +46,13 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate date is within last 3 months successfully")
     void validateDateIsWithinLast3Months_Successful() {
-        assertTrue(DateValidators.isDateIsWithinLast3Months(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isDateWithinLast3Months(PAST_DATE_TEST, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
     @DisplayName("Validate date when date is today successfully")
     void validateDateIsWithinLast3Months_WithTodaysDate() {
-        assertTrue(DateValidators.isDateIsWithinLast3Months(LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+        assertTrue(DateValidators.isDateWithinLast3Months(LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
     }
 
     @Test
@@ -61,7 +61,7 @@ class DateValidatorsTest {
         String errMsg = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
-        boolean isValidDate = DateValidators.isDateIsWithinLast3Months(LocalDate.now().minusMonths(5), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        boolean isValidDate = DateValidators.isDateWithinLast3Months(LocalDate.now().minusMonths(5), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
 
         assertFalse(isValidDate);
         assertEquals(1, errors.size());

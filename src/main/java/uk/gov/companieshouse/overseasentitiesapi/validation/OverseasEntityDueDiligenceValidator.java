@@ -47,8 +47,8 @@ public class OverseasEntityDueDiligenceValidator {
                 OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         return UtilsValidators.isNotNull(identityDate, qualifiedFieldName, errors, loggingContext) &&
-                DateValidators.isDateIsInPast(identityDate, qualifiedFieldName, errors, loggingContext) &&
-                DateValidators.isDateIsWithinLast3Months(identityDate, qualifiedFieldName, errors, loggingContext);
+                DateValidators.isDateInPast(identityDate, qualifiedFieldName, errors, loggingContext) &&
+                DateValidators.isDateWithinLast3Months(identityDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateName(String name, Errors errors, String loggingContext) {

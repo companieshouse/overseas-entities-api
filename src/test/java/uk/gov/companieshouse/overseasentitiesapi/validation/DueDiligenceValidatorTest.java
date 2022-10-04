@@ -70,6 +70,16 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenIdentityDateFieldIsNull() {
+        dueDiligenceDto.setIdentityDate(null);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(DueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
         dueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
