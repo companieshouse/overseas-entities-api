@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -17,18 +18,20 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 public class AddressDtoValidator {
 
     public Errors validate(String parentAddressField, AddressDto addressDto, List<String> allowedCountries, Errors errors, String loggingContext) {
-        validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
-        validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
-        if (Objects.nonNull(addressDto.getLine2())) {
-            validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
-        }
-        validateTown(parentAddressField, addressDto.getTown(), errors, loggingContext);
-        if (Objects.nonNull(addressDto.getCounty())) {
-            validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
-        }
-        validateCountry(parentAddressField, addressDto.getCountry(), allowedCountries, errors, loggingContext);
-        if(Objects.nonNull(addressDto.getPostcode())) {
-            validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+        if (UtilsValidators.isNotNull(addressDto, parentAddressField, errors, loggingContext)) {
+            validatePropertyNameNumber(parentAddressField, addressDto.getPropertyNameNumber(), errors, loggingContext);
+            validateLine1(parentAddressField, addressDto.getLine1(), errors, loggingContext);
+            if (Objects.nonNull(addressDto.getLine2())) {
+                validateLine2(parentAddressField, addressDto.getLine2(), errors, loggingContext);
+            }
+            validateTown(parentAddressField, addressDto.getTown(), errors, loggingContext);
+            if (Objects.nonNull(addressDto.getCounty())) {
+                validateCounty(parentAddressField, addressDto.getCounty(), errors, loggingContext);
+            }
+            validateCountry(parentAddressField, addressDto.getCountry(), allowedCountries, errors, loggingContext);
+            if (Objects.nonNull(addressDto.getPostcode())) {
+                validatePostcode(parentAddressField, addressDto.getPostcode(), errors, loggingContext);
+            }
         }
         return errors;
     }
