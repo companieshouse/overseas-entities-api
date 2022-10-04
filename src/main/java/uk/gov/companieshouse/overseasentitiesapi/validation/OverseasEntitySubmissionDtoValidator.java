@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceOptionValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -44,15 +46,14 @@ public class OverseasEntitySubmissionDtoValidator {
         entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
         presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
 
-        if (DueDiligenceOptionValidators.bothDueDiligenceOptionsNotSupplied(
-                overseasEntitySubmissionDto.getDueDiligence(), overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
-                errors,
-                loggingContext)) {
+        DueDiligenceDto dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        if (DueDiligenceOptionValidators.bothDueDiligenceOptionsNotSupplied(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
 
-            if (Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
+            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
                 overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
             }
-            if (Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence())) {
+            if (Objects.nonNull(dueDiligenceDto) && !dueDiligenceDto.isEmpty()) {
                 dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
             }
         }
