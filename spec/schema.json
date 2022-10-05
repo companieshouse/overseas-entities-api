@@ -250,10 +250,107 @@
               "$ref": "#/components/schemas/ManagingOfficerIndividual"
             }
           },
-          "managing_officers_corporate": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ManagingOfficerCorporate"
+          "ManagingOfficersCorporate": {
+            "required": [
+              "name",
+              "principal_address",
+              "is_service_address_same_as_principal_address",
+              "legal_form",
+              "law_governed",
+              "is_on_register_in_country_formed_in",
+              "role_and_responsibilities",
+              "contact_full_name",
+              "contact_email"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 50
+                  }
+                ]
+              },
+              "principal_address": {
+                "$ref": "#/components/schemas/Address"
+              },
+              "service_address": {
+                "$ref": "#/components/schemas/Address"
+              },
+              "is_service_address_same_as_principal_address": {
+                "type": "boolean"
+              },
+              "legal_form": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 160
+                  }
+                ]
+              },
+              "law_governed": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 160
+                  }
+                ]
+              },
+              "public_register_name": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 160
+                  }
+                ]
+              },
+              "registration_number": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 160
+                  }
+                ]
+              },
+              "is_on_register_in_country_formed_in": {
+                "type": "boolean"
+              },
+              "role_and_responsibilities": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 256
+                  }
+                ]
+              },
+              "contact_full_name": {
+                "allOf" : [
+                  {
+                    "$ref": "#/components/schemas/FieldPattern"
+                  },
+                  {
+                    "maxLength": 160
+                  }
+                ]
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "maxLength": 250
+              }
             }
           },
           "trusts": {
