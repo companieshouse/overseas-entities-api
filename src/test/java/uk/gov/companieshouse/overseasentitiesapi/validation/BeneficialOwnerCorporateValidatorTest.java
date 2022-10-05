@@ -71,13 +71,20 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 160));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 51));
+        beneficialOwnerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.NAME_FIELD);
-        String validationMessage = qualifiedFieldName + " must be 50 characters or less";
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
         assertError(BeneficialOwnerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 
@@ -408,13 +415,25 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityStartIsInTheFuture() {
+    void testErrorReportedWhenStartDateIsInTheFuture() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.START_DATE_FIELD);
         String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerCorporateDto.START_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenStartDateIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.START_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateDto.START_DATE_FIELD, validationMessage, errors);
     }

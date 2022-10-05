@@ -84,8 +84,8 @@ public class BeneficialOwnerIndividualValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
                 BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD);
-        return UtilsValidators.isNotNull(dateOfBirth, qualifiedFieldName, errors, loggingContext) &&
-                DateValidators.isDateIsInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
+        return UtilsValidators.isNotNull(dateOfBirth, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
@@ -116,8 +116,8 @@ public class BeneficialOwnerIndividualValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
                 BeneficialOwnerIndividualDto.START_DATE_FIELD);
-        return UtilsValidators.isNotNull(startDate, qualifiedFieldName, errors, loggingContext) &&
-                DateValidators.isDateIsInPast(startDate, qualifiedFieldName, errors, loggingContext);
+        return UtilsValidators.isNotNull(startDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateIsOnSanctionsList(Boolean isOnSanctionsList, Errors errors, String loggingContext) {

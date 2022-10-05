@@ -41,6 +41,24 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testIsEmptyFalseWhenAllFieldsSupplied() {
+        assertFalse(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyFalseWhenOneFieldSupplied() {
+        DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+        dueDiligenceDto.setName("Test");
+        assertFalse(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
+    void testIsEmptyTrueWhenNoFieldsSupplied() {
+        DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+        assertTrue(dueDiligenceDto.isEmpty());
+    }
+
+    @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         dueDiligenceDto.getAddress().setCountry("Wales");
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
@@ -65,6 +83,16 @@ class DueDiligenceValidatorTest {
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(DueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenIdentityDateFieldIsNull() {
+        dueDiligenceDto.setIdentityDate(null);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(DueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
     }

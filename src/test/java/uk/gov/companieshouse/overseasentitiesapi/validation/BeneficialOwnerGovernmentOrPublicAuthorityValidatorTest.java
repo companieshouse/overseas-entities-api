@@ -71,13 +71,20 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 160));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 51));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
                 BeneficialOwnerGovernmentOrPublicAuthorityDto.NAME_FIELD);
-        String validationMessage = qualifiedFieldName + " must be 50 characters or less";
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.NAME_FIELD, validationMessage, errors);
     }
 
@@ -275,13 +282,25 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityStartIsInTheFuture() {
+    void testErrorReportedWhenStartDateIsInTheFuture() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
                 BeneficialOwnerGovernmentOrPublicAuthorityDto.START_DATE_FIELD);
         String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.START_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenStartDateIsNull() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(null);
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityDto.START_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.START_DATE_FIELD, validationMessage, errors);
     }

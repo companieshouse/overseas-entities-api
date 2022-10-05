@@ -676,7 +676,7 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 50
+                "maxLength": 160
               }
             ]
           },
@@ -783,7 +783,14 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "principal_address": {
             "$ref": "#/components/schemas/Address"
