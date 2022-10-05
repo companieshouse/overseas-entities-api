@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.StringUtils;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class DueDiligenceDto {
 
@@ -113,5 +115,17 @@ public class DueDiligenceDto {
 
     public void setDiligence(String diligence) {
         this.diligence = diligence;
+    }
+
+    public boolean isEmpty() {
+        return Objects.isNull(identityDate) &&
+               StringUtils.isBlank(name) &&
+               Objects.isNull(address) &&
+               StringUtils.isBlank(email) &&
+               StringUtils.isBlank(supervisoryName) &&
+               StringUtils.isBlank(amlNumber) &&
+               StringUtils.isBlank(agentCode) &&
+               StringUtils.isBlank(partnerName) &&
+               StringUtils.isBlank(diligence);
     }
 }
