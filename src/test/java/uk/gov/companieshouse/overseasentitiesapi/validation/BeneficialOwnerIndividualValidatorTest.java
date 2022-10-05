@@ -161,13 +161,25 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateOfBirthIsInTheFuture() {
+    void testErrorReportedWhenDateOfBirthIsInTheFuture() {
         beneficialOwnerIndividualDtoList.get(0).setDateOfBirth(LocalDate.now().plusDays(1));
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
                 BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenDateOfBirthFieldIsNull() {
+        beneficialOwnerIndividualDtoList.get(0).setDateOfBirth(null);
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(BeneficialOwnerIndividualDto.DATE_OF_BIRTH_FIELD, validationMessage, errors);
     }
@@ -277,13 +289,25 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityStartDateIsInTheFuture() {
+    void testErrorReportedWhenStartDateFieldIsInTheFuture() {
         beneficialOwnerIndividualDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
                 BeneficialOwnerIndividualDto.START_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(BeneficialOwnerIndividualDto.START_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenStartDateFieldIsNull() {
+        beneficialOwnerIndividualDtoList.get(0).setStartDate(null);
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.START_DATE_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(BeneficialOwnerIndividualDto.START_DATE_FIELD, validationMessage, errors);
     }

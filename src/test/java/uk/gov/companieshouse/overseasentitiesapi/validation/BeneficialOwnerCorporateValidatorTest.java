@@ -415,13 +415,25 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityStartIsInTheFuture() {
+    void testErrorReportedWhenStartDateIsInTheFuture() {
         beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
                 BeneficialOwnerCorporateDto.START_DATE_FIELD);
         String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerCorporateDto.START_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenStartDateIsNull() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(null);
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.START_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerCorporateDto.START_DATE_FIELD, validationMessage, errors);
     }

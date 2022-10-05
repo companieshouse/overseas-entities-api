@@ -149,8 +149,8 @@ public class BeneficialOwnerCorporateValidator {
 
     private boolean validateStartDate(LocalDate startDate, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.START_DATE_FIELD);
-        return UtilsValidators.isNotNull(startDate, qualifiedFieldName, errors, loggingContext) &&
-                DateValidators.isDateIsInPast(startDate, qualifiedFieldName, errors, loggingContext);
+        return UtilsValidators.isNotNull(startDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
