@@ -78,7 +78,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntitySubmissionValidator() {
-        when(dueDiligenceDataBlockValidator.onlyOneDueDiligencePresent(any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());

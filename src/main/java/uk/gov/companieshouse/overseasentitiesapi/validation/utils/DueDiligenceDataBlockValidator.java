@@ -16,12 +16,12 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class DueDiligenceDataBlockValidator {
 
-     public DueDiligenceDataBlockValidator(){}
+     public static final String QUALIFIED_FIELD_NAMES = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 
-     public boolean onlyOneDueDiligencePresent(DueDiligenceDto dueDiligenceDto,
-                                                      OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
-                                                      Errors errors,
-                                                      String loggingContext) {
+     public boolean onlyOneBlockPresent(DueDiligenceDto dueDiligenceDto,
+                                        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
+                                        Errors errors,
+                                        String loggingContext) {
 
          return
          !(bothDueDiligencesPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext) ||
@@ -55,8 +55,7 @@ public class DueDiligenceDataBlockValidator {
     }
 
     private void logValidationErrorMessage(Errors errors, String loggingContext, String errorMessage) {
-        String qualifiedFieldNames = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-        setErrorMsgToLocation(errors, qualifiedFieldNames, String.format(errorMessage, qualifiedFieldNames));
-        ApiLogger.infoContext(loggingContext, String.format(errorMessage, qualifiedFieldNames));
+        setErrorMsgToLocation(errors, QUALIFIED_FIELD_NAMES, String.format(errorMessage, QUALIFIED_FIELD_NAMES));
+        ApiLogger.infoContext(loggingContext, String.format(errorMessage, QUALIFIED_FIELD_NAMES));
     }
 }
