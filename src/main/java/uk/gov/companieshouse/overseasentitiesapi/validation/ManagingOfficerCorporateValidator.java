@@ -33,6 +33,8 @@ public class ManagingOfficerCorporateValidator {
             boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(managingOfficerCorporateDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
             if (sameAddressFlagValid && Boolean.FALSE.equals(managingOfficerCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
                 validateAddress(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, managingOfficerCorporateDto.getServiceAddress(), errors, loggingContext);
+            } else {
+                validateServiceAddressIsNotSupplied(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, managingOfficerCorporateDto.getServiceAddress(), errors, loggingContext);
             }
 
             validateLegalForm(managingOfficerCorporateDto.getLegalForm(), errors, loggingContext);
@@ -42,6 +44,9 @@ public class ManagingOfficerCorporateValidator {
             if (onRegister && Boolean.TRUE.equals(managingOfficerCorporateDto.getOnRegisterInCountryFormedIn())) {
                 validatePublicRegisterName(managingOfficerCorporateDto.getPublicRegisterName(), errors, loggingContext);
                 validateRegistrationNumber(managingOfficerCorporateDto.getRegistrationNumber(), errors, loggingContext);
+            } else {
+                validatePublicRegisterNameIsNotSupplied(managingOfficerCorporateDto.getPublicRegisterName(), errors, loggingContext);
+                validateRegistrationNumberIsNotSupplied(managingOfficerCorporateDto.getRegistrationNumber(), errors, loggingContext);
             }
 
             validateRoleAndResponsibilities(managingOfficerCorporateDto.getRoleAndResponsibilities(), errors, loggingContext);
@@ -61,6 +66,12 @@ public class ManagingOfficerCorporateValidator {
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, addressField);
         addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors, loggingContext);
+        return errors;
+    }
+
+    private Errors validateServiceAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, addressField);
+        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
     }
 
@@ -100,6 +111,18 @@ public class ManagingOfficerCorporateValidator {
         return StringValidators.isNotBlank (registrationNumber, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(registrationNumber, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(registrationNumber, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private Errors validatePublicRegisterNameIsNotSupplied(String publicRegisterName, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        StringValidators.checkIsEmpty(publicRegisterName, qualifiedFieldName, errors, loggingContext);
+        return errors;
+    }
+
+    private Errors validateRegistrationNumberIsNotSupplied(String registrationNumber, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        StringValidators.checkIsEmpty(registrationNumber, qualifiedFieldName, errors, loggingContext);
+        return errors;
     }
 
     private boolean validateRoleAndResponsibilities(String name, Errors errors, String loggingContext) {

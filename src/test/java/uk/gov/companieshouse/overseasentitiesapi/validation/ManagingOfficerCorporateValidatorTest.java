@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -98,6 +99,37 @@ class ManagingOfficerCorporateValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSameAddressFlagIsFalseWhenServiceAddressIsEmpty() {
+        managingOfficerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(false);
+        managingOfficerCorporateDtoList.get(0).setServiceAddress(new AddressDto());
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertTrue(errors.size() > 0);
+    }
+
+    @Test
+    void testErrorReportedWhenSameAddressFlagIsTrueWhenServiceAddressNotEmpty() {
+        managingOfficerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(true);
+        managingOfficerCorporateDtoList.get(0).setServiceAddress(AddressMock.getAddressDto());
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD);
+
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.LINE_1_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.LINE_1_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.TOWN_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.TOWN_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.COUNTY_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.COUNTY_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.COUNTRY_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.COUNTRY_FIELD), validationMessage, errors);
+        validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.POSTCODE_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.POSTCODE_FIELD), validationMessage, errors);
     }
 
     @Test
@@ -292,6 +324,30 @@ class ManagingOfficerCorporateValidatorTest {
                 MANAGING_OFFICERS_CORPORATE_FIELD,
                 ManagingOfficerCorporateDto.REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(ManagingOfficerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterNameFieldNotEmpty() {
+        managingOfficerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        managingOfficerCorporateDtoList.get(0).setPublicRegisterName("Name");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(ManagingOfficerCorporateDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
+        managingOfficerCorporateDtoList.get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        managingOfficerCorporateDtoList.get(0).setRegistrationNumber("123456");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
         assertError(ManagingOfficerCorporateDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
 
