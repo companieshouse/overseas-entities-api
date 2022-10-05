@@ -19,23 +19,22 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
-import uk.gov.companieshouse.service.rest.err.Err;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceDataBlockValidator;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitySubmissionDtoValidatorTest {
 
-    private static final String CONTEXT = "12345";
+    private static final String LOGGING_CONTEXT = "12345";
     @InjectMocks
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
     @Mock
@@ -56,6 +55,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private DueDiligenceValidator dueDiligenceValidator;
     @Mock
     private BeneficialOwnerGovernmentOrPublicAuthorityValidator beneficialOwnerGovernmentOrPublicAuthorityValidator;
+    @Mock
+    private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
 
     private EntityDto entityDto = EntityMock.getEntityDto();
     private PresenterDto presenterDto = PresenterMock.getPresenterDto();
@@ -76,11 +77,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
     };
 
     @Test
-    void testOverseasEntitySubmissionValidatorWithDueDiligenceOnly() {
+    void testOverseasEntitySubmissionValidator() {
+        when(dueDiligenceDataBlockValidator.onlyOneDueDiligencePresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(new OverseasEntityDueDiligenceDto());
-        overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
+        overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
         verify(overseasEntityDueDiligenceValidator, times(0)).validate(eq(overseasEntityDueDiligenceDto),any(),any());
@@ -91,48 +91,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList),any(),any());
     }
 
-    @Test
-    void testOverseasEntitySubmissionValidatorWithOverseasEntitiyDueDiligenceOnly() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setDueDiligence(new DueDiligenceDto());
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
-        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
-        verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto),any(),any());
-        verify(beneficialOwnersStatementValidator, times(1)).validate(eq(beneficialOwnersStatement),any(),any());
-        verify(beneficialOwnerIndividualValidator, times(1)).validate(eq(beneficialOwnerIndividualDtoList), any(),any());
-        verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList),any(),any());
-        verify(dueDiligenceValidator, times(0)).validate(eq(dueDiligenceDto),any(),any());
-        verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList),any(),any());
-    }
-
-    @Test
-    void testOverseasEntitySubmissionValidatorFailsWhenBothOverseasEntitiesArePresent() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
-
-        String qualifiedFieldName = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-        String message = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, qualifiedFieldName);
-        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
-        assertTrue(errors.containsError(err));
-    }
-
-    @Test
-    void testOverseasEntitySubmissionValidatorFailsWhenBothOverseasEntitiesAreAbsent() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setDueDiligence(new DueDiligenceDto());
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(new OverseasEntityDueDiligenceDto());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), CONTEXT);
-
-        String qualifiedFieldName = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-        String message = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, qualifiedFieldName);
-        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
-        assertTrue(errors.containsError(err));
-    }
-
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(entityDto);
@@ -141,5 +99,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
     }
 }
