@@ -15,6 +15,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatement
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -60,6 +61,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Mock
     private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
     @Mock
+    private ManagingOfficerIndividualValidator managingOfficerIndividualValidator;
+    @Mock
     private ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
 
     private EntityDto entityDto = EntityMock.getEntityDto();
@@ -78,6 +81,11 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
     {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+    };
+
+    private List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
+    {
+        managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
     };
     private List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
     {
@@ -98,6 +106,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList),any(),any());
         verify(dueDiligenceValidator, times(1)).validate(eq(dueDiligenceDto),any(),any());
         verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList),any(),any());
+        verify(managingOfficerIndividualValidator, times(1)).validate(eq(managingOfficerIndividualDtoList),any(),any());
+        verify(managingOfficerCorporateValidator, times(1)).validate(eq(managingOfficerCorporateDtoList),any(),any());
     }
 
     @Test
@@ -114,6 +124,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList),any(),any());
         verify(dueDiligenceValidator, times(0)).validate(eq(dueDiligenceDto),any(),any());
         verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList),any(),any());
+        verify(managingOfficerIndividualValidator, times(1)).validate(eq(managingOfficerIndividualDtoList),any(),any());
         verify(managingOfficerCorporateValidator, times(1)).validate(eq(managingOfficerCorporateDtoList),any(),any());
     }
 
@@ -126,6 +137,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
     }
 }

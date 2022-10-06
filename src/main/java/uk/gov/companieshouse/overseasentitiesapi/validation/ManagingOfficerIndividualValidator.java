@@ -114,6 +114,4 @@ public class ManagingOfficerIndividualValidator {
                 && StringValidators.isLessThanOrEqualToMaxLength(roleAndResponsibilities, 256, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext);
     }
-
-
 }

@@ -143,6 +143,18 @@ public class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenHasFormerNamesFieldIsNull() {
+        managingOfficerIndividualDtoList.get(0).setHasFormerNames(null);
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.HAS_FORMER_NAMES_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.HAS_FORMER_NAMES_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenFormerNamesFieldIsEmpty() {
         managingOfficerIndividualDtoList.get(0).setFormerNames("  ");
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
