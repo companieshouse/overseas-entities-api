@@ -30,8 +30,12 @@ public class ManagingOfficerIndividualValidator {
         for (ManagingOfficerIndividualDto managingOfficerIndividualDto : managingOfficerIndividualDtoList) {
             validateFirstName(managingOfficerIndividualDto.getFirstName(), errors, loggingContext);
             validateLastName(managingOfficerIndividualDto.getLastName(), errors, loggingContext);
-            validateHasFormerNames(managingOfficerIndividualDto.getHasFormerNames(), errors, loggingContext);
-            validateFormerNames(managingOfficerIndividualDto.getFormerNames(), errors, loggingContext);
+            boolean hasFormerNamesFlagValid = validateHasFormerNames(managingOfficerIndividualDto.getHasFormerNames(), errors, loggingContext);
+            if (hasFormerNamesFlagValid && Boolean.TRUE.equals(managingOfficerIndividualDto.getHasFormerNames())) {
+                validateFormerNames(managingOfficerIndividualDto.getFormerNames(), errors, loggingContext);
+            } else {
+                validateFormerNamesAreNotSupplied(managingOfficerIndividualDto.getFormerNames(), errors, loggingContext);
+            }
             validateDateOfBirth(managingOfficerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(managingOfficerIndividualDto.getNationality(), errors, loggingContext);
             validateAddress(ManagingOfficerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, managingOfficerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
@@ -64,6 +68,12 @@ public class ManagingOfficerIndividualValidator {
     private boolean validateHasFormerNames(Boolean hasFormerNames, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.HAS_FORMER_NAMES_FIELD);
         return UtilsValidators.isNotNull(hasFormerNames, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private Errors validateFormerNamesAreNotSupplied(String formerNames, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.FORMER_NAMES_FIELD);
+        StringValidators.checkIsEmpty(formerNames, qualifiedFieldName, errors, loggingContext);
+        return errors;
     }
 
     private boolean validateFormerNames(String formerNames, Errors errors, String loggingContext) {

@@ -55,7 +55,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FIRST_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FIRST_NAME_FIELD, validationMessage, errors);
     }
@@ -67,7 +67,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FIRST_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FIRST_NAME_FIELD, validationMessage, errors);
     }
@@ -90,7 +90,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FIRST_NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FIRST_NAME_FIELD, validationMessage, errors);
     }
@@ -102,7 +102,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.LAST_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
     }
@@ -114,7 +114,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.LAST_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
     }
@@ -137,7 +137,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.LAST_NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
     }
@@ -149,9 +149,22 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.HAS_FORMER_NAMES_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.HAS_FORMER_NAMES_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenHasFormerNamesIsFalseAndFormerNamesAreSupplied() {
+        managingOfficerIndividualDtoList.get(0).setHasFormerNames(false);
+        managingOfficerIndividualDtoList.get(0).setFormerNames("Jim Bloggs Jr");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.FORMER_NAMES_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.FORMER_NAMES_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -161,7 +174,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FORMER_NAMES_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FORMER_NAMES_FIELD, validationMessage, errors);
     }
@@ -173,7 +186,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FORMER_NAMES_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FORMER_NAMES_FIELD, validationMessage, errors);
     }
@@ -196,7 +209,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.FORMER_NAMES_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.FORMER_NAMES_FIELD, validationMessage, errors);
     }
@@ -222,7 +235,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.DATE_OF_BIRTH_FIELD);
-        String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.DATE_OF_BIRTH_FIELD, validationMessage, errors);
     }
@@ -234,7 +247,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.DATE_OF_BIRTH_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.DATE_OF_BIRTH_FIELD, validationMessage, errors);
     }
@@ -246,7 +259,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.NATIONALITY_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
@@ -258,7 +271,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.NATIONALITY_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
@@ -281,7 +294,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.NATIONALITY_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
     }
@@ -293,7 +306,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD, validationMessage, errors);
     }
@@ -336,7 +349,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.OCCUPATION_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.OCCUPATION_FIELD, validationMessage, errors);
     }
@@ -348,7 +361,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.OCCUPATION_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.OCCUPATION_FIELD, validationMessage, errors);
     }
@@ -371,7 +384,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.OCCUPATION_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.OCCUPATION_FIELD, validationMessage, errors);
     }
@@ -383,7 +396,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD, validationMessage, errors);
     }
@@ -395,7 +408,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage =  String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD, validationMessage, errors);
     }
@@ -418,7 +431,7 @@ public class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage =  String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD, validationMessage, errors);
     }
