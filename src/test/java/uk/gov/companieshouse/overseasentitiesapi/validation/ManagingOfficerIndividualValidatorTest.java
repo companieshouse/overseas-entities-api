@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
-public class ManagingOfficerIndividualValidatorTest {
+class ManagingOfficerIndividualValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
@@ -32,7 +32,7 @@ public class ManagingOfficerIndividualValidatorTest {
     private List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList;
 
     @BeforeEach
-    public void init() {
+    void init() {
         addressDtoValidator = new AddressDtoValidator();
         managingOfficerIndividualValidator = new ManagingOfficerIndividualValidator(addressDtoValidator);
         managingOfficerIndividualDtoList = new ArrayList<>();
