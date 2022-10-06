@@ -363,7 +363,7 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 4000
+                "maxLength": 160
               }
             ]
           },
@@ -373,7 +373,7 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 4000
+                "maxLength": 160
               }
             ]
           },
@@ -383,7 +383,7 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 4000
+                "maxLength": 160
               }
             ]
           },
