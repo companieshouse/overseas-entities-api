@@ -869,18 +869,27 @@
       },
       "ManagingOfficerCorporate": {
         "required": [
-          "is_on_register_in_country_formed_in",
-          "is_service_address_same_as_principal_address",
-          "law_governed",
-          "legal_form",
           "name",
           "principal_address",
-          "role_and_responsibilities"
+          "is_service_address_same_as_principal_address",
+          "legal_form",
+          "law_governed",
+          "is_on_register_in_country_formed_in",
+          "role_and_responsibilities",
+          "contact_full_name",
+          "contact_email"
         ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 50
+              }
+            ]
           },
           "principal_address": {
             "$ref": "#/components/schemas/Address"
@@ -892,28 +901,72 @@
             "type": "boolean"
           },
           "legal_form": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "law_governed": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
+          },
+          "public_register_name": {
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
+          },
+          "registration_number": {
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
           "is_on_register_in_country_formed_in": {
             "type": "boolean"
           },
-          "public_register_name": {
-            "type": "string"
-          },
-          "registration_number": {
-            "type": "string"
-          },
           "role_and_responsibilities": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 256
+              }
+            ]
           },
           "contact_full_name": {
-            "type": "string"
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           },
-          "contact_email": {
-            "type": "string"
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 250
           }
         }
       },
