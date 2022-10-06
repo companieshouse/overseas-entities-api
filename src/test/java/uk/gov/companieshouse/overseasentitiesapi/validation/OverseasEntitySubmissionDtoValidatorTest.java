@@ -8,11 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -57,6 +59,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private BeneficialOwnerGovernmentOrPublicAuthorityValidator beneficialOwnerGovernmentOrPublicAuthorityValidator;
     @Mock
     private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
+    @Mock
+    private ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
 
     private EntityDto entityDto = EntityMock.getEntityDto();
     private PresenterDto presenterDto = PresenterMock.getPresenterDto();
@@ -74,6 +78,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
     {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+    };
+    private List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
+    {
+        managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
     };
 
     @Test
@@ -106,6 +114,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList),any(),any());
         verify(dueDiligenceValidator, times(0)).validate(eq(dueDiligenceDto),any(),any());
         verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList),any(),any());
+        verify(managingOfficerCorporateValidator, times(1)).validate(eq(managingOfficerCorporateDtoList),any(),any());
     }
 
     private void buildOverseasEntitySubmissionDto() {
@@ -116,5 +125,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
     }
 }
