@@ -30,8 +30,8 @@ public class ManagingOfficerIndividualValidator {
         for (ManagingOfficerIndividualDto managingOfficerIndividualDto : managingOfficerIndividualDtoList) {
             validateFirstName(managingOfficerIndividualDto.getFirstName(), errors, loggingContext);
             validateLastName(managingOfficerIndividualDto.getLastName(), errors, loggingContext);
-            boolean hasFormerNamesFlagValid = validateHasFormerNames(managingOfficerIndividualDto.getHasFormerNames(), errors, loggingContext);
-            if (hasFormerNamesFlagValid && Boolean.TRUE.equals(managingOfficerIndividualDto.getHasFormerNames())) {
+            boolean isHasFormerNamesFlagValid = validateHasFormerNames(managingOfficerIndividualDto.getHasFormerNames(), errors, loggingContext);
+            if (isHasFormerNamesFlagValid && Boolean.TRUE.equals(managingOfficerIndividualDto.getHasFormerNames())) {
                 validateFormerNames(managingOfficerIndividualDto.getFormerNames(), errors, loggingContext);
             } else {
                 validateFormerNamesAreNotSupplied(managingOfficerIndividualDto.getFormerNames(), errors, loggingContext);
@@ -39,8 +39,8 @@ public class ManagingOfficerIndividualValidator {
             validateDateOfBirth(managingOfficerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(managingOfficerIndividualDto.getNationality(), errors, loggingContext);
             validateAddress(ManagingOfficerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, managingOfficerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
-            boolean sameAddressFlagValid = validateIsServiceAddressSameAsUsualResidentialAddress(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
-            if (sameAddressFlagValid && Boolean.FALSE.equals(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
+            boolean isSameAddressFlagValid = validateIsServiceAddressSameAsUsualResidentialAddress(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
+            if (isSameAddressFlagValid && Boolean.FALSE.equals(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
                 validateAddress(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD, managingOfficerIndividualDto.getServiceAddress(), errors, loggingContext);
             } else {
                 validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD, managingOfficerIndividualDto.getServiceAddress(), errors, loggingContext);
