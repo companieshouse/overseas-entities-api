@@ -6,37 +6,49 @@ import java.time.LocalDate;
 
 public class ManagingOfficerIndividualDto {
 
-    @JsonProperty("first_name")
+    public static final String FIRST_NAME_FIELD = "first_name";
+    public static final String LAST_NAME_FIELD = "last_name";
+    public static final String HAS_FORMER_NAMES_FIELD = "has_former_names";
+    public static final String FORMER_NAMES_FIELD = "former_names";
+    public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
+    public static final String NATIONALITY_FIELD = "nationality";
+    public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
+    public static final String OCCUPATION_FIELD = "occupation";
+    public static final String ROLE_AND_RESPONSIBILITIES_FIELD = "role_and_responsibilities";
+
+    @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
 
-    @JsonProperty("last_name")
+    @JsonProperty(LAST_NAME_FIELD)
     private String lastName;
 
-    @JsonProperty("has_former_names")
+    @JsonProperty(HAS_FORMER_NAMES_FIELD)
     private Boolean hasFormerNames;
 
-    @JsonProperty("former_names")
+    @JsonProperty(FORMER_NAMES_FIELD)
     private String formerNames;
 
-    @JsonProperty("date_of_birth")
+    @JsonProperty(DATE_OF_BIRTH_FIELD)
     private LocalDate dateOfBirth;
 
-    @JsonProperty("nationality")
+    @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
 
-    @JsonProperty("usual_residential_address")
+    @JsonProperty(USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private AddressDto usualResidentialAddress;
 
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
-    @JsonProperty("is_service_address_same_as_usual_residential_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
-    @JsonProperty("occupation")
+    @JsonProperty(OCCUPATION_FIELD)
     private String occupation;
 
-    @JsonProperty("role_and_responsibilities")
+    @JsonProperty(ROLE_AND_RESPONSIBILITIES_FIELD)
     private String roleAndResponsibilities;
 
     public String getFirstName() {
