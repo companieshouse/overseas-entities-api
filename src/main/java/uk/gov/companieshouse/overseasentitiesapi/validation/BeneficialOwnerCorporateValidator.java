@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
@@ -136,13 +135,13 @@ public class BeneficialOwnerCorporateValidator {
     }
 
     private Errors validatePublicRegisterNameIsNotSupplied(String publicRegisterName, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.PUBLIC_REGISTER_NAME_FIELD);
         StringValidators.checkIsEmpty(publicRegisterName, qualifiedFieldName, errors, loggingContext);
         return errors;
     }
 
     private Errors validateRegistrationNumberIsNotSupplied(String registrationNumber, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, EntityDto.REGISTRATION_NUMBER_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.REGISTRATION_NUMBER_FIELD);
         StringValidators.checkIsEmpty(registrationNumber, qualifiedFieldName, errors, loggingContext);
         return errors;
     }
