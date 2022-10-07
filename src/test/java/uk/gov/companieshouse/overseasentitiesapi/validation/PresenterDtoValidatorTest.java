@@ -59,6 +59,13 @@ class PresenterDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        presenterDto.setFullName(StringUtils.repeat("A", 256));
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         presenterDto.setFullName(StringUtils.repeat("A", 257));
         Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
@@ -95,6 +102,13 @@ class PresenterDtoValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.EMAIL_PROPERTY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenEmailFieldIsAtMaxLength() {
+        presenterDto.setEmail(StringUtils.repeat("A", 247) + "@long.com");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
