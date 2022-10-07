@@ -21,7 +21,6 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import uk.gov.companieshouse.service.rest.err.Errors;
-import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
