@@ -20,14 +20,14 @@ public class PresenterDtoValidator {
     private boolean validateFullName(String presenterFullName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.PRESENTER_FIELD, PresenterDto.FULL_NAME_FIELD);
         return StringValidators.isNotBlank(presenterFullName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(presenterFullName, 160, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(presenterFullName, 256, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(presenterFullName, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateEmail(String email, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.PRESENTER_FIELD, PresenterDto.EMAIL_PROPERTY_FIELD);
         return StringValidators.isNotBlank(email, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(email, 250, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(email, 256, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidEmailAddress(email, qualifiedFieldName, errors, loggingContext);
     }
 
