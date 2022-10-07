@@ -277,14 +277,14 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 160
+                "maxLength": 256
               }
             ]
           },
           "email": {
             "type": "string",
             "format": "email",
-            "maxLength": 250
+            "maxLength": 256
           }
         }
       },

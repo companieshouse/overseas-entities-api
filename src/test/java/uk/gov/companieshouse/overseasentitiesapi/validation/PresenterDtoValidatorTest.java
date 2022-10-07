@@ -19,7 +19,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 @ExtendWith(MockitoExtension.class)
 class PresenterDtoValidatorTest {
 
-    private static final String CONTEXT = "12345";
+    private static final String LOGGING_CONTEXT = "12345";
 
     private PresenterDtoValidator presenterDtoValidator;
 
@@ -34,16 +34,16 @@ class PresenterDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenPresenterDtoValuesAreCorrect() {
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenNameFieldIsEmpty() {
         presenterDto.setFullName("  ");
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.FULL_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.FULL_NAME_FIELD, validationMessage, errors);
     }
@@ -51,28 +51,35 @@ class PresenterDtoValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsNull() {
         presenterDto.setFullName(null);
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.FULL_NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.FULL_NAME_FIELD, validationMessage, errors);
     }
 
     @Test
+    void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
+        presenterDto.setFullName(StringUtils.repeat("A", 256));
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        presenterDto.setFullName(StringUtils.repeat("A", 161));
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        presenterDto.setFullName(StringUtils.repeat("A", 257));
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.FULL_NAME_FIELD);
 
-        assertError(PresenterDto.FULL_NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
+        assertError(PresenterDto.FULL_NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
     }
 
     @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         presenterDto.setFullName("Дракон");
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.FULL_NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.FULL_NAME_FIELD, validationMessage, errors);
     }
@@ -80,9 +87,9 @@ class PresenterDtoValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsEmpty() {
         presenterDto.setEmail("  ");
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.EMAIL_PROPERTY_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.EMAIL_PROPERTY_FIELD, validationMessage, errors);
     }
@@ -90,28 +97,35 @@ class PresenterDtoValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsNull() {
         presenterDto.setEmail(null);
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.EMAIL_PROPERTY_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.EMAIL_PROPERTY_FIELD, validationMessage, errors);
     }
 
     @Test
+    void testNoErrorReportedWhenEmailFieldIsAtMaxLength() {
+        presenterDto.setEmail(StringUtils.repeat("A", 247) + "@long.com");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenEmailFieldExceedsMaxLength() {
-        presenterDto.setEmail(StringUtils.repeat("A", 251) + "@long.com");
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        presenterDto.setEmail(StringUtils.repeat("A", 257) + "@long.com");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.EMAIL_PROPERTY_FIELD);
 
-        assertError(PresenterDto.EMAIL_PROPERTY_FIELD, qualifiedFieldName + " must be 250 characters or less", errors);
+        assertError(PresenterDto.EMAIL_PROPERTY_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
     }
 
     @Test
     void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         presenterDto.setEmail("wrong.com");
-        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), CONTEXT);
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PresenterDto.EMAIL_PROPERTY_FIELD);
-        String validationMessage = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(PresenterDto.EMAIL_PROPERTY_FIELD,  validationMessage, errors);
     }
