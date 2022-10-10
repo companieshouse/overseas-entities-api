@@ -162,11 +162,20 @@ class EntityDtoValidatorTest {
 
     @Test
     void testErrorReportedWhenEmailFieldExceedsMaxLength() {
-        entityDto.setEmail(StringUtils.repeat("A", 251) + "@long.com");
+        entityDto.setEmail(StringUtils.repeat("A", 257) + "@long.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(EntityDto.EMAIL_PROPERTY_FIELD);
 
-        assertError(EntityDto.EMAIL_PROPERTY_FIELD, qualifiedFieldName + " must be 250 characters or less", errors);
+        assertError(EntityDto.EMAIL_PROPERTY_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenEmailFieldIsMaxLength() {
+        entityDto.setEmail(StringUtils.repeat("A", 247) + "@long.com");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.EMAIL_PROPERTY_FIELD);
+
+        assertEquals(0, errors.size(), "Errors should be empty");
     }
 
     @Test

@@ -78,7 +78,7 @@ public class EntityDtoValidator {
     private boolean validateEmail(String email, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.EMAIL_PROPERTY_FIELD);
         return StringValidators.isNotBlank(email, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(email, 250, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(email, 256, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidEmailAddress(email, qualifiedFieldName, errors, loggingContext);
     }
 
