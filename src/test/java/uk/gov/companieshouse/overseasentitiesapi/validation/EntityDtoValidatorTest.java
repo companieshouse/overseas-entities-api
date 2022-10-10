@@ -86,7 +86,7 @@ class EntityDtoValidatorTest {
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         entityDto.setPrincipalAddress(getValidAddressDto());
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     @Test
@@ -98,7 +98,7 @@ class EntityDtoValidatorTest {
 
         entityDto.setPrincipalAddress(addressDto);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() == 1);
+        assertEquals(1, errors.size());
     }
 
     @Test
