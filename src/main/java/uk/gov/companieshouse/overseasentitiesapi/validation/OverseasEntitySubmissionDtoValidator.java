@@ -2,10 +2,16 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceDataBlockValidator;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -64,13 +70,26 @@ public class OverseasEntitySubmissionDtoValidator {
             }
         }
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
-        beneficialOwnerIndividualValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersIndividual(), errors, loggingContext);
-        beneficialOwnerCorporateValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersCorporate(), errors, loggingContext);
-        beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority(), errors, loggingContext);
-        managingOfficerIndividualValidator.validate(overseasEntitySubmissionDto.getManagingOfficersIndividual(), errors, loggingContext);
-        managingOfficerCorporateValidator.validate(overseasEntitySubmissionDto.getManagingOfficersCorporate(), errors, loggingContext);
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
+        if (Objects.nonNull(beneficialOwnerIndividualDtoList) && !beneficialOwnerIndividualDtoList.isEmpty()) {
+            beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
+        if (Objects.nonNull(beneficialOwnerCorporateDtoList) && !beneficialOwnerCorporateDtoList.isEmpty()) {
+            beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
+        if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDtoList) && !beneficialOwnerGovernmentOrPublicAuthorityDtoList.isEmpty()) {
+            beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualDtoList = overseasEntitySubmissionDto.getManagingOfficersIndividual();
+        if (Objects.nonNull(managingOfficersIndividualDtoList) && !managingOfficersIndividualDtoList.isEmpty()) {
+            managingOfficerIndividualValidator.validate(managingOfficersIndividualDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateDtoList = overseasEntitySubmissionDto.getManagingOfficersCorporate();
+        if (Objects.nonNull(managingOfficersCorporateDtoList) && !managingOfficersCorporateDtoList.isEmpty()) {
+            managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
+        }
         return errors;
     }
-
-
 }
