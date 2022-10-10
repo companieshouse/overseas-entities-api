@@ -170,6 +170,15 @@ class EntityDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenEmailFieldIsMaxLength() {
+        entityDto.setEmail(StringUtils.repeat("A", 247) + "@long.com");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.EMAIL_PROPERTY_FIELD);
+
+        assertEquals(0, errors.size(), "Errors should be empty");
+    }
+
+    @Test
     void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         entityDto.setEmail("wrong.com");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
