@@ -206,6 +206,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(new ArrayList<>());
         Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
