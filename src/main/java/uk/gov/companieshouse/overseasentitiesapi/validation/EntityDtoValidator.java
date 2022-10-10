@@ -85,21 +85,21 @@ public class EntityDtoValidator {
     private boolean validateLegalForm(String legalForm, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.LEGAL_FORM_FIELD);
         return StringValidators.isNotBlank(legalForm, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(legalForm, 4000, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(legalForm, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(legalForm, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateLawGoverned(String lawGoverned, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.LAW_GOVERNED_FIELD);
         return StringValidators.isNotBlank(lawGoverned, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(lawGoverned, 4000, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(lawGoverned, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(lawGoverned, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validatePublicRegisterName(String publicRegisterName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
         return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(publicRegisterName, 4000, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(publicRegisterName, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldName, errors, loggingContext);
     }
 
