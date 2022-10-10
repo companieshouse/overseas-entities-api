@@ -84,7 +84,7 @@ class EntityDtoValidatorTest {
     @Test
     void testNoErrorReportedWhenPrincipalAddressCountryIsOnTheAllowedList() {
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
-        entityDto.setPrincipalAddress(getValidAddressDto());
+        entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
         assertEquals(0, errors.size());
     }
@@ -93,7 +93,7 @@ class EntityDtoValidatorTest {
     void testErrorReportedWhenPrincipalAddressCountryIsNotOnTheAllowedList() {
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
 
-        AddressDto addressDto = getValidAddressDto();
+        AddressDto addressDto = AddressMock.getAddressDto();
         addressDto.setCountry("Transylvania");
 
         entityDto.setPrincipalAddress(addressDto);
@@ -421,16 +421,5 @@ class EntityDtoValidatorTest {
 
     private String getQualifiedFieldName(String field) {
         return ENTITY_FIELD + "." + field;
-    }
-
-    private AddressDto getValidAddressDto() {
-        AddressDto addressDto = new AddressDto();
-
-        addressDto.setLine1("Somewhere");
-        addressDto.setPropertyNameNumber("The Twilight Zone");
-        addressDto.setTown("Back of Beyond");
-        addressDto.setCountry("England");
-
-        return addressDto;
     }
 }
