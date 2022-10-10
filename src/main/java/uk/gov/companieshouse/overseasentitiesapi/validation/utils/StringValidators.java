@@ -11,10 +11,13 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 
 public final class StringValidators {
 
+    private static final String REG_EXP_FOR_INVALID_CHARACTERS = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
+
     private StringValidators() {}
 
     public static boolean isNotBlank(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
-        return isNotNull(toTest, qualifiedFieldName, errs, loggingContext) && isNotEmpty(toTest, qualifiedFieldName, errs, loggingContext);
+        return isNotNull(toTest, qualifiedFieldName, errs, loggingContext)
+                && isNotEmpty(toTest, qualifiedFieldName, errs, loggingContext);
     }
 
     public static boolean isLessThanOrEqualToMaxLength(String toTest, Integer maxLength, String qualifiedFieldName, Errors errs, String loggingContext) {
@@ -28,9 +31,7 @@ public final class StringValidators {
     }
 
     public static boolean isValidCharacters(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
-        var regex = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
-
-        var pattern = Pattern.compile(regex);
+        var pattern = Pattern.compile(REG_EXP_FOR_INVALID_CHARACTERS);
         var matcher = pattern.matcher(toTest);
 
         if (!matcher.matches()) {

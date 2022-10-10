@@ -5,11 +5,14 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
@@ -53,15 +56,24 @@ public class EntityDtoValidator {
                 && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateIncorporationCountry(String country, Errors errors, String loggingContext) {
+    private void validateIncorporationCountry(String country, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.INCORPORATION_COUNTRY_FIELD);
-        return StringValidators.isNotBlank(country, qualifiedFieldName, errors, loggingContext);
+
+        boolean countryNotBlank = StringValidators.isNotBlank(country, qualifiedFieldName, errors, loggingContext);
+
+        if (countryNotBlank) {
+            boolean isOnList = CountryLists.getOverseasCountries().contains(country);
+            if (!isOnList) {
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+                setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
+                ApiLogger.infoContext(loggingContext, validationMessage);
+            }
+        }
     }
 
-    private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
+    private void validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, addressField);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getOverseasCountries(), errors, loggingContext);
-        return errors;
+        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors, loggingContext);
     }
 
     private boolean validateServiceAddressSameAsPrincipalAddress(Boolean same, Errors errors, String loggingContext) {
