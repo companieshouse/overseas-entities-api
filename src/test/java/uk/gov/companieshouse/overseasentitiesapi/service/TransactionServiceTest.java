@@ -115,7 +115,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void testServiceExceptionThrownWhenTransactionSdkDoesNotReturn204Status() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenTransactionSdkDoesNotReturn204StatusDuringPatch() throws IOException, URIValidationException {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
