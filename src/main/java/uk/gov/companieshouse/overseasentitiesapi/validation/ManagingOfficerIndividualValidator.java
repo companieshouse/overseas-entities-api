@@ -89,7 +89,7 @@ public class ManagingOfficerIndividualValidator {
             && DateValidators.isDateInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNationality(String nationality, Errors errors, String loggingContext){
+    private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.NATIONALITY_FIELD);
         return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(nationality, 50, qualifiedFieldName, errors, loggingContext)

@@ -110,6 +110,7 @@ public class DueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD,
                 DueDiligenceDto.DILIGENCE_FIELD);
-        return StringValidators.isNotBlank(diligence, qualifiedFieldName, errors, loggingContext);
+        return StringValidators.isNotBlank(diligence, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(diligence, 256, qualifiedFieldName, errors, loggingContext);
     }
 }
