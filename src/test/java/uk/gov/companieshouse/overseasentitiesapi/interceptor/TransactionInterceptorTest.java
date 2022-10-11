@@ -17,6 +17,8 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,6 +29,7 @@ class TransactionInterceptorTest {
 
     private static final String TX_ID = "12345678";
     private static final String PASSTHROUGH_HEADER = "passthrough";
+    private static final String LOGGING_CONTEXT = "fg4536";
 
     @Mock
     private TransactionService transactionService;
@@ -47,7 +50,7 @@ class TransactionInterceptorTest {
         var pathParams = new HashMap<String, String>();
         pathParams.put(TRANSACTION_ID_KEY, TX_ID);
 
-        when(transactionService.getTransaction(TX_ID, PASSTHROUGH_HEADER)).thenReturn(dummyTransaction);
+        when(transactionService.getTransaction(eq(TX_ID), eq(PASSTHROUGH_HEADER), any())).thenReturn(dummyTransaction);
         when(mockHttpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathParams);
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
@@ -65,7 +68,7 @@ class TransactionInterceptorTest {
 
         when(mockHttpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathParams);
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
-        when(transactionService.getTransaction(TX_ID, PASSTHROUGH_HEADER)).thenThrow(ServiceException.class);
+        when(transactionService.getTransaction(TX_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT)).thenThrow(ServiceException.class);
 
         assertFalse(transactionInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler));
         assertEquals(500,  mockHttpServletResponse.getStatus());

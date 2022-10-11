@@ -48,6 +48,7 @@ class OverseasEntitiesServiceTest {
     private static final String USER_ID = "22334455";
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
     private static final String TRANSACTION_ID = "324234-123123-768685";
+    private static final String LOGGING_CONTEXT = "32hkjh";
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -103,7 +104,7 @@ class OverseasEntitiesServiceTest {
                 REQUEST_ID,
                 USER_ID);
 
-        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any(), any());
         verify(localDateTimeSupplier, times(1)).get();
 
         String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());

@@ -41,13 +41,13 @@ public class TransactionInterceptor implements HandlerInterceptor {
         try {
             ApiLogger.debugContext(reqId, "Getting transaction for request.", logMap);
 
-            final var transaction = transactionService.getTransaction(transactionId, passthroughHeader);
+            final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
             ApiLogger.debugContext(reqId, "Transaction retrieved.", logMap);
 
             request.setAttribute(TRANSACTION_KEY, transaction);
             return true;
         } catch (Exception e) {
-            ApiLogger.errorContext(reqId, "Error retrieving transaction", e, logMap);
+            ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(500);
             return false;
         }
