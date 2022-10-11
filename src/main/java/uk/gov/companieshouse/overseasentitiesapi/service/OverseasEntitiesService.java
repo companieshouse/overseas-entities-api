@@ -72,7 +72,7 @@ public class OverseasEntitiesService {
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
         // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
-        addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource);
+        addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource, requestId);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
@@ -103,9 +103,10 @@ public class OverseasEntitiesService {
     private void addOverseasEntityResourceToTransaction(Transaction transaction,
                                                         String passthroughTokenHeader,
                                                         String submissionUri,
-                                                        Resource overseasEntityResource) throws ServiceException {
+                                                        Resource overseasEntityResource,
+                                                        String loggingContext) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
-        transactionService.updateTransaction(transaction, passthroughTokenHeader);
+        transactionService.updateTransaction(transaction, passthroughTokenHeader, loggingContext);
     }
 
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
