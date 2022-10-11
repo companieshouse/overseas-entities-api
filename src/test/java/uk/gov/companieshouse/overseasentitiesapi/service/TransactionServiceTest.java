@@ -19,8 +19,7 @@ import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -101,7 +100,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void testUpdatingATransactionIsSuccessful() throws ServiceException, IOException, URIValidationException {
+    void testUpdatingATransactionIsSuccessful() throws IOException, URIValidationException {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
@@ -111,7 +110,11 @@ class TransactionServiceTest {
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
         when(apiPatchResponse.getStatusCode()).thenReturn(204);
 
-        transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+        try {
+            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
     }
 
     @Test
