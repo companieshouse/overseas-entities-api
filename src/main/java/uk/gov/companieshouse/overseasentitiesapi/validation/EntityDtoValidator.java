@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -64,7 +65,8 @@ public class EntityDtoValidator {
         if (countryNotBlank) {
             boolean isOnList = CountryLists.getOverseasCountries().contains(country);
             if (!isOnList) {
-                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+                String sanitisedCountryName = Encode.forJava(country);
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, sanitisedCountryName);
                 setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
                 ApiLogger.infoContext(loggingContext, validationMessage);
             }

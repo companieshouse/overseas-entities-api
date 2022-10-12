@@ -4,9 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -120,13 +117,37 @@ class AddressDtoValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, EntityDto.SERVICE_ADDRESS_FIELD);
         assertError(parentField, "", validationMessage, errors);
     }
-
-    void testErrorReportedWhenFictionalCountryIsNotTheListOfAllCountries(String input) {
-        addressDto.setCountry("Utopia");
+    @Test
+    void testErrorReportedWhenFictionalCountryIsNotTheListOfAllCountries() {
+        String input = "Utopia";
+        addressDto.setCountry(input);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
 
         String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, input);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWithoutUnSanitisedStringWhenUnsanitizedCountryIsInput() {
+        String input = "Uto\t\npia";
+        addressDto.setCountry(input);
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
+
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, input);
+        String qualifiedFieldName = (StringUtils.isBlank(AddressDto.COUNTRY_FIELD))?  parentField : parentField + "." + AddressDto.COUNTRY_FIELD;
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertFalse(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
+        addressDto.setCountry("Uto\t\npia");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
+
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
         assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
