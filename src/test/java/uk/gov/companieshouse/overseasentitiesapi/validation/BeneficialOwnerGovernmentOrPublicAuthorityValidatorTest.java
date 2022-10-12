@@ -116,7 +116,11 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setServiceAddressSameAsPrincipalAddress(false);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setServiceAddress(new AddressDto());
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() > 0);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerGovernmentOrPublicAuthorityDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
     }
 
     @Test

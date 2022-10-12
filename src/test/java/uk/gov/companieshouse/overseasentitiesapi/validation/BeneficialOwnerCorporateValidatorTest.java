@@ -115,7 +115,11 @@ class BeneficialOwnerCorporateValidatorTest {
     void testErrorReportedWhenSameAddressFlagIsFalseWhenServiceAddressIsEmpty() {
         beneficialOwnerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(false);
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() > 0);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
     }
 
     @Test

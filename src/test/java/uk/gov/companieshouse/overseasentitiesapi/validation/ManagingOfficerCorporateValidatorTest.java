@@ -106,7 +106,11 @@ class ManagingOfficerCorporateValidatorTest {
         managingOfficerCorporateDtoList.get(0).setServiceAddressSameAsPrincipalAddress(false);
         managingOfficerCorporateDtoList.get(0).setServiceAddress(new AddressDto());
         Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() > 0);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerCorporateDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
     }
 
     @Test

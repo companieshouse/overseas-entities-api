@@ -97,7 +97,7 @@ public class ManagingOfficerIndividualValidator {
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, addressField);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, addressField);
         addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors, loggingContext);
         return errors;
     }

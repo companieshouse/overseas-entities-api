@@ -316,7 +316,11 @@ class ManagingOfficerIndividualValidatorTest {
         managingOfficerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
         managingOfficerIndividualDtoList.get(0).setServiceAddress(new AddressDto());
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() > 0);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
     }
 
     @Test
