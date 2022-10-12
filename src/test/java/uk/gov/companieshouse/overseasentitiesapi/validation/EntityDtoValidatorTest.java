@@ -82,6 +82,26 @@ class EntityDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenPrincipalAddressCountryIsOnTheAllowedList() {
+        entityDto.setServiceAddressSameAsPrincipalAddress(true);
+        entityDto.setPrincipalAddress(AddressMock.getAddressDto());
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    void testErrorReportedWhenPrincipalAddressCountryIsNotOnTheAllowedList() {
+        entityDto.setServiceAddressSameAsPrincipalAddress(true);
+
+        AddressDto addressDto = AddressMock.getAddressDto();
+        addressDto.setCountry("Transylvania");
+
+        entityDto.setPrincipalAddress(addressDto);
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertEquals(1, errors.size());
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFlagIsFalseWhenServiceAddressIsEmpty() {
         entityDto.setServiceAddressSameAsPrincipalAddress(false);
         entityDto.setServiceAddress(new AddressDto());
@@ -130,6 +150,22 @@ class EntityDtoValidatorTest {
         assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
     }
 
+    @Test
+    void testErrorReportedWhenIncorporationCountryIsNotOnTheAllowedList() {
+        final String invalidCountry = "Wales";  // Wales is not on the list of Overseas Countries and so should cause a validation error
+        entityDto.setIncorporationCountry(invalidCountry);
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
+
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenIncorporationCountryIsOnTheAllowedList() {
+        entityDto.setIncorporationCountry("Slovakia");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
 
     @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {

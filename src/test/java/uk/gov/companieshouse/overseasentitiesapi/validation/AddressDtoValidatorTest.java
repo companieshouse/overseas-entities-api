@@ -73,13 +73,33 @@ class AddressDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenOverseasCountrySuppliedAsAUkCountries() {
+    void testErrorReportedWhenOverseasCountrySuppliedAsAUkCountry() {
         final String invalidCountry = "Luxembourg";
         addressDto.setCountry(invalidCountry);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getUkCountries(), new Errors(), LOGGING_CONTEXT);
 
         String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenCountryFieldIsEmpty() {
+        addressDto.setCountry("  ");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getUkCountries(), new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.COUNTRY_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenCountryFieldIsNull() {
+        addressDto.setCountry(null);
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getUkCountries(), new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.COUNTRY_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
@@ -101,11 +121,8 @@ class AddressDtoValidatorTest {
         assertError(parentField, "", validationMessage, errors);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"Utopia", "" })
-    @NullSource
-    void testErrorReportedWhenFictionalCountryIsNotOnAnyList(String input) {
-        addressDto.setCountry(input);
+    void testErrorReportedWhenFictionalCountryIsNotTheListOfAllCountries(String input) {
+        addressDto.setCountry("Utopia");
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
 

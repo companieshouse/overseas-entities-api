@@ -87,11 +87,16 @@ public class AddressDtoValidator {
 
     private void validateCountry(String parentAddressField, String country, List<String> allowedCountries, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.COUNTRY_FIELD);
-        boolean isOnList = allowedCountries.contains(country);
-        if (!isOnList) {
-            var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
-            setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
-            ApiLogger.infoContext(loggingContext, validationMessage);
+
+        boolean countryNotBlank = StringValidators.isNotBlank(country, qualifiedFieldName, errors, loggingContext);
+
+        if (countryNotBlank) {
+            boolean isOnList = allowedCountries.contains(country);
+            if (!isOnList) {
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+                setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
+                ApiLogger.infoContext(loggingContext, validationMessage);
+            }
         }
     }
 
