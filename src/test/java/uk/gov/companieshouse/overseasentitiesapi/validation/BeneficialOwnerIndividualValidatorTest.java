@@ -248,7 +248,11 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
         beneficialOwnerIndividualDtoList.get(0).setServiceAddress(new AddressDto());
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.size() > 0);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, getQualifiedFieldName(qualifiedFieldName, AddressDto.PROPERTY_NAME_NUMBER_FIELD));
+        assertError(getQualifiedFieldName(BeneficialOwnerIndividualDto.SERVICE_ADDRESS_FIELD, AddressDto.PROPERTY_NAME_NUMBER_FIELD), validationMessage, errors);
     }
 
     @Test
