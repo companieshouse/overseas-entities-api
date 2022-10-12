@@ -21,6 +21,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import uk.gov.companieshouse.service.rest.err.Errors;
+import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -66,7 +67,8 @@ public class OverseasEntitiesController {
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
             }
 

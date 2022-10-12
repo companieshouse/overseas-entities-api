@@ -19,10 +19,13 @@ import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
+import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -142,6 +145,34 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+    }
+
+    @Test
+    void testResponseBodyContainsValidationErrorsWhenValidationEnabled() {
+        setValidationEnabledFeatureFlag(true);
+        Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
+        Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
+
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors(errName, errAddress));
+
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        ChResponseBody<?> chResponseBody = (ChResponseBody<?>) response.getBody();
+        assertNotNull(chResponseBody);
+        Errors responseErrors = chResponseBody.getErrorBody();
+        assertEquals(2, responseErrors.size());
+        assertTrue(responseErrors.containsError(errName));
+        assertTrue(responseErrors.containsError(errAddress));
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
 
