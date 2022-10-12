@@ -300,6 +300,15 @@ class DueDiligenceValidatorTest {
         assertError(DueDiligenceDto.DILIGENCE_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
     }
 
+    @Test
+    void testNoErrorReportedWhenDiligenceFieldDoesNotExceedMaxLength() {
+        dueDiligenceDto.setDiligence(StringUtils.repeat("A", 256));
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
+
+        assertFalse(errors.hasErrors());
+    }
+
     private void assertError(String fieldName, String message, Errors errors) {
         String qualifiedFieldName = DUE_DILIGENCE_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
