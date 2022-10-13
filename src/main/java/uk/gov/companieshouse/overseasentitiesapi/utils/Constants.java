@@ -27,4 +27,6 @@ public class Constants {
 
     // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
+
+    public static final int TRUNCATED_DATA_LENGTH = 50;
 }

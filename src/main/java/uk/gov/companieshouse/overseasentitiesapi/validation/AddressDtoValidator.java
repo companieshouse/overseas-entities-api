@@ -12,6 +12,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRUNCATED_DATA_LENGTH;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -95,6 +96,9 @@ public class AddressDtoValidator {
             boolean isOnList = allowedCountries.contains(country);
             if (!isOnList) {
                 String sanitisedCountryName = Encode.forJava(country);
+                if (sanitisedCountryName.length() > TRUNCATED_DATA_LENGTH) {
+                    sanitisedCountryName = sanitisedCountryName.substring(0, TRUNCATED_DATA_LENGTH);
+                }
                 var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, sanitisedCountryName);
                 setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
                 ApiLogger.infoContext(loggingContext, validationMessage);

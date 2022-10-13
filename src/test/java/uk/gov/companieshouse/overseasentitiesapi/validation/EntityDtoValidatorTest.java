@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRUNCATED_DATA_LENGTH;
 
 @ExtendWith(MockitoExtension.class)
 class EntityDtoValidatorTest {
@@ -168,10 +169,12 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
-        entityDto.setIncorporationCountry("Uto\t\npia");
+    void testErrorReportedWithTruncatedStringWhenLongUnsanitizedCountryIsInput() {
+        entityDto.setIncorporationCountry("Uto\t\npia" + StringUtils.repeat("A", TRUNCATED_DATA_LENGTH));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
+        String sanitised = "Uto\\t\\npia";
+        sanitised = sanitised + StringUtils.repeat("A", TRUNCATED_DATA_LENGTH - sanitised.length());
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, sanitised);
         assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
     }
 
@@ -184,6 +187,14 @@ class EntityDtoValidatorTest {
         String qualifiedFieldName = ENTITY_FIELD + "." + EntityDto.INCORPORATION_COUNTRY_FIELD;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
         assertFalse(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
+        entityDto.setIncorporationCountry("Uto\t\npia");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
     }
 
     @Test
