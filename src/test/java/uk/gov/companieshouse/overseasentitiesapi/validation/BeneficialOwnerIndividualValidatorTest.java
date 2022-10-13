@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
@@ -29,6 +30,7 @@ class BeneficialOwnerIndividualValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
+    @InjectMocks
     private AddressDtoValidator addressDtoValidator;
 
     private BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
@@ -37,7 +39,6 @@ class BeneficialOwnerIndividualValidatorTest {
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator();
         beneficialOwnerIndividualValidator = new BeneficialOwnerIndividualValidator(addressDtoValidator);
         beneficialOwnerIndividualDtoList = new ArrayList<>();
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();

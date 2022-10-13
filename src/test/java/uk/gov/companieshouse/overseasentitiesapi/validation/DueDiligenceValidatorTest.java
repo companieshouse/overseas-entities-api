@@ -4,10 +4,13 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -16,17 +19,21 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 
 @ExtendWith(MockitoExtension.class)
 class DueDiligenceValidatorTest {
     private static final String LOGGING_CONTEXT = "12345";
     private DueDiligenceValidator dueDiligenceValidator;
+    @InjectMocks
+    private AddressDtoValidator addressDtoValidator;
+    @Mock
+    private DataSanitisation dataSanitisation;
     private DueDiligenceDto dueDiligenceDto;
 
     @BeforeEach
     void init() {
-        AddressDtoValidator addressDtoValidator = new AddressDtoValidator();
         dueDiligenceValidator = new DueDiligenceValidator(addressDtoValidator);
         dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
         dueDiligenceDto.getAddress().setCountry("England");
@@ -70,6 +77,7 @@ class DueDiligenceValidatorTest {
     void testErrorReportedWhenCountryIsNotInTheUk() {
         final String invalidCountry = "France";
         dueDiligenceDto.getAddress().setCountry(invalidCountry);
+        when(dataSanitisation.makeStringSafeForLogging(invalidCountry)).thenReturn(invalidCountry);
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = DueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
         String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);

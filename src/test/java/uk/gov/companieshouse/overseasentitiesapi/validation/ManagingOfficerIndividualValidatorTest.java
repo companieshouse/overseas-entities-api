@@ -3,6 +3,9 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -21,10 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
+@ExtendWith(MockitoExtension.class)
 class ManagingOfficerIndividualValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
+    @InjectMocks
     private AddressDtoValidator addressDtoValidator;
 
     private ManagingOfficerIndividualValidator managingOfficerIndividualValidator;
@@ -33,7 +38,6 @@ class ManagingOfficerIndividualValidatorTest {
 
     @BeforeEach
     void init() {
-        addressDtoValidator = new AddressDtoValidator();
         managingOfficerIndividualValidator = new ManagingOfficerIndividualValidator(addressDtoValidator);
         managingOfficerIndividualDtoList = new ArrayList<>();
         ManagingOfficerIndividualDto managingOfficerIndividualDto = ManagingOfficerMock.getManagingOfficerIndividualDto();

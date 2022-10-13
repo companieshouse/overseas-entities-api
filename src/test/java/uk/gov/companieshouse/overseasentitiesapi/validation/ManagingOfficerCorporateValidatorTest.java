@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
@@ -28,11 +29,14 @@ class ManagingOfficerCorporateValidatorTest {
 
     private ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
 
+    @InjectMocks
+    private AddressDtoValidator addressDtoValidator;
+
     private List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList;
 
     @BeforeEach
     public void init() {
-        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator( new AddressDtoValidator());
+        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator(addressDtoValidator);
         managingOfficerCorporateDtoList = new ArrayList<>();
         ManagingOfficerCorporateDto managingOfficerCorporateDto = ManagingOfficerMock.getManagingOfficerCorporateDto();
         managingOfficerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());

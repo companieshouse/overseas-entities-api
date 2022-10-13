@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -16,6 +18,13 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 
 @Component
 public class AddressDtoValidator {
+
+    private final DataSanitisation dataSanitisation;
+
+    @Autowired
+    public AddressDtoValidator(DataSanitisation dataSanitisation) {
+        this.dataSanitisation = dataSanitisation;
+    }
 
     public Errors validate(String parentAddressField, AddressDto addressDto, List<String> allowedCountries, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(addressDto, parentAddressField, errors, loggingContext)) {
@@ -93,7 +102,7 @@ public class AddressDtoValidator {
         if (countryNotBlank) {
             boolean isOnList = allowedCountries.contains(country);
             if (!isOnList) {
-                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(country));
                 setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
                 ApiLogger.infoContext(loggingContext, validationMessage);
             }

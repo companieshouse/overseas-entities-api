@@ -3,10 +3,15 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -15,18 +20,24 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 
+@ExtendWith(MockitoExtension.class)
 class OverseasEntityDueDiligenceValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
+    @InjectMocks
     private AddressDtoValidator addressDtoValidator;
+
+    @Mock
+    private DataSanitisation dataSanitisation;
+
     private OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
     private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto;
 
     @BeforeEach
     void init() {
-        addressDtoValidator = new AddressDtoValidator();
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
         overseasEntityDueDiligenceDto.getAddress().setCountry("England");
@@ -70,6 +81,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenCountryIsNotInTheUk() {
         final String invalidCountry = "France";
+        when(dataSanitisation.makeStringSafeForLogging(invalidCountry)).thenReturn(invalidCountry);
         overseasEntityDueDiligenceDto.getAddress().setCountry(invalidCountry);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;

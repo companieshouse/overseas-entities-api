@@ -6,6 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -20,9 +21,12 @@ public class EntityDtoValidator {
 
     private final AddressDtoValidator addressDtoValidator;
 
+    private final DataSanitisation dataSanitisation;
+
     @Autowired
-    public EntityDtoValidator(AddressDtoValidator addressDtoValidator) {
+    public EntityDtoValidator(AddressDtoValidator addressDtoValidator, DataSanitisation dataSanitisation) {
         this.addressDtoValidator = addressDtoValidator;
+        this.dataSanitisation = dataSanitisation;
     }
 
     public Errors validate(EntityDto entityDto, Errors errors, String loggingContext) {
@@ -64,7 +68,7 @@ public class EntityDtoValidator {
         if (countryNotBlank) {
             boolean isOnList = CountryLists.getOverseasCountries().contains(country);
             if (!isOnList) {
-                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, country);
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(country));
                 setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
                 ApiLogger.infoContext(loggingContext, validationMessage);
             }

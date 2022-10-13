@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
@@ -30,11 +31,14 @@ class BeneficialOwnerCorporateValidatorTest {
 
     private BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
 
+    @InjectMocks
+    private AddressDtoValidator addressDtoValidator;
+
     private List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList;
 
     @BeforeEach
     public void init() {
-        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(new AddressDtoValidator());
+        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(addressDtoValidator);
         beneficialOwnerCorporateDtoList = new ArrayList<>();
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());
