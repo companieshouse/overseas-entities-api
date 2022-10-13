@@ -129,7 +129,17 @@ class AddressDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWithoutUnSanitisedStringWhenUnsanitizedCountryIsInput() {
+    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
+        addressDto.setCountry("Uto\t\npia");
+        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
+        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
+
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
+        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testUnsanitisedCountryNameIsNotFoundInReportedError() {
         String input = "Uto\t\npia";
         addressDto.setCountry(input);
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
@@ -139,16 +149,6 @@ class AddressDtoValidatorTest {
         String qualifiedFieldName = (StringUtils.isBlank(AddressDto.COUNTRY_FIELD))?  parentField : parentField + "." + AddressDto.COUNTRY_FIELD;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
         assertFalse(errors.containsError(err));
-    }
-
-    @Test
-    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
-        addressDto.setCountry("Uto\t\npia");
-        String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
-        Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
-
-        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
-        assertError(parentField, AddressDto.COUNTRY_FIELD, validationMessage, errors);
     }
 
     @Test

@@ -9,7 +9,6 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -169,7 +168,15 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWithoutUnSanitisedStringWhenUnsanitizedCountryIsInput() {
+    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
+        entityDto.setIncorporationCountry("Uto\t\npia");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
+        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testUnsanitisedCountryNameIsNotFoundInReportedError() {
         String input = "Uto\t\npia";
         entityDto.setIncorporationCountry(input);
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
@@ -177,14 +184,6 @@ class EntityDtoValidatorTest {
         String qualifiedFieldName = ENTITY_FIELD + "." + EntityDto.INCORPORATION_COUNTRY_FIELD;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
         assertFalse(errors.containsError(err));
-    }
-
-    @Test
-    void testErrorReportedWithSanitisedStringWhenUnsanitizedCountryIsInput() {
-        entityDto.setIncorporationCountry("Uto\t\npia");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, "Uto\\t\\npia");
-        assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, validationMessage, errors);
     }
 
     @Test
