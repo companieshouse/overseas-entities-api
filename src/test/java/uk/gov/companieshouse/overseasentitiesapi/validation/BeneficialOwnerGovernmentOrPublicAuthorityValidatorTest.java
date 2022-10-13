@@ -4,13 +4,13 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
-import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -31,11 +31,14 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
 
     private BeneficialOwnerGovernmentOrPublicAuthorityValidator beneficialOwnerGovernmentOrPublicAuthorityValidator;
 
+    @InjectMocks
+    private AddressDtoValidator addressDtoValidator;
+
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList;
 
     @BeforeEach
     void init() {
-        beneficialOwnerGovernmentOrPublicAuthorityValidator = new BeneficialOwnerGovernmentOrPublicAuthorityValidator(new AddressDtoValidator(new DataSanitisation()));
+        beneficialOwnerGovernmentOrPublicAuthorityValidator = new BeneficialOwnerGovernmentOrPublicAuthorityValidator(addressDtoValidator);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerGovernmentOrPublicAuthorityDto.setPrincipalAddress(AddressMock.getAddressDto());

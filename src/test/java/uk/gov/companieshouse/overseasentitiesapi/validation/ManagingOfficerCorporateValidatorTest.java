@@ -4,12 +4,12 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -29,11 +29,14 @@ class ManagingOfficerCorporateValidatorTest {
 
     private ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
 
+    @InjectMocks
+    private AddressDtoValidator addressDtoValidator;
+
     private List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList;
 
     @BeforeEach
     public void init() {
-        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator( new AddressDtoValidator(new DataSanitisation()));
+        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator(addressDtoValidator);
         managingOfficerCorporateDtoList = new ArrayList<>();
         ManagingOfficerCorporateDto managingOfficerCorporateDto = ManagingOfficerMock.getManagingOfficerCorporateDto();
         managingOfficerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());

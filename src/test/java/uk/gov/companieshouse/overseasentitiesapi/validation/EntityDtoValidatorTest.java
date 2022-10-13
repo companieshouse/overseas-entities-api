@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
@@ -27,11 +28,13 @@ class EntityDtoValidatorTest {
     private EntityDtoValidator entityDtoValidator;
 
     private AddressDtoValidator addressDtoValidator;
+
+    @InjectMocks
+    private DataSanitisation dataSanitisation;
     private EntityDto entityDto;
 
     @BeforeEach
     public void init() {
-        DataSanitisation dataSanitisation = new DataSanitisation();
         addressDtoValidator = new AddressDtoValidator(dataSanitisation);
         entityDtoValidator = new EntityDtoValidator(addressDtoValidator, dataSanitisation);
         entityDto = EntityMock.getEntityDto();

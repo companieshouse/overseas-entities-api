@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
@@ -11,7 +12,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -30,6 +30,7 @@ class BeneficialOwnerIndividualValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
+    @InjectMocks
     private AddressDtoValidator addressDtoValidator;
 
     private BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
@@ -38,7 +39,6 @@ class BeneficialOwnerIndividualValidatorTest {
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator(new DataSanitisation());
         beneficialOwnerIndividualValidator = new BeneficialOwnerIndividualValidator(addressDtoValidator);
         beneficialOwnerIndividualDtoList = new ArrayList<>();
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
