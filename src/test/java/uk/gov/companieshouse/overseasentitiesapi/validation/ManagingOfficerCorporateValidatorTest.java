@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -32,7 +33,7 @@ class ManagingOfficerCorporateValidatorTest {
 
     @BeforeEach
     public void init() {
-        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator( new AddressDtoValidator());
+        managingOfficerCorporateValidator = new ManagingOfficerCorporateValidator( new AddressDtoValidator(new DataSanitisation()));
         managingOfficerCorporateDtoList = new ArrayList<>();
         ManagingOfficerCorporateDto managingOfficerCorporateDto = ManagingOfficerMock.getManagingOfficerCorporateDto();
         managingOfficerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());

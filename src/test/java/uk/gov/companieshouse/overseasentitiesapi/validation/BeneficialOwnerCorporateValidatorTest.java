@@ -10,6 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsM
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -34,7 +35,7 @@ class BeneficialOwnerCorporateValidatorTest {
 
     @BeforeEach
     public void init() {
-        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(new AddressDtoValidator());
+        beneficialOwnerCorporateValidator = new BeneficialOwnerCorporateValidator(new AddressDtoValidator(new DataSanitisation()));
         beneficialOwnerCorporateDtoList = new ArrayList<>();
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setPrincipalAddress(AddressMock.getAddressDto());

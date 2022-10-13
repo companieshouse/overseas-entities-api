@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -30,8 +31,9 @@ class EntityDtoValidatorTest {
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator();
-        entityDtoValidator = new EntityDtoValidator(addressDtoValidator);
+        DataSanitisation dataSanitisation = new DataSanitisation();
+        addressDtoValidator = new AddressDtoValidator(dataSanitisation);
+        entityDtoValidator = new EntityDtoValidator(addressDtoValidator, dataSanitisation);
         entityDto = EntityMock.getEntityDto();
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddress(new AddressDto());

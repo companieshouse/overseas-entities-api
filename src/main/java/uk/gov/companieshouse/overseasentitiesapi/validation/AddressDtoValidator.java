@@ -1,9 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import org.owasp.encoder.Encode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -12,12 +13,18 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRUNCATED_DATA_LENGTH;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class AddressDtoValidator {
+
+    private final DataSanitisation dataSanitisation;
+
+    @Autowired
+    public AddressDtoValidator(DataSanitisation dataSanitisation) {
+        this.dataSanitisation = dataSanitisation;
+    }
 
     public Errors validate(String parentAddressField, AddressDto addressDto, List<String> allowedCountries, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(addressDto, parentAddressField, errors, loggingContext)) {
@@ -95,11 +102,7 @@ public class AddressDtoValidator {
         if (countryNotBlank) {
             boolean isOnList = allowedCountries.contains(country);
             if (!isOnList) {
-                String sanitisedCountryName = Encode.forJava(country);
-                if (sanitisedCountryName.length() > TRUNCATED_DATA_LENGTH) {
-                    sanitisedCountryName = sanitisedCountryName.substring(0, TRUNCATED_DATA_LENGTH);
-                }
-                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, sanitisedCountryName);
+                var validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(country));
                 setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
                 ApiLogger.infoContext(loggingContext, validationMessage);
             }

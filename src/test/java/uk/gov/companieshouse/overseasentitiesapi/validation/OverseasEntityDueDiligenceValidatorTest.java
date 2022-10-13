@@ -7,6 +7,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenc
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -26,7 +27,7 @@ class OverseasEntityDueDiligenceValidatorTest {
 
     @BeforeEach
     void init() {
-        addressDtoValidator = new AddressDtoValidator();
+        addressDtoValidator = new AddressDtoValidator(new DataSanitisation());
         overseasEntityDueDiligenceValidator = new OverseasEntityDueDiligenceValidator(addressDtoValidator);
         overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
         overseasEntityDueDiligenceDto.getAddress().setCountry("England");

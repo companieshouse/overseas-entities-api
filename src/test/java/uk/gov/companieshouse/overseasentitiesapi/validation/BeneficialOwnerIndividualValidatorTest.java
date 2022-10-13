@@ -11,6 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -37,7 +38,7 @@ class BeneficialOwnerIndividualValidatorTest {
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator();
+        addressDtoValidator = new AddressDtoValidator(new DataSanitisation());
         beneficialOwnerIndividualValidator = new BeneficialOwnerIndividualValidator(addressDtoValidator);
         beneficialOwnerIndividualDtoList = new ArrayList<>();
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();

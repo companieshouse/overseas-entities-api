@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -26,7 +27,7 @@ class DueDiligenceValidatorTest {
 
     @BeforeEach
     void init() {
-        AddressDtoValidator addressDtoValidator = new AddressDtoValidator();
+        AddressDtoValidator addressDtoValidator = new AddressDtoValidator(new DataSanitisation());
         dueDiligenceValidator = new DueDiligenceValidator(addressDtoValidator);
         dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
         dueDiligenceDto.getAddress().setCountry("England");
