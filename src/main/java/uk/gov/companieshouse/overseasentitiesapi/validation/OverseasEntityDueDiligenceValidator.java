@@ -8,7 +8,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
@@ -46,9 +45,13 @@ public class OverseasEntityDueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
-        return UtilsValidators.isNotNull(identityDate, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateInPast(identityDate, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateWithinLast3Months(identityDate, qualifiedFieldName, errors, loggingContext);
+
+        if (Objects.nonNull(identityDate)) {
+            return DateValidators.isDateInPast(identityDate, qualifiedFieldName, errors, loggingContext)
+                    && DateValidators.isDateWithinLast3Months(identityDate, qualifiedFieldName, errors, loggingContext);
+        }
+
+        return true;
     }
 
     private boolean validateName(String name, Errors errors, String loggingContext) {
