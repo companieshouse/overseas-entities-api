@@ -101,13 +101,11 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsNull() {
+    void testNoErrorReportedWhenIdentityDateFieldIsNull() {
         overseasEntityDueDiligenceDto.setIdentityDate(null);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
-        assertError(DueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
