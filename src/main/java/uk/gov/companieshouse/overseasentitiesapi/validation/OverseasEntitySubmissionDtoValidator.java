@@ -67,7 +67,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        if (dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+        if (dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(overseasEntitySubmissionDto.getWhoIsRegistering(), dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
 
             if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
                 overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
