@@ -9,9 +9,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.AGENT_REGISTERING;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages.INCORRECT_DATA_FOR_SELECTION;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE;
 
@@ -20,36 +18,14 @@ public class DueDiligenceDataBlockValidator {
 
      public static final String QUALIFIED_FIELD_NAMES = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 
-     public boolean onlyOneCorrectBlockPresent(String whoIsRegistering,
-                                               DueDiligenceDto dueDiligenceDto,
+     public boolean onlyOneCorrectBlockPresent(DueDiligenceDto dueDiligenceDto,
                                                OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
                                                Errors errors,
                                                String loggingContext) {
 
 
-         if (!(bothDueDiligencesPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext) ||
-                 bothDueDiligencesAbsent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext))) {
-             return !incorrectDueDiligenceBlockIsPresent(whoIsRegistering, dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext);
-         } else {
-             return false;
-         }
-    }
-
-    private boolean incorrectDueDiligenceBlockIsPresent(String whoIsRegistering,
-                                                        DueDiligenceDto dueDiligenceDto,
-                                                        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
-                                                        Errors errors,
-                                                        String loggingContext) {
-
-        boolean isAgentRegistering = whoIsRegistering.equals(AGENT_REGISTERING);
-        if (isAgentRegistering && (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty())) {
-            logValidationErrorMessage(OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE, errors, loggingContext, INCORRECT_DATA_FOR_SELECTION);
-            return true;
-        } else if (!isAgentRegistering && Objects.nonNull(dueDiligenceDto) && !dueDiligenceDto.isEmpty()) {
-            logValidationErrorMessage(OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD, errors, loggingContext, INCORRECT_DATA_FOR_SELECTION);
-            return true;
-        }
-        return false;
+         return !(bothDueDiligencesPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext) ||
+                 bothDueDiligencesAbsent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext));
     }
 
     private boolean bothDueDiligencesPresent(DueDiligenceDto dueDiligenceDto,

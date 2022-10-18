@@ -30,5 +30,4 @@ public class Constants {
 
     public static final int TRUNCATED_DATA_LENGTH = 50;
 
-    public static final String AGENT_REGISTERING = "agent";
 }

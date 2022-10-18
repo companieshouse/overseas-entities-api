@@ -100,7 +100,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
@@ -119,7 +119,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntitySubmissionValidatorWithOverseasEntityDueDiligence() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
@@ -138,7 +138,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersIndividualAreNull() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -148,7 +148,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersIndividualAreEmpty() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
@@ -158,7 +158,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersCorporateAreNull() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(null);
@@ -168,7 +168,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersCorporateAreEmpty() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
@@ -178,7 +178,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersGovernmentOrPublicAuthorityAreNull() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
@@ -188,7 +188,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBeneficialOwnersGovernmentOrPublicAuthorityAreEmpty() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(new ArrayList<>());
@@ -198,7 +198,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenManagingOfficersIndividualAreNull() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
@@ -208,7 +208,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenManagingOfficersIndividualAreEmpty() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(new ArrayList<>());
@@ -218,7 +218,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenManagingOfficersCorporateAreNull() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
@@ -228,7 +228,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testNoErrorReportedWhenManagingOfficersCorporateAreEmpty() {
-        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any(), any())).thenReturn(true);
+        when(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(any(), any(), any(), any())).thenReturn(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());

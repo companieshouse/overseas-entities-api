@@ -23,7 +23,6 @@ public class OverseasEntitySubmissionDto {
     public static final String MANAGING_OFFICERS_INDIVIDUAL_FIELD = "managing_officers_individual";
     public static final String MANAGING_OFFICERS_CORPORATE_FIELD = "managing_officers_corporate";
     public static final String TRUST_DATA = "trusts";
-    public static final String WHO_IS_REGISTERING = "who_is_registering";
 
     @JsonProperty(PRESENTER_FIELD)
     private PresenterDto presenter;
@@ -58,9 +57,6 @@ public class OverseasEntitySubmissionDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(TRUST_DATA)
     private List<TrustDataDto> trusts;
-
-    @JsonProperty(WHO_IS_REGISTERING)
-    private String whoIsRegistering;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -159,13 +155,5 @@ public class OverseasEntitySubmissionDto {
 
     public void setLinks(Map<String, String> links) {
         this.links = links;
-    }
-
-    public String getWhoIsRegistering() {
-        return whoIsRegistering;
-    }
-
-    public void setWhoIsRegistering(String whoIsRegistering) {
-        this.whoIsRegistering = whoIsRegistering;
     }
 }

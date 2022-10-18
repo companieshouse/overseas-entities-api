@@ -65,16 +65,13 @@ public class OverseasEntitySubmissionDtoValidator {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
 
-        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
-        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        if (dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(overseasEntitySubmissionDto.getWhoIsRegistering(), dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+        validateDueDiligenceFields(overseasEntitySubmissionDto, errors, loggingContext);
 
-            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
-                overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
-            } else {
-                dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
-            }
-        }
+        validateOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+        return errors;
+    }
+
+    private void validateOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
 
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
@@ -97,6 +94,19 @@ public class OverseasEntitySubmissionDtoValidator {
         if (Objects.nonNull(managingOfficersCorporateDtoList) && !managingOfficersCorporateDtoList.isEmpty()) {
             managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
         }
-        return errors;
+    }
+
+    private void validateDueDiligenceFields(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        if (dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+
+            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
+                overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
+            } else {
+                dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
+            }
+        }
     }
 }
