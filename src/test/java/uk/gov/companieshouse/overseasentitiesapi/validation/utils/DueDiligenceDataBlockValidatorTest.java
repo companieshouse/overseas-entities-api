@@ -22,7 +22,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksPresentWithSomeFieldsPopulatedForBoth() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
       DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
       dueDiligenceDto.setName("Test");
       dueDiligenceDto.setEmail("test@test.gov.uk");
@@ -36,7 +36,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksPresentWithAllFieldsPopulatedForBoth() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -44,7 +44,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothNull() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(null, null, errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(null, null, errors, LOGGING_CONTEXT));
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -52,7 +52,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothEmpty() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(new DueDiligenceDto(), new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(new DueDiligenceDto(), new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -60,7 +60,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentDueDiligenceNullOtherEmpty() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(new DueDiligenceDto(), null, errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(new DueDiligenceDto(), null, errors, LOGGING_CONTEXT));
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -68,7 +68,7 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentOverseasEntityDueDiligenceNullOtherEmpty() {
       Errors errors = new Errors();
-      assertFalse(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(null, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
+      assertFalse(dueDiligenceDataBlockValidator.onlyOneBlockPresent(null, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -76,28 +76,28 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherEmpty() {
       Errors errors = new Errors();
-      assertTrue(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(dueDiligenceDto, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
+      assertTrue(dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT));
       assertFalse(errors.hasErrors());
    }
 
    @Test
    void testErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherNull() {
       Errors errors = new Errors();
-      assertTrue(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(dueDiligenceDto, null, errors, LOGGING_CONTEXT));
+      assertTrue(dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, null, errors, LOGGING_CONTEXT));
       assertFalse(errors.hasErrors());
    }
 
    @Test
    void testErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherEmpty() {
       Errors errors = new Errors();
-      assertTrue(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(new DueDiligenceDto(), overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
+      assertTrue(dueDiligenceDataBlockValidator.onlyOneBlockPresent(new DueDiligenceDto(), overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
       assertFalse(errors.hasErrors());
    }
 
    @Test
    void testErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherNull() {
       Errors errors = new Errors();
-      assertTrue(dueDiligenceDataBlockValidator.onlyOneCorrectBlockPresent(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
+      assertTrue(dueDiligenceDataBlockValidator.onlyOneBlockPresent(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT));
       assertFalse(errors.hasErrors());
    }
 
