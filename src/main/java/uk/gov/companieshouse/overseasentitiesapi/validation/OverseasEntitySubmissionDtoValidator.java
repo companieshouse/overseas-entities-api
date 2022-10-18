@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceDataBlockValidator;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.List;
@@ -56,20 +57,23 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
-        presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
-
-        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
-        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        if (dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
-
-            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
-                overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
-            } else {
-                dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
-            }
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
+            entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
         }
+
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
+            presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        }
+
+        validateDueDiligenceFields(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+        return errors;
+    }
+
+    private void validateOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         if (Objects.nonNull(beneficialOwnerIndividualDtoList) && !beneficialOwnerIndividualDtoList.isEmpty()) {
             beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
@@ -90,6 +94,19 @@ public class OverseasEntitySubmissionDtoValidator {
         if (Objects.nonNull(managingOfficersCorporateDtoList) && !managingOfficersCorporateDtoList.isEmpty()) {
             managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
         }
-        return errors;
+    }
+
+    private void validateDueDiligenceFields(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        if (dueDiligenceDataBlockValidator.onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+
+            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
+                overseasEntityDueDiligenceValidator.validate(overseasEntitySubmissionDto.getOverseasEntityDueDiligence(), errors, loggingContext);
+            } else {
+                dueDiligenceValidator.validate(overseasEntitySubmissionDto.getDueDiligence(), errors, loggingContext);
+            }
+        }
     }
 }
