@@ -15,6 +15,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDili
 class DueDiligenceDataBlockValidatorTest {
 
    private static final String LOGGING_CONTEXT = "12345";
+
    private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator = new DueDiligenceDataBlockValidator();
    private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
    private DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
