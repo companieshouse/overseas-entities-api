@@ -9,6 +9,7 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
@@ -61,13 +62,8 @@ public class OverseasEntitiesService {
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
-        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
-        insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
-        insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
-        insertedSubmission.setHttpRequestId(requestId);
-        insertedSubmission.setCreatedByUserId(userId);
 
-        overseasEntitySubmissionsRepository.save(insertedSubmission);
+        String submissionUri = updateOverseasEntitySubmissonWithMetaData(insertedSubmission, transaction.getId(), requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
@@ -78,6 +74,38 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
+    }
+
+    public ResponseEntity<Object> updateOverseasEntity(Transaction transaction,
+                                                       String submissionId,
+                                                       OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                       String requestId,
+                                                       String userId) {
+        ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");
+
+        if (!hasExistingOverseasEntitySubmission(transaction)) {
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have an existing Overseas Entity submission", transaction.getId()));
+        }
+
+        // TODO Check Mongo for existence of an Overseas Entity linked to the supplied transaction...
+
+        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+
+        overseasEntitySubmissionDao.setId(submissionId);
+        overseasEntitySubmissionDao.setHttpRequestId(requestId);
+
+        // TODO Do we need to record the 'modified on' date and maintain the 'created on' date? Modified By user should in theory be the same...
+
+        overseasEntitySubmissionsRepository.save(overseasEntitySubmissionDao);
+
+        updateOverseasEntitySubmissonWithMetaData(overseasEntitySubmissionDao, transaction.getId(), requestId, userId);
+
+        ApiLogger.infoContext(requestId, String.format(
+                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
+                transaction.getId(), submissionId));
+
+        return ResponseEntity.ok().build();
     }
 
     private boolean hasExistingOverseasEntitySubmission (Transaction transaction) {
@@ -131,5 +159,17 @@ public class OverseasEntitiesService {
             throw new SubmissionNotFoundException(
                     String.format("Could not find submission data for submission %s", submissionId));
         }
+    }
+
+    private String updateOverseasEntitySubmissonWithMetaData(OverseasEntitySubmissionDao submission, String transactionId, String requestId, String userId) {
+        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transactionId, submission.getId());
+        submission.setLinks(Collections.singletonMap("self", submissionUri));
+        submission.setCreatedOn(dateTimeNowSupplier.get());
+        submission.setHttpRequestId(requestId);
+        submission.setCreatedByUserId(userId);
+
+        overseasEntitySubmissionsRepository.save(submission);
+
+        return submissionUri;
     }
 }

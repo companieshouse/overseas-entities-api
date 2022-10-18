@@ -10,9 +10,6 @@ public class Constants {
     public static final String ERIC_IDENTITY = "ERIC-identity";
     public static final String ERIC_AUTHORISED_USER = "ERIC-Authorised-User";
 
-    // Request parameters
-    public static final String SAVE_POINT = "SAVE_POINT";
-
     // URI path attributes
     public static final String TRANSACTION_ID_KEY = "transaction_id";
     public static final String OVERSEAS_ENTITY_ID_KEY = "overseas_entity_id";
