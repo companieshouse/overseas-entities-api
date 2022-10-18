@@ -7,14 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.model.SavePoint;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -29,6 +32,7 @@ import java.util.HashMap;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SAVE_POINT;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
@@ -86,6 +90,28 @@ public class OverseasEntitiesController {
             ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping("/{overseas_entity_id}")
+    public ResponseEntity<Object> updateSubmission(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
+            @RequestParam(SAVE_POINT) SavePoint savePoint,
+            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            HttpServletRequest request) {
+
+        var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, submissionId);
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        logMap.put(SAVE_POINT, savePoint);
+
+        ApiLogger.infoContext(requestId, "Calling service to update the overseas entity", logMap);
+
+        // TODO Implement this method and return appropriate response
+
+        return ResponseEntity.internalServerError().build();
     }
 
     @GetMapping("/{overseas_entity_id}/validation-status")
