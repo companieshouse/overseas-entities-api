@@ -58,9 +58,9 @@ class OwnersAndOfficersDataBlockValidatorTest {
     private ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
 
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
-    private EntityDto entityDto = EntityMock.getEntityDto();
-    private PresenterDto presenterDto = PresenterMock.getPresenterDto();
-    private DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+    private final EntityDto entityDto = EntityMock.getEntityDto();
+    private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
+    private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
 
     @Test
     void testNoErrorReportedForAllBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
