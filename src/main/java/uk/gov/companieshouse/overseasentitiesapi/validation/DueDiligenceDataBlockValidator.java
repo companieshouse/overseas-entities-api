@@ -6,8 +6,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.validation.DueDiligenceValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityDueDiligenceValidator;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.Objects;
