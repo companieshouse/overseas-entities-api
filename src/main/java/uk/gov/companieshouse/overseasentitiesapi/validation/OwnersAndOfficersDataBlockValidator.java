@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
+package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,12 +9,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerCorporateValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerGovernmentOrPublicAuthorityValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerIndividualValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnersStatementValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.ManagingOfficerCorporateValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.ManagingOfficerIndividualValidator;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.List;
@@ -29,7 +23,7 @@ public class OwnersAndOfficersDataBlockValidator {
     public static final String MISSING_MANAGING_OFFICER = "Missing managing officer";
     public static final String INCORRECTLY_ADDED_BENEFICIAL_OWNER = "Incorrectly added beneficial owner";
     public static final String INCORRECTLY_ADDED_MANAGING_OFFICER = "Incorrectly added managing officer";
-
+    public static final String INVALID_BENEFICIAL_OWNER_STATEMENT = "Invalid statement supplied";
     private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
     private final BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
     private final BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
@@ -108,6 +102,10 @@ public class OwnersAndOfficersDataBlockValidator {
                     return false;
                 }
                 break;
+            default:
+                logValidationErrorMessage(errors, loggingContext, INVALID_BENEFICIAL_OWNER_STATEMENT);
+                return false;
+
         }
         return true;
     }

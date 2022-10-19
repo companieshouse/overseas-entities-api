@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
+package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

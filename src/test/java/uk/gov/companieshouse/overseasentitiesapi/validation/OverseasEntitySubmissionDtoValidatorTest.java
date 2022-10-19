@@ -22,8 +22,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceDataBlockValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.OwnersAndOfficersDataBlockValidator;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -57,29 +55,29 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Mock
     private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
 
-    private EntityDto entityDto = EntityMock.getEntityDto();
-    private PresenterDto presenterDto = PresenterMock.getPresenterDto();
-    private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
-    private BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.NONE_IDENTIFIED;
-    private List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
-    private DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+    private final EntityDto entityDto = EntityMock.getEntityDto();
+    private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
+    private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+    private final BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.NONE_IDENTIFIED;
+    private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+    private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
     {
         beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
     };
-    private List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+    private final List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
     {
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
     };
-    private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+    private final List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
     {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
     };
 
-    private List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
+    private final List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
     {
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
     };
-    private List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
+    private final List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
     {
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
     };

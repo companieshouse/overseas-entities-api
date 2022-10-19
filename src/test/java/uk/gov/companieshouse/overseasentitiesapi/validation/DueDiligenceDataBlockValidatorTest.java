@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
+package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,14 +9,13 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.DueDiligenceValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityDueDiligenceValidator;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.DueDiligenceDataBlockValidator.QUALIFIED_FIELD_NAMES;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.DueDiligenceDataBlockValidator.QUALIFIED_FIELD_NAMES;
 
 @ExtendWith(MockitoExtension.class)
 class DueDiligenceDataBlockValidatorTest {
@@ -29,8 +28,8 @@ class DueDiligenceDataBlockValidatorTest {
    @Mock
    private DueDiligenceValidator dueDiligenceValidator;
 
-   private OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
-   private DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+   private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+   private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
 
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksPresentWithSomeFieldsPopulatedForBoth() {

@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
+package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +20,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerCorporateValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerGovernmentOrPublicAuthorityValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnerIndividualValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.BeneficialOwnersStatementValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.ManagingOfficerCorporateValidator;
-import uk.gov.companieshouse.overseasentitiesapi.validation.ManagingOfficerIndividualValidator;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -35,10 +29,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.OwnersAndOfficersDataBlockValidator.INCORRECTLY_ADDED_BENEFICIAL_OWNER;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.OwnersAndOfficersDataBlockValidator.INCORRECTLY_ADDED_MANAGING_OFFICER;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.OwnersAndOfficersDataBlockValidator.MISSING_BENEFICIAL_OWNER;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.OwnersAndOfficersDataBlockValidator.MISSING_MANAGING_OFFICER;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.OwnersAndOfficersDataBlockValidator.INCORRECTLY_ADDED_BENEFICIAL_OWNER;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.OwnersAndOfficersDataBlockValidator.INCORRECTLY_ADDED_MANAGING_OFFICER;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.OwnersAndOfficersDataBlockValidator.MISSING_BENEFICIAL_OWNER;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.OwnersAndOfficersDataBlockValidator.MISSING_MANAGING_OFFICER;
 
 @ExtendWith(MockitoExtension.class)
 class OwnersAndOfficersDataBlockValidatorTest {
