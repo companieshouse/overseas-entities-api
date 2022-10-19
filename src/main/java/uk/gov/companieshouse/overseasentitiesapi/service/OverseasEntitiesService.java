@@ -63,7 +63,7 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
-        String submissionUri = updateOverseasEntitySubmissonWithMetaData(insertedSubmission, transaction.getId(), requestId, userId);
+        String submissionUri = updateOverseasEntitySubmissionWithMetaData(insertedSubmission, transaction.getId(), requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
@@ -95,11 +95,7 @@ public class OverseasEntitiesService {
         overseasEntitySubmissionDao.setId(submissionId);
         overseasEntitySubmissionDao.setHttpRequestId(requestId);
 
-        // TODO Do we need to record the 'modified on' date and maintain the 'created on' date? Modified By user should in theory be the same...
-
-        overseasEntitySubmissionsRepository.save(overseasEntitySubmissionDao);
-
-        updateOverseasEntitySubmissonWithMetaData(overseasEntitySubmissionDao, transaction.getId(), requestId, userId);
+        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, transaction.getId(), requestId, userId);
 
         ApiLogger.infoContext(requestId, String.format(
                 "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
@@ -161,7 +157,7 @@ public class OverseasEntitiesService {
         }
     }
 
-    private String updateOverseasEntitySubmissonWithMetaData(OverseasEntitySubmissionDao submission, String transactionId, String requestId, String userId) {
+    private String updateOverseasEntitySubmissionWithMetaData(OverseasEntitySubmissionDao submission, String transactionId, String requestId, String userId) {
         var submissionUri = String.format(SUBMISSION_URI_PATTERN, transactionId, submission.getId());
         submission.setLinks(Collections.singletonMap("self", submissionUri));
         submission.setCreatedOn(dateTimeNowSupplier.get());
