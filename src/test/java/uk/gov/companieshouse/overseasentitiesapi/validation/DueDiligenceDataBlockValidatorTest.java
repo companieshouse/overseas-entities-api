@@ -15,6 +15,10 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.DueDiligenceDataBlockValidator.QUALIFIED_FIELD_NAMES;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,6 +116,18 @@ class DueDiligenceDataBlockValidatorTest {
       Errors errors = new Errors();
       dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
       assertFalse(errors.hasErrors());
+   }
+
+   @Test
+   void testOverseasDueDiligenceValidatorIsCalled() {
+      dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+      verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto), any(), any());
+   }
+
+   @Test
+   void testDueDiligenceValidatorIsCalled() {
+      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
+      verify(dueDiligenceValidator, times(1)).validate(eq(dueDiligenceDto), any(), any());
    }
 
    private void assertError(String fieldName, String message, Errors errors) {
