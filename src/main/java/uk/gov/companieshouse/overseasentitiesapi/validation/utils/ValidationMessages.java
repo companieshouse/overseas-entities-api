@@ -9,7 +9,6 @@ public class ValidationMessages {
     public static final String SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE = "%s should not be populated";
     public static final String SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE = "%s should not both be present, only one should be present";
     public static final String SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE = "%s should not both be absent, one should be present";
-    public static final String MISSING_OR_INCORRRECT_DATA_FOR_STATEMENT = "Missing or incorrect data for beneficial owners statement";
     public static final String MAX_LENGTH_EXCEEDED_ERROR_MESSAGE = " must be %s characters or less";
     public static final String INVALID_CHARACTERS_ERROR_MESSAGE = "%s must only include letters a to z, numbers, and special characters such as hyphens, spaces and apostrophes";
     public static final String INVALID_EMAIL_ERROR_MESSAGE = "Email address is not in the correct format for %s, like name@example.com";
