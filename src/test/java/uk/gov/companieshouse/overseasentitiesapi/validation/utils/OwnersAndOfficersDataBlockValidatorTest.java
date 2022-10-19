@@ -12,9 +12,11 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
@@ -117,9 +119,9 @@ class OwnersAndOfficersDataBlockValidatorTest {
     void testErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
-        List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
-        managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
-        overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
+        List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
+        managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
@@ -150,9 +152,9 @@ class OwnersAndOfficersDataBlockValidatorTest {
     void testErrorReportedForNoBeneficialOwnersIdentifiedWithManagingOfficerAndBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
-        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
-        beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
-        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
         List<ManagingOfficerIndividualDto>  managingOfficerIndividualDtoList = new ArrayList<>();
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
