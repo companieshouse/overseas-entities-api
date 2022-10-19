@@ -162,7 +162,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testBeneficialOwnerIndividualIsCalled() {
+    void testBeneficialOwnerIndividualValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
@@ -173,7 +173,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testBeneficialOwnerCorporateIsCalled() {
+    void testBeneficialOwnerCorporateValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
@@ -184,7 +184,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testBeneficialOwnerGovernmentOrPublicAuthorityIsCalled() {
+    void testBeneficialOwnerGovernmentOrPublicAuthorityValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
@@ -195,7 +195,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testManagingOfficerIndividualIsCalled() {
+    void testManagingOfficerIndividualValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
@@ -206,7 +206,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testManagingOfficerCorporateIsCalled() {
+    void testManagingOfficerCorporateValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
