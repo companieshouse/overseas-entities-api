@@ -100,7 +100,7 @@
           "required": true
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Overseas Entity Submission has been updated."
           },
           "400": {
