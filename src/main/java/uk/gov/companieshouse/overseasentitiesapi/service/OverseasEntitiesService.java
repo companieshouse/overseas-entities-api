@@ -95,7 +95,6 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setId(submissionId);
-        overseasEntitySubmissionDao.setHttpRequestId(requestId);
 
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, transaction.getId(), requestId, userId);
 
