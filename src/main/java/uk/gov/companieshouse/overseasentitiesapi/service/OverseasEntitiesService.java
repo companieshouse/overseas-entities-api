@@ -14,6 +14,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -35,16 +36,19 @@ public class OverseasEntitiesService {
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
+    private final TransactionUtils transactionUtils;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
                                    TransactionService transactionService,
                                    OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper,
-                                   Supplier<LocalDateTime> dateTimeNowSupplier) {
+                                   Supplier<LocalDateTime> dateTimeNowSupplier,
+                                   TransactionUtils transactionUtils) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
+        this.transactionUtils = transactionUtils;
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
@@ -76,19 +80,17 @@ public class OverseasEntitiesService {
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
 
-    public ResponseEntity updateOverseasEntity(Transaction transaction,
+    public ResponseEntity<Object> updateOverseasEntity(Transaction transaction,
                                                        String submissionId,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String requestId,
                                                        String userId) {
         ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");
 
-        if (!hasExistingOverseasEntitySubmission(transaction)) {
+        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto)) {
             return ResponseEntity.badRequest().body(String.format(
-                    "Transaction id: %s does not have an existing Overseas Entity submission", transaction.getId()));
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
         }
-
-        // TODO Check Mongo for existence of an Overseas Entity linked to the supplied transaction...
 
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
@@ -104,7 +106,7 @@ public class OverseasEntitiesService {
         return ResponseEntity.ok().build();
     }
 
-    private boolean hasExistingOverseasEntitySubmission (Transaction transaction) {
+    private boolean hasExistingOverseasEntitySubmission(Transaction transaction) {
         if (transaction.getResources() != null) {
             return transaction.getResources().entrySet().stream().anyMatch(resourceEntry -> FILING_KIND_OVERSEAS_ENTITY.equals(resourceEntry.getValue().getKind()));
         }
