@@ -91,7 +91,7 @@ public class OverseasEntitiesController {
     }
 
     @PutMapping("/{overseas_entity_id}")
-    public ResponseEntity<Object> updateSubmission(
+    public ResponseEntity updateSubmission(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
