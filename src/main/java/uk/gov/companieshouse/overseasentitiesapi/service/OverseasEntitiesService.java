@@ -76,7 +76,7 @@ public class OverseasEntitiesService {
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
 
-    public ResponseEntity<Object> updateOverseasEntity(Transaction transaction,
+    public ResponseEntity updateOverseasEntity(Transaction transaction,
                                                        String submissionId,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String requestId,
