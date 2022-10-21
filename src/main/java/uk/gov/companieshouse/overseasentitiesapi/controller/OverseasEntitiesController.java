@@ -96,8 +96,7 @@ public class OverseasEntitiesController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
-            HttpServletRequest request) {
+            @RequestHeader(value = ERIC_IDENTITY) String userId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, submissionId);
