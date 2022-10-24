@@ -22,13 +22,11 @@ import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
-import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Set;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -94,9 +92,8 @@ public class OverseasEntitiesController {
     }
 
     private String convertErrorsToString(Errors validationErrors) {
-        Gson gson = new GsonBuilder().create();
-        String validationErrorsJson = gson.toJson(validationErrors);
-        return validationErrorsJson;
+        var gson = new GsonBuilder().create();
+        return gson.toJson(validationErrors);
     }
 
     @GetMapping("/{overseas_entity_id}/validation-status")
