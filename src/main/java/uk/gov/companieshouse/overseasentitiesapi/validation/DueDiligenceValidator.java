@@ -31,7 +31,9 @@ public class DueDiligenceValidator {
         validateAddress(dueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(dueDiligenceDto.getEmail(), errors, loggingContext);
         validateSupervisoryName(dueDiligenceDto.getSupervisoryName(), errors, loggingContext);
-        validateAmlNumber(dueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        if(dueDiligenceDto.getAmlNumber() != null) {
+            validateAmlNumber(dueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        }
         validateAgentCode(dueDiligenceDto.getAgentCode(), errors, loggingContext);
         validatePartnerName(dueDiligenceDto.getPartnerName(), errors, loggingContext);
         validateDiligence(dueDiligenceDto.getDiligence(), errors, loggingContext);
@@ -85,8 +87,7 @@ public class DueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD,
                 DueDiligenceDto.AML_NUMBER_FIELD);
-        return StringValidators.isNotBlank(amlNumber, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext);
+        return StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateAgentCode(String agentCode, Errors errors, String loggingContext) {
