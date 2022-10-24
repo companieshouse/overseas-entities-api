@@ -384,6 +384,32 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
 
+    @Test
+    void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
+        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(CREATED_SUCCESS_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
+    }
+
     private void setValidationEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitiesController, "isValidationEnabled", value);
     }

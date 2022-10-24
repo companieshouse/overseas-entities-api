@@ -132,6 +132,45 @@ public class OverseasEntitiesController {
         }
     }
 
+    /**
+     * Temporary endpoint for creating an initial OE mongo record with partial data
+     * and no validation (to be added). This is to prevent issues with existing POST endpoint
+     * that will validate a whole submission.
+     * @param transaction The transaction to be linked to OE submission
+     * @param overseasEntitySubmissionDto The data to store
+     * @param requestId Http request ID, used in logs
+     * @param userId the ERIC user id
+     * @param request the HttpServletRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("/start")
+    public ResponseEntity<Object> createNewSubmissionForSaveAndResume(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            HttpServletRequest request) {
+
+        var logMap = new HashMap<String, Object>();
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+
+        try {
+            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+
+            ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
+
+            return this.overseasEntitiesService.createOverseasEntity(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    passThroughTokenHeader,
+                    requestId,
+                    userId);
+        } catch (Exception e) {
+            ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/{overseas_entity_id}/validation-status")
     public ResponseEntity<Object> getValidationStatus(
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
