@@ -85,7 +85,8 @@ public class DueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD,
                 DueDiligenceDto.AML_NUMBER_FIELD);
-        return StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext);
+        return StringValidators.isNotBlank(amlNumber, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateAgentCode(String agentCode, Errors errors, String loggingContext) {
