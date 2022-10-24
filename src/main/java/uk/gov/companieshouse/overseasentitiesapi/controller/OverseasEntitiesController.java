@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,13 @@ import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
+import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Set;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -66,7 +70,8 @@ public class OverseasEntitiesController {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
+
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToString(validationErrors), null);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -86,6 +91,12 @@ public class OverseasEntitiesController {
             ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String convertErrorsToString(Errors validationErrors) {
+        Gson gson = new GsonBuilder().create();
+        String validationErrorsJson = gson.toJson(validationErrors);
+        return validationErrorsJson;
     }
 
     @GetMapping("/{overseas_entity_id}/validation-status")
