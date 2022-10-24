@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
 
@@ -67,7 +68,8 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
-        String submissionUri = updateOverseasEntitySubmissionWithMetaData(insertedSubmission, transaction.getId(), requestId, userId);
+        final String submissionUri = getSubmissionUri(transaction.getId(), insertedSubmission.getId());
+        updateOverseasEntitySubmissionWithMetaData(insertedSubmission, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
@@ -87,7 +89,9 @@ public class OverseasEntitiesService {
                                                        String userId) {
         ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");
 
-        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto)) {
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+
+        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
             return ResponseEntity.badRequest().body(String.format(
                     "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
         }
@@ -96,7 +100,7 @@ public class OverseasEntitiesService {
 
         overseasEntitySubmissionDao.setId(submissionId);
 
-        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, transaction.getId(), requestId, userId);
+        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         ApiLogger.infoContext(requestId, String.format(
                 "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
@@ -158,15 +162,19 @@ public class OverseasEntitiesService {
         }
     }
 
-    private String updateOverseasEntitySubmissionWithMetaData(OverseasEntitySubmissionDao submission, String transactionId, String requestId, String userId) {
-        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transactionId, submission.getId());
-        submission.setLinks(Collections.singletonMap("self", submissionUri));
+    private String getSubmissionUri(String transactionId, String submissionId) {
+        return String.format(SUBMISSION_URI_PATTERN, transactionId, submissionId);
+    }
+
+    private void updateOverseasEntitySubmissionWithMetaData(OverseasEntitySubmissionDao submission,
+                                                              String submissionUri,
+                                                              String requestId,
+                                                              String userId) {
+        submission.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
         submission.setCreatedOn(dateTimeNowSupplier.get());
         submission.setHttpRequestId(requestId);
         submission.setCreatedByUserId(userId);
 
         overseasEntitySubmissionsRepository.save(submission);
-
-        return submissionUri;
     }
 }

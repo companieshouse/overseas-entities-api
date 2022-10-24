@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_RESOURCE;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionUtilsTest {
@@ -31,62 +30,38 @@ class TransactionUtilsTest {
     private final TransactionUtils transactionUtils = new TransactionUtils();
 
     @Test
-    void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseWhenOverseasEntityLinksIsNull() {
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(null);
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+    void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseWhenOverseasEntitySelfLinkIsNull() {
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, null);
         assertFalse(result);
     }
 
     @Test
-    void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseIfOverseasEntityLinksDoesNotContainSelfLink() {
-        Map<String, String> emptyLinksMap = new HashMap<>();
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(emptyLinksMap);
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
-        assertFalse(result);
-    }
-
-    @Test
-    void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseIfOverseasEntityLinksHasBlankSelfLink() {
-        Map<String, String> overseasEntityLinksMap = new HashMap<>();
-        overseasEntityLinksMap.put(LINK_SELF, "  ");
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(overseasEntityLinksMap);
-
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+    void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseWhenTransactionIsNull() {
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(null, OVERSEAS_ENTITY_SELF_LINK);
         assertFalse(result);
     }
 
     @Test
     void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseIfTransactionResourcesIsNull() {
-        Map<String, String> overseasEntityLinksMap = new HashMap<>();
-        overseasEntityLinksMap.put(LINK_SELF, OVERSEAS_ENTITY_SELF_LINK);
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(overseasEntityLinksMap);
         when(transaction.getResources()).thenReturn(null);
 
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, OVERSEAS_ENTITY_SELF_LINK);
         assertFalse(result);
     }
 
     @Test
     void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseIfNoOverseasEntityFilingKindFoundInTransaction() {
-        Map<String, String> overseasEntityLinksMap = new HashMap<>();
-        overseasEntityLinksMap.put(LINK_SELF, OVERSEAS_ENTITY_SELF_LINK);
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(overseasEntityLinksMap);
-
         Map<String, Resource> transactionResources = new HashMap<>();
         Resource accountsResource = new Resource();
         accountsResource.setKind("Accounts");
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, OVERSEAS_ENTITY_SELF_LINK);
         assertFalse(result);
     }
 
     @Test
     void testIsTransactionLinkedToOverseasEntitySubmissionReturnsFalseIfNoOverseasEntityMatchFound() {
-        Map<String, String> overseasEntityLinksMap = new HashMap<>();
-        overseasEntityLinksMap.put(LINK_SELF, OVERSEAS_ENTITY_SELF_LINK);
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(overseasEntityLinksMap);
-
         Map<String, Resource> transactionResources = new HashMap<>();
         Resource overseasEntityResource = new Resource();
         overseasEntityResource.setKind(FILING_KIND_OVERSEAS_ENTITY);
@@ -97,16 +72,12 @@ class TransactionUtilsTest {
         transactionResources.put(nonMatchingResourceLink, overseasEntityResource);
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, OVERSEAS_ENTITY_SELF_LINK);
         assertFalse(result);
     }
 
     @Test
     void testIsTransactionLinkedToOverseasEntitySubmissionReturnsTrueIfOverseasEntityMatchFound() {
-        Map<String, String> overseasEntityLinksMap = new HashMap<>();
-        overseasEntityLinksMap.put(LINK_SELF, OVERSEAS_ENTITY_SELF_LINK);
-        when(overseasEntitySubmissionDto.getLinks()).thenReturn(overseasEntityLinksMap);
-
         Map<String, Resource> transactionResources = new HashMap<>();
         Resource overseasEntityResource = new Resource();
         overseasEntityResource.setKind(FILING_KIND_OVERSEAS_ENTITY);
@@ -116,7 +87,7 @@ class TransactionUtilsTest {
         transactionResources.put(OVERSEAS_ENTITY_SELF_LINK, overseasEntityResource);
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto);
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, OVERSEAS_ENTITY_SELF_LINK);
         assertTrue(result);
     }
 }

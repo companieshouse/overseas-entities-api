@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -185,7 +186,7 @@ class OverseasEntitiesServiceTest {
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
 
-        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto))
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
         when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
@@ -223,7 +224,7 @@ class OverseasEntitiesServiceTest {
         var transaction = buildTransaction();
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
 
-        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, overseasEntitySubmissionDto))
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(false);
 
         // make the call to test
