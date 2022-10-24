@@ -31,7 +31,9 @@ public class DueDiligenceValidator {
         validateAddress(dueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(dueDiligenceDto.getEmail(), errors, loggingContext);
         validateSupervisoryName(dueDiligenceDto.getSupervisoryName(), errors, loggingContext);
-        validateAmlNumber(dueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        if(dueDiligenceDto.getAmlNumber() != null) {
+            validateAmlNumber(dueDiligenceDto.getAmlNumber(), errors, loggingContext);
+        }
         validateAgentCode(dueDiligenceDto.getAgentCode(), errors, loggingContext);
         validatePartnerName(dueDiligenceDto.getPartnerName(), errors, loggingContext);
         validateDiligence(dueDiligenceDto.getDiligence(), errors, loggingContext);
