@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 class OverseasEntitiesControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
+    private static final ResponseEntity<Object> FAILURE_RESPONSE = ResponseEntity.internalServerError().build();
 
     private static final String REQUEST_ID = "fd4gld5h3jhh";
     private static final String PASSTHROUGH = "13456";
@@ -166,6 +167,60 @@ class OverseasEntitiesControllerTest {
                     times(1)
             );
         }
+    }
+
+    @Test
+    void testCreatingANewSubmissionIsUnSuccessful() throws ServiceException {
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
+
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
+        assertEquals(FAILURE_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
+    }
+
+    @Test
+    void testCreatingANewSubmissionForSaveAndResumeIsUnSuccessful() throws ServiceException {
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
+
+        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
+        assertEquals(FAILURE_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
     }
 
     @Test
