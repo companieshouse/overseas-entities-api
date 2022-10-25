@@ -133,29 +133,35 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
-        Errors errors = new Errors(err);
-        when(overseasEntitySubmissionDtoValidator.validate(
-                eq(overseasEntitySubmissionDto),
-                any(Errors.class),
-                eq(REQUEST_ID)
-        )).thenReturn(errors);
-
-        var response = overseasEntitiesController.createNewSubmission(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
+
+            setValidationEnabledFeatureFlag(true);
+            final String errorLocation = "EXAMPLE_ERROR_LOCATION";
+            final String error = "EXAMPLE_ERROR";
+            Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
+            Errors errors = new Errors(err);
+            when(overseasEntitySubmissionDtoValidator.validate(
+                    eq(overseasEntitySubmissionDto),
+                    any(Errors.class),
+                    eq(REQUEST_ID)
+            )).thenReturn(errors);
+
+            var response = overseasEntitiesController.createNewSubmission(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    REQUEST_ID,
+                    USER_ID,
+                    mockHttpServletRequest);
+
+            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+
             mockApiLogger.verify(
                     () -> ApiLogger.errorContext(
-                            any(),
-                            eq("Validation errors : {\"errs\":[{\"error\":\"Any\",\"location\":\"Any\",\"locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
+                            eq(REQUEST_ID),
+                            eq("Validation errors : {\"errs\":[{\"error\":\"" +
+                                    error + "\",\"location\":\"" +
+                                    errorLocation + "\",\"" +
+                                    "locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
                             eq(null)),
                     times(1)
             );
