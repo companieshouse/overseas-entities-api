@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,8 @@ public class OverseasEntitiesController {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
+
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -86,6 +88,11 @@ public class OverseasEntitiesController {
             ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String convertErrorsToJsonString(Errors validationErrors) {
+        var gson = new GsonBuilder().create();
+        return gson.toJson(validationErrors);
     }
 
     @GetMapping("/{overseas_entity_id}/validation-status")
