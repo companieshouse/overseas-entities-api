@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
@@ -41,7 +45,7 @@ class OverseasEntitiesControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
     private static final ResponseEntity<Object> UPDATED_SUCCESS_RESPONSE = ResponseEntity.ok().build();
-    private static final ResponseEntity<Object> UPDATED_FAILURE_RESPONSE = ResponseEntity.internalServerError().build();
+    private static final ResponseEntity<Object> FAILURE_RESPONSE = ResponseEntity.internalServerError().build();
 
     private static final String REQUEST_ID = "fd4gld5h3jhh";
     private static final String PASSTHROUGH = "13456";
@@ -136,14 +140,49 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
-        when(overseasEntitySubmissionDtoValidator.validate(
-                eq(overseasEntitySubmissionDto),
-                any(Errors.class),
-                eq(REQUEST_ID)
-        )).thenReturn(new Errors(err));
+            setValidationEnabledFeatureFlag(true);
+            final String errorLocation = "EXAMPLE_ERROR_LOCATION";
+            final String error = "EXAMPLE_ERROR";
+            Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
+            Errors errors = new Errors(err);
+            when(overseasEntitySubmissionDtoValidator.validate(
+                    eq(overseasEntitySubmissionDto),
+                    any(Errors.class),
+                    eq(REQUEST_ID)
+            )).thenReturn(errors);
+
+            var response = overseasEntitiesController.createNewSubmission(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    REQUEST_ID,
+                    USER_ID,
+                    mockHttpServletRequest);
+
+            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            eq(REQUEST_ID),
+                            eq("Validation errors : {\"errs\":[{\"error\":\"" +
+                                    error + "\",\"location\":\"" +
+                                    errorLocation + "\",\"" +
+                                    "locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
+                            eq(null)),
+                    times(1)
+            );
+        }
+    }
+
+    @Test
+    void testCreatingANewSubmissionIsUnSuccessful() throws ServiceException {
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
 
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
@@ -152,7 +191,42 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
+        assertEquals(FAILURE_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
+    }
+
+    @Test
+    void testCreatingANewSubmissionForSaveAndResumeIsUnSuccessful() throws ServiceException {
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
+
+        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
+        assertEquals(FAILURE_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                PASSTHROUGH,
+                REQUEST_ID,
+                USER_ID);
     }
 
     @Test
@@ -244,7 +318,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
-        assertEquals(UPDATED_FAILURE_RESPONSE, response);
+        assertEquals(FAILURE_RESPONSE, response);
 
         verify(overseasEntitiesService).updateOverseasEntity(
                 transaction,
@@ -350,6 +424,48 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
         verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
+
+            setValidationEnabledFeatureFlag(true);
+
+            overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
+            overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
+
+            setValidationEnabledFeatureFlag(true);
+            final String errorLocation = "EXAMPLE_ERROR_LOCATION";
+            final String error = "EXAMPLE_ERROR";
+            Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
+            Errors errors = new Errors(err);
+            when(overseasEntitySubmissionDtoValidator.validate(
+                    eq(overseasEntitySubmissionDto),
+                    any(Errors.class),
+                    eq(REQUEST_ID)
+            )).thenReturn(errors);
+
+            var response = overseasEntitiesController.updateSubmission(
+                    transaction,
+                    SUBMISSION_ID,
+                    overseasEntitySubmissionDto,
+                    REQUEST_ID,
+                    USER_ID);
+
+            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            eq(REQUEST_ID),
+                            eq("Validation errors : {\"errs\":[{\"error\":\"" +
+                                    error + "\",\"location\":\"" +
+                                    errorLocation + "\",\"" +
+                                    "locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
+                            eq(null)),
+                    times(1)
+            );
+        }
     }
 
     @Test

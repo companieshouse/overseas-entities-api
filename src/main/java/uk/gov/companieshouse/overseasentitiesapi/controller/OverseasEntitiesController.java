@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -68,7 +69,8 @@ public class OverseasEntitiesController {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
+
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -106,15 +108,15 @@ public class OverseasEntitiesController {
 
         try {
             // TODO The logic related to what specific validation checks should be run will need to be more
-            //      sophisticated - this is covered by ROE-1415 for the first concrete case (presenter) where it will
-            //      be needed. For now though, it's only necessary to check if all validation checks should be run,
-            //      i.e. if the user is calling the PUT end-point from the 'check your answers' screen.
+            //      sophisticated - this is covered by ROE-1415. For now though, it's only necessary to check if
+            //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
+            //      'check your answers' screen.
             if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(
                         overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + validationErrors, new Exception());
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -198,5 +200,10 @@ public class OverseasEntitiesController {
                 || (Objects.nonNull(dto.getBeneficialOwnersIndividual()) && !dto.getBeneficialOwnersIndividual().isEmpty())
                 || (Objects.nonNull(dto.getManagingOfficersCorporate()) && !dto.getManagingOfficersCorporate().isEmpty())
                 || (Objects.nonNull(dto.getManagingOfficersIndividual()) && !dto.getManagingOfficersIndividual().isEmpty());
+    }
+
+    private String convertErrorsToJsonString(Errors validationErrors) {
+        var gson = new GsonBuilder().create();
+        return gson.toJson(validationErrors);
     }
 }
