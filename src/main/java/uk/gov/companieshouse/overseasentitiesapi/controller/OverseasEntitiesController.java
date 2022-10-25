@@ -68,7 +68,7 @@ public class OverseasEntitiesController {
 
                 if (validationErrors.hasErrors()) {
 
-                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToString(validationErrors), null);
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -90,7 +90,7 @@ public class OverseasEntitiesController {
         }
     }
 
-    private String convertErrorsToString(Errors validationErrors) {
+    private String convertErrorsToJsonString(Errors validationErrors) {
         var gson = new GsonBuilder().create();
         return gson.toJson(validationErrors);
     }

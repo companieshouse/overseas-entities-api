@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -131,12 +135,12 @@ class OverseasEntitiesControllerTest {
     void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
         Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
-
+        Errors errors = new Errors(err);
         when(overseasEntitySubmissionDtoValidator.validate(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
-        )).thenReturn(new Errors(err));
+        )).thenReturn(errors);
 
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
@@ -146,6 +150,16 @@ class OverseasEntitiesControllerTest {
                 mockHttpServletRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            any(),
+                            eq("Validation errors : {\"errs\":[{\"error\":\"Any\",\"location\":\"Any\",\"locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
+                            eq(null)),
+                    times(1)
+            );
+        }
     }
 
     @Test
