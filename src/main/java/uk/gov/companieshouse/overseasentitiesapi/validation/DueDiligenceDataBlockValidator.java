@@ -1,5 +1,6 @@
-package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
+package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -16,9 +17,36 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class DueDiligenceDataBlockValidator {
 
-     public static final String QUALIFIED_FIELD_NAMES = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
+    public static final String QUALIFIED_FIELD_NAMES = OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD + " and " + OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
+    private final OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator;
+    private final DueDiligenceValidator dueDiligenceValidator;
 
-     public boolean onlyOneBlockPresent(DueDiligenceDto dueDiligenceDto,
+    @Autowired
+    public DueDiligenceDataBlockValidator(
+            OverseasEntityDueDiligenceValidator overseasEntityDueDiligenceValidator,
+            DueDiligenceValidator dueDiligenceValidator) {
+
+        this.overseasEntityDueDiligenceValidator = overseasEntityDueDiligenceValidator;
+        this.dueDiligenceValidator = dueDiligenceValidator;
+
+    }
+
+    public boolean validateDueDiligenceFields(DueDiligenceDto dueDiligenceDto,
+                                              OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
+                                              Errors errors,
+                                              String loggingContext) {
+
+        if (onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
+                overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, errors, loggingContext);
+            } else {
+                dueDiligenceValidator.validate(dueDiligenceDto, errors, loggingContext);
+            }
+        }
+        return false;
+    }
+
+     private boolean onlyOneBlockPresent(DueDiligenceDto dueDiligenceDto,
                                         OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
                                         Errors errors,
                                         String loggingContext) {
