@@ -65,6 +65,56 @@
         }
       }
     },
+    "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}": {
+      "put": {
+        "tags": [
+          "Overseas Entity"
+        ],
+        "summary": "Update an overseas entity registration submission",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overseas_entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/OverseasEntitySubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Overseas Entity Submission has been updated."
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/validation-status": {
       "get": {
         "tags": [

@@ -21,6 +21,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -32,13 +33,17 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitiesServiceTest {
@@ -62,8 +67,14 @@ class OverseasEntitiesServiceTest {
     @Mock
     private Supplier<LocalDateTime> localDateTimeSupplier;
 
+    @Mock
+    private TransactionUtils transactionUtils;
+
     @Captor
     private ArgumentCaptor<Transaction> transactionApiCaptor;
+
+    @Captor
+    private ArgumentCaptor<OverseasEntitySubmissionDao> overseasEntitySubmissionsRepositoryCaptor;
 
     @InjectMocks
     private OverseasEntitiesService overseasEntitiesService;
@@ -72,8 +83,7 @@ class OverseasEntitiesServiceTest {
     void testOverseasEntitySubmissionCreatedSuccessfully() throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
+        Transaction transaction = buildTransaction();
 
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
@@ -168,5 +178,73 @@ class OverseasEntitiesServiceTest {
     void testValidationStatusWhenSubmissionIsNotPresent() {
         when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.isValid(SUBMISSION_ID));
+    }
+
+    @Test
+    void testOverseasEntitySubmissionUpdatedSuccessfully() {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        // ensure DAO id is null before we use it in the test
+        assertNull(overseasEntitySubmissionDao.getId());
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
+        var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        assertEquals(SUBMISSION_ID, savedSubmission.getId());
+        assertEquals(REQUEST_ID, savedSubmission.getHttpRequestId());
+
+        var submissionUri = String.format(SUBMISSION_URI_PATTERN, TRANSACTION_ID, SUBMISSION_ID);
+        assertEquals(submissionUri, savedSubmission.getLinks().get(LINK_SELF));
+
+        assertEquals(DUMMY_TIME_STAMP, savedSubmission.getCreatedOn());
+        assertEquals(USER_ID, savedSubmission.getCreatedByUserId());
+
+        // assert response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testUpdateOverseasEntitySubmissionReturnsErrorIfTransactionANdSubmissionNotLinked() {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(false);
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        // assert response
+        var responseBody = response.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        var expectedMessage = String.format("Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", TRANSACTION_ID, SUBMISSION_ID);
+        assertEquals(expectedMessage, responseBody);
+    }
+
+    private Transaction buildTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        return transaction;
     }
 }
