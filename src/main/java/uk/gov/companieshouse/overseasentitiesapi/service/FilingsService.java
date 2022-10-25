@@ -54,6 +54,9 @@ public class FilingsService {
     @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
     private String filingDescription;
 
+    @Value("${OE01_COST}")
+    private String costAmount;
+
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
     private final Supplier<LocalDate> dateNowSupplier;
@@ -89,6 +92,7 @@ public class FilingsService {
         setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
+        filing.setCost(costAmount);
         setDescriptionFields(filing);
     }
 

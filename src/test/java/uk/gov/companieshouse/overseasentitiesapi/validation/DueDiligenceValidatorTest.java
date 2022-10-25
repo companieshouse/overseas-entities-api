@@ -223,6 +223,13 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenAmlNumberFieldIsNull() {
+        dueDiligenceDto.setAmlNumber(null);
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenAmlNumberFieldExceedsMaxLength() {
         dueDiligenceDto.setAmlNumber(StringUtils.repeat("A", 257));
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
