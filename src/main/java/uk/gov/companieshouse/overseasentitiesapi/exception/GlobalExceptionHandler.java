@@ -12,7 +12,6 @@ import org.springframework.web.context.request.WebRequest;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 
@@ -25,23 +24,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex, WebRequest webRequest) {
         var context = webRequest.getHeader(ERIC_REQUEST_ID_KEY);
-        var exceptionMessage = truncate(Encode.forJava(ex.getMessage()));
-        var encodedStackTrace = truncate(Encode.forJava(ExceptionUtils.getStackTrace(ex)));
-        var encodedRootCause = truncate(Encode.forJava(ExceptionUtils.getStackTrace(ExceptionUtils.getRootCause(ex))));
+        var sanitisedExceptionMessage = truncate(Encode.forJava(ex.getMessage()));
+        var sanitisedStackTrace = truncate(Encode.forJava(ExceptionUtils.getStackTrace(ex)));
+        var sanitisedRootCause = truncate(Encode.forJava(ExceptionUtils.getStackTrace(ExceptionUtils.getRootCause(ex))));
 
         HashMap<String, Object> logMap = new HashMap<>();
         logMap.put("error", ex.getClass());
-        logMap.put("stackTrace", encodedStackTrace);
-        logMap.put("rootCause", encodedRootCause);
+        logMap.put("stackTrace", sanitisedStackTrace);
+        logMap.put("rootCause", sanitisedRootCause);
 
-        ApiLogger.errorContext(context, exceptionMessage, null, logMap);
+        ApiLogger.errorContext(context, sanitisedExceptionMessage, null, logMap);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String truncate(String input) {
-        if (Objects.isNull(input)) {
-            return null;
-        }
         return StringUtils.truncate(input, truncationLength);
     }
 
