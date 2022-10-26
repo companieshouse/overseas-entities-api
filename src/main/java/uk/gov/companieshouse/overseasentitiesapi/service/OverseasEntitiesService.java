@@ -9,10 +9,12 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -25,6 +27,7 @@ import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
 
@@ -34,16 +37,19 @@ public class OverseasEntitiesService {
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
+    private final TransactionUtils transactionUtils;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
                                    TransactionService transactionService,
                                    OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper,
-                                   Supplier<LocalDateTime> dateTimeNowSupplier) {
+                                   Supplier<LocalDateTime> dateTimeNowSupplier,
+                                   TransactionUtils transactionUtils) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
+        this.transactionUtils = transactionUtils;
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
@@ -61,13 +67,9 @@ public class OverseasEntitiesService {
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
-        var submissionUri = String.format(SUBMISSION_URI_PATTERN, transaction.getId(), insertedSubmission.getId());
-        insertedSubmission.setLinks(Collections.singletonMap("self", submissionUri));
-        insertedSubmission.setCreatedOn(dateTimeNowSupplier.get());
-        insertedSubmission.setHttpRequestId(requestId);
-        insertedSubmission.setCreatedByUserId(userId);
 
-        overseasEntitySubmissionsRepository.save(insertedSubmission);
+        final String submissionUri = getSubmissionUri(transaction.getId(), insertedSubmission.getId());
+        updateOverseasEntitySubmissionWithMetaData(insertedSubmission, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
@@ -80,7 +82,34 @@ public class OverseasEntitiesService {
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
     }
 
-    private boolean hasExistingOverseasEntitySubmission (Transaction transaction) {
+    public ResponseEntity<Object> updateOverseasEntity(Transaction transaction,
+                                                       String submissionId,
+                                                       OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                       String requestId,
+                                                       String userId) {
+        ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");
+
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+
+        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
+        }
+
+        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+
+        overseasEntitySubmissionDao.setId(submissionId);
+
+        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
+
+        ApiLogger.infoContext(requestId, String.format(
+                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
+                transaction.getId(), submissionId));
+
+        return ResponseEntity.ok().build();
+    }
+
+    private boolean hasExistingOverseasEntitySubmission(Transaction transaction) {
         if (transaction.getResources() != null) {
             return transaction.getResources().entrySet().stream().anyMatch(resourceEntry -> FILING_KIND_OVERSEAS_ENTITY.equals(resourceEntry.getValue().getKind()));
         }
@@ -131,5 +160,21 @@ public class OverseasEntitiesService {
             throw new SubmissionNotFoundException(
                     String.format("Could not find submission data for submission %s", submissionId));
         }
+    }
+
+    private String getSubmissionUri(String transactionId, String submissionId) {
+        return String.format(SUBMISSION_URI_PATTERN, transactionId, submissionId);
+    }
+
+    private void updateOverseasEntitySubmissionWithMetaData(OverseasEntitySubmissionDao submission,
+                                                              String submissionUri,
+                                                              String requestId,
+                                                              String userId) {
+        submission.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
+        submission.setCreatedOn(dateTimeNowSupplier.get());
+        submission.setHttpRequestId(requestId);
+        submission.setCreatedByUserId(userId);
+
+        overseasEntitySubmissionsRepository.save(submission);
     }
 }
