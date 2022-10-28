@@ -41,6 +41,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 @RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/overseas-entity")
 public class OverseasEntitiesController {
 
+    private static final String VALIDATION_ERRORS_MESSAGE = "Validation errors : %s";
+
     private final OverseasEntitiesService overseasEntitiesService;
     private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
@@ -70,8 +72,8 @@ public class OverseasEntitiesController {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-
-                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null, logMap);
+                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                            convertErrorsToJsonString(validationErrors)), null, logMap);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -117,7 +119,8 @@ public class OverseasEntitiesController {
                         overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null, logMap);
+                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                            convertErrorsToJsonString(validationErrors)), null, logMap);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -196,8 +199,8 @@ public class OverseasEntitiesController {
                         submissionDtoOptional.get(), new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    final String errorsAsJsonString = convertErrorsToJsonString(validationErrors);
-                    ApiLogger.errorContext(requestId, "Validation errors : " + errorsAsJsonString, null, logMap);
+                    final var errorsAsJsonString = convertErrorsToJsonString(validationErrors);
+                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE, errorsAsJsonString), null, logMap);
 
                     flagValidationStatusAsFailed(validationStatus, errorsAsJsonString);
                 }
@@ -206,7 +209,7 @@ public class OverseasEntitiesController {
             return ResponseEntity.ok().body(validationStatus);
         }
 
-        final String message = String.format("Could not find submission data for submission %s", submissionId);
+        final var message = String.format("Could not find submission data for submission %s", submissionId);
         ApiLogger.errorContext(requestId, message, null, logMap);
         return ResponseEntity.notFound().build();
     }
