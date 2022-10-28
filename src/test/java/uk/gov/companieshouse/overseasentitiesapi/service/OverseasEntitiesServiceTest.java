@@ -34,8 +34,6 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -162,22 +160,6 @@ class OverseasEntitiesServiceTest {
         var responseBody = response.getBody();
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(String.format("Transaction id: %s has an existing Overseas Entity submission", TRANSACTION_ID), responseBody);
-    }
-
-    @Test
-    void testValidationStatusWhenSubmissionIsPresent() throws SubmissionNotFoundException {
-        OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
-        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(Mocks.buildSubmissionDto());
-        when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(submissionDao));
-
-        ValidationStatusResponse validationStatusResponse = overseasEntitiesService.isValid(SUBMISSION_ID);
-        assertTrue(validationStatusResponse.isValid());
-    }
-
-    @Test
-    void testValidationStatusWhenSubmissionIsNotPresent() {
-        when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)).thenReturn(Optional.empty());
-        assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.isValid(SUBMISSION_ID));
     }
 
     @Test

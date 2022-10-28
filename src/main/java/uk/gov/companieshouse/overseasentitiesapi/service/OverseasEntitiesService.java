@@ -5,9 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
@@ -147,18 +145,6 @@ public class OverseasEntitiesService {
             return Optional.of(dto);
         } else {
             return Optional.empty();
-        }
-    }
-
-    public ValidationStatusResponse isValid(String submissionId) throws SubmissionNotFoundException {
-        var submissionDtoOptional = getOverseasEntitySubmission(submissionId);
-        if(submissionDtoOptional.isPresent()) {
-            var validationStatus = new ValidationStatusResponse();
-            validationStatus.setValid(true);
-            return validationStatus;
-        } else {
-            throw new SubmissionNotFoundException(
-                    String.format("Could not find submission data for submission %s", submissionId));
         }
     }
 
