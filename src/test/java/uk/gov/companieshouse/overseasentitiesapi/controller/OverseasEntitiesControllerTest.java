@@ -28,9 +28,12 @@ import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -169,7 +172,8 @@ class OverseasEntitiesControllerTest {
                                     error + "\",\"location\":\"" +
                                     errorLocation + "\",\"" +
                                     "locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
-                            eq(null)),
+                            eq(null),
+                            any()),
                     times(1)
             );
         }
@@ -258,18 +262,66 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenTrue() throws SubmissionNotFoundException {
-        ValidationStatusResponse validationStatus = new ValidationStatusResponse();
-        validationStatus.setValid(true);
-        when(overseasEntitiesService.isValid(SUBMISSION_ID)).thenReturn(validationStatus);
+    void testValidationStatusResponseWhenSubmissionIsFound() {
+        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
-        assertEquals(ResponseEntity.ok().body(validationStatus), response);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
+        assertTrue(validationStatusResponse.isValid());
+        assertEquals(null, validationStatusResponse.getValidationStatusError());
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionNotFound() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.isValid(SUBMISSION_ID)).thenThrow(SubmissionNotFoundException.class);
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass() {
+        setValidationEnabledFeatureFlag(true);
+
+        ValidationStatusResponse validationStatus = new ValidationStatusResponse();
+        validationStatus.setValid(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
+
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
+        assertTrue(validationStatusResponse.isValid());
+        assertNull(validationStatusResponse.getValidationStatusError());
+    }
+
+    @Test
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails() {
+        setValidationEnabledFeatureFlag(true);
+
+        ValidationStatusResponse validationStatus = new ValidationStatusResponse();
+        validationStatus.setValid(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+
+        final String errorLocation = "EXAMPLE_ERROR_LOCATION";
+        final String error = "EXAMPLE_ERROR";
+        Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
+        when(overseasEntitySubmissionDtoValidator.validate(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors(err));
+
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
+        assertFalse(validationStatusResponse.isValid());
+        assertNotNull(validationStatusResponse.getValidationStatusError());
+    }
+
+    @Test
+    void testValidationStatusResponseWhenSubmissionNotFound() {
+        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.empty());
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
         assertEquals(ResponseEntity.notFound().build(), response);
     }
@@ -462,7 +514,8 @@ class OverseasEntitiesControllerTest {
                                     error + "\",\"location\":\"" +
                                     errorLocation + "\",\"" +
                                     "locationType\":\"request-body\",\"type\":\"ch:validation\"}]}"),
-                            eq(null)),
+                            eq(null),
+                            any()),
                     times(1)
             );
         }

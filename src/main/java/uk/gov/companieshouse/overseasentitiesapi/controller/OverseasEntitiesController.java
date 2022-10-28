@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -70,7 +71,7 @@ public class OverseasEntitiesController {
 
                 if (validationErrors.hasErrors()) {
 
-                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null, logMap);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -87,7 +88,7 @@ public class OverseasEntitiesController {
                     requestId,
                     userId);
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
+            ApiLogger.errorContext(requestId, "Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -116,7 +117,7 @@ public class OverseasEntitiesController {
                         overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null);
+                    ApiLogger.errorContext(requestId, "Validation errors : " + convertErrorsToJsonString(validationErrors), null, logMap);
                     var responseBody = ChResponseBody.createErrorsBody(validationErrors);
                     return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
                 }
@@ -129,7 +130,7 @@ public class OverseasEntitiesController {
                     requestId,
                     userId);
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId,"Error Updating Overseas Entity Submission", e, logMap);
+            ApiLogger.errorContext(requestId, "Error Updating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -168,7 +169,7 @@ public class OverseasEntitiesController {
                     requestId,
                     userId);
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId,"Error Creating Overseas Entity Submission", e, logMap);
+            ApiLogger.errorContext(requestId, "Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -178,18 +179,50 @@ public class OverseasEntitiesController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
+        ApiLogger.debugContext(requestId, "Called getValidationStatus(...)");
 
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, submissionId);
         logMap.put(TRANSACTION_ID_KEY, transactionId);
-        ApiLogger.infoContext(requestId, "Calling service to get validation status", logMap);
-        try {
-            var validationStatusResponse = this.overseasEntitiesService.isValid(submissionId);
-            return ResponseEntity.ok().body(validationStatusResponse);
-        } catch (SubmissionNotFoundException e) {
-            ApiLogger.errorContext(requestId,e.getMessage(), e, logMap);
-            return ResponseEntity.notFound().build();
+
+        ApiLogger.infoContext(requestId, "Calling service to get the overseas entity submission", logMap);
+        var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(submissionId);
+        if (submissionDtoOptional.isPresent()) {
+            var validationStatus = new ValidationStatusResponse();
+            validationStatus.setValid(true);
+
+            if (isValidationEnabled) {
+                var validationErrors = overseasEntitySubmissionDtoValidator.validate(
+                        submissionDtoOptional.get(), new Errors(), requestId);
+
+                if (validationErrors.hasErrors()) {
+                    final String errorsAsJsonString = convertErrorsToJsonString(validationErrors);
+                    ApiLogger.errorContext(requestId, "Validation errors : " + errorsAsJsonString, null, logMap);
+
+                    flagValidationStatusAsFailed(validationStatus, errorsAsJsonString);
+                }
+            }
+
+            return ResponseEntity.ok().body(validationStatus);
         }
+
+        final String message = String.format("Could not find submission data for submission %s", submissionId);
+        ApiLogger.errorContext(requestId, message, null, logMap);
+        return ResponseEntity.notFound().build();
+    }
+
+    private void flagValidationStatusAsFailed(ValidationStatusResponse validationStatus, String errorsAsJsonString) {
+        validationStatus.setValid(false);
+
+        // A simplified 'errors' object can be created as ROE registrations are not software filed. Note also
+        // that at least one 'error' needs to be present for the validation check to register as failed by the
+        // Transactions API
+        var errors = new ValidationStatusError[1];
+        var error = new ValidationStatusError();
+        error.setError(errorsAsJsonString);
+        errors[0] = error;
+
+        validationStatus.setValidationStatusError(errors);
     }
 
     private boolean isValidationRequired(OverseasEntitySubmissionDto dto) {
