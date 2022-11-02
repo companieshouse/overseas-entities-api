@@ -20,6 +20,9 @@ public class BeneficialOwnerIndividualDao {
     @Field("nationality")
     private String nationality;
 
+    @Field("second_nationality")
+    private String secondNationality;
+
     @Field("usual_residential_address")
     private AddressDao usualResidentialAddress;
 
@@ -77,6 +80,14 @@ public class BeneficialOwnerIndividualDao {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public String getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(String secondNationality) {
+        this.secondNationality = secondNationality;
     }
 
     public AddressDao getUsualResidentialAddress() {

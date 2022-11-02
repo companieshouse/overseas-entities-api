@@ -13,6 +13,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -38,6 +39,9 @@ public class ManagingOfficerIndividualValidator {
             }
             validateDateOfBirth(managingOfficerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(managingOfficerIndividualDto.getNationality(), errors, loggingContext);
+            if (Objects.nonNull(managingOfficerIndividualDto.getSecondNationality())) {
+                validateSecondNationality(managingOfficerIndividualDto.getSecondNationality(), errors, loggingContext);
+            }
             validateAddress(ManagingOfficerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, managingOfficerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             boolean isSameAddressFlagValid = validateIsServiceAddressSameAsUsualResidentialAddress(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
             if (isSameAddressFlagValid && Boolean.FALSE.equals(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
@@ -94,6 +98,12 @@ public class ManagingOfficerIndividualValidator {
         return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(nationality, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateSecondNationality(String secondNationality, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        return StringValidators.isLessThanOrEqualToMaxLength(secondNationality, 50, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {

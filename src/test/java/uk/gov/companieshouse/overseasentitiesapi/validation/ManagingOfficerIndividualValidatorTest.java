@@ -304,6 +304,29 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenSecondNationalityFieldExceedsMaxLength() {
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("A", 51));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityFieldContainsInvalidCharacters() {
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("Дракон");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         managingOfficerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

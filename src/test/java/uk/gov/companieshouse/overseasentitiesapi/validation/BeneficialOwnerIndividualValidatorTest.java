@@ -233,6 +233,29 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenSecondNationalityFieldExceedsMaxLength() {
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("A", 51));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        assertError(BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityFieldContainsInvalidCharacters() {
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality("Дракон");
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         beneficialOwnerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
