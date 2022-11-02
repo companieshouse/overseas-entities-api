@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -86,7 +87,7 @@ public final class StringValidators {
     }
 
     public static boolean checkIsNotEqual(String string1, String string2, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
-        if (string1.equals(string2)) {
+        if (StringUtils.equals(string1, string2)) {
             setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
             return false;
