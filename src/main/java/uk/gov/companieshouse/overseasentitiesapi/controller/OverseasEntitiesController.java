@@ -69,7 +69,7 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -114,8 +114,9 @@ public class OverseasEntitiesController {
             //      sophisticated - this is covered by ROE-1415. For now though, it's only necessary to check if
             //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
             //      'check your answers' screen.
-            if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(
+            // if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
+            if (isValidationEnabled) {
+                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
                         overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
