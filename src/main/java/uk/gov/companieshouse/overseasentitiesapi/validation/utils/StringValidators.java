@@ -85,8 +85,8 @@ public final class StringValidators {
         }
     }
 
-    public static boolean checkIsNotEqual(String nationality, String secondNationality, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
-        if (nationality.equals(secondNationality)) {
+    public static boolean checkIsNotEqual(String string1, String string2, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (string1.equals(string2)) {
             setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
             return false;
