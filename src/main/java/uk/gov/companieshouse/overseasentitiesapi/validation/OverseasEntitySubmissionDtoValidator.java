@@ -33,7 +33,7 @@ public class OverseasEntitySubmissionDtoValidator {
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
     }
 
-    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
             entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
         }
@@ -53,84 +53,21 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        // todo - how to log missing blocks if the gap is > 1 block eg T, F, F, T
-
-//        boolean isPreviousBlockNull = false;
-//
-//        // block 1 - presenter
-//        if (Objects.nonNull(overseasEntitySubmissionDto.getPresenter())) {
-//            presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
-//        } else { // block is null
-//            isPreviousBlockNull = true;
-//        }
-//
-//
-//        // block 2 - entity
-//        if (Objects.nonNull(overseasEntitySubmissionDto.getEntity())) {
-//            entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
-//            if (isPreviousBlockNull) {
-//                // fail previous block, can't have populated block after a missing block
-//                UtilsValidators.setErrorMsgToLocation(errors, "presenter", "Presenter block should not be missing");
-//            }
-//            isPreviousBlockNull = false;
-//        } else { // block is null
-//            isPreviousBlockNull = true;
-//        }
-//
-//
-//        // block 3 - due diligence
-//        if (Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence()) || Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
-//            dueDiligenceDataBlockValidator.validateDueDiligenceFields(
-//                    overseasEntitySubmissionDto.getDueDiligence(),
-//                    overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
-//                    errors,
-//                    loggingContext);
-//            if (isPreviousBlockNull) {
-//                // fail previous block, can't have populated block after a missing block
-//                UtilsValidators.setErrorMsgToLocation(errors, "entity", "Entity block should not be missing");
-//            }
-//            isPreviousBlockNull = false;
-//        } else { // block is null
-//            isPreviousBlockNull = true;
-//        }
-//
-//
-//        // block 4 - owners and officers
-//        if (CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
-//            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
-//            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
-//            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getManagingOfficersCorporate())
-//            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getManagingOfficersIndividual())) {
-//
-//            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-//
-//            // final null block check as this is final block
-//            if (isPreviousBlockNull) {
-//                // fail previous block, can't have populated block after a missing block
-//                UtilsValidators.setErrorMsgToLocation(errors, "due diligence", "due diligence or overseas entity due diligence block should not be missing");
-//            }
-//        }
-//
-//
-//        // trusts?
-//
-//        return errors;
-
-        // ---------------------- new version ----------------------
-
         Set<Err> missingBlocksErrors = new HashSet<>();
 
         // block 1 - presenter
-        if (Objects.nonNull(overseasEntitySubmissionDto.getPresenter())) {
-            presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        var presenterDto = overseasEntitySubmissionDto.getPresenter();
+        if (Objects.nonNull(presenterDto)) {
+            presenterDtoValidator.validate(presenterDto, errors, loggingContext);
         } else { // block is null
             missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("presenter").withError("presenter should not be null").build());
         }
 
 
         // block 2 - entity
-        if (Objects.nonNull(overseasEntitySubmissionDto.getEntity())) {
-            entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+        if (Objects.nonNull(entityDto)) {
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
             addMissingBlocksToErrors(missingBlocksErrors, errors);
         } else { // block is null
             missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("entity").withError("entity should not be null").build());
@@ -138,21 +75,25 @@ public class OverseasEntitySubmissionDtoValidator {
 
 
         // block 3 - due diligence
-        if (Objects.nonNull(overseasEntitySubmissionDto.getDueDiligence()) || Objects.nonNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())) {
+        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        if (Objects.nonNull(dueDiligenceDto) || Objects.nonNull(overseasEntityDueDiligenceDto)) {
             dueDiligenceDataBlockValidator.validateDueDiligenceFields(
-                    overseasEntitySubmissionDto.getDueDiligence(),
-                    overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                    dueDiligenceDto,
+                    overseasEntityDueDiligenceDto,
                     errors,
                     loggingContext);
 
             addMissingBlocksToErrors(missingBlocksErrors, errors);
-        } else { // block is null
-            missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("due diligence").withError("due diligence or overseas entity due diligence should not be null").build());
+        } else { // both due diligence blocks are null
+            missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("due_diligence, overseas_entity_due_diligence").withError("due_diligence and overseas_entity_due_diligence should not both be null").build());
         }
 
 
+        // do we handle beneficial_owner_statement separately or as part of validateOwnersAndOfficers?
+
         // block 4 - owners and officers
-        // is this needed? as if this block is present then it indicates a full validation should happen
+        // is this needed?  if this block is present then it indicates a full validation should happen so the 'full' validate method should get used
         if (CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
             || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
             || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
@@ -169,7 +110,6 @@ public class OverseasEntitySubmissionDtoValidator {
 
         return errors;
 
-        // option 3 - work backwards?
     }
 
     /**

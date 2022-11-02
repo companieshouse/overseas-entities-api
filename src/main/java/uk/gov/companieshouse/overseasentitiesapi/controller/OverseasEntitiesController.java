@@ -69,7 +69,14 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), requestId);
+                Errors validationErrors;
+                if (isFullValidationRequired(overseasEntitySubmissionDto)) {
+                    validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
+                            overseasEntitySubmissionDto, new Errors(), requestId);
+                } else {
+                    validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                            overseasEntitySubmissionDto, new Errors(), requestId);
+                }
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -114,10 +121,15 @@ public class OverseasEntitiesController {
             //      sophisticated - this is covered by ROE-1415. For now though, it's only necessary to check if
             //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
             //      'check your answers' screen.
-            // if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
-                        overseasEntitySubmissionDto, new Errors(), requestId);
+                Errors validationErrors;
+                if (isFullValidationRequired(overseasEntitySubmissionDto)) {
+                    validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
+                            overseasEntitySubmissionDto, new Errors(), requestId);
+                } else {
+                    validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                            overseasEntitySubmissionDto, new Errors(), requestId);
+                }
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -196,7 +208,7 @@ public class OverseasEntitiesController {
             validationStatus.setValid(true);
 
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(
+                var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
                         submissionDtoOptional.get(), new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
@@ -229,7 +241,7 @@ public class OverseasEntitiesController {
         validationStatus.setValidationStatusError(errors);
     }
 
-    private boolean isValidationRequired(OverseasEntitySubmissionDto dto) {
+    private boolean isFullValidationRequired(OverseasEntitySubmissionDto dto) {
         // The presence of one or more BOs or MOs in the submission indicates that all data should be present and that
         // the entire DTO can now be validated
         return (Objects.nonNull(dto.getBeneficialOwnersCorporate()) && !dto.getBeneficialOwnersCorporate().isEmpty())
