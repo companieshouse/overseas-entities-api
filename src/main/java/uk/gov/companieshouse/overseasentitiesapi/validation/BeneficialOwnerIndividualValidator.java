@@ -11,6 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidato
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.NatureOfControlValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class BeneficialOwnerIndividualValidator {
             validateDateOfBirth(beneficialOwnerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(beneficialOwnerIndividualDto.getNationality(), errors, loggingContext);
             if (Objects.nonNull(beneficialOwnerIndividualDto.getSecondNationality())) {
-                validateSecondNationality(beneficialOwnerIndividualDto.getSecondNationality(), errors, loggingContext);
+                validateSecondNationality(beneficialOwnerIndividualDto.getNationality(), beneficialOwnerIndividualDto.getSecondNationality(), errors, loggingContext);
             }
             validateAddress(BeneficialOwnerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, beneficialOwnerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             boolean sameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
@@ -98,9 +99,10 @@ public class BeneficialOwnerIndividualValidator {
                && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateSecondNationality(String secondNationality, Errors errors, String loggingContext) {
+    private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        return StringValidators.isLessThanOrEqualToMaxLength(secondNationality,  50, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(secondNationality,  50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(secondNationality, qualifiedFieldName, errors, loggingContext);
     }
 

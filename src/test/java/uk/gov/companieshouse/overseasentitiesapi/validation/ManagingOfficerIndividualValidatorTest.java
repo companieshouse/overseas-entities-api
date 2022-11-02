@@ -327,6 +327,25 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenSecondNationalityFieldIsNotEqualToTheNationalityGiven() {
+        managingOfficerIndividualDtoList.get(0).setNationality("French");
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("Algerian");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+    @Test
+    void testErrorReportedWhenSecondNationalityFieldEqualsTheNationalityGiven() {
+        managingOfficerIndividualDtoList.get(0).setNationality("French");
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("French");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String validationMessage = String.format(ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName);
+        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         managingOfficerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

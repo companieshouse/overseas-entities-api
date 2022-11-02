@@ -84,4 +84,13 @@ public final class StringValidators {
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field should not be populated");
         }
     }
+
+    public static boolean checkIsNotEqual(String nationality, String secondNationality, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (nationality.equals(secondNationality)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
+            return false;
+        }
+        return true;
+    }
 }
