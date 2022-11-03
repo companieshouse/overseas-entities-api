@@ -112,7 +112,7 @@ public class AddressDtoValidator {
     private void validatePostcode(String parentAddressField, String postcode, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(parentAddressField, AddressDto.POSTCODE_FIELD);
 
-        StringValidators.isLessThanOrEqualToMaxLength(postcode, 20, qualifiedFieldName, errors, loggingContext);
+        StringValidators.isLessThanOrEqualToMaxLength(postcode, 15, qualifiedFieldName, errors, loggingContext);
         StringValidators.isValidCharacters(postcode, qualifiedFieldName, errors, loggingContext);
     }
 }

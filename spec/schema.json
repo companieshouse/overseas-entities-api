@@ -1396,7 +1396,7 @@
                 "$ref": "#/components/schemas/FieldPattern"
               },
               {
-                "maxLength": 20
+                "maxLength": 15
               }
             ]
           }

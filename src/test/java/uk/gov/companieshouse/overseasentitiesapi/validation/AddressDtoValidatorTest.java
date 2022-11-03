@@ -338,12 +338,12 @@ class AddressDtoValidatorTest {
 
     @Test
     void testErrorReportedWhenPostcodeFieldExceedsMaxLength() {
-        addressDto.setPostcode(StringUtils.repeat("A", 21));
+        addressDto.setPostcode(StringUtils.repeat("A", 16));
         String parentField = EntityDto.PRINCIPAL_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.POSTCODE_FIELD);
-        assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 20 characters or less", errors);
+        assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 15 characters or less", errors);
     }
 
     @Test
@@ -359,12 +359,12 @@ class AddressDtoValidatorTest {
 
     @Test
     void testErrorReportedForServiceAddressField() {
-        addressDto.setPostcode(StringUtils.repeat("A", 21));
+        addressDto.setPostcode(StringUtils.repeat("A", 16));
         String parentField = EntityDto.SERVICE_ADDRESS_FIELD;
         Errors errors = addressDtoValidator.validate(parentField, addressDto, CountryLists.getAllCountries(), new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(parentField, AddressDto.POSTCODE_FIELD);
 
-        assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 20 characters or less", errors);
+        assertError(parentField, AddressDto.POSTCODE_FIELD, qualifiedFieldName + " must be 15 characters or less", errors);
     }
 
     @Test
