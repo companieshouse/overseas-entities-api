@@ -28,7 +28,6 @@ import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -69,14 +68,8 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                Errors validationErrors;
-                if (isFullValidationRequired(overseasEntitySubmissionDto)) {
-                    validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
+                Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(
                             overseasEntitySubmissionDto, new Errors(), requestId);
-                } else {
-                    validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
-                            overseasEntitySubmissionDto, new Errors(), requestId);
-                }
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -122,14 +115,8 @@ public class OverseasEntitiesController {
             //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
             //      'check your answers' screen.
             if (isValidationEnabled) {
-                Errors validationErrors;
-                if (isFullValidationRequired(overseasEntitySubmissionDto)) {
-                    validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
+                Errors validationErrors = overseasEntitySubmissionDtoValidator.validate(
                             overseasEntitySubmissionDto, new Errors(), requestId);
-                } else {
-                    validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
-                            overseasEntitySubmissionDto, new Errors(), requestId);
-                }
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -241,15 +228,7 @@ public class OverseasEntitiesController {
         validationStatus.setValidationStatusError(errors);
     }
 
-    private boolean isFullValidationRequired(OverseasEntitySubmissionDto dto) {
-        // The presence of one or more BOs or MOs in the submission indicates that all data should be present and that
-        // the entire DTO can now be validated
-        return (Objects.nonNull(dto.getBeneficialOwnersCorporate()) && !dto.getBeneficialOwnersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersGovernmentOrPublicAuthority()) && !dto.getBeneficialOwnersGovernmentOrPublicAuthority().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersIndividual()) && !dto.getBeneficialOwnersIndividual().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersCorporate()) && !dto.getManagingOfficersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersIndividual()) && !dto.getManagingOfficersIndividual().isEmpty());
-    }
+
 
     private String convertErrorsToJsonString(Errors validationErrors) {
         var gson = new GsonBuilder().create();

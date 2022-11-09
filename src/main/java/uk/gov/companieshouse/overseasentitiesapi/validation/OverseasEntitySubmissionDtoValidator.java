@@ -33,6 +33,31 @@ public class OverseasEntitySubmissionDtoValidator {
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
     }
 
+    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // firstly check if submission is empty and return immediately if so
+        if (isSubmissionEmpty(overseasEntitySubmissionDto)) {
+            errors.addError(Err.invalidBodyBuilderWithLocation("Empty").withError("submission should not be empty").build());
+            return errors;
+        }
+
+        // Then validate either a full submission or a partial one
+        if (isFullValidationRequired(overseasEntitySubmissionDto)) {
+            return validateFull(overseasEntitySubmissionDto, errors, loggingContext);
+        } else {
+            return validatePartial(overseasEntitySubmissionDto, errors, loggingContext);
+        }
+    }
+
+    private boolean isFullValidationRequired(OverseasEntitySubmissionDto dto) {
+        // The presence of one or more BOs or MOs in the submission indicates that all data should be present and that
+        // the entire DTO can now be validated
+        return (Objects.nonNull(dto.getBeneficialOwnersCorporate()) && !dto.getBeneficialOwnersCorporate().isEmpty())
+                || (Objects.nonNull(dto.getBeneficialOwnersGovernmentOrPublicAuthority()) && !dto.getBeneficialOwnersGovernmentOrPublicAuthority().isEmpty())
+                || (Objects.nonNull(dto.getBeneficialOwnersIndividual()) && !dto.getBeneficialOwnersIndividual().isEmpty())
+                || (Objects.nonNull(dto.getManagingOfficersCorporate()) && !dto.getManagingOfficersCorporate().isEmpty())
+                || (Objects.nonNull(dto.getManagingOfficersIndividual()) && !dto.getManagingOfficersIndividual().isEmpty());
+    }
+
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
             entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
@@ -52,7 +77,7 @@ public class OverseasEntitySubmissionDtoValidator {
         return errors;
     }
 
-    public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    private Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         Set<Err> missingBlocksErrors = new HashSet<>();
 
         // block 1 - presenter
@@ -68,7 +93,7 @@ public class OverseasEntitySubmissionDtoValidator {
         var entityDto = overseasEntitySubmissionDto.getEntity();
         if (Objects.nonNull(entityDto)) {
             entityDtoValidator.validate(entityDto, errors, loggingContext);
-            addMissingBlocksToErrors(missingBlocksErrors, errors);
+            flushMissingBlocksToErrors(missingBlocksErrors, errors);
         } else { // block is null
             missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("entity").withError("entity should not be null").build());
         }
@@ -84,26 +109,14 @@ public class OverseasEntitySubmissionDtoValidator {
                     errors,
                     loggingContext);
 
-            addMissingBlocksToErrors(missingBlocksErrors, errors);
+            flushMissingBlocksToErrors(missingBlocksErrors, errors);
         } else { // both due diligence blocks are null
             missingBlocksErrors.add(Err.invalidBodyBuilderWithLocation("due_diligence, overseas_entity_due_diligence").withError("due_diligence and overseas_entity_due_diligence should not both be null").build());
         }
 
 
-        // do we handle beneficial_owner_statement separately or as part of validateOwnersAndOfficers?
-
         // block 4 - owners and officers
-        // is this needed?  if this block is present then it indicates a full validation should happen so the 'full' validate method should get used
-        if (CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
-            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
-            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
-            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getManagingOfficersCorporate())
-            || CollectionUtils.isNotEmpty(overseasEntitySubmissionDto.getManagingOfficersIndividual())) {
-
-            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-
-            addMissingBlocksToErrors(missingBlocksErrors, errors);
-        }
+        // if owners and officers are present then the 'full' validation method should get called and not this 'partial' method
 
 
         // trusts?
@@ -113,12 +126,24 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     /**
+     * determine if the submissionDTO is empty
+     * @param overseasEntitySubmissionDto
+     * @return
+     */
+    private boolean isSubmissionEmpty(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+        return Objects.isNull(overseasEntitySubmissionDto.getPresenter())
+                && Objects.isNull(overseasEntitySubmissionDto.getEntity())
+                && Objects.isNull(overseasEntitySubmissionDto.getDueDiligence())
+                && Objects.isNull(overseasEntitySubmissionDto.getOverseasEntityDueDiligence());
+    }
+
+    /**
      * Add missing blocks errors to the main Errors list
      * Wipes/clears missingBlocksErrors after adding to Errors
      * @param missingBlocksErrors
      * @param errors
      */
-    private void addMissingBlocksToErrors(Set<Err> missingBlocksErrors, Errors errors) {
+    private void flushMissingBlocksToErrors(Set<Err> missingBlocksErrors, Errors errors) {
         if (CollectionUtils.isNotEmpty(missingBlocksErrors)) {
             // move missing block errors into "errors"
             missingBlocksErrors.forEach(errors::addError);
