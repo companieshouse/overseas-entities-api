@@ -87,7 +87,8 @@ public class OwnersAndOfficersDataBlockValidator {
                  }
                  break;
             case SOME_IDENTIFIED_ALL_DETAILS:
-                if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
+                // TODO roe-1640 AC are that both at least one BO and MO must be present if either one is missing an error is logged and returned
+                if (!(hasBeneficialOwners(overseasEntitySubmissionDto) || hasManagingOfficers(overseasEntitySubmissionDto))) {
                     logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER));
                     return false;
                 }
