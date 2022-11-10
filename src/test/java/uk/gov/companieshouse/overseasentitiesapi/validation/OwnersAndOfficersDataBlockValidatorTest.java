@@ -113,7 +113,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    // TODO roe-1640 AC are that both at least one BO and MO must be present if either one is missing an error is logged and returned
+    // TODO roe-1640 AC are that at least one BO and at least one MO must be present - if either one is missing an error is logged and returned
     @Test
     void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
         buildOverseasEntitySubmissionDto();
@@ -124,8 +124,6 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
-        //assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
-
     }
 
     @Test
