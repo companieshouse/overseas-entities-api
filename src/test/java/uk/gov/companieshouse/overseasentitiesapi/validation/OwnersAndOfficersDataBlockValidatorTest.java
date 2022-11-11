@@ -113,8 +113,9 @@ class OwnersAndOfficersDataBlockValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    // TODO roe-1640 AC are that at least one BO and at least one MO must be present - if either one is missing an error is logged and returned
     @Test
-    void testErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
+    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
@@ -122,7 +123,28 @@ class OwnersAndOfficersDataBlockValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
-        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdenitified() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER + " or " + MISSING_MANAGING_OFFICER), errors);
     }
 
     @Test
@@ -138,7 +160,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficers() {
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdenitified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         Errors errors = new Errors();
