@@ -139,7 +139,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdenitified() {
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdentified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         Errors errors = new Errors();
@@ -160,7 +160,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdenitified() {
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdentified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         Errors errors = new Errors();
