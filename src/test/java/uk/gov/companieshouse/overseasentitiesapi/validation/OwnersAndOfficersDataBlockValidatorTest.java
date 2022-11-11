@@ -127,6 +127,27 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdenitified() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER + " or " + MISSING_MANAGING_OFFICER), errors);
+    }
+
+    @Test
     void testNoErrorReportedForNoBeneficialOwnersIdentifiedWithOnlyManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
@@ -139,7 +160,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficers() {
+    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdenitified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         Errors errors = new Errors();
