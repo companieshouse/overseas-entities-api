@@ -555,6 +555,7 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
