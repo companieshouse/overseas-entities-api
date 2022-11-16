@@ -56,11 +56,6 @@ public class OverseasEntitySubmissionDtoValidator {
             presenterDtoValidator.validate(presenterDto, errors, loggingContext);
         }
 
-        var entityDto = overseasEntitySubmissionDto.getEntity();
-        if (Objects.nonNull(entityDto)) {
-            entityDtoValidator.validate(entityDto, errors, loggingContext);
-        }
-
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
         if (Objects.nonNull(dueDiligenceDto) || Objects.nonNull(overseasEntityDueDiligenceDto)) {
@@ -69,6 +64,11 @@ public class OverseasEntitySubmissionDtoValidator {
                     overseasEntityDueDiligenceDto,
                     errors,
                     loggingContext);
+        }
+
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+        if (Objects.nonNull(entityDto)) {
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
         }
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);

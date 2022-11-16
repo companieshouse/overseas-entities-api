@@ -165,6 +165,19 @@ public class OverseasEntitiesController {
 
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
 
+
+            if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
+                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                        overseasEntitySubmissionDto, new Errors(), requestId);
+
+                if (validationErrors.hasErrors()) {
+                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                            convertErrorsToJsonString(validationErrors)), null, logMap);
+                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+                }
+            }
+
             return this.overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
