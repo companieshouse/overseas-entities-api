@@ -6,6 +6,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.util.Objects;
+
 @Component
 public class OverseasEntitySubmissionDtoValidator {
 
@@ -27,7 +29,8 @@ public class OverseasEntitySubmissionDtoValidator {
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
     }
 
-    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
             entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
         }
@@ -41,6 +44,32 @@ public class OverseasEntitySubmissionDtoValidator {
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
+        return errors;
+    }
+
+    public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        var presenterDto = overseasEntitySubmissionDto.getPresenter();
+        if (Objects.nonNull(presenterDto)) {
+            presenterDtoValidator.validate(presenterDto, errors, loggingContext);
+        }
+
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+        if (Objects.nonNull(entityDto)) {
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
+        }
+
+        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        if (Objects.nonNull(dueDiligenceDto) || Objects.nonNull(overseasEntityDueDiligenceDto)) {
+            dueDiligenceDataBlockValidator.validateDueDiligenceFields(
+                    dueDiligenceDto,
+                    overseasEntityDueDiligenceDto,
+                    errors,
+                    loggingContext);
+        }
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         return errors;

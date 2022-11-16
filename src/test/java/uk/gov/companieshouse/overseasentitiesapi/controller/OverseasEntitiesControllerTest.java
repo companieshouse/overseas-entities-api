@@ -112,7 +112,7 @@ class OverseasEntitiesControllerTest {
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -150,7 +150,7 @@ class OverseasEntitiesControllerTest {
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
             Errors errors = new Errors(err);
-            when(overseasEntitySubmissionDtoValidator.validate(
+            when(overseasEntitySubmissionDtoValidator.validateFull(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
                     eq(REQUEST_ID)
@@ -239,7 +239,7 @@ class OverseasEntitiesControllerTest {
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -282,7 +282,7 @@ class OverseasEntitiesControllerTest {
         validationStatus.setValid(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -306,7 +306,7 @@ class OverseasEntitiesControllerTest {
         final String errorLocation = "EXAMPLE_ERROR_LOCATION";
         final String error = "EXAMPLE_ERROR";
         Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors(err));
@@ -407,7 +407,7 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
                 USER_ID);
-        verify(overseasEntitySubmissionDtoValidator, never()).validate(any(), any(), any());
+        verify(overseasEntitySubmissionDtoValidator, never()).validateFull(any(), any(), any());
     }
 
     @Test
@@ -417,7 +417,7 @@ class OverseasEntitiesControllerTest {
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
         overseasEntitySubmissionDto.getBeneficialOwnersIndividual().add(new BeneficialOwnerIndividualDto());
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -445,7 +445,7 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
                 USER_ID);
-        verify(overseasEntitySubmissionDtoValidator).validate(
+        verify(overseasEntitySubmissionDtoValidator).validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID));
@@ -460,7 +460,7 @@ class OverseasEntitiesControllerTest {
 
         Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -492,7 +492,7 @@ class OverseasEntitiesControllerTest {
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
             Errors errors = new Errors(err);
-            when(overseasEntitySubmissionDtoValidator.validate(
+            when(overseasEntitySubmissionDtoValidator.validatePartial(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
                     eq(REQUEST_ID)
@@ -531,7 +531,7 @@ class OverseasEntitiesControllerTest {
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)

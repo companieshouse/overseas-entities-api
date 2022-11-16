@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsM
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
@@ -18,12 +19,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -61,30 +64,31 @@ class OwnersAndOfficersDataBlockValidatorTest {
     private final EntityDto entityDto = EntityMock.getEntityDto();
     private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
     private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+    private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
 
     @Test
-    void testNoErrorReportedForAllBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
+    void testFullValidationNoErrorReportedForAllBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testErrorReportedForAllBeneficialOwnersIdentifiedWithNoBeneficialOwners() {
+    void testFullValidationErrorReportedForAllBeneficialOwnersIdentifiedWithNoBeneficialOwners() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that all can be identified", MISSING_BENEFICIAL_OWNER), errors);
     }
 
     @Test
-    void testErrorReportedForAllBeneficialOwnersIdentifiedWithBeneficialOwnerAndManagingOfficer() {
+    void testFullValidationErrorReportedForAllBeneficialOwnersIdentifiedWithBeneficialOwnerAndManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
@@ -94,12 +98,12 @@ class OwnersAndOfficersDataBlockValidatorTest {
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that all can be identified", INCORRECTLY_ADDED_MANAGING_OFFICER), errors);
     }
 
     @Test
-    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
@@ -109,67 +113,67 @@ class OwnersAndOfficersDataBlockValidatorTest {
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     // TODO roe-1640 AC are that at least one BO and at least one MO must be present - if either one is missing an error is logged and returned
     @Test
-    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdentified() {
+    void testFullValidationErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenSomeAreIdentified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER + " or " + MISSING_MANAGING_OFFICER), errors);
     }
 
     @Test
-    void testNoErrorReportedForNoBeneficialOwnersIdentifiedWithOnlyManagingOfficer() {
+    void testFullValidationNoErrorReportedForNoBeneficialOwnersIdentifiedWithOnlyManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdentified() {
+    void testFullValidationErrorReportedForNoBeneficialOwnersIdentifiedWithNoManagingOfficersWhenNoneAreIdentified() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that none can be identified", MISSING_MANAGING_OFFICER), errors);
     }
 
     @Test
-    void testErrorReportedForNoBeneficialOwnersIdentifiedWithManagingOfficerAndBeneficialOwner() {
+    void testFullValidationErrorReportedForNoBeneficialOwnersIdentifiedWithManagingOfficerAndBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
@@ -179,63 +183,162 @@ class OwnersAndOfficersDataBlockValidatorTest {
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         Errors errors = new Errors();
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that none can be identified", INCORRECTLY_ADDED_BENEFICIAL_OWNER), errors);
     }
 
     @Test
-    void testBeneficialOwnerIndividualValidatorIsCalled() {
+    void testFullValidationBeneficialOwnerIndividualValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
         beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(beneficialOwnerIndividualValidator, times(1)).validate(eq(beneficialOwnerIndividualDtoList), any(), any());
     }
 
     @Test
-    void testBeneficialOwnerCorporateValidatorIsCalled() {
+    void testFullValidationBeneficialOwnerCorporateValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(beneficialOwnerCorporateValidator, times(1)).validate(eq(beneficialOwnerCorporateDtoList), any(), any());
     }
 
     @Test
-    void testBeneficialOwnerGovernmentOrPublicAuthorityValidatorIsCalled() {
+    void testFullValidationBeneficialOwnerGovernmentOrPublicAuthorityValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(eq(beneficialOwnerGovernmentOrPublicAuthorityDtoList), any(), any());
     }
 
     @Test
-    void testManagingOfficerIndividualValidatorIsCalled() {
+    void testFullValidationManagingOfficerIndividualValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(managingOfficerIndividualValidator, times(1)).validate(eq(managingOfficerIndividualDtoList), any(), any());
     }
 
     @Test
-    void testManagingOfficerCorporateValidatorIsCalled() {
+    void testFullValidationManagingOfficerCorporateValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.NONE_IDENTIFIED);
         List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(managingOfficerCorporateValidator, times(1)).validate(eq(managingOfficerCorporateDtoList), any(), any());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForPresenterOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setPresenter(presenterDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForDueDiligenceOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForOverseasEntitiesDueDiligenceOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForEntityOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntity(entityDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForBeneficialOwnerIndividualOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var beneficialOwnersIndividualList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForBeneficialOwnerCorporateOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var beneficialOwnersCorporateList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForBeneficialOwnerGovernmentOrPublicAuthorityOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var beneficialOwnersGovernmentOrPublicAuthorityList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthorityList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForManagingOfficersIndividualOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var managingOfficersIndividualList = Arrays.asList(ManagingOfficerMock.getManagingOfficerIndividualDto());
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForManagingOfficersCorporateOnly() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        var managingOfficersCorporateList = Arrays.asList(ManagingOfficerMock.getManagingOfficerCorporateDto());
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationNoErrorsReportedForMultipleFields() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setPresenter(presenterDto);
+        var beneficialOwnersGovernmentOrPublicAuthorityList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthorityList);
+        var managingOfficersCorporateList = Arrays.asList(ManagingOfficerMock.getManagingOfficerCorporateDto());
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     private void buildOverseasEntitySubmissionDto() {

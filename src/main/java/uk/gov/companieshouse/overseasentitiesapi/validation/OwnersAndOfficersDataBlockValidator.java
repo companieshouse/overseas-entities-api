@@ -47,32 +47,37 @@ public class OwnersAndOfficersDataBlockValidator {
         this.managingOfficerCorporateValidator = managingOfficerCorporateValidator;
     }
 
-    public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public void validateOwnersAndOfficersAgainstStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
         if (isCorrectCombinationOfOwnersAndOfficersForStatement(overseasEntitySubmissionDto, errors, loggingContext)) {
-            List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
-            if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
-                beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
-            }
-            List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
-            if (hasCorporateBeneficialOwnersPresent(beneficialOwnerCorporateDtoList)) {
-                beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, errors, loggingContext);
-            }
-            List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
-            if (hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(beneficialOwnerGovernmentOrPublicAuthorityDtoList)) {
-                beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, errors, loggingContext);
-            }
-            List<ManagingOfficerIndividualDto> managingOfficersIndividualDtoList = overseasEntitySubmissionDto.getManagingOfficersIndividual();
-            if (hasIndividualManagingOfficersPresent(managingOfficersIndividualDtoList)) {
-                managingOfficerIndividualValidator.validate(managingOfficersIndividualDtoList, errors, loggingContext);
-            }
-            List<ManagingOfficerCorporateDto> managingOfficersCorporateDtoList = overseasEntitySubmissionDto.getManagingOfficersCorporate();
-            if (hasCorporateManagingOfficersPresent(managingOfficersCorporateDtoList)) {
-                managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
-            }
+            validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         }
     }
+
+    public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
+        if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
+            beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
+        if (hasCorporateBeneficialOwnersPresent(beneficialOwnerCorporateDtoList)) {
+            beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
+        if (hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(beneficialOwnerGovernmentOrPublicAuthorityDtoList)) {
+            beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualDtoList = overseasEntitySubmissionDto.getManagingOfficersIndividual();
+        if (hasIndividualManagingOfficersPresent(managingOfficersIndividualDtoList)) {
+            managingOfficerIndividualValidator.validate(managingOfficersIndividualDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateDtoList = overseasEntitySubmissionDto.getManagingOfficersCorporate();
+        if (hasCorporateManagingOfficersPresent(managingOfficersCorporateDtoList)) {
+            managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
+        }
+    }
+
 
     private boolean isCorrectCombinationOfOwnersAndOfficersForStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         switch(overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
