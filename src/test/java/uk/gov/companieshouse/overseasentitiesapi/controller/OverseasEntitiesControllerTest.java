@@ -14,7 +14,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
@@ -384,6 +383,11 @@ class OverseasEntitiesControllerTest {
     void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledButValidationIsDeterminedToNotBeRequired() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
+
         when(overseasEntitiesService.updateOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -556,6 +560,10 @@ class OverseasEntitiesControllerTest {
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
