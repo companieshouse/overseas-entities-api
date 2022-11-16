@@ -109,10 +109,6 @@ public class OverseasEntitiesController {
         ApiLogger.infoContext(requestId, "Calling service to update the Overseas Entity Submission", logMap);
 
         try {
-            // TODO The logic related to what specific validation checks should be run will need to be more
-            //      sophisticated - this is covered by ROE-1415. For now though, it's only necessary to check if
-            //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
-            //      'check your answers' screen.
             if (isValidationEnabled) {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
                         overseasEntitySubmissionDto, new Errors(), requestId);

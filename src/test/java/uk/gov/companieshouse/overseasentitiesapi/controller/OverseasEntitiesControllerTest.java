@@ -611,8 +611,6 @@ class OverseasEntitiesControllerTest {
                 mockHttpServletRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-
-        verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {

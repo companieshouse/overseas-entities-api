@@ -286,6 +286,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+        verify(beneficialOwnerIndividualValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -296,6 +297,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+        verify(beneficialOwnerCorporateValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -306,6 +308,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+        verify(beneficialOwnerGovernmentOrPublicAuthorityValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -316,6 +319,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+        verify(managingOfficerIndividualValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -326,6 +330,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+        verify(managingOfficerCorporateValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test

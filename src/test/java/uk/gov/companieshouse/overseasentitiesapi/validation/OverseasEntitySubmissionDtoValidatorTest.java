@@ -269,6 +269,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
     }
 
     @Test
@@ -282,6 +285,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -296,6 +302,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
     }
 
     private void buildOverseasEntitySubmissionDto() {
