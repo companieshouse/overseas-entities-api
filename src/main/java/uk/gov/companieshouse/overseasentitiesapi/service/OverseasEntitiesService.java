@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
 
@@ -51,12 +52,33 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
+    public ResponseEntity<Object> createOverseasEntityWithResumeLink(Transaction transaction,
+                                                                     OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                                     String passthroughTokenHeader,
+                                                                     String requestId,
+                                                                     String userId) throws ServiceException {
+        ApiLogger.debugContext(requestId, "Called createOverseasEntityWithResumeLink(...)");
+
+        return createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, true);
+    }
+
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String passthroughTokenHeader,
                                                        String requestId,
                                                        String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
+
+        return createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, false);
+    }
+
+    private ResponseEntity<Object> createOverseasEntity(Transaction transaction,
+                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                        String passthroughTokenHeader,
+                                                        String requestId,
+                                                        String userId,
+                                                        boolean addResumeLinkToTransaction) throws ServiceException {
+        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...), with 'add resume link' = " + addResumeLinkToTransaction);
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
             return ResponseEntity.badRequest().body(String.format("Transaction id: %s has an existing Overseas Entity submission", transaction.getId()));
@@ -66,13 +88,17 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
-        final String submissionUri = getSubmissionUri(transaction.getId(), insertedSubmission.getId());
+        final String submissionId = insertedSubmission.getId();
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateOverseasEntitySubmissionWithMetaData(insertedSubmission, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var overseasEntityResource = createOverseasEntityTransactionResource(submissionUri);
-        // add a link to our newly created Overseas Entity submission (aka resource) to the transaction
-        addOverseasEntityResourceToTransaction(transaction, passthroughTokenHeader, submissionUri, overseasEntityResource, requestId);
+
+        // add link to our newly created Overseas Entity submission (aka resource) to the transaction and potentially
+        // also a link for the 'resume' journey
+        updateTransactionWithLinks(transaction, submissionId, passthroughTokenHeader, submissionUri,
+                overseasEntityResource, requestId, addResumeLinkToTransaction);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s",  transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
@@ -127,12 +153,20 @@ public class OverseasEntitiesService {
         return overseasEntityResource;
     }
 
-    private void addOverseasEntityResourceToTransaction(Transaction transaction,
-                                                        String passthroughTokenHeader,
-                                                        String submissionUri,
-                                                        Resource overseasEntityResource,
-                                                        String loggingContext) throws ServiceException {
+    private void updateTransactionWithLinks(Transaction transaction,
+                                            String submissionId,
+                                            String passthroughTokenHeader,
+                                            String submissionUri,
+                                            Resource overseasEntityResource,
+                                            String loggingContext,
+                                            boolean addResumeLinkToTransaction) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
+
+        if (addResumeLinkToTransaction) {
+            final String resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            transaction.setResumeJourneyUri(resumeJourneyUri);
+        }
+
         transactionService.updateTransaction(transaction, passthroughTokenHeader, loggingContext);
     }
 

@@ -165,7 +165,7 @@ public class OverseasEntitiesController {
 
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
 
-            return this.overseasEntitiesService.createOverseasEntity(
+            return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
                     passThroughTokenHeader,
