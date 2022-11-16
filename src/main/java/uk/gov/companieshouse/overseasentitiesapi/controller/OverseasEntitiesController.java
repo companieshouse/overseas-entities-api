@@ -28,7 +28,6 @@ import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
