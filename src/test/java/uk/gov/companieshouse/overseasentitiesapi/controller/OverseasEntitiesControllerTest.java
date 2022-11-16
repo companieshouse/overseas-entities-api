@@ -588,6 +588,33 @@ class OverseasEntitiesControllerTest {
                 USER_ID);
     }
 
+    @Test
+    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
+        overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
+
+        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
+
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors(err));
+
+        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+
+        verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any());
+    }
+
     private void setValidationEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitiesController, "isValidationEnabled", value);
     }

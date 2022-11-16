@@ -241,16 +241,6 @@ public class OverseasEntitiesController {
         validationStatus.setValidationStatusError(errors);
     }
 
-    private boolean isValidationRequired(OverseasEntitySubmissionDto dto) {
-        // The presence of one or more BOs or MOs in the submission indicates that all data should be present and that
-        // the entire DTO can now be validated
-        return (Objects.nonNull(dto.getBeneficialOwnersCorporate()) && !dto.getBeneficialOwnersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersGovernmentOrPublicAuthority()) && !dto.getBeneficialOwnersGovernmentOrPublicAuthority().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersIndividual()) && !dto.getBeneficialOwnersIndividual().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersCorporate()) && !dto.getManagingOfficersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersIndividual()) && !dto.getManagingOfficersIndividual().isEmpty());
-    }
-
     private String convertErrorsToJsonString(Errors validationErrors) {
         var gson = new GsonBuilder().create();
         return gson.toJson(validationErrors);
