@@ -163,7 +163,7 @@ public class OverseasEntitiesService {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
 
         if (addResumeLinkToTransaction) {
-            final String resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            final var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
             transaction.setResumeJourneyUri(resumeJourneyUri);
         }
 
