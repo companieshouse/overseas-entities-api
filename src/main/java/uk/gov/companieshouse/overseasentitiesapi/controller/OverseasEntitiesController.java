@@ -173,7 +173,7 @@ public class OverseasEntitiesController {
                 }
             }
 
-            return this.overseasEntitiesService.createOverseasEntity(
+            return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
                     passThroughTokenHeader,

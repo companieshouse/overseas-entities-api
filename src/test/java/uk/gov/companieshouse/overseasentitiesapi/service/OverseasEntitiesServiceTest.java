@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,7 +80,16 @@ class OverseasEntitiesServiceTest {
     private OverseasEntitiesService overseasEntitiesService;
 
     @Test
-    void testOverseasEntitySubmissionCreatedSuccessfully() throws ServiceException {
+    void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
+        testSubmissionCreation(true);
+    }
+
+    @Test
+    void testOverseasEntitySubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException {
+        testSubmissionCreation(false);
+    }
+
+    private void testSubmissionCreation(boolean isResumeLinkExpected) throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
         Transaction transaction = buildTransaction();
@@ -103,14 +114,24 @@ class OverseasEntitiesServiceTest {
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
 
+        ResponseEntity<Object> response;
 
         // make the call to test
-        var response = overseasEntitiesService.createOverseasEntity(
-                transaction,
-                overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
-                REQUEST_ID,
-                USER_ID);
+        if (isResumeLinkExpected) {
+            response = overseasEntitiesService.createOverseasEntityWithResumeLink(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    PASSTHROUGH_TOKEN_HEADER,
+                    REQUEST_ID,
+                    USER_ID);
+        } else {
+            response = overseasEntitiesService.createOverseasEntity(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    PASSTHROUGH_TOKEN_HEADER,
+                    REQUEST_ID,
+                    USER_ID);
+        }
 
         verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any(), any());
         verify(localDateTimeSupplier, times(1)).get();
@@ -128,6 +149,12 @@ class OverseasEntitiesServiceTest {
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
+
+        if (isResumeLinkExpected) {
+            assertEquals(String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
+        } else {
+            assertNull(transactionSent.getResumeJourneyUri());
+        }
 
         // assert response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
