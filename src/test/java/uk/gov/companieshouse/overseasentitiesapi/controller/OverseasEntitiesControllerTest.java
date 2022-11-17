@@ -208,7 +208,7 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionForSaveAndResumeIsUnSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
@@ -225,7 +225,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
         assertEquals(FAILURE_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
@@ -555,7 +555,7 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
@@ -571,7 +571,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 PASSTHROUGH,
