@@ -14,7 +14,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
@@ -112,7 +111,7 @@ class OverseasEntitiesControllerTest {
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -150,7 +149,7 @@ class OverseasEntitiesControllerTest {
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
             Errors errors = new Errors(err);
-            when(overseasEntitySubmissionDtoValidator.validate(
+            when(overseasEntitySubmissionDtoValidator.validateFull(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
                     eq(REQUEST_ID)
@@ -239,7 +238,7 @@ class OverseasEntitiesControllerTest {
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -282,7 +281,7 @@ class OverseasEntitiesControllerTest {
         validationStatus.setValid(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -306,7 +305,7 @@ class OverseasEntitiesControllerTest {
         final String errorLocation = "EXAMPLE_ERROR_LOCATION";
         final String error = "EXAMPLE_ERROR";
         Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors(err));
@@ -384,40 +383,7 @@ class OverseasEntitiesControllerTest {
     void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledButValidationIsDeterminedToNotBeRequired() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
-        when(overseasEntitiesService.updateOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID)).thenReturn(UPDATED_SUCCESS_RESPONSE);
-
-        var response = overseasEntitiesController.updateSubmission(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-        assertEquals(UPDATED_SUCCESS_RESPONSE, response);
-
-        verify(overseasEntitiesService).updateOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-        verify(overseasEntitySubmissionDtoValidator, never()).validate(any(), any(), any());
-    }
-
-    @Test
-    void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledAndValidationIsDeterminedToBeRequired() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-
-        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().add(new BeneficialOwnerIndividualDto());
-
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
@@ -445,7 +411,45 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
                 USER_ID);
-        verify(overseasEntitySubmissionDtoValidator).validate(
+        verify(overseasEntitySubmissionDtoValidator, never()).validateFull(any(), any(), any());
+    }
+
+    @Test
+    void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledAndValidationIsDeterminedToBeRequired() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().add(new BeneficialOwnerIndividualDto());
+
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
+
+        when(overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID)).thenReturn(UPDATED_SUCCESS_RESPONSE);
+
+        var response = overseasEntitiesController.updateSubmission(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(UPDATED_SUCCESS_RESPONSE, response);
+
+        verify(overseasEntitiesService).updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+        verify(overseasEntitySubmissionDtoValidator).validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID));
@@ -460,7 +464,7 @@ class OverseasEntitiesControllerTest {
 
         Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -492,7 +496,7 @@ class OverseasEntitiesControllerTest {
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
             Errors errors = new Errors(err);
-            when(overseasEntitySubmissionDtoValidator.validate(
+            when(overseasEntitySubmissionDtoValidator.validatePartial(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
                     eq(REQUEST_ID)
@@ -531,7 +535,7 @@ class OverseasEntitiesControllerTest {
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
-        when(overseasEntitySubmissionDtoValidator.validate(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -555,6 +559,11 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
         when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
@@ -577,6 +586,31 @@ class OverseasEntitiesControllerTest {
                 PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
+    }
+
+    @Test
+    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
+        overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
+
+        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
+
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors(err));
+
+        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID,
+                mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {

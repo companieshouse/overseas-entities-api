@@ -28,7 +28,6 @@ import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -69,7 +68,7 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), requestId);
+                var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
                     ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
@@ -110,12 +109,8 @@ public class OverseasEntitiesController {
         ApiLogger.infoContext(requestId, "Calling service to update the Overseas Entity Submission", logMap);
 
         try {
-            // TODO The logic related to what specific validation checks should be run will need to be more
-            //      sophisticated - this is covered by ROE-1415. For now though, it's only necessary to check if
-            //      all validation checks should be run, i.e. if the user is calling the PUT end-point from the
-            //      'check your answers' screen.
-            if (isValidationEnabled && isValidationRequired(overseasEntitySubmissionDto)) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(
+            if (isValidationEnabled) {
+                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
                         overseasEntitySubmissionDto, new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
@@ -165,6 +160,19 @@ public class OverseasEntitiesController {
 
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
 
+
+            if (isValidationEnabled) {
+                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                        overseasEntitySubmissionDto, new Errors(), requestId);
+
+                if (validationErrors.hasErrors()) {
+                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                            convertErrorsToJsonString(validationErrors)), null, logMap);
+                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+                }
+            }
+
             return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
@@ -195,7 +203,7 @@ public class OverseasEntitiesController {
             validationStatus.setValid(true);
 
             if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validate(
+                var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
                         submissionDtoOptional.get(), new Errors(), requestId);
 
                 if (validationErrors.hasErrors()) {
@@ -226,16 +234,6 @@ public class OverseasEntitiesController {
         errors[0] = error;
 
         validationStatus.setValidationStatusError(errors);
-    }
-
-    private boolean isValidationRequired(OverseasEntitySubmissionDto dto) {
-        // The presence of one or more BOs or MOs in the submission indicates that all data should be present and that
-        // the entire DTO can now be validated
-        return (Objects.nonNull(dto.getBeneficialOwnersCorporate()) && !dto.getBeneficialOwnersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersGovernmentOrPublicAuthority()) && !dto.getBeneficialOwnersGovernmentOrPublicAuthority().isEmpty())
-                || (Objects.nonNull(dto.getBeneficialOwnersIndividual()) && !dto.getBeneficialOwnersIndividual().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersCorporate()) && !dto.getManagingOfficersCorporate().isEmpty())
-                || (Objects.nonNull(dto.getManagingOfficersIndividual()) && !dto.getManagingOfficersIndividual().isEmpty());
     }
 
     private String convertErrorsToJsonString(Errors validationErrors) {
