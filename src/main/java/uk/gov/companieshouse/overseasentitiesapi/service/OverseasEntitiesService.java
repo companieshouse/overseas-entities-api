@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
@@ -131,6 +132,27 @@ public class OverseasEntitiesService {
                 transaction.getId(), submissionId));
 
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<Object> getSavedOverseasEntity(Transaction transaction,
+                                                         String submissionId,
+                                                         String requestId) throws SubmissionNotFoundException {
+        ApiLogger.debugContext(requestId, "Called getOverseasEntity(...)");
+
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+
+        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
+        }
+
+        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(submissionId);
+        OverseasEntitySubmissionDto submissionDto = submissionOpt
+                .orElseThrow(() ->
+                        new SubmissionNotFoundException(
+                                String.format("Empty submission returned when generating filing for %s", submissionId)));
+
+        return ResponseEntity.ok().body(submissionDto);
     }
 
     private boolean hasExistingOverseasEntitySubmission(Transaction transaction) {
