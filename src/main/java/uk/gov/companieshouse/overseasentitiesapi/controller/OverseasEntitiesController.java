@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -137,11 +139,12 @@ public class OverseasEntitiesController {
      * Temporary endpoint for creating an initial OE mongo record with partial data
      * and no validation (to be added). This is to prevent issues with existing POST endpoint
      * that will validate a whole submission.
-     * @param transaction The transaction to be linked to OE submission
+     *
+     * @param transaction                 The transaction to be linked to OE submission
      * @param overseasEntitySubmissionDto The data to store
-     * @param requestId Http request ID, used in logs
-     * @param userId the ERIC user id
-     * @param request the HttpServletRequest
+     * @param requestId                   Http request ID, used in logs
+     * @param userId                      the ERIC user id
+     * @param request                     the HttpServletRequest
      * @return ResponseEntity
      */
     @PostMapping("/start")
@@ -220,6 +223,32 @@ public class OverseasEntitiesController {
         final var message = String.format("Could not find submission data for submission %s", submissionId);
         ApiLogger.errorContext(requestId, message, null, logMap);
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{overseas_entity_id}")
+    public ResponseEntity<Object> getSubmission(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
+
+        var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, submissionId);
+        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+
+        try {
+            ApiLogger.infoContext(requestId, "Calling service to get the overseas entity submission", logMap);
+            return overseasEntitiesService.getSavedOverseasEntity(transaction, submissionId, requestId);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
+        } catch (SubmissionNotFoundException e) {
+            ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            ApiLogger.errorContext(requestId, "Error getting Overseas Entity Submission", e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private void flagValidationStatusAsFailed(ValidationStatusResponse validationStatus, String errorsAsJsonString) {

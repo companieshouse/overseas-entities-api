@@ -14,6 +14,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
@@ -611,6 +613,72 @@ class OverseasEntitiesControllerTest {
                 mockHttpServletRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+    }
+
+    @Test
+    void testGetSubmissionIsSuccessful() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+                )).thenReturn(ResponseEntity.ok().body(overseasEntitySubmissionDto));
+
+        var response = overseasEntitiesController.getSubmission(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotLinkedToTransaction() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        )).thenThrow(new SubmissionNotLinkedToTransactionException(String.format("Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", TRANSACTION_ID, SUBMISSION_ID)));
+
+        var response = overseasEntitiesController.getSubmission(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotFound() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        )).thenThrow(new SubmissionNotFoundException(String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID)));
+
+        var response = overseasEntitiesController.getSubmission(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        );
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetSubmissionIsNotSuccessfulWhenExceptionIsThrown() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        )).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
+
+        var response = overseasEntitiesController.getSubmission(
+                transaction,
+                SUBMISSION_ID,
+                REQUEST_ID
+        );
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {
