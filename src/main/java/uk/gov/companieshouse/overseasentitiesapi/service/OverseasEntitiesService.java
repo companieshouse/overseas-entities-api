@@ -138,7 +138,7 @@ public class OverseasEntitiesService {
     public ResponseEntity<Object> getSavedOverseasEntity(Transaction transaction,
                                                          String submissionId,
                                                          String requestId) throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
-        ApiLogger.debugContext(requestId, "Called getOverseasEntity(...)");
+        ApiLogger.debugContext(requestId, "Called getSavedOverseasEntity(...)");
 
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
 
