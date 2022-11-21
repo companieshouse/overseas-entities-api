@@ -19,6 +19,7 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -237,6 +238,10 @@ public class OverseasEntitiesController {
         try {
             ApiLogger.infoContext(requestId, "Calling service to get the overseas entity submission", logMap);
             return overseasEntitiesService.getSavedOverseasEntity(transaction, submissionId, requestId);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

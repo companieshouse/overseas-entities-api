@@ -13,6 +13,7 @@ import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
@@ -253,7 +254,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntityWhenSubmissionFoundSuccessfully() throws SubmissionNotFoundException {
+    void testGetSavedOverseasEntityWhenSubmissionFoundSuccessfully() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException  {
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         var overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         var transaction = buildTransaction();
@@ -276,36 +277,36 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntityWhenTransactionNotLinked() throws SubmissionNotFoundException {
+    void testGetSavedOverseasEntityWhenTransactionNotLinked() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(false);
-        var response = overseasEntitiesService.getSavedOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                REQUEST_ID);
+        Exception exception = assertThrows(SubmissionNotLinkedToTransactionException.class, () ->
+                overseasEntitiesService.getSavedOverseasEntity(
+                        transaction,
+                        SUBMISSION_ID,
+                        REQUEST_ID));
 
-        var responseBody = response.getBody();
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String actualMessage = exception.getMessage();
         var expectedMessage = String.format("Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", TRANSACTION_ID, SUBMISSION_ID);
-        assertEquals(expectedMessage, responseBody);
+        assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
-    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() throws SubmissionNotFoundException {
+    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
         when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)
         ).thenReturn(Optional.empty());
 
-        var expectedMessage = String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID);
         Exception exception = assertThrows(SubmissionNotFoundException.class, () ->
                 overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
                 REQUEST_ID));
         String actualMessage = exception.getMessage();
+        var expectedMessage = String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID);
         assertTrue(actualMessage.contains(expectedMessage));
     }
 

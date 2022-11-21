@@ -15,6 +15,7 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
@@ -615,7 +616,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsSucessful() throws SubmissionNotFoundException {
+    void testGetSubmissionIsSucessful() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -633,7 +634,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenBadRequestIsReturned() throws SubmissionNotFoundException {
+    void testGetSubmissionIsNotSucessfulWhenBadRequestIsReturned() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         ResponseEntity badRequestResponse = ResponseEntity.badRequest().body(String.format(
                 "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s",
                 transaction.getId(),
@@ -643,7 +644,7 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 REQUEST_ID
-        )).thenReturn(badRequestResponse);
+        )).thenThrow(new SubmissionNotLinkedToTransactionException(String.format("Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", TRANSACTION_ID, SUBMISSION_ID)));
 
         var response = overseasEntitiesController.getSubmission(
                 transaction,
@@ -654,7 +655,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenSubmissionNotFound() throws SubmissionNotFoundException {
+    void testGetSubmissionIsNotSucessfulWhenSubmissionNotFound() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -670,7 +671,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenExceptionIsThrown() throws SubmissionNotFoundException {
+    void testGetSubmissionIsNotSucessfulWhenExceptionIsThrown() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
