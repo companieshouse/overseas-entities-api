@@ -241,7 +241,7 @@ public class OverseasEntitiesController {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId, "Error Updating Overseas Entity Submission", e, logMap);
+            ApiLogger.errorContext(requestId, "Error getting Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
