@@ -616,7 +616,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsSucessful() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsSuccessful() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -634,12 +634,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenBadRequestIsReturned() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
-        ResponseEntity badRequestResponse = ResponseEntity.badRequest().body(String.format(
-                "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s",
-                transaction.getId(),
-                SUBMISSION_ID));
-
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotLinkedToTransaction() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -655,7 +650,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenSubmissionNotFound() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotFound() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -671,7 +666,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSucessfulWhenExceptionIsThrown() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsNotSuccessfulWhenExceptionIsThrown() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
