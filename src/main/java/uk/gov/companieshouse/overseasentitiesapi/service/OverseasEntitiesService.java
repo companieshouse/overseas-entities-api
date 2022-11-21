@@ -142,6 +142,9 @@ public class OverseasEntitiesService {
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
 
         if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
+            ApiLogger.errorContext(requestId, String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId),
+                    null);
             return ResponseEntity.badRequest().body(String.format(
                     "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
         }
