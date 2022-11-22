@@ -695,6 +695,9 @@
           "nationality": {
             "$ref": "#/components/schemas/FieldPattern"
           },
+          "second_nationality": {
+            "$ref": "#/components/schemas/FieldPattern"
+          },
           "usual_residential_address": {
             "$ref": "#/components/schemas/Address"
           },
@@ -980,6 +983,9 @@
             "format": "date"
           },
           "nationality": {
+            "$ref": "#/components/schemas/FieldPattern"
+          },
+          "second_nationality": {
             "$ref": "#/components/schemas/FieldPattern"
           },
           "usual_residential_address": {

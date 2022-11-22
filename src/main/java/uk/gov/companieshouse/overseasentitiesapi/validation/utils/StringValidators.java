@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -83,5 +84,14 @@ public final class StringValidators {
             setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field should not be populated");
         }
+    }
+
+    public static boolean checkIsNotEqual(String string1, String string2, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (StringUtils.equals(string1, string2)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
+            return false;
+        }
+        return true;
     }
 }

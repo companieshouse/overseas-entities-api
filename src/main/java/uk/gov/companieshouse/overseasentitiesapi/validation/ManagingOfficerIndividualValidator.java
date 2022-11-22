@@ -9,10 +9,12 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -38,6 +40,9 @@ public class ManagingOfficerIndividualValidator {
             }
             validateDateOfBirth(managingOfficerIndividualDto.getDateOfBirth(), errors, loggingContext);
             validateNationality(managingOfficerIndividualDto.getNationality(), errors, loggingContext);
+            if (Objects.nonNull(managingOfficerIndividualDto.getSecondNationality())) {
+                validateSecondNationality(managingOfficerIndividualDto.getNationality(), managingOfficerIndividualDto.getSecondNationality(), errors, loggingContext);
+            }
             validateAddress(ManagingOfficerIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD, managingOfficerIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
             boolean isSameAddressFlagValid = validateIsServiceAddressSameAsUsualResidentialAddress(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
             if (isSameAddressFlagValid && Boolean.FALSE.equals(managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
@@ -94,6 +99,13 @@ public class ManagingOfficerIndividualValidator {
         return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(nationality, 50, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(secondNationality, 50, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
