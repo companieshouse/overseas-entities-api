@@ -6,6 +6,10 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
+/**
+ * A request interceptor class that checks if a web request made to the OE API is allowed - for this to be true a
+ * transaction must be present in the request attributes and that transaction cannot be CLOSED.
+ */
 @Component
 public class ProcessingInterceptor extends AbstractClosedTransactionInterceptor {
 

@@ -15,6 +15,13 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQ
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
+/**
+ * An abstract class which can be extended by request interceptors to implement specific behaviour, based on whether the
+ * transaction associated with the Overseas Entity submission is Closed or not.
+ * <p/>
+ * Note that a transaction object instance is expected to already be present in the request attributes. Any concrete
+ * implementations must therefore run after the <code>TransactionInterceptor</code> has completed.
+ */
 public abstract class AbstractClosedTransactionInterceptor implements HandlerInterceptor {
 
     @Override
