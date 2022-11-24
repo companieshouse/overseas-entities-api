@@ -15,7 +15,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQ
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
-abstract public class AbstractClosedTransactionInterceptor implements HandlerInterceptor {
+public abstract class AbstractClosedTransactionInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
