@@ -50,10 +50,10 @@ public class OverseasEntitiesController {
     @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
     private boolean isValidationEnabled;
 
-    @Value("${FEATURE_FLAG_ROE_UPDATE_24112022}")
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022}")
     private boolean isRoeUpdateEnabled;
 
-    @Value("${FEATURE_FLAG_ROE_REMOVE_24112022}")
+    @Value("${FEATURE_FLAG_ENABLE_ROE_REMOVE_24112022}")
     private boolean isRoeRemoveEnabled;
 
     @Autowired
