@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -57,31 +61,33 @@ public class FilingsService {
     @Value("${OE01_COST}")
     private String costAmount;
 
+    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022}")
+    private boolean isTrustsSubmissionThroughWebEnabled;
+
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
     private final Supplier<LocalDate> dateNowSupplier;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public FilingsService(OverseasEntitiesService overseasEntitiesService,
-                          ApiClientService apiClientService,
-                          Supplier<LocalDate> dateNowSupplier,
-                          ObjectMapper objectMapper) {
+    public FilingsService(OverseasEntitiesService overseasEntitiesService, ApiClientService apiClientService,
+            Supplier<LocalDate> dateNowSupplier, ObjectMapper objectMapper) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
         this.objectMapper = objectMapper;
     }
 
-    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
-            throws SubmissionNotFoundException, ServiceException {
+    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction,
+            String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
         var filing = new FilingApi();
         filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
         setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader);
         return filing;
     }
 
-    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction, String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
+    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction,
+            String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
@@ -96,30 +102,34 @@ public class FilingsService {
         setDescriptionFields(filing);
     }
 
-    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
-        Optional<OverseasEntitySubmissionDto> submissionOpt =
-                overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap)
+            throws SubmissionNotFoundException, ServiceException {
 
-        OverseasEntitySubmissionDto submissionDto = submissionOpt
-                .orElseThrow(() ->
-                        new SubmissionNotFoundException(
-                                String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
+        Optional<OverseasEntitySubmissionDto> submissionOpt = overseasEntitiesService
+                .getOverseasEntitySubmission(overseasEntityId);
+
+        OverseasEntitySubmissionDto submissionDto = submissionOpt.orElseThrow(() -> new SubmissionNotFoundException(
+                String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
 
         data.put(PRESENTER_FIELD, submissionDto.getPresenter());
         data.put(ENTITY_FIELD, submissionDto.getEntity());
         data.put(DUE_DILIGENCE_FIELD, submissionDto.getDueDiligence());
         data.put(OVERSEAS_ENTITY_DUE_DILIGENCE, submissionDto.getOverseasEntityDueDiligence());
         data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, getBeneficialOwnersIndividualSubmissionData(submissionDto));
-        data.put(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
+        data.put(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
         data.put(BENEFICIAL_OWNERS_CORPORATE_FIELD, getBeneficialOwnersCorporateSubmissionData(submissionDto));
         data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
-
+        if (isTrustsSubmissionThroughWebEnabled) {
+            data.put(TRUST_DATA, submissionDto.getTrusts());
+        }
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 
-    private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+    private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(
+            OverseasEntitySubmissionDto submissionDto) throws ServiceException {
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualSubmissionData = new ArrayList<>();
 
         if (Objects.isNull(submissionDto.getBeneficialOwnersIndividual())) {
@@ -127,18 +137,23 @@ public class FilingsService {
         }
 
         for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
-            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
-                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
 
-            List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
-            beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            if (!isTrustsSubmissionThroughWebEnabled) {
+                String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
+                        + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
+
+                List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(),
+                        noTrustsMessage);
+                beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            }
             beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
         }
 
         return beneficialOwnersIndividualSubmissionData;
     }
 
-    private List<BeneficialOwnerCorporateDto> getBeneficialOwnersCorporateSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+    private List<BeneficialOwnerCorporateDto> getBeneficialOwnersCorporateSubmissionData(
+            OverseasEntitySubmissionDto submissionDto) throws ServiceException {
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateSubmissionData = new ArrayList<>();
 
         if (Objects.isNull(submissionDto.getBeneficialOwnersCorporate())) {
@@ -146,18 +161,22 @@ public class FilingsService {
         }
 
         for (BeneficialOwnerCorporateDto beneficialOwner : submissionDto.getBeneficialOwnersCorporate()) {
-            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Corporate "
-                    + beneficialOwner.getPublicRegisterName();
+            if (!isTrustsSubmissionThroughWebEnabled) {
+                String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Corporate "
+                        + beneficialOwner.getPublicRegisterName();
 
-            List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
-            beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+
+                List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(),
+                        noTrustsMessage);
+                beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            }
             beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
         }
-
         return beneficialOwnersCorporateSubmissionData;
     }
 
-    private List<TrustDataDto> getTrustData(OverseasEntitySubmissionDto submissionDto, List<String> trustIds, String noTrustsExceptionMessage) throws ServiceException {
+    private List<TrustDataDto> getTrustData(OverseasEntitySubmissionDto submissionDto, List<String> trustIds,
+            String noTrustsExceptionMessage) throws ServiceException {
         List<TrustDataDto> trustsDataForBO = new ArrayList<>();
         // Loop through each trustId(s) and lookup the information for that trust
         if (Objects.isNull(trustIds)) {
@@ -193,8 +212,11 @@ public class FilingsService {
 
     private String convertTrustDataToString(List<TrustDataDto> trustsDataForBO) throws ServiceException {
         String trustData = "";
+
         if (!trustsDataForBO.isEmpty()) {
-            // Convert trust data to JSON string if it exists on transaction else it's to an empty string
+
+            // Convert trust data to JSON string if it exists on transaction else it's to an
+            // empty string
             try {
                 trustData = objectMapper.writeValueAsString(trustsDataForBO);
             } catch (JsonProcessingException e) {
@@ -204,7 +226,8 @@ public class FilingsService {
         return trustData;
     }
 
-    private void setPaymentData(Map<String, Object> data, Transaction transaction, String passthroughTokenHeader, Map<String, Object> logMap) throws ServiceException {
+    private void setPaymentData(Map<String, Object> data, Transaction transaction, String passthroughTokenHeader,
+            Map<String, Object> logMap) throws ServiceException {
         var paymentLink = transaction.getLinks().getPayment();
         var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
         var payment = getPayment(paymentReference, passthroughTokenHeader);
@@ -216,17 +239,18 @@ public class FilingsService {
 
     private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader) throws ServiceException {
         try {
-            return apiClientService
-                    .getOauthAuthenticatedClient(passthroughTokenHeader).payment().get("/payments/" + paymentReference).execute().getData();
+            return apiClientService.getOauthAuthenticatedClient(passthroughTokenHeader).payment()
+                    .get("/payments/" + paymentReference).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException(e.getMessage(), e);
         }
     }
 
-    private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader) throws ServiceException {
+    private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
+            throws ServiceException {
         try {
-            var transactionPaymentInfo = apiClientService
-                    .getOauthAuthenticatedClient(passthroughTokenHeader).transactions().getPayment(uri).execute();
+            var transactionPaymentInfo = apiClientService.getOauthAuthenticatedClient(passthroughTokenHeader)
+                    .transactions().getPayment(uri).execute();
 
             return transactionPaymentInfo.getData().getPaymentReference();
         } catch (URIValidationException | IOException e) {
