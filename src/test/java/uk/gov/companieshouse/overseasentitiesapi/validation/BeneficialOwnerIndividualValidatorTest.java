@@ -221,6 +221,33 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenBothNationalityFieldsAreWithinMaxLength() {
+        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 24));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenBothNationalityFieldsExceedMaxLength() {
+        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 25));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
+
+        String qualifiedFieldNameSecondNationality = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        String compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 50 characters or less").build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
     void testErrorReportedWhenNationalityFieldContainsInvalidCharacters() {
         beneficialOwnerIndividualDtoList.get(0).setNationality("Дракон");
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

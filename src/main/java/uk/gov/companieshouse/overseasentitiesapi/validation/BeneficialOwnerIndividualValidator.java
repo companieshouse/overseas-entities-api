@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
@@ -100,10 +101,13 @@ public class BeneficialOwnerIndividualValidator {
     }
 
     private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(secondNationality,  50, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldName, errors, loggingContext);
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
+        String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
+        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldNameSecondNationality, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(secondNationality,  50, qualifiedFieldNameSecondNationality, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format("%s,%s", nationality, secondNationality),50, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldNameSecondNationality, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
