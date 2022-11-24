@@ -1,49 +1,28 @@
 package uk.gov.companieshouse.overseasentitiesapi.interceptor;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
-
-import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED;
-
+/**
+ * A request interceptor class that checks if a request to retrieve filing data is allowed - for this to be true a
+ * transaction must be present in the request attributes and that transaction must be CLOSED.
+ */
 @Component
-public class FilingInterceptor implements HandlerInterceptor {
+public class FilingInterceptor extends AbstractClosedTransactionInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        final String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
-        ApiLogger.debugContext(reqId, "Called preHandle(...)", null);
+    boolean handleClosedTransactionStatus(String reqId, HashMap<String, Object> logMap, HttpServletResponse response) {
+        ApiLogger.infoContext(reqId, "Transaction is closed - filing allowed", logMap);
 
-        final var transaction = (Transaction) request.getAttribute(TRANSACTION_KEY);
+        return true;
+    }
 
-        if (Objects.isNull(transaction)) {
-            ApiLogger.infoContext(reqId, "No transaction found in request - filing disallowed");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            return false;
-        }
-
-        var logMap = new HashMap<String, Object>();
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-
-        if (CLOSED.equals(transaction.getStatus())) {
-            ApiLogger.infoContext(reqId, "Transaction is closed - filing allowed", logMap);
-
-            return true;
-        }
-
-        ApiLogger.infoContext(reqId, "Transaction is not closed - filing disallowed", logMap);
+    @Override
+    boolean handleNonClosedTransactionStatus(String reqId, HashMap<String, Object> logMap, HttpServletResponse response) {
+        ApiLogger.errorContext(reqId, "Transaction is not closed - filing disallowed", null, logMap);
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 

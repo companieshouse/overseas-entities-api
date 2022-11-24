@@ -12,6 +12,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.TransactionService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,6 +72,6 @@ class TransactionInterceptorTest {
         when(transactionService.getTransaction(TX_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT)).thenThrow(ServiceException.class);
 
         assertFalse(transactionInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler));
-        assertEquals(500,  mockHttpServletResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
     }
 }
