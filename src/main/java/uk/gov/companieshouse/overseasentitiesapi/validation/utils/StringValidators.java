@@ -45,8 +45,8 @@ public final class StringValidators {
 
 
     /**
-     * The email regex is taken from OWASP https://owasp.org/www-community/OWASP_Validation_Regex_Repository
-     * ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,15}$
+     * The email regex is taken from account.ch.gov.uk
+     * https://github.com/companieshouse/account.ch.gov.uk/blob/412c70c5b1d4949d689b0a2b1c5a9a3527134aaa/lib/AccountChGovUk/Helpers/Validation.pm#L129
      * @param email
      * @param qualifiedFieldName
      * @param errs
@@ -55,7 +55,7 @@ public final class StringValidators {
      */
     public static boolean isValidEmailAddress(String email, String qualifiedFieldName, Errors errs, String loggingContext) {
 
-        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$";
+        var regex = "^.+@.+\\..+$";
 
         var pattern = Pattern.compile(regex);
         var matcher = pattern.matcher(email);
