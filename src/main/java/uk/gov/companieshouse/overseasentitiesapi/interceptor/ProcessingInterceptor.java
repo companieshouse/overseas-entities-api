@@ -11,14 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
-import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED;
-
 @Component
-public class FilingInterceptor implements HandlerInterceptor {
+public class ProcessingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
@@ -28,7 +27,8 @@ public class FilingInterceptor implements HandlerInterceptor {
         final var transaction = (Transaction) request.getAttribute(TRANSACTION_KEY);
 
         if (Objects.isNull(transaction)) {
-            ApiLogger.errorContext(reqId, "No transaction found in request - filing disallowed", null);
+            ApiLogger.errorContext(reqId, "No transaction found in request - processing disallowed", null);
+
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
             return false;
@@ -38,15 +38,15 @@ public class FilingInterceptor implements HandlerInterceptor {
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         if (CLOSED.equals(transaction.getStatus())) {
-            ApiLogger.infoContext(reqId, "Transaction is closed - filing allowed", logMap);
+            ApiLogger.errorContext(reqId, "Transaction is closed - processing disallowed", null, logMap);
 
-            return true;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            return false;
         }
 
-        ApiLogger.errorContext(reqId, "Transaction is not closed - filing disallowed", null, logMap);
+        ApiLogger.infoContext(reqId, "Transaction is not closed - processing allowed", logMap);
 
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-        return false;
+        return true;
     }
 }

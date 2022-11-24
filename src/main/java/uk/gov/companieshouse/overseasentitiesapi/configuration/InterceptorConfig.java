@@ -10,6 +10,7 @@ import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.FilingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.ProcessingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.UserAuthenticationInterceptor;
 
@@ -45,6 +46,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private FilingInterceptor filingInterceptor;
 
+    @Autowired
+    private ProcessingInterceptor processingInterceptor;
+
     /**
      * Setup the interceptors to run against endpoints when the endpoints are called
      * Interceptors are executed in the order they are added to the registry
@@ -58,6 +62,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addInternalUserAuthenticationEndpointsInterceptor(registry);
         addTransactionInterceptor(registry);
         addFilingInterceptor(registry);
+        addProcessingInterceptor(registry);
     }
 
     /**
@@ -93,6 +98,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
                 .addPathPatterns(TRANSACTIONS, FILINGS);
+    }
+
+    /**
+     * Interceptor to check specific conditions for OE end-points that are called from web clients
+     * @param registry The spring interceptor registry
+     */
+    private void addProcessingInterceptor(InterceptorRegistry registry) {
+        registry.addInterceptor(processingInterceptor)
+                .addPathPatterns(TRANSACTIONS)
+                .excludePathPatterns(COSTS);
     }
 
     /**

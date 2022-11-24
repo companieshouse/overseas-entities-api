@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class FilingInterceptorTest {
+class ProcessingInterceptorTest {
 
     private static final String CREATED_BY_ID = "12345";
 
@@ -29,7 +29,7 @@ class FilingInterceptorTest {
     private HttpServletRequest mockHttpServletRequest;
 
     @InjectMocks
-    private FilingInterceptor filingInterceptor;
+    private ProcessingInterceptor processingInterceptor;
 
     private Transaction transaction;
     @BeforeEach
@@ -41,26 +41,26 @@ class FilingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsTrueWhenTransactionIsClosed() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsClosed() throws IOException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
-        var result = filingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
-        assertTrue(result);
-        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsStillOpen() throws IOException {
+    void testInterceptorReturnsTrueWhenTransactionIsStillOpen() throws IOException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
         transaction.setStatus(TransactionStatus.OPEN);
-        var result = filingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
-        assertFalse(result);
-        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
+        assertTrue(result);
+        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
     }
 
     @Test
@@ -69,7 +69,7 @@ class FilingInterceptorTest {
         Object mockHandler = new Object();
 
         when(mockHttpServletRequest.getAttribute("transaction")).thenReturn(null);
-        var result = filingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
         assertFalse(result);
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());

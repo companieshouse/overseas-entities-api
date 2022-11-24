@@ -59,6 +59,7 @@ class UserAuthenticationInterceptorTest {
 
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
         assertTrue(result);
+        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
     }
 
     @Test
@@ -84,5 +85,6 @@ class UserAuthenticationInterceptorTest {
 
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
         assertTrue(result);
+        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
     }
 }

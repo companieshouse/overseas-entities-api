@@ -12,6 +12,7 @@ import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.FilingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.overseasentitiesapi.interceptor.ProcessingInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.overseasentitiesapi.interceptor.UserAuthenticationInterceptor;
 
@@ -43,12 +44,16 @@ class InterceptorConfigTest {
     @Mock
     private InternalUserInterceptor internalUserInterceptor;
 
+    @Mock
+    private ProcessingInterceptor processingInterceptor;
+
     @InjectMocks
     private InterceptorConfig interceptorConfig;
 
     @Test
     void addInterceptorsTest() {
         when(interceptorRegistry.addInterceptor(any())).thenReturn(interceptorRegistration);
+        when(interceptorRegistration.addPathPatterns(any(String.class))).thenReturn(interceptorRegistration);
 
         interceptorConfig.addInterceptors(interceptorRegistry);
 
@@ -76,5 +81,10 @@ class InterceptorConfigTest {
         // Filing interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(filingInterceptor);
         inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.FILINGS);
+
+        // Processing interceptor check
+        inOrder.verify(interceptorRegistry).addInterceptor(processingInterceptor);
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS);
+        inOrder.verify(interceptorRegistration).excludePathPatterns(InterceptorConfig.COSTS);
     }
 }
