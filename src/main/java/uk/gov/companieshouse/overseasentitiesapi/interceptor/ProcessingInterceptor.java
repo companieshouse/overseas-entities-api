@@ -17,34 +17,19 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @Component
-public class ProcessingInterceptor implements HandlerInterceptor {
+public class ProcessingInterceptor extends AbstractClosedTransactionInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        final String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
-        ApiLogger.debugContext(reqId, "Called preHandle(...)", null);
+    boolean handleClosedTransactionStatus(String reqId, HashMap<String, Object> logMap, HttpServletResponse response) {
+        ApiLogger.errorContext(reqId, "Transaction is closed - processing disallowed", null, logMap);
 
-        final var transaction = (Transaction) request.getAttribute(TRANSACTION_KEY);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        if (Objects.isNull(transaction)) {
-            ApiLogger.errorContext(reqId, "No transaction found in request - processing disallowed", null);
+        return false;
+    }
 
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            return false;
-        }
-
-        var logMap = new HashMap<String, Object>();
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-
-        if (CLOSED.equals(transaction.getStatus())) {
-            ApiLogger.errorContext(reqId, "Transaction is closed - processing disallowed", null, logMap);
-
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            return false;
-        }
-
+    @Override
+    boolean handleNonClosedTransactionStatus(String reqId, HashMap<String, Object> logMap, HttpServletResponse response) {
         ApiLogger.infoContext(reqId, "Transaction is not closed - processing allowed", logMap);
 
         return true;
