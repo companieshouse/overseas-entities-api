@@ -304,14 +304,30 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenSecondNationalityFieldExceedsMaxLength() {
-        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("A", 51));
+    void testNoErrorReportedWhenBothNationalityFieldsAreWithinMaxLength() {
+        managingOfficerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 24));
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenBothNationalityFieldsExceedMaxLength() {
+        managingOfficerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 25));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.NATIONALITY_FIELD);
+
+        String qualifiedFieldNameSecondNationality = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
                 ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
 
-        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
+        String compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 50 characters or less").build();
+        assertTrue(errors.containsError(err));
     }
 
     @Test

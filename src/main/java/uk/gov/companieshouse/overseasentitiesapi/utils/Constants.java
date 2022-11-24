@@ -31,4 +31,6 @@ public class Constants {
     public static final String LINK_RESOURCE = "resource";
 
     public static final int TRUNCATED_DATA_LENGTH = 50;
+
+    public static final String DUAL_NATIONALITY_STRING_FORMAT = "%s,%s";
 }
