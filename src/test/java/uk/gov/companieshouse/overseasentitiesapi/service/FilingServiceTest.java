@@ -43,6 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
@@ -53,6 +54,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,6 +70,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
@@ -524,6 +527,20 @@ class FilingServiceTest {
         assertEquals("", beneficialOwnerCorporateDto.getTrustData());
     }
 
+    private void checkTrustDataIsEmptyWithTrustFeatureFlagOn(FilingApi filing) {
+
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        assertNull(trustDataList);
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        assertNull(beneficialOwnerIndividualDto.getTrustIds());
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.get(0);
+        assertNull(beneficialOwnerCorporateDto.getTrustIds());
+    }
+
     private void checkTrustDataIndividual(FilingApi filing, int boIndex, String trustId) throws JSONException {
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
         final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
@@ -531,6 +548,20 @@ class FilingServiceTest {
         final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
         assertEquals(trustId, trustDataJSON.get("trust_id"));
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
+    }
+
+    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        final TrustDataDto trustData = trustDataList.get(boIndex);
+        assertEquals(trustId, trustData.getTrustId());
+        assertEquals("Trust Name " + trustId, trustData.getTrustName());
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
+        final List<String> trustsIdsList = beneficialOwnerIndividualDto.getTrustIds();
+
+        assertEquals(trustId, trustsIdsList.get(0));
     }
 
     private void checkTrustDataIndividualWithThreeTrusts(FilingApi filing) throws JSONException {
@@ -551,6 +582,30 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
+    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        final TrustDataDto trustData1 = trustDataList.get(0);
+        assertEquals("1", trustData1.getTrustId());
+        assertEquals("Trust Name 1", trustData1.getTrustName());
+
+        final TrustDataDto trustData2 = trustDataList.get(1);
+        assertEquals("2", trustData2.getTrustId());
+        assertEquals("Trust Name 2", trustData2.getTrustName());
+
+        final TrustDataDto trustData3 = trustDataList.get(2);
+        assertEquals("3", trustData3.getTrustId());
+        assertEquals("Trust Name 3", trustData3.getTrustName());
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerCorporateDto = beneficialOwnersIndividualInFiling.get(0);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("2", trustsIdsList.get(1));
+        assertEquals("3", trustsIdsList.get(2));
+    }
+
     private void checkTrustDataCorporate(FilingApi filing, int boIndex, String trustId) throws JSONException {
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
         final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
@@ -559,6 +614,23 @@ class FilingServiceTest {
         assertEquals(trustId, trustDataJSON.get("trust_id"));
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
+
+    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+
+        final TrustDataDto trustData = trustDataList.get(boIndex);
+        assertEquals(trustId, trustData.getTrustId());
+        assertEquals("Trust Name " + trustId, trustData.getTrustName());
+
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals(trustId, trustsIdsList.get(0));
+    }
+
 
     private void checkTrustDataCorporateWithThreeTrusts(FilingApi filing) throws JSONException {
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
@@ -576,6 +648,32 @@ class FilingServiceTest {
         final JSONObject trustDataJSON3 = trustsDataJSON.getJSONObject(2);
         assertEquals("3", trustDataJSON3.get("trust_id"));
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
+    }
+
+    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+
+        final TrustDataDto trustData1 = trustDataList.get(0);
+        assertEquals("1", trustData1.getTrustId());
+        assertEquals("Trust Name 1", trustData1.getTrustName());
+
+        final TrustDataDto trustData2 = trustDataList.get(1);
+        assertEquals("2", trustData2.getTrustId());
+        assertEquals("Trust Name 2", trustData2.getTrustName());
+
+        final TrustDataDto trustData3 = trustDataList.get(2);
+        assertEquals("3", trustData3.getTrustId());
+        assertEquals("Trust Name 3", trustData3.getTrustName());
+
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(0);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("2", trustsIdsList.get(1));
+        assertEquals("3", trustsIdsList.get(2));
+
     }
 
     private void checkManagingOfficers(FilingApi filing) {
@@ -705,14 +803,15 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        
         setValidationEnabledFeatureFlag(true);
+
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
-        // overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -731,7 +830,7 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataIsEmpty(filing);
+        checkTrustDataIsEmptyWithTrustFeatureFlagOn(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
@@ -739,14 +838,15 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
             throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
         setValidationEnabledFeatureFlag(true);
+
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -765,7 +865,7 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataIndividual(filing, 0, "1");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
@@ -782,9 +882,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoIndividualTrusts();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(1).setTrustData("[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(2).setTrustData("[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -803,9 +900,10 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataIndividual(filing, 0, "1");
-        checkTrustDataIndividual(filing, 1, "2");
-        checkTrustDataIndividual(filing, 2, "3");
+
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 2, "3");
     }
 
     @Test
@@ -820,7 +918,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrust();
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -839,7 +936,7 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataCorporate(filing, 0, "1");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
@@ -856,9 +953,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrusts();
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(1).setTrustData("[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(2).setTrustData("[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -877,9 +971,10 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataCorporate(filing, 0, "1");
-        checkTrustDataCorporate(filing, 1, "2");
-        checkTrustDataCorporate(filing, 2, "3");
+
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 2, "3");
     }
 
     @Test
@@ -894,12 +989,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrustsAndThreeIndividualTrust();
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(1).setTrustData("[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(2).setTrustData("[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(1).setTrustData("[{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(2).setTrustData("[{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
@@ -918,13 +1007,14 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataCorporate(filing, 0, "1");
-        checkTrustDataCorporate(filing, 1, "2");
-        checkTrustDataCorporate(filing, 2, "3");
 
-        checkTrustDataIndividual(filing, 0, "1");
-        checkTrustDataIndividual(filing, 1, "2");
-        checkTrustDataIndividual(filing, 2, "3");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 2, "3");
+
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 2, "3");
     }
 
     @Test
@@ -939,9 +1029,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithThreeTrusts();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
-        "{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
-        "{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
 
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -961,7 +1048,7 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataIndividualWithThreeTrusts(filing);
+        checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
@@ -978,9 +1065,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithThreeTrusts();
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
-        "{\"trust_id\":\"2\",\"trust_name\":\"Trust Name 2\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}," +
-        "{\"trust_id\":\"3\",\"trust_name\":\"Trust Name 3\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
 
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1000,24 +1084,9 @@ class FilingServiceTest {
 
         checkDueDiligence(filing);
         checkOverseasEntityDueDiligence(filing);
-        checkTrustDataCorporateWithThreeTrusts(filing);
+        checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(filing);
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
-    }
-
-    @Test
-    void testFilingGenerationThrowsExceptionWithBOIndividualMoreThanOneTrustIDWithTrustFeatureFlagOn() {
-
-        setValidationEnabledFeatureFlag(true);
-        
-        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
-        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithTwoTrustsSameID();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustData("[{\"trust_id\":\"1\",\"trust_name\":\"Trust Name 1\",\"creation_date\":[2020,4,1],\"unable_to_obtain_all_trust_info\":null}]");
-        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
-        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-
-        assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {
