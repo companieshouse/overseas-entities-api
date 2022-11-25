@@ -120,7 +120,7 @@ class FilingServiceTest {
 
     @BeforeEach
     void init() {
-        setValidationEnabledFeatureFlag(true);
+        setValidationEnabledFeatureFlag(false);
 
         transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
