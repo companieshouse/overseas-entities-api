@@ -136,8 +136,6 @@ public class FilingsService {
         }
 
         for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
-            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
-                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
 
             if (!isTrustsSubmissionThroughWebEnabled) {
                 String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
@@ -168,8 +166,9 @@ public class FilingsService {
 
             List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
             beneficialOwner.setTrustData(convertTrustDataToString(trustData));
-            beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
         }
+        beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
+    }
 
         return beneficialOwnersCorporateSubmissionData;
     }
