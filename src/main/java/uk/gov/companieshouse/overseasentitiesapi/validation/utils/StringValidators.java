@@ -13,6 +13,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 public final class StringValidators {
 
     private static final String REG_EXP_FOR_INVALID_CHARACTERS = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
+    private static final String REG_EXP_FOR_INVALID_EMAILS = "^.+@.+\\..+$";
 
     private StringValidators() {}
 
@@ -54,8 +55,7 @@ public final class StringValidators {
      */
     public static boolean isValidEmailAddress(String email, String qualifiedFieldName, Errors errs, String loggingContext) {
 
-        var regex = "^.+@.+\\..+$";
-        var pattern = Pattern.compile(regex);
+        var pattern = Pattern.compile(REG_EXP_FOR_INVALID_EMAILS);
         var matcher = pattern.matcher(email);
 
         if (!matcher.matches()) {
