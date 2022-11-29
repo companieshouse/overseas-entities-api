@@ -491,6 +491,27 @@ class ManagingOfficerCorporateValidatorTest {
         assertError(ManagingOfficerCorporateDto.CONTACT_EMAIL_FIELD,  validationMessage, errors);
     }
 
+    @Test
+    void testNoErrorReportedWithLongEmailAddress() {
+        managingOfficerCorporateDtoList.get(0).setContactEmail("vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithLongEmailNameAndAddress() {
+        managingOfficerCorporateDtoList.get(0).setContactEmail("socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithVeryLongEmailNameAndAddress() {
+        managingOfficerCorporateDtoList.get(0).setContactEmail("socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
 
     private void assertError(String fieldName, String message, Errors errors) {
         String qualifiedFieldName = MANAGING_OFFICERS_CORPORATE_FIELD + "." + fieldName;

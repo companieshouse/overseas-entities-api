@@ -194,6 +194,27 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWithLongEmailAddress() {
+        dueDiligenceDto.setEmail("vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithLongEmailNameAndAddress() {
+        dueDiligenceDto.setEmail("socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithVeryLongEmailNameAndAddress() {
+        dueDiligenceDto.setEmail("socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenSupervisoryNameFieldIsNull() {
         dueDiligenceDto.setSupervisoryName(null);
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);

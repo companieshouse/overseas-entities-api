@@ -258,6 +258,27 @@ class EntityDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWithLongEmailAddress() {
+        entityDto.setEmail("vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithLongEmailNameAndAddress() {
+        entityDto.setEmail("socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithVeryLongEmailNameAndAddress() {
+        entityDto.setEmail("socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenLegalFormIsEmpty() {
         entityDto.setLegalForm("  ");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);

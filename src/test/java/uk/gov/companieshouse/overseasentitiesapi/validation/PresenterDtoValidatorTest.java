@@ -121,6 +121,27 @@ class PresenterDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWithLongEmailAddress() {
+        presenterDto.setEmail("vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithLongEmailNameAndAddress() {
+        presenterDto.setEmail("socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWithVeryLongEmailNameAndAddress() {
+        presenterDto.setEmail("socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+        Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         presenterDto.setEmail("wrong.com");
         Errors errors = presenterDtoValidator.validate(presenterDto, new Errors(), LOGGING_CONTEXT);
