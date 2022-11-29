@@ -14,9 +14,6 @@ public final class StringValidators {
 
     private static final String REG_EXP_FOR_INVALID_CHARACTERS = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
 
-    //This is the same regular expression as used by the CH account service
-    private static final String REG_EXP_FOR_INVALID_EMAILS = "^.+@.+\\..+$";
-
     private StringValidators() {}
 
     public static boolean isNotBlank(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
@@ -48,6 +45,7 @@ public final class StringValidators {
 
 
     /**
+     * This is the same regular expression as used by the CH account service
      * @param email
      * @param qualifiedFieldName
      * @param errs
@@ -56,7 +54,8 @@ public final class StringValidators {
      */
     public static boolean isValidEmailAddress(String email, String qualifiedFieldName, Errors errs, String loggingContext) {
 
-        var pattern = Pattern.compile(REG_EXP_FOR_INVALID_EMAILS);
+        var regex = "^.+@.+\\..+$";
+        var pattern = Pattern.compile(regex);
         var matcher = pattern.matcher(email);
 
         if (!matcher.matches()) {
