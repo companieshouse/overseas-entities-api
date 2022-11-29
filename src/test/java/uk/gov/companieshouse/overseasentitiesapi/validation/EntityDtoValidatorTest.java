@@ -391,7 +391,7 @@ class EntityDtoValidatorTest {
     @Test
     void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterJurisdictionFieldNotEmpty() {
         entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
-        entityDto.setPublicRegisterJurisdiction("Name");
+        entityDto.setPublicRegisterJurisdiction("Jurisdiction");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
         String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
@@ -407,7 +407,6 @@ class EntityDtoValidatorTest {
         String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
         assertError(EntityDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
     }
-
 
     @Test
     void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
@@ -457,6 +456,7 @@ class EntityDtoValidatorTest {
         entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 160));
         entityDto.setRegistrationNumber("1234");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+
         assertEquals(0, errors.size(), "Errors should be empty");
     }
 
