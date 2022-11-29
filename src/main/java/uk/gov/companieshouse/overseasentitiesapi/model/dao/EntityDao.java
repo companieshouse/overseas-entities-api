@@ -31,6 +31,9 @@ public class EntityDao {
     @Field("public_register_name")
     private String publicRegisterName;
 
+    @Field("public_register_jurisdiction")
+    private String publicRegisterJurisdiction;
+
     @Field("registration_number")
     private String registrationNumber;
 
@@ -111,6 +114,14 @@ public class EntityDao {
 
     public String getRegistrationNumber() {
         return registrationNumber;
+    }
+
+    public String getPublicRegisterJurisdiction() {
+        return publicRegisterJurisdiction;
+    }
+
+    public void setPublicRegisterJurisdiction(String publicRegisterJurisdiction) {
+        this.publicRegisterJurisdiction = publicRegisterJurisdiction;
     }
 
     public void setRegistrationNumber(String registrationNumber) {
