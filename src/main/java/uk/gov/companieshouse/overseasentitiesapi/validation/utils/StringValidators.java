@@ -45,6 +45,7 @@ public final class StringValidators {
 
 
     /**
+     * This is the same regular expression as used by the CH account service
      * @param email
      * @param qualifiedFieldName
      * @param errs
