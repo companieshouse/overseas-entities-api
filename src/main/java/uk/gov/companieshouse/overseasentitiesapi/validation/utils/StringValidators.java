@@ -13,6 +13,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 public final class StringValidators {
 
     private static final String REG_EXP_FOR_INVALID_CHARACTERS = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
+
+    //This is the same regular expression as used by the CH account service
     private static final String REG_EXP_FOR_INVALID_EMAILS = "^.+@.+\\..+$";
 
     private StringValidators() {}
@@ -46,7 +48,6 @@ public final class StringValidators {
 
 
     /**
-     * This is the same regular expression as used by the CH account service
      * @param email
      * @param qualifiedFieldName
      * @param errs
