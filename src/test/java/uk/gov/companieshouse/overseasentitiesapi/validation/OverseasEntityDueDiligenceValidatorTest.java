@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -195,23 +197,12 @@ class OverseasEntityDueDiligenceValidatorTest {
         assertError(OverseasEntityDueDiligenceDto.EMAIL_FIELD,  validationMessage, errors);
     }
 
-    @Test
-    void testNoErrorReportedWithLongEmailAddress() {
-        overseasEntityDueDiligenceDto.setEmail("vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testNoErrorReportedWithLongEmailNameAndAddress() {
-        overseasEntityDueDiligenceDto.setEmail("socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testNoErrorReportedWithVeryLongEmailNameAndAddress() {
-        overseasEntityDueDiligenceDto.setEmail("socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk");
+    @ParameterizedTest
+    @ValueSource(strings = {"vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk",
+            "socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk",
+            "socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk"})
+    void testNoErrorReportedWithLongEmailAddress(String email) {
+        overseasEntityDueDiligenceDto.setEmail(email);
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
