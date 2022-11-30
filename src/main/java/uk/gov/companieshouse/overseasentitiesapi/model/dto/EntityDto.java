@@ -13,6 +13,7 @@ public class EntityDto {
     public static final String LEGAL_FORM_FIELD = "legal_form";
     public static final String LAW_GOVERNED_FIELD = "law_governed";
     public static final String PUBLIC_REGISTER_NAME_FIELD = "public_register_name";
+    public static final String PUBLIC_REGISTER_JURISDICTION_FIELD = "public_register_jurisdiction";
     public static final String REGISTRATION_NUMBER_FIELD = "registration_number";
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
 
@@ -42,6 +43,9 @@ public class EntityDto {
 
     @JsonProperty(PUBLIC_REGISTER_NAME_FIELD)
     private String publicRegisterName;
+
+    @JsonProperty(PUBLIC_REGISTER_JURISDICTION_FIELD)
+    private String publicRegisterJurisdiction;
 
     @JsonProperty(REGISTRATION_NUMBER_FIELD)
     private String registrationNumber;
@@ -119,6 +123,14 @@ public class EntityDto {
 
     public void setPublicRegisterName(String publicRegisterName) {
         this.publicRegisterName = publicRegisterName;
+    }
+
+    public String getPublicRegisterJurisdiction() {
+        return publicRegisterJurisdiction;
+    }
+
+    public void setPublicRegisterJurisdiction(String publicRegisterJurisdiction) {
+        this.publicRegisterJurisdiction = publicRegisterJurisdiction;
     }
 
     public String getRegistrationNumber() {
