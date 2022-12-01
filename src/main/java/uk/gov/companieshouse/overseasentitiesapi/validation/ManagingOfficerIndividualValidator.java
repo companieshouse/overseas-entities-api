@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCAT_STRING_FORMAT;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
@@ -107,7 +107,7 @@ public class ManagingOfficerIndividualValidator {
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
         return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldNameSecondNationality, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCAT_STRING_FORMAT, nationality, secondNationality), 50, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, nationality, secondNationality), 50, compoundQualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(secondNationality, qualifiedFieldNameSecondNationality, errors, loggingContext);
     }
 
