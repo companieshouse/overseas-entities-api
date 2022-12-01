@@ -32,5 +32,5 @@ public class Constants {
 
     public static final int TRUNCATED_DATA_LENGTH = 50;
 
-    public static final String DUAL_NATIONALITY_STRING_FORMAT = "%s,%s";
+    public static final String CONCAT_STRING_FORMAT = "%s,%s";
 }

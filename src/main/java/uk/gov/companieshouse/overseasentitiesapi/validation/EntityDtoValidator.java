@@ -13,6 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidator
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCAT_STRING_FORMAT;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -44,8 +45,8 @@ public class EntityDtoValidator {
         validateLawGoverned(entityDto.getLawGoverned(), errors, loggingContext);
 
         if (entityDto.isOnRegisterInCountryFormedIn()) {
-            validatePublicRegisterName(entityDto.getPublicRegisterName(), errors, loggingContext);
-            validatePublicRegisterJurisdiction(entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
+            validatePublicRegisterName(entityDto.getPublicRegisterName(), entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
+            validatePublicRegisterJurisdiction(entityDto.getPublicRegisterName(), entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
             validateRegistrationNumber(entityDto.getRegistrationNumber(), errors, loggingContext);
         } else {
             validatePublicRegisterNameIsNotSupplied(entityDto.getPublicRegisterName(), errors, loggingContext);
@@ -114,18 +115,24 @@ public class EntityDtoValidator {
                 && StringValidators.isValidCharacters(lawGoverned, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validatePublicRegisterName(String publicRegisterName, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
-        return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(publicRegisterName, 160, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldName, errors, loggingContext);
+    private boolean validatePublicRegisterName(String publicRegisterName, String publicRegisterJurisdiction, Errors errors, String loggingContext) {
+        String qualifiedFieldNamePublicRegisterName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        String qualifiedFieldNamePublicRegisterJurisdiction = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
+        var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
+
+        return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCAT_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext);
     }
 
-    private boolean validatePublicRegisterJurisdiction(String publicRegisterJurisdiction, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
-        return StringValidators.isNotBlank(publicRegisterJurisdiction, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(publicRegisterJurisdiction, 160, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(publicRegisterJurisdiction, qualifiedFieldName, errors, loggingContext);
+    private boolean validatePublicRegisterJurisdiction(String publicRegisterName, String publicRegisterJurisdiction, Errors errors, String loggingContext) {
+        String qualifiedFieldNamePublicRegisterName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_NAME_FIELD);
+        String qualifiedFieldNamePublicRegisterJurisdiction = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
+        var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
+
+        return StringValidators.isNotBlank(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCAT_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext);
     }
 
     private boolean validateRegistrationNumber(String registrationNumber, Errors errors, String loggingContext) {
