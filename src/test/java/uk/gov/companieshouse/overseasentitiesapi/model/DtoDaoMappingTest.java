@@ -50,6 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DtoDaoMappingTest {
 
+    private static final String EMAIL = "test@email.com";
+
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
 
     @BeforeEach
@@ -89,7 +91,7 @@ class DtoDaoMappingTest {
 
         EntityDao entity = new EntityDao();
         entity.setName("name");
-        entity.setEmail("email");
+        entity.setEmail(EMAIL);
         entity.setIncorporationCountry("country");
         entity.setLawGoverned("law governed");
         entity.setLegalForm("legal form");
@@ -149,7 +151,6 @@ class DtoDaoMappingTest {
         trustDataDao.add(trustData);
         overseasEntitySubmission.setTrusts(trustDataDao);
 
-
         return overseasEntitySubmission;
     }
 
@@ -167,7 +168,7 @@ class DtoDaoMappingTest {
 
         EntityDto entity = new EntityDto();
         entity.setName("name");
-        entity.setEmail("email");
+        entity.setEmail(" " + EMAIL + " ");
         entity.setIncorporationCountry("country");
         entity.setLawGoverned("law governed");
         entity.setLegalForm("legal form");
@@ -237,7 +238,7 @@ class DtoDaoMappingTest {
         EntityDto entityDto = dto.getEntity();
 
         assertEquals(entityDto.getName(), entityDao.getName());
-        assertEquals(entityDto.getEmail(), entityDao.getEmail());
+        assertEquals(EMAIL, entityDao.getEmail());
         assertEquals(entityDto.getIncorporationCountry(), entityDao.getIncorporationCountry());
         assertEquals(entityDto.getLawGoverned(), entityDao.getLawGoverned());
         assertEquals(entityDto.getLegalForm(), entityDao.getLegalForm());
