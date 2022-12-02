@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -56,6 +58,9 @@ public class FilingsService {
 
     @Value("${OE01_COST}")
     private String costAmount;
+
+    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022}")
+    private boolean isTrustsSubmissionThroughWebEnabled;
 
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
@@ -115,7 +120,9 @@ public class FilingsService {
         data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
         data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
         data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
-
+        if (isTrustsSubmissionThroughWebEnabled) {
+            data.put(TRUST_DATA, submissionDto.getTrusts());
+        }
         ApiLogger.debug("Submission data has been set on filing", logMap);
     }
 
@@ -127,11 +134,15 @@ public class FilingsService {
         }
 
         for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
-            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
-                    + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
 
-            List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
-            beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            if (!isTrustsSubmissionThroughWebEnabled) {
+                String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Individual "
+                        + beneficialOwner.getFirstName() + " " + beneficialOwner.getLastName();
+
+                List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(),
+                        noTrustsMessage);
+                beneficialOwner.setTrustData(convertTrustDataToString(trustData));
+            }
             beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
         }
 
@@ -146,13 +157,16 @@ public class FilingsService {
         }
 
         for (BeneficialOwnerCorporateDto beneficialOwner : submissionDto.getBeneficialOwnersCorporate()) {
-            String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Corporate "
-                    + beneficialOwner.getPublicRegisterName();
+            if (!isTrustsSubmissionThroughWebEnabled) {
+                String noTrustsMessage = "No trusts exist for this filing but a trust id is provided for BO Corporate "
+                        + beneficialOwner.getPublicRegisterName();
+
 
             List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
             beneficialOwner.setTrustData(convertTrustDataToString(trustData));
-            beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
         }
+        beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
+    }
 
         return beneficialOwnersCorporateSubmissionData;
     }
