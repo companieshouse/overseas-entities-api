@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class EntityDto {
 
     public static final String NAME_FIELD = "name";
@@ -98,7 +100,7 @@ public class EntityDto {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = Objects.isNull(email) ? null : email.trim();
     }
 
     public String getLegalForm() {

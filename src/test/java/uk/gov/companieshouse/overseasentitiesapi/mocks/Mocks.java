@@ -18,6 +18,12 @@ import java.util.List;
 
 public class Mocks {
 
+    /**
+     * Tests will add spaces to the beginning and end of this e-mail address, to check that they are removed (trimmed)
+     * when an e-mail is set on a DTO.
+     */
+    public static final String EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES = "user@domain.roe";
+
     public static OverseasEntitySubmissionDto buildSubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         EntityDto entity = buildEntityDto();

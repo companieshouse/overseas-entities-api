@@ -60,7 +60,7 @@ public class OverseasEntityDueDiligenceDto {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = Objects.isNull(email) ? null : email.trim();
     }
 
     public String getSupervisoryName() {

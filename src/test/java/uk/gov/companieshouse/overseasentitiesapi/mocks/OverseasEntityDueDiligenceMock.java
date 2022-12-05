@@ -5,11 +5,12 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 
 import java.time.LocalDate;
 
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
+
 public class OverseasEntityDueDiligenceMock {
 
     public static final LocalDate IDENTITY_DATE = LocalDate.of(2022,1,1);
     public static final String NAME = "ABC Checking Ltd";
-    public static final String EMAIL = "investigations@abc.com";
     public static final String SUPERVISOR_NAME = "Super Supervisor";
     public static final String AML_NUMBER = "abc123";
     public static final String PARTNER_NAME = "John Smith";
@@ -19,7 +20,7 @@ public class OverseasEntityDueDiligenceMock {
         overseasEntityDueDiligenceDao.setIdentityDate(IDENTITY_DATE);
         overseasEntityDueDiligenceDao.setAddress(AddressMock.getAddressDao());
         overseasEntityDueDiligenceDao.setName(NAME);
-        overseasEntityDueDiligenceDao.setEmail(EMAIL);
+        overseasEntityDueDiligenceDao.setEmail(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES);
         overseasEntityDueDiligenceDao.setSupervisoryName(SUPERVISOR_NAME);
         overseasEntityDueDiligenceDao.setAmlNumber(AML_NUMBER);
         overseasEntityDueDiligenceDao.setPartnerName(PARTNER_NAME);
@@ -31,7 +32,7 @@ public class OverseasEntityDueDiligenceMock {
         overseasEntityDueDiligenceDto.setIdentityDate(IDENTITY_DATE);
         overseasEntityDueDiligenceDto.setAddress(AddressMock.getAddressDto());
         overseasEntityDueDiligenceDto.setName(NAME);
-        overseasEntityDueDiligenceDto.setEmail(EMAIL);
+        overseasEntityDueDiligenceDto.setEmail(" " + EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES + " ");
         overseasEntityDueDiligenceDto.setSupervisoryName(SUPERVISOR_NAME);
         overseasEntityDueDiligenceDto.setAmlNumber(AML_NUMBER);
         overseasEntityDueDiligenceDto.setPartnerName(PARTNER_NAME);
