@@ -62,6 +62,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
@@ -730,7 +731,7 @@ class FilingServiceTest {
                 (OverseasEntityDueDiligenceDto) filing.getData().get(OVERSEAS_ENTITY_DUE_DILIGENCE);
         assertEquals(OverseasEntityDueDiligenceMock.IDENTITY_DATE, oeDueDiligenceDtoInFiling.getIdentityDate());
         assertEquals(OverseasEntityDueDiligenceMock.NAME, oeDueDiligenceDtoInFiling.getName());
-        assertEquals(OverseasEntityDueDiligenceMock.EMAIL, oeDueDiligenceDtoInFiling.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, oeDueDiligenceDtoInFiling.getEmail());
         assertEquals(OverseasEntityDueDiligenceMock.SUPERVISOR_NAME, oeDueDiligenceDtoInFiling.getSupervisoryName());
         assertEquals(OverseasEntityDueDiligenceMock.AML_NUMBER, oeDueDiligenceDtoInFiling.getAmlNumber());
         assertEquals(OverseasEntityDueDiligenceMock.PARTNER_NAME, oeDueDiligenceDtoInFiling.getPartnerName());

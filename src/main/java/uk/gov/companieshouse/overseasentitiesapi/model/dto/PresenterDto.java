@@ -2,6 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class PresenterDto {
 
     public static final String FULL_NAME_FIELD = "full_name";
@@ -27,6 +29,6 @@ public class PresenterDto {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = Objects.isNull(email) ? null : email.trim();
     }
 }
