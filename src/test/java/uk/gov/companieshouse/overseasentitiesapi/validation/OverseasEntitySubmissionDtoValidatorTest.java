@@ -38,6 +38,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 
 @ExtendWith(MockitoExtension.class)
@@ -226,7 +227,22 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingEntityFieldAndOtherBlockWithValidationErrors() {
+    void testErrorReportedForMissingPresenterFieldAndOtherBlocksWithValidationErrors() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = PRESENTER_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedForMissingEntityFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         overseasEntitySubmissionDto.setEntity(null);
@@ -253,22 +269,18 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingPresenterFieldAndOtherBlockWithValidationErrors() {
+    void testErrorReportedForMissingEntityNameField() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setPresenter(null);
-        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
-        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
-        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
-        overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
+        overseasEntitySubmissionDto.setEntityName(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = PRESENTER_FIELD;
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
-    void testErrorNotReportedForMissingPresenterFieldAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingPresenterFieldAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -285,7 +297,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingEntityFieldAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingEntityFieldAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -301,7 +313,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
