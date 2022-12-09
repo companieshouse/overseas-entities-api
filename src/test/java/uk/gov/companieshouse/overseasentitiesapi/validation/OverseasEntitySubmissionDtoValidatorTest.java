@@ -295,6 +295,24 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testErrorNotReportedForMissingEntityNameFieldAndOtherBlocksForPartialValidation() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+    }
+
+    @Test
     void testErrorNotReportedForMissingPresenterFieldAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);

@@ -57,6 +57,11 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
+        var entityNameDto = overseasEntitySubmissionDto.getEntityName();
+        if (Objects.nonNull(entityNameDto)) {
+            entityNameDtoValidator.validate(entityNameDto, errors, loggingContext);
+        }
+
         var presenterDto = overseasEntitySubmissionDto.getPresenter();
         if (Objects.nonNull(presenterDto)) {
             presenterDtoValidator.validate(presenterDto, errors, loggingContext);
