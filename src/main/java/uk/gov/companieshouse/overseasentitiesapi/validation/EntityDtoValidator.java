@@ -121,7 +121,7 @@ public class EntityDtoValidator {
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
 
         return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 159, compoundQualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext);
     }
 
@@ -131,7 +131,7 @@ public class EntityDtoValidator {
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
 
         return StringValidators.isNotBlank(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 159, compoundQualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext);
     }
 

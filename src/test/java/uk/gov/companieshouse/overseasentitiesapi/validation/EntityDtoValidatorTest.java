@@ -433,7 +433,7 @@ class EntityDtoValidatorTest {
     @Test
     void testNoErrorReportedWhenPublicRegisterNameAndJurisdictionFieldIsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterName(StringUtils.repeat("A", 79));
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 78));
         entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 80));
         entityDto.setRegistrationNumber("1234");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
@@ -444,22 +444,22 @@ class EntityDtoValidatorTest {
     @Test
     void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterName(StringUtils.repeat("A", 161));
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 160));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
 
         String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
-        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 160 characters or less").build();
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
         assertTrue(errors.containsError(err));
     }
 
     @Test
     void testErrorReportedWhenPublicRegisterJurisdictionFieldExceedsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 161));
+        entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 160));
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
 
         String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
-        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 160 characters or less").build();
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
         assertTrue(errors.containsError(err));
     }
 
@@ -471,7 +471,7 @@ class EntityDtoValidatorTest {
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
 
         String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
-        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 160 characters or less").build();
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
         assertTrue(errors.containsError(err));
     }
 
