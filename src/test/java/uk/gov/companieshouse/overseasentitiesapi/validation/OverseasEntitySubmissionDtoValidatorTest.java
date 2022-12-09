@@ -254,9 +254,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingEntityFieldAndOtherBlockWithValidationErrors() {
+    void testErrorReportedForMissingEntityFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(null);
         overseasEntitySubmissionDto.setEntity(null);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(null);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
@@ -281,7 +280,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingPresenterFieldAndOtherBlockWithValidationErrors() {
+    void testErrorReportedForMissingPresenterFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -296,7 +295,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingPresenterFieldAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingPresenterFieldAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -313,7 +312,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingEntityFieldAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingEntityFieldAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -329,7 +328,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlockForPartialValidation() {
+    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
