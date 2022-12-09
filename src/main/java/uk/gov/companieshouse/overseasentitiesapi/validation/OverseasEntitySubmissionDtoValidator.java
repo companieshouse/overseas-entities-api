@@ -11,6 +11,7 @@ import java.util.Objects;
 @Component
 public class OverseasEntitySubmissionDtoValidator {
 
+    private final EntityNameDtoValidator entityNameDtoValidator;
     private final EntityDtoValidator entityDtoValidator;
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
@@ -18,11 +19,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
 
     @Autowired
-    public OverseasEntitySubmissionDtoValidator(EntityDtoValidator entityDtoValidator,
+    public OverseasEntitySubmissionDtoValidator(EntityNameDtoValidator entityNameDtoValidator,
+                                                EntityDtoValidator entityDtoValidator,
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator,
                                                 DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator) {
-
+        this.entityNameDtoValidator = entityNameDtoValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.dueDiligenceDataBlockValidator = dueDiligenceDataBlockValidator;
@@ -30,6 +32,10 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
+            entityNameDtoValidator.validate(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
+        }
 
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
             entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
