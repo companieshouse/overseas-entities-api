@@ -25,6 +25,9 @@ public class OverseasEntitySubmissionDao {
     @Field("http_request_id")
     private String httpRequestId;
 
+    @Field("entity_name")
+    private EntityNameDao entityNameDao;
+
     @Field("presenter")
     private PresenterDao presenter;
 
@@ -67,6 +70,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public EntityNameDao getEntityName() {
+        return entityNameDao;
+    }
+
+    public void setEntityName(EntityNameDao entityNameDao) {
+        this.entityNameDao = entityNameDao;
     }
 
     public PresenterDao getPresenter() {

@@ -12,6 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class OverseasEntitySubmissionDto {
 
+    public static final String ENTITY_NAME_FIELD = "entity_name";
     public static final String PRESENTER_FIELD = "presenter";
     public static final String ENTITY_FIELD = "entity";
     public static final String DUE_DILIGENCE_FIELD = "due_diligence";
@@ -23,6 +24,9 @@ public class OverseasEntitySubmissionDto {
     public static final String MANAGING_OFFICERS_INDIVIDUAL_FIELD = "managing_officers_individual";
     public static final String MANAGING_OFFICERS_CORPORATE_FIELD = "managing_officers_corporate";
     public static final String TRUST_DATA = "trusts";
+
+    @JsonProperty(ENTITY_NAME_FIELD)
+    private EntityNameDto entityName;
 
     @JsonProperty(PRESENTER_FIELD)
     private PresenterDto presenter;
@@ -60,6 +64,14 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty("links")
     private Map<String, String> links;
+
+    public EntityNameDto getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(EntityNameDto entityName) {
+        this.entityName = entityName;
+    }
 
     public PresenterDto getPresenter() {
         return presenter;
