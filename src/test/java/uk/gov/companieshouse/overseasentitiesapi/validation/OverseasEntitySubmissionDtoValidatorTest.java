@@ -216,6 +216,33 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testErrorReportedForMissingEntityNameField() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedForMissingEntityNameFieldAndOtherBlocksWithValidationErrors() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedForMissingEntityField() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
@@ -244,7 +271,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testErrorReportedForMissingEntityFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(null);
         overseasEntitySubmissionDto.setEntity(null);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(null);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
@@ -256,7 +282,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
-
     @Test
     void testErrorReportedForMissingPresenterField() {
         buildOverseasEntitySubmissionDto();
@@ -264,17 +289,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = PRESENTER_FIELD;
-        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
-        assertError(qualifiedFieldName, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedForMissingEntityNameField() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(null);
-
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = ENTITY_NAME_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
