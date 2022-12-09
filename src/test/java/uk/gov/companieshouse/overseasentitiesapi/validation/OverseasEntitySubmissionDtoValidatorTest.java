@@ -348,6 +348,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntity(entityDto);
         overseasEntitySubmissionDto.setPresenter(presenterDto);
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
