@@ -433,7 +433,7 @@ class EntityDtoValidatorTest {
     @Test
     void testNoErrorReportedWhenPublicRegisterNameAndJurisdictionFieldIsMaxLength() {
         entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterName(StringUtils.repeat("A", 78));
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 79));
         entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 80));
         entityDto.setRegistrationNumber("1234");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
