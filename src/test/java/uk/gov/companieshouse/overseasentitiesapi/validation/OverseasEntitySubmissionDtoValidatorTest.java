@@ -379,24 +379,24 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldIsEmpty() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("  ");
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
-        assertTrue(errors.containsError(err));
-    }
-
-    @Test
     void testFullValidationErrorReportedWhenEntityNameFieldIsNull() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldIsEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("  ");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
         assertTrue(errors.containsError(err));
@@ -427,19 +427,23 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNoPartialValidationErrorReportedWhenEntityNameFieldIsEmpty() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("  ");
-        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
     void testNoPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenEntityNameFieldIsEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("  ");
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
     }
 
     @Test

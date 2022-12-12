@@ -57,7 +57,7 @@ public class OverseasEntitySubmissionDtoValidator {
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         var entityName = overseasEntitySubmissionDto.getEntityName();
-        if (StringUtils.isNotBlank(entityName)) {
+        if (Objects.nonNull(entityName)) {
             validateEntityName(entityName, errors, loggingContext);
         }
 
@@ -87,7 +87,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private boolean validateEntityName(String entityName, Errors errors, String loggingContext) {
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
-        return StringValidators.isNotBlank(entityName, qualifiedFieldName, errors, loggingContext)
+        return StringValidators.isNotEmpty(entityName, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
