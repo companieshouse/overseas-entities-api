@@ -31,7 +31,6 @@ public class EntityDtoValidator {
     }
 
     public Errors validate(EntityDto entityDto, Errors errors, String loggingContext) {
-        validateName(entityDto.getName(), errors, loggingContext);
         validateIncorporationCountry(entityDto.getIncorporationCountry(), errors, loggingContext);
         validateAddress(EntityDto.PRINCIPAL_ADDRESS_FIELD, entityDto.getPrincipalAddress(), errors, loggingContext);
         boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
@@ -54,13 +53,6 @@ public class EntityDtoValidator {
             validateRegistrationNumberIsNotSupplied(entityDto.getRegistrationNumber(), errors, loggingContext);
         }
         return errors;
-    }
-
-    private boolean validateName(String entityName, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.ENTITY_FIELD, EntityDto.NAME_FIELD);
-        return StringValidators.isNotBlank(entityName, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
 
     private void validateIncorporationCountry(String country, Errors errors, String loggingContext) {

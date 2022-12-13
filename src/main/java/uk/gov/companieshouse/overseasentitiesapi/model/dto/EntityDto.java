@@ -6,7 +6,6 @@ import java.util.Objects;
 
 public class EntityDto {
 
-    public static final String NAME_FIELD = "name";
     public static final String INCORPORATION_COUNTRY_FIELD = "incorporation_country";
     public static final String PRINCIPAL_ADDRESS_FIELD = "principal_address";
     public static final String SERVICE_ADDRESS_FIELD = "service_address";
@@ -18,9 +17,6 @@ public class EntityDto {
     public static final String PUBLIC_REGISTER_JURISDICTION_FIELD = "public_register_jurisdiction";
     public static final String REGISTRATION_NUMBER_FIELD = "registration_number";
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
-
-    @JsonProperty(NAME_FIELD)
-    private String name;
 
     @JsonProperty(INCORPORATION_COUNTRY_FIELD)
     private String incorporationCountry;
@@ -54,14 +50,6 @@ public class EntityDto {
 
     @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD)
     private boolean isOnRegisterInCountryFormedIn;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getIncorporationCountry() {
         return incorporationCountry;

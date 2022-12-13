@@ -51,45 +51,6 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenNameFieldIsEmpty() {
-        entityDto.setName("  ");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldIsNull() {
-        entityDto.setName(null);
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        entityDto.setName(StringUtils.repeat("A", 161));
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-
-        assertError(EntityDto.NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
-        entityDto.setName("Дракон");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
     void testNoErrorReportedWhenPrincipalAddressCountryIsOnTheAllowedList() {
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
@@ -520,17 +481,15 @@ class EntityDtoValidatorTest {
 
     @Test
     void testErrorsReportedWhenMultipleFieldsAreInvalid() {
-        entityDto.setName(StringUtils.repeat("A", 161));
         entityDto.setIncorporationCountry(null);
         entityDto.setLawGoverned(StringUtils.repeat("A", 161));
-        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setOnRegisterInCountryFormedIn(true);     // Note that setting this value does not cause an error
         entityDto.setPublicRegisterName(" ");
         entityDto.setPublicRegisterJurisdiction("Дракон");
         entityDto.setRegistrationNumber("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
 
-        assertEquals(6, errors.size());
-        assertError(EntityDto.NAME_FIELD, getQualifiedFieldName(EntityDto.NAME_FIELD) + " must be 160 characters or less", errors);
+        assertEquals(5, errors.size());
         assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", getQualifiedFieldName(EntityDto.INCORPORATION_COUNTRY_FIELD)), errors);
         assertError(EntityDto.LAW_GOVERNED_FIELD, getQualifiedFieldName(EntityDto.LAW_GOVERNED_FIELD) + " must be 160 characters or less", errors);
         assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s",  getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD)), errors);

@@ -398,7 +398,6 @@
       },
       "Entity": {
         "required": [
-          "name",
           "incorporation_country",
           "principal_address",
           "is_service_address_same_as_principal_address",
@@ -438,16 +437,6 @@
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "allOf" : [
-              {
-                "$ref": "#/components/schemas/FieldPattern"
-              },
-              {
-                "maxLength": 160
-              }
-            ]
-          },
           "incorporation_country": {
             "$ref": "#/components/schemas/OverseasCountry"
           },

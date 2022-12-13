@@ -8,7 +8,6 @@ public class EntityMock {
 
     public static EntityDto getEntityDto() {
         EntityDto entityDto = new EntityDto();
-        entityDto.setName("ABC Entity");
         entityDto.setIncorporationCountry("France");
         entityDto.setServiceAddressSameAsPrincipalAddress(Boolean.TRUE);
         entityDto.setEmail("jbloggs@jb.com");
@@ -19,7 +18,6 @@ public class EntityMock {
 
     public static EntityDao getEntityDao() {
         EntityDao entityDao = new EntityDao();
-        entityDao.setName("ABC Entity");
         entityDao.setIncorporationCountry("France");
         entityDao.setServiceAddressSameAsPrincipalAddress(Boolean.TRUE);
         entityDao.setEmail("jbloggs@jb.com");

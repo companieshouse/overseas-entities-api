@@ -187,7 +187,6 @@ public class Mocks {
 
     private static EntityDto buildEntityDto() {
         EntityDto entityDto = new EntityDto();
-        entityDto.setName("Joe Bloggs Ltd");
         entityDto.setEmail("example@test123.co.uk");
         entityDto.setIncorporationCountry("Eutopia");
         entityDto.setLawGoverned("The law");
