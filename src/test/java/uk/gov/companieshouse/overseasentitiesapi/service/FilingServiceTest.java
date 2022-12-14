@@ -175,6 +175,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -210,6 +211,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -247,6 +249,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -282,6 +285,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -319,6 +323,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -359,6 +364,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -400,6 +406,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -437,6 +444,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -827,6 +835,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -862,6 +871,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -897,6 +907,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -933,6 +944,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -968,6 +980,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -1004,6 +1017,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -1045,6 +1059,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -1081,6 +1096,7 @@ class FilingServiceTest {
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
