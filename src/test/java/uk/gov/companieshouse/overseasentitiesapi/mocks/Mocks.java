@@ -26,6 +26,7 @@ public class Mocks {
 
     public static OverseasEntitySubmissionDto buildSubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("Joe Bloggs Ltd");
         EntityDto entity = buildEntityDto();
         overseasEntitySubmissionDto.setEntity(entity);
         PresenterDto presenter = PresenterMock.getPresenterDto();
