@@ -89,7 +89,6 @@ class DtoDaoMappingTest {
         address.setPostcode("post code");
 
         EntityDao entity = new EntityDao();
-        entity.setName("name");
         entity.setEmail(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES);
         entity.setIncorporationCountry("country");
         entity.setLawGoverned("law governed");
@@ -166,7 +165,6 @@ class DtoDaoMappingTest {
         address.setPostcode("post code");
 
         EntityDto entity = new EntityDto();
-        entity.setName("name");
         // Leading and trailing spaces are added but should be trimmed by the time that the object is mapped
         entity.setEmail(" " + EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES + " ");
         entity.setIncorporationCountry("country");
@@ -236,7 +234,6 @@ class DtoDaoMappingTest {
         EntityDao entityDao = dao.getEntity();
         EntityDto entityDto = dto.getEntity();
 
-        assertEquals(entityDto.getName(), entityDao.getName());
         assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, entityDao.getEmail());
         assertEquals(entityDto.getIncorporationCountry(), entityDao.getIncorporationCountry());
         assertEquals(entityDto.getLawGoverned(), entityDao.getLawGoverned());
