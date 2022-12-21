@@ -33,4 +33,5 @@ public class Constants {
     public static final int TRUNCATED_DATA_LENGTH = 50;
 
     public static final String CONCATENATED_STRING_FORMAT = "%s,%s";
+    public static final String CONCATENATED_STRING_FORMAT_NO_COMMA = "%s%s";
 }

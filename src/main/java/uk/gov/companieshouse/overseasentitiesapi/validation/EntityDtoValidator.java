@@ -14,6 +14,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMess
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT_NO_COMMA;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -113,7 +114,7 @@ public class EntityDtoValidator {
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
 
         return StringValidators.isNotBlank(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT_NO_COMMA, publicRegisterName, publicRegisterJurisdiction), 159, compoundQualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterName, qualifiedFieldNamePublicRegisterName, errors, loggingContext);
     }
 
@@ -123,7 +124,7 @@ public class EntityDtoValidator {
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNamePublicRegisterName, qualifiedFieldNamePublicRegisterJurisdiction);
 
         return StringValidators.isNotBlank(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, publicRegisterName, publicRegisterJurisdiction), 160, compoundQualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT_NO_COMMA, publicRegisterName, publicRegisterJurisdiction), 159, compoundQualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(publicRegisterJurisdiction, qualifiedFieldNamePublicRegisterJurisdiction, errors, loggingContext);
     }
 
