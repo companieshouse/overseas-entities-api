@@ -66,7 +66,7 @@ public final class StringValidators {
         return true;
     }
 
-    private static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+    public static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.trim().isEmpty()) {
             setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field is empty");

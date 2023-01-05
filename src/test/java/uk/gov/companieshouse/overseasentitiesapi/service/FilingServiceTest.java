@@ -170,11 +170,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -205,11 +205,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -242,11 +242,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -277,11 +277,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -314,11 +314,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -354,11 +354,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -395,11 +395,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -432,11 +432,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -822,11 +822,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -857,11 +857,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -892,11 +892,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -928,11 +928,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -963,11 +963,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -999,11 +999,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -1040,11 +1040,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -1076,11 +1076,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);

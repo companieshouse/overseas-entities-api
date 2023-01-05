@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -22,7 +23,6 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator,
                                                 DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator) {
-
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.dueDiligenceDataBlockValidator = dueDiligenceDataBlockValidator;
@@ -30,6 +30,10 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
+            validateEntityName(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
+        }
 
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
             entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
@@ -50,6 +54,11 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        var entityName = overseasEntitySubmissionDto.getEntityName();
+        if (Objects.nonNull(entityName)) {
+            validateEntityName(entityName, errors, loggingContext);
+        }
 
         var presenterDto = overseasEntitySubmissionDto.getPresenter();
         if (Objects.nonNull(presenterDto)) {
@@ -73,5 +82,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         return errors;
+    }
+
+    private boolean validateEntityName(String entityName, Errors errors, String loggingContext) {
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        return StringValidators.isNotEmpty(entityName, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
 }

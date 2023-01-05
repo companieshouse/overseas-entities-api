@@ -26,6 +26,7 @@ public class Mocks {
 
     public static OverseasEntitySubmissionDto buildSubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("Joe Bloggs Ltd");
         EntityDto entity = buildEntityDto();
         overseasEntitySubmissionDto.setEntity(entity);
         PresenterDto presenter = PresenterMock.getPresenterDto();
@@ -187,7 +188,6 @@ public class Mocks {
 
     private static EntityDto buildEntityDto() {
         EntityDto entityDto = new EntityDto();
-        entityDto.setName("Joe Bloggs Ltd");
         entityDto.setEmail("example@test123.co.uk");
         entityDto.setIncorporationCountry("Eutopia");
         entityDto.setLawGoverned("The law");
