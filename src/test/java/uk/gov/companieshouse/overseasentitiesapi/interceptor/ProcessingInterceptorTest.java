@@ -52,6 +52,30 @@ class ProcessingInterceptorTest {
     }
 
     @Test
+    void testInterceptorReturnsFalseWhenTransactionIsClosedPendingPayment() throws IOException {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+
+        transaction.setStatus(TransactionStatus.CLOSED_PENDING_PAYMENT);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
+    }
+
+    @Test
+    void testInterceptorReturnsFalseWhenTransactionIsDeleted() throws IOException {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+
+        transaction.setStatus(TransactionStatus.DELETED);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
+    }
+
+    @Test
     void testInterceptorReturnsTrueWhenTransactionIsStillOpen() throws IOException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
