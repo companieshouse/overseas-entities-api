@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
@@ -34,13 +35,15 @@ public class CostsController {
     @GetMapping
     public ResponseEntity<List<Cost>> getCosts(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @RequestAttribute(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
-        var cost = costsService.getCosts();
+        var cost = costsService.getCosts(overseasEntityId);
 
         return ResponseEntity.ok(Collections.singletonList(cost));
     }

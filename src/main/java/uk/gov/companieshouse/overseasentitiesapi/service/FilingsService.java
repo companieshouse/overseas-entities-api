@@ -55,7 +55,10 @@ public class FilingsService {
     private String filingDescription;
 
     @Value("${OE01_COST}")
-    private String costAmount;
+    private String costRegisterAmount;
+
+    @Value("${OE01_UPDATE_COST}")
+    private String costUpdateAmount;
 
     private final OverseasEntitiesService overseasEntitiesService;
     private final ApiClientService apiClientService;
@@ -92,7 +95,12 @@ public class FilingsService {
         setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
-        filing.setCost(costAmount);
+        if (false) { // TODO
+            filing.setCost(costUpdateAmount);
+        } else {
+            filing.setCost(costRegisterAmount);
+        }
+
         setDescriptionFields(filing);
     }
 

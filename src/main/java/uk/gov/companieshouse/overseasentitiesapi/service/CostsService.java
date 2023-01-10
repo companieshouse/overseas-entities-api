@@ -9,10 +9,16 @@ import java.util.Collections;
 @Service
 public class CostsService {
 
-    private static final String COST_DESC = "Register Overseas Entity fee";
+    private static final String COST_REGISTER_DESC = "Register Overseas Entity fee";
+
+    private static final String COST_UPDATE_DESC = "Update Overseas Entity fee";
+
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
     private static final String RESOURCE_KIND = "overseas-entity";
-    private static final String PRODUCT_TYPE = "register-overseas-entity";
+    private static final String PRODUCT_TYPE_REGISTER = "register-overseas-entity";
+
+    private static final String PRODUCT_TYPE_UPDATE = "update-overseas-entity";
+
     private static final String CREDIT_CARD = "credit-card";
     private static final String DESCRIPTION_IDENTIFIER = "description-identifier";
     private static final String PAYMENT_SESSION = "payment-session#payment-session";
@@ -20,19 +26,45 @@ public class CostsService {
     private static final String VALUE = "Value";
 
     @Value("${OE01_COST}")
-    private String costAmount;
+    private String costRegisterAmount;
 
-    public Cost getCosts() {
+    @Value("${OE01_UPDATE_COST}")
+    private String costUpdateAmount;
+
+    public Cost getCosts(String overseasEntityId) {
+        if (false) { // TODO
+            return getCostForUpdate();
+        } else {
+            return getCostForRegistration();
+        }
+    }
+
+    private Cost getCostForRegistration() {
         var cost = new Cost();
-        cost.setAmount(costAmount);
+        cost.setAmount(costRegisterAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
-        cost.setDescription(COST_DESC);
+        cost.setDescription(COST_REGISTER_DESC);
         cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
         cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
-        cost.setProductType(PRODUCT_TYPE);
+        cost.setProductType(PRODUCT_TYPE_REGISTER);
+
+        return cost;
+    }
+
+    private Cost getCostForUpdate() {
+        var cost = new Cost();
+        cost.setAmount(costUpdateAmount);
+        cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
+        cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
+        cost.setDescription(COST_UPDATE_DESC);
+        cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
+        cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
+        cost.setKind(PAYMENT_SESSION);
+        cost.setResourceKind(RESOURCE_KIND);
+        cost.setProductType(PRODUCT_TYPE_UPDATE);
 
         return cost;
     }

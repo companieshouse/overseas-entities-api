@@ -13,6 +13,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CostsControllerTest {
+
+    private final static String OVERSEAS_ENTITY_ID = "testId";
+
     private final static String REQUEST_ID = "7567675jgjhgh";
 
     private final Transaction transaction = new Transaction();
@@ -25,8 +28,8 @@ class CostsControllerTest {
 
     @Test
     void getCosts() {
-        var response = costsController.getCosts(transaction, REQUEST_ID);
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
 
-        verify(costService, times(1)).getCosts();
+        verify(costService, times(1)).getCosts(OVERSEAS_ENTITY_ID);
     }
 }
