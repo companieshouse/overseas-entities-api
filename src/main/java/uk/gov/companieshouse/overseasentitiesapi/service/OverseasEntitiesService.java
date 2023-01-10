@@ -56,27 +56,24 @@ public class OverseasEntitiesService {
 
     public ResponseEntity<Object> createOverseasEntityWithResumeLink(Transaction transaction,
                                                                      OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                                     String passthroughTokenHeader,
                                                                      String requestId,
                                                                      String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called createOverseasEntityWithResumeLink(...)");
 
-        return createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, true);
+        return createOverseasEntity(transaction, overseasEntitySubmissionDto, requestId, userId, true);
     }
 
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                       String passthroughTokenHeader,
                                                        String requestId,
                                                        String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
 
-        return createOverseasEntity(transaction, overseasEntitySubmissionDto, passthroughTokenHeader, requestId, userId, false);
+        return createOverseasEntity(transaction, overseasEntitySubmissionDto, requestId, userId, false);
     }
 
     private ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                         OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                        String passThroughTokenHeader,
                                                         String requestId,
                                                         String userId,
                                                         boolean addResumeLinkToTransaction) throws ServiceException {
@@ -111,7 +108,6 @@ public class OverseasEntitiesService {
     public ResponseEntity<Object> updateOverseasEntity(Transaction transaction,
                                                        String submissionId,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                                       String passThroughTokenHeader,
                                                        String requestId,
                                                        String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");

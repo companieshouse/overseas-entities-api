@@ -24,11 +24,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
-import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
@@ -68,8 +66,7 @@ public class OverseasEntitiesController {
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
-            HttpServletRequest request) {
+            @RequestHeader(value = ERIC_IDENTITY) String userId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
@@ -86,14 +83,11 @@ public class OverseasEntitiesController {
                 }
             }
 
-            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-
             ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
 
             return this.overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
-                    passThroughTokenHeader,
                     requestId,
                     userId);
         } catch (Exception e) {
@@ -108,8 +102,7 @@ public class OverseasEntitiesController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String submissionId,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
-            HttpServletRequest request) {
+            @RequestHeader(value = ERIC_IDENTITY) String userId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, submissionId);
@@ -130,13 +123,10 @@ public class OverseasEntitiesController {
                 }
             }
 
-            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-
             return overseasEntitiesService.updateOverseasEntity(
                     transaction,
                     submissionId,
                     overseasEntitySubmissionDto,
-                    passThroughTokenHeader,
                     requestId,
                     userId);
         } catch (Exception e) {
@@ -154,7 +144,6 @@ public class OverseasEntitiesController {
      * @param overseasEntitySubmissionDto The data to store
      * @param requestId                   Http request ID, used in logs
      * @param userId                      the ERIC user id
-     * @param request                     the HttpServletRequest
      * @return ResponseEntity
      */
     @PostMapping("/start")
@@ -162,17 +151,13 @@ public class OverseasEntitiesController {
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @RequestBody OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
-            HttpServletRequest request) {
+            @RequestHeader(value = ERIC_IDENTITY) String userId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         try {
-            String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
-
 
             if (isValidationEnabled) {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
@@ -189,7 +174,6 @@ public class OverseasEntitiesController {
             return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
-                    passThroughTokenHeader,
                     requestId,
                     userId);
         } catch (Exception e) {

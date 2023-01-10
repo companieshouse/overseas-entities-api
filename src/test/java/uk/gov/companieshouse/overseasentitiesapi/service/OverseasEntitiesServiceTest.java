@@ -18,7 +18,6 @@ import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapp
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
@@ -51,7 +50,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSI
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitiesServiceTest {
     private static final String REQUEST_ID = "fd4gld5h3jhh";
-    private static final String PASSTHROUGH_TOKEN_HEADER = "13456";
     private static final String SUBMISSION_ID = "abc123";
     private static final String USER_ID = "22334455";
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
@@ -126,14 +124,12 @@ class OverseasEntitiesServiceTest {
             response = overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
-                    PASSTHROUGH_TOKEN_HEADER,
                     REQUEST_ID,
                     USER_ID);
         } else {
             response = overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
-                    PASSTHROUGH_TOKEN_HEADER,
                     REQUEST_ID,
                     USER_ID);
         }
@@ -185,7 +181,6 @@ class OverseasEntitiesServiceTest {
         var response = overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
                 USER_ID);
 
@@ -215,7 +210,6 @@ class OverseasEntitiesServiceTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
                 USER_ID);
 
@@ -254,7 +248,6 @@ class OverseasEntitiesServiceTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
                 USER_ID);
 

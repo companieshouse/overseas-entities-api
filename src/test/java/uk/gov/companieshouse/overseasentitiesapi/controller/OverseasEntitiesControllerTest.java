@@ -9,7 +9,6 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
@@ -52,7 +51,6 @@ class OverseasEntitiesControllerTest {
     private static final ResponseEntity<Object> FAILURE_RESPONSE = ResponseEntity.internalServerError().build();
 
     private static final String REQUEST_ID = "fd4gld5h3jhh";
-    private static final String PASSTHROUGH = "13456";
     private static final String SUBMISSION_ID = "abc123";
     private static final String TRANSACTION_ID = "test-1";
     private static final String USER_ID = "22334455";
@@ -71,14 +69,9 @@ class OverseasEntitiesControllerTest {
 
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
-    private MockHttpServletRequest mockHttpServletRequest;
-
     @BeforeEach
     void init() {
         setValidationEnabledFeatureFlag(false);
-
-        mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.addHeader("ERIC-Access-Token", PASSTHROUGH);
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
     }
@@ -88,15 +81,13 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -104,7 +95,6 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -121,15 +111,13 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -137,7 +125,6 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -161,8 +148,7 @@ class OverseasEntitiesControllerTest {
                     transaction,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
-                    USER_ID,
-                    mockHttpServletRequest);
+                    USER_ID);
 
             assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
@@ -185,7 +171,6 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
 
@@ -193,8 +178,7 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
         assertEquals(FAILURE_RESPONSE, response);
@@ -202,7 +186,6 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -212,7 +195,6 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
 
@@ -220,8 +202,7 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
         assertEquals(FAILURE_RESPONSE, response);
@@ -229,7 +210,6 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -250,8 +230,7 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         ChResponseBody<?> chResponseBody = (ChResponseBody<?>) response.getBody();
         assertNotNull(chResponseBody);
@@ -333,7 +312,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(UPDATED_SUCCESS_RESPONSE);
 
@@ -342,8 +320,7 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -352,7 +329,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -363,7 +339,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
 
@@ -372,8 +347,7 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
         assertEquals(FAILURE_RESPONSE, response);
@@ -382,7 +356,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -400,7 +373,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(UPDATED_SUCCESS_RESPONSE);
 
@@ -409,8 +381,7 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -419,7 +390,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
         verify(overseasEntitySubmissionDtoValidator, never()).validateFull(any(), any(), any());
@@ -441,7 +411,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(UPDATED_SUCCESS_RESPONSE);
 
@@ -450,8 +419,7 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -460,7 +428,6 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
         verify(overseasEntitySubmissionDtoValidator).validatePartial(
@@ -489,12 +456,11 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
-        verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any(), any());
+        verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -522,8 +488,7 @@ class OverseasEntitiesControllerTest {
                     SUBMISSION_ID,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
-                    USER_ID,
-                    mockHttpServletRequest);
+                    USER_ID);
 
             assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
@@ -562,8 +527,7 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         ChResponseBody<?> chResponseBody = (ChResponseBody<?>) response.getBody();
         assertNotNull(chResponseBody);
@@ -584,15 +548,13 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
         var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -600,7 +562,6 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH,
                 REQUEST_ID,
                 USER_ID);
     }
@@ -624,8 +585,7 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID,
-                mockHttpServletRequest);
+                USER_ID);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
