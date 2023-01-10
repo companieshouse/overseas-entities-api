@@ -34,7 +34,7 @@ public class TransactionService {
         }
     }
 
-    public void updateTransaction(Transaction transaction, String passthroughHeader, String loggingContext) throws ServiceException {
+    public void updateTransaction(Transaction transaction, String loggingContext) throws ServiceException {
         try {
             var uri = TRANSACTIONS_PRIVATE_API_PREFIX + transaction.getId();
 

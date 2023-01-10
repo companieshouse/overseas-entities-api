@@ -116,7 +116,7 @@ class TransactionServiceTest {
         when(apiPatchResponse.getStatusCode()).thenReturn(204);
 
         try {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Should not throw exception");
@@ -135,7 +135,7 @@ class TransactionServiceTest {
         when(apiPatchResponse.getStatusCode()).thenReturn(401);
 
         assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         });
     }
 
@@ -150,7 +150,7 @@ class TransactionServiceTest {
         when(privateTransactionPatch.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
         assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         });
     }
 }

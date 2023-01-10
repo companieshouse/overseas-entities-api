@@ -100,7 +100,7 @@ public class OverseasEntitiesService {
         // Update company name set on the transaction and add a link to our newly created Overseas Entity
         // submission (aka resource) to the transaction (and potentially also a link for the 'resume' journey)
         updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
-                passThroughTokenHeader, submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
+                submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s", transaction.getId(), insertedSubmission.getId()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
@@ -131,7 +131,7 @@ public class OverseasEntitiesService {
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
         transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName());
-        transactionService.updateTransaction(transaction, passThroughTokenHeader, requestId);
+        transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(
                 "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
@@ -184,7 +184,6 @@ public class OverseasEntitiesService {
     private void updateTransactionWithLinksAndCompanyName(Transaction transaction,
                                                           String companyName,
                                                           String submissionId,
-                                                          String passThroughTokenHeader,
                                                           String submissionUri,
                                                           Resource overseasEntityResource,
                                                           String loggingContext,
@@ -197,7 +196,7 @@ public class OverseasEntitiesService {
             transaction.setResumeJourneyUri(resumeJourneyUri);
         }
 
-        transactionService.updateTransaction(transaction, passThroughTokenHeader, loggingContext);
+        transactionService.updateTransaction(transaction, loggingContext);
     }
 
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {

@@ -17,7 +17,7 @@ public class ApiClientService {
         return ApiSdkManager.getPrivateSDK(ericPassThroughHeader);
     }
 
-    public InternalApiClient getInternalApiKeyClient() throws IOException {
+    public InternalApiClient getInternalApiKeyClient() {
         return ApiSdkManager.getPrivateSDK();
     }
 }

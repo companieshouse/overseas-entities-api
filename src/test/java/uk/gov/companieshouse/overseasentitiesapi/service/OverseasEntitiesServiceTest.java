@@ -138,7 +138,7 @@ class OverseasEntitiesServiceTest {
                     USER_ID);
         }
 
-        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any(), any());
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         verify(localDateTimeSupplier, times(1)).get();
 
         String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());
@@ -231,7 +231,7 @@ class OverseasEntitiesServiceTest {
         assertEquals(DUMMY_TIME_STAMP, savedSubmission.getCreatedOn());
         assertEquals(USER_ID, savedSubmission.getCreatedByUserId());
 
-        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any(), any());
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
         assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
