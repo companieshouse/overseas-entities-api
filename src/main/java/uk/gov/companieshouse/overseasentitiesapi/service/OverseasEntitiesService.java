@@ -51,6 +51,20 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
+    public SubmissionType getSubmissionType(String overseasEntityId) {
+        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(overseasEntityId);
+        if (submissionOpt.isPresent()) {
+            String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
+            if (registrationNumber != null && !registrationNumber.isEmpty()) {
+                ApiLogger.info(String.format("Submission with registration number %s found", registrationNumber));
+                return SubmissionType.Update;
+            } else {
+                ApiLogger.info("Submission without registration number found");
+            }
+        }
+        return SubmissionType.Registration;
+    }
+
     public ResponseEntity<Object> createOverseasEntity(Transaction transaction,
                                                        OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                        String passthroughTokenHeader,

@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
@@ -31,8 +32,15 @@ public class CostsService {
     @Value("${OE01_UPDATE_COST}")
     private String costUpdateAmount;
 
+    private final OverseasEntitiesService overseasEntitiesService;
+
+    @Autowired
+    public CostsService(OverseasEntitiesService overseasEntitiesService) {
+        this.overseasEntitiesService = overseasEntitiesService;
+    }
+
     public Cost getCosts(String overseasEntityId) {
-        if (false) { // TODO
+        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.Update) {
             return getCostForUpdate();
         } else {
             return getCostForRegistration();
