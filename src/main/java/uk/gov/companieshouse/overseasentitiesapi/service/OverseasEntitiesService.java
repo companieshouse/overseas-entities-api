@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
@@ -32,6 +33,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATI
 @Service
 public class OverseasEntitiesService {
 
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isROEUpdateEnabled;
+
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -52,6 +56,9 @@ public class OverseasEntitiesService {
     }
 
     public SubmissionType getSubmissionType(String overseasEntityId) {
+        if (!isROEUpdateEnabled) {
+            return SubmissionType.Registration;
+        }
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(overseasEntityId);
         if (submissionOpt.isPresent()) {
             String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();

@@ -27,11 +27,9 @@ class CostsControllerTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
-    @Mock
     private CostsService costService = new CostsService(overseasEntitiesService);
 
-    @InjectMocks
-    private CostsController costsController;
+    private CostsController costsController = new CostsController(costService);
 
     @Test
     void getCosts() {
