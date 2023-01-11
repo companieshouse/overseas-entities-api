@@ -109,14 +109,14 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalOauthAuthenticatedClient(PASSTHROUGH_HEADER)).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
         when(apiPatchResponse.getStatusCode()).thenReturn(204);
 
         try {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Should not throw exception");
@@ -128,14 +128,14 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalOauthAuthenticatedClient(PASSTHROUGH_HEADER)).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
         when(apiPatchResponse.getStatusCode()).thenReturn(401);
 
         assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         });
     }
 
@@ -144,13 +144,13 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalOauthAuthenticatedClient(PASSTHROUGH_HEADER)).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
         assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
+            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
         });
     }
 }

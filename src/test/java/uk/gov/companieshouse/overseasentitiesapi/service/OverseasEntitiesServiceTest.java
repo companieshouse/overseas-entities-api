@@ -50,11 +50,11 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSI
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitiesServiceTest {
     private static final String REQUEST_ID = "fd4gld5h3jhh";
-    private static final String PASSTHROUGH_TOKEN_HEADER = "13456";
     private static final String SUBMISSION_ID = "abc123";
     private static final String USER_ID = "22334455";
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
     private static final String TRANSACTION_ID = "324234-123123-768685";
+    private static final String ENTITY_NAME = "MANSION HOLDINGS AG";
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -97,6 +97,7 @@ class OverseasEntitiesServiceTest {
         Transaction transaction = buildTransaction();
 
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(ENTITY_NAME);
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         overseasEntitySubmissionDao.setId(submissionId);
 
@@ -123,19 +124,17 @@ class OverseasEntitiesServiceTest {
             response = overseasEntitiesService.createOverseasEntityWithResumeLink(
                     transaction,
                     overseasEntitySubmissionDto,
-                    PASSTHROUGH_TOKEN_HEADER,
                     REQUEST_ID,
                     USER_ID);
         } else {
             response = overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
-                    PASSTHROUGH_TOKEN_HEADER,
                     REQUEST_ID,
                     USER_ID);
         }
 
-        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any(), any());
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         verify(localDateTimeSupplier, times(1)).get();
 
         String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());
@@ -148,6 +147,7 @@ class OverseasEntitiesServiceTest {
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
@@ -181,7 +181,6 @@ class OverseasEntitiesServiceTest {
         var response = overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
-                PASSTHROUGH_TOKEN_HEADER,
                 REQUEST_ID,
                 USER_ID);
 
@@ -192,9 +191,10 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testOverseasEntitySubmissionUpdatedSuccessfully() {
+    void testOverseasEntitySubmissionUpdatedSuccessfully() throws ServiceException {
         var transaction = buildTransaction();
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(ENTITY_NAME);
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
 
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
@@ -225,13 +225,18 @@ class OverseasEntitiesServiceTest {
         assertEquals(DUMMY_TIME_STAMP, savedSubmission.getCreatedOn());
         assertEquals(USER_ID, savedSubmission.getCreatedByUserId());
 
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        // assert transaction resources are updated to point to submission
+        Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
+
         // assert response
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testUpdateOverseasEntitySubmissionReturnsErrorIfTransactionAndSubmissionNotLinked() {
+    void testUpdateOverseasEntitySubmissionReturnsErrorIfTransactionAndSubmissionNotLinked() throws ServiceException {
         var transaction = buildTransaction();
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
 
@@ -302,9 +307,9 @@ class OverseasEntitiesServiceTest {
 
         Exception exception = assertThrows(SubmissionNotFoundException.class, () ->
                 overseasEntitiesService.getSavedOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                REQUEST_ID));
+                        transaction,
+                        SUBMISSION_ID,
+                        REQUEST_ID));
         String actualMessage = exception.getMessage();
         var expectedMessage = String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID);
         assertTrue(actualMessage.contains(expectedMessage));
