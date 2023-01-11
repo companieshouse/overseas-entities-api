@@ -2,7 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -10,9 +9,8 @@ import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.SubmissionType;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,16 +25,27 @@ class CostsControllerTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
-    private CostsService costService = new CostsService(overseasEntitiesService);
-
-    private CostsController costsController = new CostsController(costService);
-
     @Test
-    void getCosts() {
+    void getRegistrationCosts() {
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Registration);
 
-        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        final CostsService costService = new CostsService(overseasEntitiesService);
+        costService.setRegistrationCostAmount("13.00");
+        final CostsController costsController = new CostsController(costService);
 
-        verify(costService, times(1)).getCosts(OVERSEAS_ENTITY_ID);
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals("13.00", response.getBody().get(0).getAmount());
+    }
+
+    @Test
+    void getUpdateCosts() {
+        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Update);
+
+        final CostsService costService = new CostsService(overseasEntitiesService);
+        costService.setUpdateCostAmount("13.00");
+        final CostsController costsController = new CostsController(costService);
+
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals("13.00", response.getBody().get(0).getAmount());
     }
 }

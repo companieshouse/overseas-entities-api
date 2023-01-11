@@ -76,4 +76,12 @@ public class CostsService {
 
         return cost;
     }
+
+    public void setRegistrationCostAmount(String amount) {
+        this.costRegisterAmount = amount;
+    }
+
+    public void setUpdateCostAmount(String amount) {
+        this.costUpdateAmount = amount;
+    }
 }
