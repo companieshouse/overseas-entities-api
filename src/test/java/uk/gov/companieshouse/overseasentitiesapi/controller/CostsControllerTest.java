@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.SubmissionType;
@@ -26,7 +27,7 @@ class CostsControllerTest {
     private OverseasEntitiesService overseasEntitiesService;
 
     @Test
-    void getRegistrationCosts() {
+    void getRegistrationCosts() throws ServiceException {
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Registration);
 
         final CostsService costService = new CostsService(overseasEntitiesService);
@@ -38,7 +39,7 @@ class CostsControllerTest {
     }
 
     @Test
-    void getUpdateCosts() {
+    void getUpdateCosts() throws ServiceException {
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Update);
 
         final CostsService costService = new CostsService(overseasEntitiesService);

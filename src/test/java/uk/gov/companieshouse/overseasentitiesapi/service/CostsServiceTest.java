@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,7 +24,7 @@ class CostsServiceTest {
     }
 
     @Test
-    void getRegistrationCosts() {
+    void getRegistrationCosts() throws ServiceException {
 
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Registration);
 
@@ -43,7 +44,7 @@ class CostsServiceTest {
     }
 
     @Test
-    void getUpdateCosts() {
+    void getUpdateCosts() throws ServiceException {
 
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Update);
 

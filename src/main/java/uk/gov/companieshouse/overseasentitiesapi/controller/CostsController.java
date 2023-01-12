@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.payment.Cost;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -37,7 +38,7 @@ public class CostsController {
     public ResponseEntity<List<Cost>> getCosts(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());

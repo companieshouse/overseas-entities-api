@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_K
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 
 @Service
 public class OverseasEntitiesService {
@@ -55,20 +57,30 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public SubmissionType getSubmissionType(String overseasEntityId) {
+    public SubmissionType getSubmissionType(String overseasEntityId) throws ServiceException {
         if (!isROEUpdateEnabled) {
             return SubmissionType.Registration;
         }
-        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(overseasEntityId);
-        if (submissionOpt.isPresent()) {
-            String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
-            if (registrationNumber != null && !registrationNumber.isEmpty()) {
-                ApiLogger.info(String.format("Submission with registration number %s found", registrationNumber));
-                return SubmissionType.Update;
-            } else {
-                ApiLogger.info("Submission without registration number found");
-            }
+        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
+                overseasEntityId);
+        if (submissionOpt.isEmpty()) {
+            String errorMessage = "Overseas entity submission not found";
+            Map<String, Object> logMap = new HashMap<>();
+            logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+            ServiceException error = new ServiceException(errorMessage);
+            ApiLogger.error(errorMessage, error, logMap);
+            throw error;
         }
+
+        String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
+        if (registrationNumber != null && !registrationNumber.isEmpty()) {
+            ApiLogger.info(String.format("Submission with registration number %s found",
+                    registrationNumber));
+            return SubmissionType.Update;
+        } else {
+            ApiLogger.info("Submission without registration number found");
+        }
+
         return SubmissionType.Registration;
     }
 

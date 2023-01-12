@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
 import java.util.Collections;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
 @Service
 public class CostsService {
@@ -39,7 +40,7 @@ public class CostsService {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    public Cost getCosts(String overseasEntityId) {
+    public Cost getCosts(String overseasEntityId) throws ServiceException {
         if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.Update) {
             return getCostForUpdate();
         } else {
