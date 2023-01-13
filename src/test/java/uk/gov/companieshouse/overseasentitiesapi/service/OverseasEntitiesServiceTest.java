@@ -15,8 +15,10 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
@@ -34,6 +36,7 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -52,6 +55,9 @@ class OverseasEntitiesServiceTest {
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
     private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String LOGGING_CONTEXT = "32hkjh";
+
+    private OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
+    private OverseasEntitySubmissionDto submissionDto = new OverseasEntitySubmissionDto();
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -228,5 +234,37 @@ class OverseasEntitiesServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         return transaction;
+    }
+
+    @Test
+    void checkSubmissionTypeIsRegistrationIfNoRegistrationNumberInSubmission() throws ServiceException {
+        EntityDto entityDto = new EntityDto();
+        submissionDto.setEntity(entityDto);
+        overseasEntitiesService.setROEUpdateEnabled(true);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
+        assertEquals(SubmissionType.Registration, kind);
+    }
+
+    @Test
+    void checkSubmissionTypeIsUpdateIfRegistrationNumberInSubmission() throws ServiceException {
+        EntityDto entityDto = new EntityDto();
+        entityDto.setRegistrationNumber("OE111129");
+        submissionDto.setEntity(entityDto);
+        overseasEntitiesService.setROEUpdateEnabled(true);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
+        assertEquals(SubmissionType.Update, kind);
+    }
+
+    @Test
+    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() throws ServiceException {
+        overseasEntitiesService.setROEUpdateEnabled(true);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(ServiceException.class, () -> {
+            overseasEntitiesService.getSubmissionType("testId1");
+        });
     }
 }
