@@ -110,4 +110,21 @@ class StringValidatorsTest {
         assertEquals(1, errors.size());
         assertTrue(errors.containsError(err));
     }
+
+    @Test
+    @DisplayName("Validate strings are not equal successfully")
+    void validateStringsAreNotEqual_Successful() {
+        assertTrue(StringValidators.checkIsNotEqual("Wales", "England", ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+    }
+
+    @Test
+    @DisplayName("Validate strings are not equal unsuccessfully")
+    void validateStringsAreNotEqual_Unsuccessful() {
+        String errMsg = String.format(ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
+        boolean isNotEqual = StringValidators.checkIsNotEqual("Wales", "Wales", ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        assertFalse(isNotEqual);
+        assertEquals(1, errors.size());
+        assertTrue(errors.containsError(err));
+    }
 }

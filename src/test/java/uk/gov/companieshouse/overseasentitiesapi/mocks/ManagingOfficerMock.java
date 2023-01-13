@@ -7,6 +7,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 
 import java.time.LocalDate;
 
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
+
 public class ManagingOfficerMock {
     public static ManagingOfficerIndividualDto getManagingOfficerIndividualDto()  {
         ManagingOfficerIndividualDto dto = new ManagingOfficerIndividualDto();
@@ -51,7 +53,7 @@ public class ManagingOfficerMock {
         dto.setRegistrationNumber("11223344");
         dto.setRoleAndResponsibilities("role and responsibilities text");
         dto.setContactFullName("Joe Bloggs");
-        dto.setContactEmail("jbloggs@bloggs.co.ru");
+        dto.setContactEmail(" " + EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES + " ");
         return dto;
     }
 
@@ -68,7 +70,7 @@ public class ManagingOfficerMock {
         dao.setRegistrationNumber("11223344");
         dao.setRoleAndResponsibilities("role and responsibilities text");
         dao.setContactFullName("Joe Bloggs");
-        dao.setContactEmail("jbloggs@bloggs.co.ru");
+        dao.setContactEmail(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES);
         return dao;
     }
 }

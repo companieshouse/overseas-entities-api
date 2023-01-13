@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +46,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private static final String LOGGING_CONTEXT = "12345";
     @InjectMocks
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
+
     @Mock
     private EntityDtoValidator entityDtoValidator;
     @Mock
@@ -55,6 +58,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Mock
     private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
 
+    private final String entityName = "ABC Entity";
     private final EntityDto entityDto = EntityMock.getEntityDto();
     private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
     private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
@@ -87,7 +91,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(
@@ -95,7 +99,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                 eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                 any(),
                 any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto),any(),any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto),any(),any());
         assertFalse(errors.hasErrors());
     }
 
@@ -104,7 +108,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
         verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(
@@ -112,7 +117,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                 eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                 any(),
                 any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto),any(),any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto),any(),any());
         assertFalse(errors.hasErrors());
     }
 
@@ -121,7 +126,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -130,7 +135,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -139,7 +144,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -148,7 +153,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -157,7 +162,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -166,7 +171,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(new ArrayList<>());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -175,7 +180,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -184,7 +189,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(new ArrayList<>());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -193,7 +198,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -202,15 +207,42 @@ class OverseasEntitySubmissionDtoValidatorTest {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedForMissingEntityNameField() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedForMissingEntityNameFieldAndOtherBlocksWithValidationErrors() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
     void testErrorReportedForMissingEntityField() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = ENTITY_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -218,7 +250,43 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingEntityFieldAndOtherBlockWithValidationErrors() {
+    void testEntityNameFieldValidatorGetsCalled() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setEntity(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(0)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+    }
+
+    @Test
+    void testErrorNotReportedForMissingEntityNameFieldAndOtherBlocksForPartialValidation() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+    }
+
+    @Test
+    void testErrorReportedForMissingEntityFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(null);
@@ -226,7 +294,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
 
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = ENTITY_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -236,15 +304,16 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testErrorReportedForMissingPresenterField() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = PRESENTER_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+
     @Test
-    void testErrorReportedForMissingPresenterFieldAndOtherBlockWithValidationErrors() {
+    void testErrorReportedForMissingPresenterFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
@@ -252,14 +321,158 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(null);
 
-        Errors errors = overseasEntitySubmissionDtoValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = PRESENTER_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testErrorNotReportedForMissingPresenterFieldAndOtherBlocksForPartialValidation() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setPresenter(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+    }
+
+    @Test
+    void testErrorNotReportedForMissingEntityFieldAndOtherBlocksForPartialValidation() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntity(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(0)).validate(any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
+    }
+
+    @Test
+    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(null);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(null);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(null);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(0)).validateDueDiligenceFields(any(), any(), any(), any());
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldIsNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldIsEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("  ");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldExceedsMaxLength() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(StringUtils.repeat("A", 161));
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldContainsInvalidCharacters() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("Дракон");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testNoPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenEntityNameFieldIsEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("  ");
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenEntityNameFieldExceedsMaxLength() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(StringUtils.repeat("A", 161));
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenEntityNameFieldContainsInvalidCharacters() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName("Дракон");
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
+        assertTrue(errors.containsError(err));
+    }
+
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(entityName);
         overseasEntitySubmissionDto.setEntity(entityDto);
         overseasEntitySubmissionDto.setPresenter(presenterDto);
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);

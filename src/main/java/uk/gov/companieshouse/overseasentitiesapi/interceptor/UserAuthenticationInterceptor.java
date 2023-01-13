@@ -66,7 +66,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        ApiLogger.infoContext(reqId, "UserAuthenticationInterceptor unauthorised", authInfoMap);
+        ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised", null, authInfoMap);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return false;
     }

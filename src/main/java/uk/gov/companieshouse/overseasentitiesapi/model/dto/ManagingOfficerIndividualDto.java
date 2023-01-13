@@ -12,6 +12,7 @@ public class ManagingOfficerIndividualDto {
     public static final String FORMER_NAMES_FIELD = "former_names";
     public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
     public static final String NATIONALITY_FIELD = "nationality";
+    public static final String SECOND_NATIONALITY_FIELD = "second_nationality";
     public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
     public static final String SERVICE_ADDRESS_FIELD = "service_address";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
@@ -35,6 +36,9 @@ public class ManagingOfficerIndividualDto {
 
     @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
+
+    @JsonProperty(SECOND_NATIONALITY_FIELD)
+    private String secondNationality;
 
     @JsonProperty(USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private AddressDto usualResidentialAddress;
@@ -97,6 +101,14 @@ public class ManagingOfficerIndividualDto {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public String getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(String secondNationality) {
+        this.secondNationality = secondNationality;
     }
 
     public AddressDto getUsualResidentialAddress() {

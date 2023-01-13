@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
@@ -44,10 +45,7 @@ public final class StringValidators {
 
 
     /**
-     * The email regex is taken from OWASP https://owasp.org/www-community/OWASP_Validation_Regex_Repository
-     * ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,15}$
-     * Sonar has highlighted issues with the * and + grouping quantifiers causing backstepping (recursion)
-     * so we are modifying them to be ++ and *+ (possessive = no backstepping)
+     * This is the same regular expression as used by the CH account service
      * @param email
      * @param qualifiedFieldName
      * @param errs
@@ -56,8 +54,7 @@ public final class StringValidators {
      */
     public static boolean isValidEmailAddress(String email, String qualifiedFieldName, Errors errs, String loggingContext) {
 
-        var regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*+@(?:[a-zA-Z0-9-]+\\.)++[a-zA-Z]{2,15}$";
-
+        var regex = "^.+@.+\\..+$";
         var pattern = Pattern.compile(regex);
         var matcher = pattern.matcher(email);
 
@@ -69,7 +66,7 @@ public final class StringValidators {
         return true;
     }
 
-    private static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+    public static boolean isNotEmpty(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         if (toTest.trim().isEmpty()) {
             setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field is empty");
@@ -83,5 +80,14 @@ public final class StringValidators {
             setErrorMsgToLocation(errs, qualifiedFieldName, String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, qualifiedFieldName + " Field should not be populated");
         }
+    }
+
+    public static boolean checkIsNotEqual(String string1, String string2, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (StringUtils.equals(string1, string2)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
+            return false;
+        }
+        return true;
     }
 }

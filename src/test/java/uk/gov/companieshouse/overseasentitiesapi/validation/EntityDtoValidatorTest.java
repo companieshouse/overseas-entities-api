@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
@@ -46,45 +48,6 @@ class EntityDtoValidatorTest {
     void testNoErrorReportedWhenEntityDtoValuesAreCorrect() {
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldIsEmpty() {
-        entityDto.setName("  ");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldIsNull() {
-        entityDto.setName(null);
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        entityDto.setName(StringUtils.repeat("A", 161));
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-
-        assertError(EntityDto.NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
-        entityDto.setName("Дракон");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.NAME_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.NAME_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -257,6 +220,16 @@ class EntityDtoValidatorTest {
         assertError(EntityDto.EMAIL_PROPERTY_FIELD,  validationMessage, errors);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"vsocarroll@QQQQQQQT123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk",
+            "socarrollA123456789B132456798C123456798D123456789@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk",
+            "socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk"})
+    void testNoErrorReportedWithLongEmailAddress(String email) {
+        entityDto.setEmail(email);
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
     @Test
     void testErrorReportedWhenLegalFormIsEmpty() {
         entityDto.setLegalForm("  ");
@@ -377,6 +350,16 @@ class EntityDtoValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenOnRegisterFlagIsFalseWhenPublicRegisterJurisdictionFieldNotEmpty() {
+        entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        entityDto.setPublicRegisterJurisdiction("Jurisdiction");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenOnRegisterFlagIsFalseWhenRegistrationNumberFieldNotEmpty() {
         entityDto.setOnRegisterInCountryFormedIn(Boolean.FALSE);
         entityDto.setRegistrationNumber("123456");
@@ -384,26 +367,6 @@ class EntityDtoValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
         assertError(EntityDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
-    }
-
-
-    @Test
-    void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
-        entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterName(StringUtils.repeat("A", 161));
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD);
-
-        assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
-    }
-
-    @Test
-    void testNoErrorReportedWhenPublicRegisterNameFieldIsMaxLength() {
-        entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setPublicRegisterName(StringUtils.repeat("A", 160));
-        entityDto.setRegistrationNumber("1234");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        assertEquals(0, errors.size(), "Errors should be empty");
     }
 
     @Test
@@ -415,6 +378,73 @@ class EntityDtoValidatorTest {
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenRegistrationNumberFieldContainsInvalidCharacters() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setRegistrationNumber("Дракон");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenPublicRegisterNameAndJurisdictionFieldIsMaxLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 79));
+        entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 80));
+        entityDto.setRegistrationNumber("1234");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameFieldExceedsMaxLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 160));
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+
+        String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterJurisdictionFieldExceedsMaxLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 160));
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+
+        String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterNameAndJurisdictionFieldsCombinedExceedsMaxLength() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName(StringUtils.repeat("A", 80));
+        entityDto.setPublicRegisterJurisdiction(StringUtils.repeat("A", 80));
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+
+        String compoundQualifiedFieldName = String.format("%s and %s", getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD), getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD));
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 159 characters or less").build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWhenPublicRegisterJurisdictionFieldContainsInvalidCharacters() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterJurisdiction("Дракон");
+        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD, validationMessage, errors);
     }
 
     @Test
@@ -450,31 +480,20 @@ class EntityDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenRegistrationNumberFieldContainsInvalidCharacters() {
-        entityDto.setOnRegisterInCountryFormedIn(true);
-        entityDto.setRegistrationNumber("Дракон");
-        Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(EntityDto.REGISTRATION_NUMBER_FIELD, validationMessage, errors);
-    }
-
-    @Test
     void testErrorsReportedWhenMultipleFieldsAreInvalid() {
-        entityDto.setName(StringUtils.repeat("A", 161));
         entityDto.setIncorporationCountry(null);
         entityDto.setLawGoverned(StringUtils.repeat("A", 161));
-        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setOnRegisterInCountryFormedIn(true);     // Note that setting this value does not cause an error
         entityDto.setPublicRegisterName(" ");
+        entityDto.setPublicRegisterJurisdiction("Дракон");
         entityDto.setRegistrationNumber("Дракон");
         Errors errors = entityDtoValidator.validate(entityDto, new Errors(), LOGGING_CONTEXT);
 
         assertEquals(5, errors.size());
-        assertError(EntityDto.NAME_FIELD, getQualifiedFieldName(EntityDto.NAME_FIELD) + " must be 160 characters or less", errors);
         assertError(EntityDto.INCORPORATION_COUNTRY_FIELD, ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", getQualifiedFieldName(EntityDto.INCORPORATION_COUNTRY_FIELD)), errors);
         assertError(EntityDto.LAW_GOVERNED_FIELD, getQualifiedFieldName(EntityDto.LAW_GOVERNED_FIELD) + " must be 160 characters or less", errors);
         assertError(EntityDto.PUBLIC_REGISTER_NAME_FIELD, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s",  getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_NAME_FIELD)), errors);
+        assertError(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s",  getQualifiedFieldName(EntityDto.PUBLIC_REGISTER_JURISDICTION_FIELD)), errors);
         assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s",  getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD)), errors);
     }
 

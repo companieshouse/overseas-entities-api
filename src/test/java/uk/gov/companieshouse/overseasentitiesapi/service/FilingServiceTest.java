@@ -43,6 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
@@ -53,6 +54,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,6 +62,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
@@ -68,6 +71,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
@@ -117,6 +121,8 @@ class FilingServiceTest {
 
     @BeforeEach
     void init() {
+        setValidationEnabledFeatureFlag(false);
+
         transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         var transactionLinks = new TransactionLinks();
@@ -164,11 +170,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -199,11 +205,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -236,11 +242,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -271,11 +277,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -308,11 +314,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -348,11 +354,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -389,11 +395,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -426,11 +432,11 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
         assertEquals("user@domain.roe", presenterInFiling.getEmail());
         final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-        assertEquals("Joe Bloggs Ltd", entityInFiling.getName());
         assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
 
         checkDueDiligence(filing);
@@ -522,6 +528,20 @@ class FilingServiceTest {
         assertEquals("", beneficialOwnerCorporateDto.getTrustData());
     }
 
+    private void checkTrustDataIsEmptyWithTrustFeatureFlagOn(FilingApi filing) {
+
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        assertNull(trustDataList);
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        assertNull(beneficialOwnerIndividualDto.getTrustIds());
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.get(0);
+        assertNull(beneficialOwnerCorporateDto.getTrustIds());
+    }
+
     private void checkTrustDataIndividual(FilingApi filing, int boIndex, String trustId) throws JSONException {
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
         final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
@@ -529,6 +549,20 @@ class FilingServiceTest {
         final JSONObject trustDataJSON = trustsDataJSON.getJSONObject(0);
         assertEquals(trustId, trustDataJSON.get("trust_id"));
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
+    }
+
+    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        final TrustDataDto trustData = trustDataList.get(boIndex);
+        assertEquals(trustId, trustData.getTrustId());
+        assertEquals("Trust Name " + trustId, trustData.getTrustName());
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
+        final List<String> trustsIdsList = beneficialOwnerIndividualDto.getTrustIds();
+
+        assertEquals(trustId, trustsIdsList.get(0));
     }
 
     private void checkTrustDataIndividualWithThreeTrusts(FilingApi filing) throws JSONException {
@@ -549,6 +583,30 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
+    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+        final TrustDataDto trustData1 = trustDataList.get(0);
+        assertEquals("1", trustData1.getTrustId());
+        assertEquals("Trust Name 1", trustData1.getTrustName());
+
+        final TrustDataDto trustData2 = trustDataList.get(1);
+        assertEquals("2", trustData2.getTrustId());
+        assertEquals("Trust Name 2", trustData2.getTrustName());
+
+        final TrustDataDto trustData3 = trustDataList.get(2);
+        assertEquals("3", trustData3.getTrustId());
+        assertEquals("Trust Name 3", trustData3.getTrustName());
+
+        final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
+        final BeneficialOwnerIndividualDto beneficialOwnerCorporateDto = beneficialOwnersIndividualInFiling.get(0);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("2", trustsIdsList.get(1));
+        assertEquals("3", trustsIdsList.get(2));
+    }
+
     private void checkTrustDataCorporate(FilingApi filing, int boIndex, String trustId) throws JSONException {
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
         final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
@@ -557,6 +615,23 @@ class FilingServiceTest {
         assertEquals(trustId, trustDataJSON.get("trust_id"));
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
+
+    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+
+        final TrustDataDto trustData = trustDataList.get(boIndex);
+        assertEquals(trustId, trustData.getTrustId());
+        assertEquals("Trust Name " + trustId, trustData.getTrustName());
+
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals(trustId, trustsIdsList.get(0));
+    }
+
 
     private void checkTrustDataCorporateWithThreeTrusts(FilingApi filing) throws JSONException {
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
@@ -574,6 +649,32 @@ class FilingServiceTest {
         final JSONObject trustDataJSON3 = trustsDataJSON.getJSONObject(2);
         assertEquals("3", trustDataJSON3.get("trust_id"));
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
+    }
+
+    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+        final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
+
+
+        final TrustDataDto trustData1 = trustDataList.get(0);
+        assertEquals("1", trustData1.getTrustId());
+        assertEquals("Trust Name 1", trustData1.getTrustName());
+
+        final TrustDataDto trustData2 = trustDataList.get(1);
+        assertEquals("2", trustData2.getTrustId());
+        assertEquals("Trust Name 2", trustData2.getTrustName());
+
+        final TrustDataDto trustData3 = trustDataList.get(2);
+        assertEquals("3", trustData3.getTrustId());
+        assertEquals("Trust Name 3", trustData3.getTrustName());
+
+        final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(0);
+        final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
+
+        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("2", trustsIdsList.get(1));
+        assertEquals("3", trustsIdsList.get(2));
+
     }
 
     private void checkManagingOfficers(FilingApi filing) {
@@ -630,7 +731,7 @@ class FilingServiceTest {
                 (OverseasEntityDueDiligenceDto) filing.getData().get(OVERSEAS_ENTITY_DUE_DILIGENCE);
         assertEquals(OverseasEntityDueDiligenceMock.IDENTITY_DATE, oeDueDiligenceDtoInFiling.getIdentityDate());
         assertEquals(OverseasEntityDueDiligenceMock.NAME, oeDueDiligenceDtoInFiling.getName());
-        assertEquals(OverseasEntityDueDiligenceMock.EMAIL, oeDueDiligenceDtoInFiling.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, oeDueDiligenceDtoInFiling.getEmail());
         assertEquals(OverseasEntityDueDiligenceMock.SUPERVISOR_NAME, oeDueDiligenceDtoInFiling.getSupervisoryName());
         assertEquals(OverseasEntityDueDiligenceMock.AML_NUMBER, oeDueDiligenceDtoInFiling.getAmlNumber());
         assertEquals(OverseasEntityDueDiligenceMock.PARTNER_NAME, oeDueDiligenceDtoInFiling.getPartnerName());
@@ -699,5 +800,297 @@ class FilingServiceTest {
         return new ApiErrorResponseException(
                 new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders())
                         .setMessage(ERROR_MESSAGE));
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataIsEmptyWithTrustFeatureFlagOn(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoIndividualTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrusts();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrustsAndThreeIndividualTrust();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataCorporateWithTrustFeatureFlagOn(filing, 2, "3");
+
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 0, "1");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 1, "2");
+        checkTrustDataIndividualWithTrustFeatureFlagOn(filing, 2, "3");
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+        
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithThreeTrusts();
+
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+
+        setValidationEnabledFeatureFlag(true);
+
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithThreeTrusts();
+
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    private void setValidationEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(filingsService, "isTrustsSubmissionThroughWebEnabled", value);
     }
 }

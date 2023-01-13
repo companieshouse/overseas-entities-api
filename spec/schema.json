@@ -113,6 +113,54 @@
             "description": "Internal Server Error"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Overseas Entity"
+        ],
+        "summary": "Retrieve saved overseas entity submission data",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overseas_entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Individual overseas entity submission",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverseasEntitySubmission"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Supplied transaction does not relate to the supplied OE id"
+          },
+          "404": {
+            "description": "Submission not found"
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/validation-status": {
@@ -261,6 +309,16 @@
         ],
         "type": "object",
         "properties": {
+          "entity_name": {
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
+          },
           "presenter": {
             "$ref": "#/components/schemas/Presenter"
           },
@@ -340,7 +398,6 @@
       },
       "Entity": {
         "required": [
-          "name",
           "incorporation_country",
           "principal_address",
           "is_service_address_same_as_principal_address",
@@ -380,16 +437,6 @@
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "allOf" : [
-              {
-                "$ref": "#/components/schemas/FieldPattern"
-              },
-              {
-                "maxLength": 160
-              }
-            ]
-          },
           "incorporation_country": {
             "$ref": "#/components/schemas/OverseasCountry"
           },
@@ -645,6 +692,9 @@
             "format": "date"
           },
           "nationality": {
+            "$ref": "#/components/schemas/FieldPattern"
+          },
+          "second_nationality": {
             "$ref": "#/components/schemas/FieldPattern"
           },
           "usual_residential_address": {
@@ -932,6 +982,9 @@
             "format": "date"
           },
           "nationality": {
+            "$ref": "#/components/schemas/FieldPattern"
+          },
+          "second_nationality": {
             "$ref": "#/components/schemas/FieldPattern"
           },
           "usual_residential_address": {

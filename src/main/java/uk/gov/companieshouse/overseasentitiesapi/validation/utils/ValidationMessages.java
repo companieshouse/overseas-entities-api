@@ -15,5 +15,5 @@ public class ValidationMessages {
     public static final String DATE_NOT_IN_PAST_ERROR_MESSAGE = "%s must be in the past";
     public static final String DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE = "%s must be in the past 3 months";
     public static final String COUNTRY_NOT_ON_LIST_ERROR_MESSAGE = "%s is not on the list of allowed countries";
-
+    public static final String SECOND_NATIONALITY_SHOULD_BE_DIFFERENT = "%s should not be the same as the nationality given";
 }

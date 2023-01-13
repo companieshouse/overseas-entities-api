@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
 
 class DtoDaoMappingTest {
 
@@ -88,8 +89,7 @@ class DtoDaoMappingTest {
         address.setPostcode("post code");
 
         EntityDao entity = new EntityDao();
-        entity.setName("name");
-        entity.setEmail("email");
+        entity.setEmail(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES);
         entity.setIncorporationCountry("country");
         entity.setLawGoverned("law governed");
         entity.setLegalForm("legal form");
@@ -149,7 +149,6 @@ class DtoDaoMappingTest {
         trustDataDao.add(trustData);
         overseasEntitySubmission.setTrusts(trustDataDao);
 
-
         return overseasEntitySubmission;
     }
 
@@ -166,8 +165,8 @@ class DtoDaoMappingTest {
         address.setPostcode("post code");
 
         EntityDto entity = new EntityDto();
-        entity.setName("name");
-        entity.setEmail("email");
+        // Leading and trailing spaces are added but should be trimmed by the time that the object is mapped
+        entity.setEmail(" " + EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES + " ");
         entity.setIncorporationCountry("country");
         entity.setLawGoverned("law governed");
         entity.setLegalForm("legal form");
@@ -222,7 +221,6 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDto.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDto);
 
-
         List<TrustDataDto> trustDataDto = new ArrayList<>();
         TrustDataDto trustData = TrustMock.getTrustDataDto();
         trustDataDto.add(trustData);
@@ -236,8 +234,7 @@ class DtoDaoMappingTest {
         EntityDao entityDao = dao.getEntity();
         EntityDto entityDto = dto.getEntity();
 
-        assertEquals(entityDto.getName(), entityDao.getName());
-        assertEquals(entityDto.getEmail(), entityDao.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, entityDao.getEmail());
         assertEquals(entityDto.getIncorporationCountry(), entityDao.getIncorporationCountry());
         assertEquals(entityDto.getLawGoverned(), entityDao.getLawGoverned());
         assertEquals(entityDto.getLegalForm(), entityDao.getLegalForm());
@@ -253,7 +250,7 @@ class DtoDaoMappingTest {
         PresenterDto presenterDto = dto.getPresenter();
 
         assertEquals(presenterDto.getFullName(), presenterDao.getFullName());
-        assertEquals(presenterDto.getEmail(), presenterDao.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, presenterDao.getEmail());
 
         assertDueDiligenceIsEqual(dao.getDueDiligence(), dto.getDueDiligence());
         assertOverseasEntityDueDiligenceIsEqual(dao.getOverseasEntityDueDiligence(), dto.getOverseasEntityDueDiligence());
@@ -271,7 +268,7 @@ class DtoDaoMappingTest {
     private void assertDueDiligenceIsEqual(DueDiligenceDao dueDiligenceDao, DueDiligenceDto dueDiligenceDto) {
         assertEquals(dueDiligenceDto.getIdentityDate(), dueDiligenceDao.getIdentityDate());
         assertEquals(dueDiligenceDto.getName(), dueDiligenceDao.getName());
-        assertEquals(dueDiligenceDto.getEmail(), dueDiligenceDao.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, dueDiligenceDao.getEmail());
         assertEquals(dueDiligenceDto.getSupervisoryName(), dueDiligenceDao.getSupervisoryName());
         assertEquals(dueDiligenceDto.getAmlNumber(), dueDiligenceDao.getAmlNumber());
         assertEquals( dueDiligenceDto.getAgentCode(), dueDiligenceDao.getAgentCode());
@@ -284,7 +281,7 @@ class DtoDaoMappingTest {
 
         assertEquals(overseasEntityDueDiligenceDto.getIdentityDate(), overseasEntityDueDiligenceDao.getIdentityDate());
         assertEquals(overseasEntityDueDiligenceDto.getName(), overseasEntityDueDiligenceDao.getName());
-        assertEquals(overseasEntityDueDiligenceDto.getEmail(), overseasEntityDueDiligenceDao.getEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, overseasEntityDueDiligenceDao.getEmail());
         assertEquals(overseasEntityDueDiligenceDto.getSupervisoryName(), overseasEntityDueDiligenceDao.getSupervisoryName());
         assertEquals(overseasEntityDueDiligenceDto.getAmlNumber(), overseasEntityDueDiligenceDao.getAmlNumber());
         assertEquals(overseasEntityDueDiligenceDto.getPartnerName(), overseasEntityDueDiligenceDao.getPartnerName());
@@ -375,7 +372,7 @@ class DtoDaoMappingTest {
         assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
         assertEquals(mocDto.getRoleAndResponsibilities(), mocDao.getRoleAndResponsibilities());
         assertEquals(mocDto.getContactFullName(), mocDao.getContactFullName());
-        assertEquals(mocDto.getContactEmail(), mocDao.getContactEmail());
+        assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, mocDao.getContactEmail());
 
         assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());
         assertAddressesAreEqual(mocDto.getServiceAddress(), mocDao.getServiceAddress());

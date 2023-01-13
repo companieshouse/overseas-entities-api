@@ -34,10 +34,15 @@ public class TransactionService {
         }
     }
 
-    public void updateTransaction(Transaction transaction, String passthroughHeader, String loggingContext) throws ServiceException {
+    public void updateTransaction(Transaction transaction, String loggingContext) throws ServiceException {
         try {
             var uri = TRANSACTIONS_PRIVATE_API_PREFIX + transaction.getId();
-            var response = apiClientService.getInternalOauthAuthenticatedClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
+
+            // The internal API key client is used here as the transaction service will call back into the OE API to get
+            // the costs (if a costs end-point has already been set on the transaction) and those calls cannot be made
+            // with a user token
+            var response = apiClientService.getInternalApiKeyClient()
+                    .privateTransaction().patch(uri, transaction).execute();
 
             if (response.getStatusCode() != 204) {
                 throw new IOException("Invalid Status Code received from Transactions-api: " + response.getStatusCode());

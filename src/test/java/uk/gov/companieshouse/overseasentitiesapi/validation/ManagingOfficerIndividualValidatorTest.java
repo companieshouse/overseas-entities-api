@@ -304,6 +304,64 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenBothNationalityFieldsAreWithinMaxLength() {
+        managingOfficerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 24));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenBothNationalityFieldsExceedMaxLength() {
+        managingOfficerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 25));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.NATIONALITY_FIELD);
+
+        String qualifiedFieldNameSecondNationality = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        String compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 50 characters or less").build();
+        assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityFieldContainsInvalidCharacters() {
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("Дракон");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenSecondNationalityFieldIsNotEqualToTheNationalityGiven() {
+        managingOfficerIndividualDtoList.get(0).setNationality("French");
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("Algerian");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+    @Test
+    void testErrorReportedWhenSecondNationalityFieldEqualsTheNationalityGiven() {
+        managingOfficerIndividualDtoList.get(0).setNationality("French");
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("French");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
+        String validationMessage = String.format(ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName);
+        assertError(ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         managingOfficerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

@@ -23,6 +23,7 @@ public class Constants {
     public static final String COSTS_URI_SUFFIX = "/costs";
     public static final String TRANSACTIONS_PRIVATE_API_PREFIX = "/private/transactions/";
     public static final String TRANSACTIONS_PUBLIC_API_PREFIX = "/transactions/";
+    public static final String RESUME_JOURNEY_URI_PATTERN = "/register-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
 
     // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
@@ -30,4 +31,7 @@ public class Constants {
     public static final String LINK_RESOURCE = "resource";
 
     public static final int TRUNCATED_DATA_LENGTH = 50;
+
+    public static final String CONCATENATED_STRING_FORMAT = "%s,%s";
+    public static final String CONCATENATED_STRING_FORMAT_NO_COMMA = "%s%s";
 }

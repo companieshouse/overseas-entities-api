@@ -47,32 +47,37 @@ public class OwnersAndOfficersDataBlockValidator {
         this.managingOfficerCorporateValidator = managingOfficerCorporateValidator;
     }
 
-    public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public void validateOwnersAndOfficersAgainstStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
         if (isCorrectCombinationOfOwnersAndOfficersForStatement(overseasEntitySubmissionDto, errors, loggingContext)) {
-            List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
-            if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
-                beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
-            }
-            List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
-            if (hasCorporateBeneficialOwnersPresent(beneficialOwnerCorporateDtoList)) {
-                beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, errors, loggingContext);
-            }
-            List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
-            if (hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(beneficialOwnerGovernmentOrPublicAuthorityDtoList)) {
-                beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, errors, loggingContext);
-            }
-            List<ManagingOfficerIndividualDto> managingOfficersIndividualDtoList = overseasEntitySubmissionDto.getManagingOfficersIndividual();
-            if (hasIndividualManagingOfficersPresent(managingOfficersIndividualDtoList)) {
-                managingOfficerIndividualValidator.validate(managingOfficersIndividualDtoList, errors, loggingContext);
-            }
-            List<ManagingOfficerCorporateDto> managingOfficersCorporateDtoList = overseasEntitySubmissionDto.getManagingOfficersCorporate();
-            if (hasCorporateManagingOfficersPresent(managingOfficersCorporateDtoList)) {
-                managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
-            }
+            validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         }
     }
+
+    public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
+        if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
+            beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
+        if (hasCorporateBeneficialOwnersPresent(beneficialOwnerCorporateDtoList)) {
+            beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, errors, loggingContext);
+        }
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
+        if (hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(beneficialOwnerGovernmentOrPublicAuthorityDtoList)) {
+            beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualDtoList = overseasEntitySubmissionDto.getManagingOfficersIndividual();
+        if (hasIndividualManagingOfficersPresent(managingOfficersIndividualDtoList)) {
+            managingOfficerIndividualValidator.validate(managingOfficersIndividualDtoList, errors, loggingContext);
+        }
+        List<ManagingOfficerCorporateDto> managingOfficersCorporateDtoList = overseasEntitySubmissionDto.getManagingOfficersCorporate();
+        if (hasCorporateManagingOfficersPresent(managingOfficersCorporateDtoList)) {
+            managingOfficerCorporateValidator.validate(managingOfficersCorporateDtoList, errors, loggingContext);
+        }
+    }
+
 
     private boolean isCorrectCombinationOfOwnersAndOfficersForStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         switch(overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
@@ -87,8 +92,9 @@ public class OwnersAndOfficersDataBlockValidator {
                  }
                  break;
             case SOME_IDENTIFIED_ALL_DETAILS:
-                if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
-                    logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER));
+                // TODO roe-1640 AC are that at least one BO and at least one MO must be present - if either one is missing an error is logged and returned
+                if (!(hasBeneficialOwners(overseasEntitySubmissionDto) || hasManagingOfficers(overseasEntitySubmissionDto))) {
+                    logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER + " or " + MISSING_MANAGING_OFFICER));
                     return false;
                 }
                 break;

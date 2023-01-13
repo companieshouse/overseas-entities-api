@@ -4,9 +4,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class EntityDao {
 
-    @Field("name")
-    private String name;
-
     @Field("incorporation_country")
     private String incorporationCountry;
 
@@ -31,19 +28,14 @@ public class EntityDao {
     @Field("public_register_name")
     private String publicRegisterName;
 
+    @Field("public_register_jurisdiction")
+    private String publicRegisterJurisdiction;
+
     @Field("registration_number")
     private String registrationNumber;
 
     @Field("is_on_register_in_country_formed_in")
     private boolean isOnRegisterInCountryFormedIn;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getIncorporationCountry() {
         return incorporationCountry;
@@ -111,6 +103,14 @@ public class EntityDao {
 
     public String getRegistrationNumber() {
         return registrationNumber;
+    }
+
+    public String getPublicRegisterJurisdiction() {
+        return publicRegisterJurisdiction;
+    }
+
+    public void setPublicRegisterJurisdiction(String publicRegisterJurisdiction) {
+        this.publicRegisterJurisdiction = publicRegisterJurisdiction;
     }
 
     public void setRegistrationNumber(String registrationNumber) {
