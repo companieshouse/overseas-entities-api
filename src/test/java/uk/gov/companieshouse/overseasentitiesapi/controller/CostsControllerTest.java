@@ -28,7 +28,7 @@ class CostsControllerTest {
 
     @Test
     void getRegistrationCosts() throws ServiceException {
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Registration);
+        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.REGISTRATION);
 
         final CostsService costService = new CostsService(overseasEntitiesService);
         costService.setRegistrationCostAmount("13.00");
@@ -40,7 +40,7 @@ class CostsControllerTest {
 
     @Test
     void getUpdateCosts() throws ServiceException {
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.Update);
+        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.UPDATE);
 
         final CostsService costService = new CostsService(overseasEntitiesService);
         costService.setUpdateCostAmount("13.00");

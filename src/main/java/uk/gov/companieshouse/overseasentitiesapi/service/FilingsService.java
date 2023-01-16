@@ -101,7 +101,7 @@ public class FilingsService {
         setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
-        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.Update) {
+        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.UPDATE) {
             filing.setCost(costUpdateAmount);
         } else {
             filing.setCost(costRegisterAmount);

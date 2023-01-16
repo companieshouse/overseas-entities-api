@@ -41,7 +41,7 @@ public class CostsService {
     }
 
     public Cost getCosts(String overseasEntityId) throws ServiceException {
-        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.Update) {
+        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.UPDATE) {
             return getCostForUpdate();
         } else {
             return getCostForRegistration();

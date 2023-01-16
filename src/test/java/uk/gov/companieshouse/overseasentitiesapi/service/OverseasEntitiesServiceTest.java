@@ -333,7 +333,7 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
-        assertEquals(SubmissionType.Registration, kind);
+        assertEquals(SubmissionType.REGISTRATION, kind);
     }
 
     @Test
@@ -345,7 +345,7 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
-        assertEquals(SubmissionType.Update, kind);
+        assertEquals(SubmissionType.UPDATE, kind);
     }
 
     @Test

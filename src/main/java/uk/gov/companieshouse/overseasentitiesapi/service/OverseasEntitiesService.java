@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -62,15 +61,15 @@ public class OverseasEntitiesService {
 
     public SubmissionType getSubmissionType(String overseasEntityId) throws ServiceException {
         if (!isROEUpdateEnabled) {
-            return SubmissionType.Registration;
+            return SubmissionType.REGISTRATION;
         }
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {
-            String errorMessage = "Overseas entity submission not found";
+            var errorMessage = "Overseas entity submission not found";
             Map<String, Object> logMap = new HashMap<>();
             logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-            ServiceException error = new ServiceException(errorMessage);
+            var error = new ServiceException(errorMessage);
             ApiLogger.error(errorMessage, error, logMap);
             throw error;
         }
@@ -79,12 +78,12 @@ public class OverseasEntitiesService {
         if (registrationNumber != null && !registrationNumber.isEmpty()) {
             ApiLogger.info(String.format("Submission with registration number %s found",
                     registrationNumber));
-            return SubmissionType.Update;
+            return SubmissionType.UPDATE;
         } else {
             ApiLogger.info("Submission without registration number found");
         }
 
-        return SubmissionType.Registration;
+        return SubmissionType.REGISTRATION;
     }
 
     public ResponseEntity<Object> createOverseasEntityWithResumeLink(Transaction transaction,
