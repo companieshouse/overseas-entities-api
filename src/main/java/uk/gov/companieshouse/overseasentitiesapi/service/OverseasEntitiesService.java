@@ -59,17 +59,17 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public SubmissionType getSubmissionType(String overseasEntityId) throws ServiceException {
+    public SubmissionType getSubmissionType(String overseasEntityId) throws SubmissionNotFoundException {
         if (!isROEUpdateEnabled) {
             return SubmissionType.REGISTRATION;
         }
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {
-            var errorMessage = "Overseas entity submission not found";
+            var errorMessage = "Can not determine submission type";
             Map<String, Object> logMap = new HashMap<>();
             logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-            var error = new ServiceException(errorMessage);
+            var error = new SubmissionNotFoundException(errorMessage);
             ApiLogger.error(errorMessage, error, logMap);
             throw error;
         }

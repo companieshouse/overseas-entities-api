@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.payment.Cost;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -38,15 +39,20 @@ public class CostsController {
     public ResponseEntity<List<Cost>> getCosts(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
-        var cost = costsService.getCosts(overseasEntityId);
+        try {
+            var cost = costsService.getCosts(overseasEntityId);
 
-        return ResponseEntity.ok(Collections.singletonList(cost));
+            return ResponseEntity.ok(Collections.singletonList(cost));
+        } catch (SubmissionNotFoundException e) {
+            ApiLogger.errorContext(requestId, "Error determining submission costs", e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

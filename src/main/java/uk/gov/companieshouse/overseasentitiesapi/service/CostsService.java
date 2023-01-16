@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
 import java.util.Collections;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 
 @Service
 public class CostsService {
 
-    private static final String COST_REGISTER_DESC = "Register Overseas Entity fee";
+    private static final String REGISTER_COST_DESC = "Register Overseas Entity fee";
 
-    private static final String COST_UPDATE_DESC = "Update Overseas Entity fee";
+    private static final String UPDATE_COST_DESC = "Update Overseas Entity fee";
 
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
     private static final String RESOURCE_KIND = "overseas-entity";
@@ -40,7 +40,7 @@ public class CostsService {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    public Cost getCosts(String overseasEntityId) throws ServiceException {
+    public Cost getCosts(String overseasEntityId) throws SubmissionNotFoundException {
         if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.UPDATE) {
             return getCostForUpdate();
         } else {
@@ -53,7 +53,7 @@ public class CostsService {
         cost.setAmount(costRegisterAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
-        cost.setDescription(COST_REGISTER_DESC);
+        cost.setDescription(REGISTER_COST_DESC);
         cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
         cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
         cost.setKind(PAYMENT_SESSION);
@@ -68,7 +68,7 @@ public class CostsService {
         cost.setAmount(costUpdateAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
-        cost.setDescription(COST_UPDATE_DESC);
+        cost.setDescription(UPDATE_COST_DESC);
         cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
         cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
         cost.setKind(PAYMENT_SESSION);

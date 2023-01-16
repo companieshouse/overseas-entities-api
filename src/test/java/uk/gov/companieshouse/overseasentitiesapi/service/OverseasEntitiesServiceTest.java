@@ -326,7 +326,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeIsRegistrationIfNoRegistrationNumberInSubmission() throws ServiceException {
+    void checkSubmissionTypeIsRegistrationIfNoRegistrationNumberInSubmission() throws SubmissionNotFoundException {
         EntityDto entityDto = new EntityDto();
         submissionDto.setEntity(entityDto);
         overseasEntitiesService.setROEUpdateEnabled(true);
@@ -337,7 +337,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeIsUpdateIfRegistrationNumberInSubmission() throws ServiceException {
+    void checkSubmissionTypeIsUpdateIfRegistrationNumberInSubmission() throws SubmissionNotFoundException {
         EntityDto entityDto = new EntityDto();
         entityDto.setRegistrationNumber("OE111129");
         submissionDto.setEntity(entityDto);
@@ -349,10 +349,10 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() throws ServiceException {
+    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() throws SubmissionNotFoundException {
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(ServiceException.class, () -> {
+        assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.getSubmissionType("testId1");
         });
     }

@@ -7,7 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,19 +19,20 @@ class CostsServiceTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
+    private CostsService costService;
+
     @BeforeEach
     void init() {
-        // ReflectionTestUtils.setField(costService, "costRegisterAmount", "13.00");
+        costService = new CostsService(overseasEntitiesService);
+        ReflectionTestUtils.setField(costService, "costRegisterAmount", "13.00");
+        ReflectionTestUtils.setField(costService, "costUpdateAmount", "26.00");
     }
 
     @Test
-    void getRegistrationCosts() throws ServiceException {
+    void getRegistrationCosts() throws SubmissionNotFoundException {
 
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.REGISTRATION);
 
-        final CostsService costService = new CostsService(overseasEntitiesService);
-
-        costService.setRegistrationCostAmount("13.00");
         var result = costService.getCosts("testId");
 
         assertEquals("13.00", result.getAmount());
@@ -44,16 +46,13 @@ class CostsServiceTest {
     }
 
     @Test
-    void getUpdateCosts() throws ServiceException {
+    void getUpdateCosts() throws SubmissionNotFoundException {
 
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.UPDATE);
 
-        final CostsService costService = new CostsService(overseasEntitiesService);
-
-        costService.setUpdateCostAmount("13.00");
         var result = costService.getCosts("testId");
 
-        assertEquals("13.00", result.getAmount());
+        assertEquals("26.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
         assertEquals(Collections.singletonList("data-maintenance"), result.getClassOfPayment());
         assertEquals("Update Overseas Entity fee", result.getDescription());

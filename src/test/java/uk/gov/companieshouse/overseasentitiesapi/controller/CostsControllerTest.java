@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.SubmissionType;
@@ -26,27 +28,32 @@ class CostsControllerTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
+    private CostsService costsService;
+
+    @BeforeEach
+    void init() {
+        costsService = new CostsService(overseasEntitiesService);
+        ReflectionTestUtils.setField(costsService, "costRegisterAmount", "13.00");
+        ReflectionTestUtils.setField(costsService, "costUpdateAmount", "26.00");
+    }
+
     @Test
-    void getRegistrationCosts() throws ServiceException {
+    void testGetCostsReturnsRegistionCosts() throws SubmissionNotFoundException {
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.REGISTRATION);
 
-        final CostsService costService = new CostsService(overseasEntitiesService);
-        costService.setRegistrationCostAmount("13.00");
-        final CostsController costsController = new CostsController(costService);
+        final CostsController costsController = new CostsController(costsService);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("13.00", response.getBody().get(0).getAmount());
     }
 
     @Test
-    void getUpdateCosts() throws ServiceException {
+    void testGetCostsReturnsUpdateCosts() throws SubmissionNotFoundException {
         when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.UPDATE);
 
-        final CostsService costService = new CostsService(overseasEntitiesService);
-        costService.setUpdateCostAmount("13.00");
-        final CostsController costsController = new CostsController(costService);
+        final CostsController costsController = new CostsController(costsService);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals("13.00", response.getBody().get(0).getAmount());
+        assertEquals("26.00", response.getBody().get(0).getAmount());
     }
 }
