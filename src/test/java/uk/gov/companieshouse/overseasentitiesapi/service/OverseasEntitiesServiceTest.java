@@ -326,9 +326,8 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeIsRegistrationIfNoRegistrationNumberInSubmission() throws SubmissionNotFoundException {
-        EntityDto entityDto = new EntityDto();
-        submissionDto.setEntity(entityDto);
+    void checkSubmissionTypeIsRegistrationIfNoOverseasEntityNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber(null);
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
@@ -337,10 +336,8 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeIsUpdateIfRegistrationNumberInSubmission() throws SubmissionNotFoundException {
-        EntityDto entityDto = new EntityDto();
-        entityDto.setRegistrationNumber("OE111129");
-        submissionDto.setEntity(entityDto);
+    void checkSubmissionTypeIsUpdateIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));

@@ -78,16 +78,15 @@ public class OverseasEntitiesService {
             }
         }
 
-        String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
-        if (StringUtils.isNotBlank(registrationNumber)) {
-            ApiLogger.infoContext(requestId, String.format("Submission with registration number %s found",
-                    registrationNumber));
+        String entityNumber = submissionOpt.get().getEntityNumber();
+        if (StringUtils.isNotBlank(entityNumber)) {
+            ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
+                    entityNumber));
             return SubmissionType.UPDATE;
         } else {
-            ApiLogger.infoContext(requestId, "Submission without registration number found");
+            ApiLogger.infoContext(requestId, "Submission without overseas entity number found");
+            return SubmissionType.REGISTRATION;
         }
-
-        return SubmissionType.REGISTRATION;
     }
 
     public ResponseEntity<Object> createOverseasEntityWithResumeLink(Transaction transaction,

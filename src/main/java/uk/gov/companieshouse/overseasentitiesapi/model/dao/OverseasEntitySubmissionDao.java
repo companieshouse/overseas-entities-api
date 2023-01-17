@@ -28,6 +28,9 @@ public class OverseasEntitySubmissionDao {
     @Field("entity_name")
     private String entityName;
 
+    @Field("oe_number")
+    private String entityNumber;
+
     @Field("presenter")
     private PresenterDao presenter;
 
@@ -74,6 +77,13 @@ public class OverseasEntitySubmissionDao {
 
     public String getEntityName() {
         return entityName;
+    }
+
+    public void setEntityNumber(String entityName) {
+        this.entityNumber = entityNumber;
+    }
+    public String getEntityNumber() {
+        return entityNumber;
     }
 
     public void setEntityName(String entityName) {
