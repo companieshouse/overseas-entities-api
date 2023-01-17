@@ -56,4 +56,14 @@ class CostsControllerTest {
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("26.00", response.getBody().get(0).getAmount());
     }
+;
+    @Test
+    void testGetCostsSubmissionException() throws SubmissionNotFoundException {
+        when(overseasEntitiesService.getSubmissionType(any(), any())).thenThrow(
+                new SubmissionNotFoundException("test"));
+
+        final CostsController costsController = new CostsController(costsService);
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals(500, response.getStatusCodeValue());
+    }
 }
