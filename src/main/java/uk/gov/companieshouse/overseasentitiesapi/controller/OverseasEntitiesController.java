@@ -36,6 +36,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
+import java.util.stream.IntStream;
+import java.util.random.RandomGeneratorFactory;
+
 @RestController
 @RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/overseas-entity")
 public class OverseasEntitiesController {
@@ -53,6 +56,14 @@ public class OverseasEntitiesController {
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_REMOVE_24112022:false}")
     private boolean isRoeRemoveEnabled;
+
+    public IntStream getPseudoInts(String algorithm, int streamSize) {
+        // returns an IntStream with size @streamSize of random numbers generated using the @algorithm
+        // where the lower bound is 0 and the upper is 100 (exclusive)
+        return RandomGeneratorFactory.of(algorithm)
+                .create()
+                .ints(streamSize, 0,100);
+    }
 
     @Autowired
     public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,
