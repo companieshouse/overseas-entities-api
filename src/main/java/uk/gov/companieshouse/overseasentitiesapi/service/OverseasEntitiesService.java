@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -67,15 +68,18 @@ public class OverseasEntitiesService {
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {
             var errorMessage = "Can not determine submission type";
-            Map<String, Object> logMap = new HashMap<>();
-            logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-            var error = new SubmissionNotFoundException(errorMessage);
-            ApiLogger.errorContext(requestId, errorMessage, error, logMap);
-            throw error;
+            try {
+                throw new SubmissionNotFoundException(errorMessage);
+            } catch (SubmissionNotFoundException exn) {
+                Map<String, Object> logMap = new HashMap<>();
+                logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+                ApiLogger.errorContext(requestId, errorMessage, exn, logMap);
+                throw exn;
+            }
         }
 
         String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
-        if (registrationNumber != null && !registrationNumber.isEmpty()) {
+        if (StringUtils.isNotBlank(registrationNumber)) {
             ApiLogger.infoContext(requestId, String.format("Submission with registration number %s found",
                     registrationNumber));
             return SubmissionType.UPDATE;

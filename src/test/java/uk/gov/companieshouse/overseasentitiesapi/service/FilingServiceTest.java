@@ -155,7 +155,16 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForRegistration() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType.REGISTRATION);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType.UPDATE);
+    }
+
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType submissionType) throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -163,6 +172,7 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(submissionType);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
