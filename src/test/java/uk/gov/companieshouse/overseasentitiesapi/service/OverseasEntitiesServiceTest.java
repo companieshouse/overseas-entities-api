@@ -332,7 +332,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
-        SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
         assertEquals(SubmissionType.REGISTRATION, kind);
     }
 
@@ -344,7 +344,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
-        SubmissionType kind = overseasEntitiesService.getSubmissionType("testId1");
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
         assertEquals(SubmissionType.UPDATE, kind);
     }
 
@@ -353,7 +353,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
-            overseasEntitiesService.getSubmissionType("testId1");
+            overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
         });
     }
 }

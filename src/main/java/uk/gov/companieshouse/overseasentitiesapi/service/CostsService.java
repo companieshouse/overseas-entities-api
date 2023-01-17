@@ -11,16 +11,14 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 @Service
 public class CostsService {
 
-    private static final String REGISTER_COST_DESC = "Register Overseas Entity fee";
+    private static final String REGISTER_COST_DESCRIPTION = "Register Overseas Entity fee";
 
-    private static final String UPDATE_COST_DESC = "Update Overseas Entity fee";
+    private static final String UPDATE_COST_DESCRIPTION = "Update Overseas Entity fee";
 
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
     private static final String RESOURCE_KIND = "overseas-entity";
-    private static final String PRODUCT_TYPE_REGISTER = "register-overseas-entity";
-
-    private static final String PRODUCT_TYPE_UPDATE = "update-overseas-entity";
-
+    private static final String REGISTER_PRODUCT_TYPE = "register-overseas-entity";
+    private static final String UPDATE_PRODUCT_TYPE = "update-overseas-entity";
     private static final String CREDIT_CARD = "credit-card";
     private static final String DESCRIPTION_IDENTIFIER = "description-identifier";
     private static final String PAYMENT_SESSION = "payment-session#payment-session";
@@ -28,10 +26,10 @@ public class CostsService {
     private static final String VALUE = "Value";
 
     @Value("${OE01_COST}")
-    private String costRegisterAmount;
+    private String registerCostAmount;
 
     @Value("${OE01_UPDATE_COST}")
-    private String costUpdateAmount;
+    private String updateCostAmount;
 
     private final OverseasEntitiesService overseasEntitiesService;
 
@@ -40,8 +38,8 @@ public class CostsService {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    public Cost getCosts(String overseasEntityId) throws SubmissionNotFoundException {
-        if (overseasEntitiesService.getSubmissionType(overseasEntityId) == SubmissionType.UPDATE) {
+    public Cost getCosts(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        if (overseasEntitiesService.getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE) {
             return getCostForUpdate();
         } else {
             return getCostForRegistration();
@@ -50,39 +48,39 @@ public class CostsService {
 
     private Cost getCostForRegistration() {
         var cost = new Cost();
-        cost.setAmount(costRegisterAmount);
+        cost.setAmount(registerCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
-        cost.setDescription(REGISTER_COST_DESC);
+        cost.setDescription(REGISTER_COST_DESCRIPTION);
         cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
         cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
-        cost.setProductType(PRODUCT_TYPE_REGISTER);
+        cost.setProductType(REGISTER_PRODUCT_TYPE);
 
         return cost;
     }
 
     private Cost getCostForUpdate() {
         var cost = new Cost();
-        cost.setAmount(costUpdateAmount);
+        cost.setAmount(updateCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
-        cost.setDescription(UPDATE_COST_DESC);
+        cost.setDescription(UPDATE_COST_DESCRIPTION);
         cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
         cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
-        cost.setProductType(PRODUCT_TYPE_UPDATE);
+        cost.setProductType(UPDATE_PRODUCT_TYPE);
 
         return cost;
     }
 
     public void setRegistrationCostAmount(String amount) {
-        this.costRegisterAmount = amount;
+        this.registerCostAmount = amount;
     }
 
     public void setUpdateCostAmount(String amount) {
-        this.costUpdateAmount = amount;
+        this.updateCostAmount = amount;
     }
 }

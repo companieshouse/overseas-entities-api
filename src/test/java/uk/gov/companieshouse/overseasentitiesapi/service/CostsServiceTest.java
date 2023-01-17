@@ -16,6 +16,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CostsServiceTest {
+
+    private final static String TEST_REQUEST_ID = "testRequestId";
+    private final static String TEST_OVERSEAS_ENTITY_ID = "testOverseasEntityId";
+
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
@@ -24,16 +28,16 @@ class CostsServiceTest {
     @BeforeEach
     void init() {
         costService = new CostsService(overseasEntitiesService);
-        ReflectionTestUtils.setField(costService, "costRegisterAmount", "13.00");
-        ReflectionTestUtils.setField(costService, "costUpdateAmount", "26.00");
+        ReflectionTestUtils.setField(costService, "registerCostAmount", "13.00");
+        ReflectionTestUtils.setField(costService, "updateCostAmount", "26.00");
     }
 
     @Test
     void getRegistrationCosts() throws SubmissionNotFoundException {
 
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.REGISTRATION);
+        when(overseasEntitiesService.getSubmissionType(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(SubmissionType.REGISTRATION);
 
-        var result = costService.getCosts("testId");
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
         assertEquals("13.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
@@ -48,9 +52,9 @@ class CostsServiceTest {
     @Test
     void getUpdateCosts() throws SubmissionNotFoundException {
 
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.UPDATE);
+        when(overseasEntitiesService.getSubmissionType(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(SubmissionType.UPDATE);
 
-        var result = costService.getCosts("testId");
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
         assertEquals("26.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());

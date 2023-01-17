@@ -33,13 +33,13 @@ class CostsControllerTest {
     @BeforeEach
     void init() {
         costsService = new CostsService(overseasEntitiesService);
-        ReflectionTestUtils.setField(costsService, "costRegisterAmount", "13.00");
-        ReflectionTestUtils.setField(costsService, "costUpdateAmount", "26.00");
+        ReflectionTestUtils.setField(costsService, "registerCostAmount", "13.00");
+        ReflectionTestUtils.setField(costsService, "updateCostAmount", "26.00");
     }
 
     @Test
     void testGetCostsReturnsRegistionCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.REGISTRATION);
+        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(SubmissionType.REGISTRATION);
 
         final CostsController costsController = new CostsController(costsService);
 
@@ -49,7 +49,7 @@ class CostsControllerTest {
 
     @Test
     void testGetCostsReturnsUpdateCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.getSubmissionType(any())).thenReturn(SubmissionType.UPDATE);
+        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(SubmissionType.UPDATE);
 
         final CostsController costsController = new CostsController(costsService);
 

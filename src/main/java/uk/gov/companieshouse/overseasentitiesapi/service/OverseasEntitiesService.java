@@ -59,7 +59,7 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public SubmissionType getSubmissionType(String overseasEntityId) throws SubmissionNotFoundException {
+    public SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         if (!isROEUpdateEnabled) {
             return SubmissionType.REGISTRATION;
         }
@@ -70,17 +70,17 @@ public class OverseasEntitiesService {
             Map<String, Object> logMap = new HashMap<>();
             logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
             var error = new SubmissionNotFoundException(errorMessage);
-            ApiLogger.error(errorMessage, error, logMap);
+            ApiLogger.errorContext(requestId, errorMessage, error, logMap);
             throw error;
         }
 
         String registrationNumber = submissionOpt.get().getEntity().getRegistrationNumber();
         if (registrationNumber != null && !registrationNumber.isEmpty()) {
-            ApiLogger.info(String.format("Submission with registration number %s found",
+            ApiLogger.infoContext(requestId, String.format("Submission with registration number %s found",
                     registrationNumber));
             return SubmissionType.UPDATE;
         } else {
-            ApiLogger.info("Submission without registration number found");
+            ApiLogger.infoContext(requestId, "Submission without registration number found");
         }
 
         return SubmissionType.REGISTRATION;
