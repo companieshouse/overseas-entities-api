@@ -35,7 +35,7 @@ class CostsServiceTest {
     @Test
     void getRegistrationCosts() throws SubmissionNotFoundException {
 
-        when(overseasEntitiesService.getSubmissionType(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(SubmissionType.REGISTRATION);
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(false);
 
         var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
@@ -52,7 +52,7 @@ class CostsServiceTest {
     @Test
     void getUpdateCosts() throws SubmissionNotFoundException {
 
-        when(overseasEntitiesService.getSubmissionType(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(SubmissionType.UPDATE);
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(true);
 
         var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 

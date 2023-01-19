@@ -38,9 +38,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS
 @Service
 public class OverseasEntitiesService {
 
-    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
-    private boolean isROEUpdateEnabled;
-
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -60,22 +57,15 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
+    public boolean isSubmissionAnUpdate(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
+    }
+
     public SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        if (!isROEUpdateEnabled) {
-            return SubmissionType.REGISTRATION;
-        }
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {
-            var errorMessage = "Can not determine submission type";
-            try {
-                throw new SubmissionNotFoundException(errorMessage);
-            } catch (SubmissionNotFoundException exn) {
-                Map<String, Object> logMap = new HashMap<>();
-                logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-                ApiLogger.errorContext(requestId, errorMessage, exn, logMap);
-                throw exn;
-            }
+            throw new SubmissionNotFoundException("Can not determine submission type");
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();
@@ -255,9 +245,5 @@ public class OverseasEntitiesService {
         submission.setCreatedByUserId(userId);
 
         overseasEntitySubmissionsRepository.save(submission);
-    }
-
-    public void setROEUpdateEnabled(boolean isROEUpdateEnabled) {
-        this.isROEUpdateEnabled = isROEUpdateEnabled;
     }
 }

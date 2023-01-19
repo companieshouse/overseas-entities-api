@@ -172,7 +172,7 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
-        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(submissionType);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(submissionType == SubmissionType.UPDATE);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);

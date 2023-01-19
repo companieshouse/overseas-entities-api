@@ -39,7 +39,7 @@ public class CostsService {
     }
 
     public Cost getCosts(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        if (overseasEntitiesService.getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE) {
+        if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
             return getCostForUpdate();
         } else {
             return getCostForRegistration();

@@ -328,7 +328,6 @@ class OverseasEntitiesServiceTest {
     @Test
     void checkSubmissionTypeIsRegistrationIfNoOverseasEntityNumberInSubmission() throws SubmissionNotFoundException {
         submissionDto.setEntityNumber(null);
-        overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
@@ -338,7 +337,6 @@ class OverseasEntitiesServiceTest {
     @Test
     void checkSubmissionTypeIsUpdateIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
         submissionDto.setEntityNumber("OE111129");
-        overseasEntitiesService.setROEUpdateEnabled(true);
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
@@ -346,8 +344,23 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() throws SubmissionNotFoundException {
-        overseasEntitiesService.setROEUpdateEnabled(true);
+    void checkIsUpdateSubmissionIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
+        assertEquals(true, isUpdate);
+    }
+    @Test
+    void checkIsNotUpdateSubmissionIfNoOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
+        assertEquals(false, isUpdate);
+    }
+
+    @Test
+    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");

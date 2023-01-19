@@ -319,7 +319,7 @@
               }
             ]
           },
-          "oe_number": {
+          "entity_number": {
             "allOf" : [
               {
                 "$ref": "#/components/schemas/FieldPattern"

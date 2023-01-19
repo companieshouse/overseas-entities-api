@@ -39,7 +39,7 @@ class CostsControllerTest {
 
     @Test
     void testGetCostsReturnsRegistionCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(SubmissionType.REGISTRATION);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(false);
 
         final CostsController costsController = new CostsController(costsService);
 
@@ -49,7 +49,7 @@ class CostsControllerTest {
 
     @Test
     void testGetCostsReturnsUpdateCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.getSubmissionType(any(), any())).thenReturn(SubmissionType.UPDATE);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
 
         final CostsController costsController = new CostsController(costsService);
 
@@ -59,7 +59,7 @@ class CostsControllerTest {
 ;
     @Test
     void testGetCostsSubmissionException() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.getSubmissionType(any(), any())).thenThrow(
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenThrow(
                 new SubmissionNotFoundException("test"));
 
         final CostsController costsController = new CostsController(costsService);

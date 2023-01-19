@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class OverseasEntitySubmissionDto {
 
     public static final String ENTITY_NAME_FIELD = "entity_name";
-    public static final String ENTITY_NUMBER_FIELD = "oe_number";
+    public static final String ENTITY_NUMBER_FIELD = "entity_number";
     public static final String PRESENTER_FIELD = "presenter";
     public static final String ENTITY_FIELD = "entity";
     public static final String DUE_DILIGENCE_FIELD = "due_diligence";
