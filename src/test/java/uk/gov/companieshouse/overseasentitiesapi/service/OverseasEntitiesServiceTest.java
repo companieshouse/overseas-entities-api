@@ -360,10 +360,18 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkSubmissionTypeServiceExceptionWhenNoSuchSubmission() {
+    void checkSubmissionTypeServiceThrowsExceptionWhenNoSuchSubmission() {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
+        });
+    }
+
+    @Test
+    void checkIsSubmissionAnUpadteThrowsServiceExceptionWhenNoSuchSubmission() {
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(SubmissionNotFoundException.class, () -> {
+            overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1");
         });
     }
 }
