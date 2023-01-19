@@ -2,7 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
@@ -33,7 +32,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SEL
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 
 @Service
 public class OverseasEntitiesService {
@@ -224,6 +222,7 @@ public class OverseasEntitiesService {
         var submission = overseasEntitySubmissionsRepository.findById(submissionId);
         if (submission.isPresent()) {
             ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", submission.get().getId()));
+            
             var dto = overseasEntityDtoDaoMapper.daoToDto(submission.get());
             return Optional.of(dto);
         } else {
