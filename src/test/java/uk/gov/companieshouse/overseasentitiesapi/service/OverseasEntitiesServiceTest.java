@@ -18,6 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapp
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
@@ -55,6 +56,9 @@ class OverseasEntitiesServiceTest {
     private static final LocalDateTime DUMMY_TIME_STAMP = LocalDateTime.of(2020, 2,2, 0, 0);
     private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String ENTITY_NAME = "MANSION HOLDINGS AG";
+
+    private OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
+    private OverseasEntitySubmissionDto submissionDto = new OverseasEntitySubmissionDto();
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -319,5 +323,55 @@ class OverseasEntitiesServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         return transaction;
+    }
+
+    @Test
+    void checkSubmissionTypeIsRegistrationIfNoOverseasEntityNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber(null);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
+        assertEquals(SubmissionType.REGISTRATION, kind);
+    }
+
+    @Test
+    void checkSubmissionTypeIsUpdateIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
+        assertEquals(SubmissionType.UPDATE, kind);
+    }
+
+    @Test
+    void checkIsUpdateSubmissionIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
+        assertEquals(true, isUpdate);
+    }
+    @Test
+    void checkIsNotUpdateSubmissionIfNoOverseasNumberInSubmission() throws SubmissionNotFoundException {
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
+        assertEquals(false, isUpdate);
+    }
+
+    @Test
+    void checkSubmissionTypeServiceThrowsExceptionWhenNoSuchSubmission() {
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(SubmissionNotFoundException.class, () -> {
+            overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
+        });
+    }
+
+    @Test
+    void checkIsSubmissionAnUpdateThrowsServiceExceptionWhenNoSuchSubmission() {
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(SubmissionNotFoundException.class, () -> {
+            overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1");
+        });
     }
 }

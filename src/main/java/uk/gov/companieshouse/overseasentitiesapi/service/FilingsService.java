@@ -58,7 +58,10 @@ public class FilingsService {
     private String filingDescription;
 
     @Value("${OE01_COST}")
-    private String costAmount;
+    private String registerCostAmount;
+
+    @Value("${OE01_UPDATE_COST}")
+    private String updateCostAmount;
 
     @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022}")
     private boolean isTrustsSubmissionThroughWebEnabled;
@@ -79,15 +82,15 @@ public class FilingsService {
         this.objectMapper = objectMapper;
     }
 
-    public FilingApi generateOverseasEntityFiling(String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
+    public FilingApi generateOverseasEntityFiling(String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
             throws SubmissionNotFoundException, ServiceException {
         var filing = new FilingApi();
         filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
-        setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader);
+        setFilingApiData(filing, requestId, overseasEntityId, transaction, passThroughTokenHeader);
         return filing;
     }
 
-    private void setFilingApiData(FilingApi filing, String overseasEntityId, Transaction transaction, String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
+    private void setFilingApiData(FilingApi filing, String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader) throws SubmissionNotFoundException, ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
@@ -98,7 +101,12 @@ public class FilingsService {
         setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
-        filing.setCost(costAmount);
+        if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
+            filing.setCost(updateCostAmount);
+        } else {
+            filing.setCost(registerCostAmount);
+        }
+
         setDescriptionFields(filing);
     }
 

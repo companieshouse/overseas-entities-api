@@ -319,6 +319,16 @@
               }
             ]
           },
+          "entity_number": {
+            "allOf" : [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 8
+              }
+            ]
+          },
           "presenter": {
             "$ref": "#/components/schemas/Presenter"
           },

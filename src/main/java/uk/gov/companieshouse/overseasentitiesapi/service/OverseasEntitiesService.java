@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,28 @@ public class OverseasEntitiesService {
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
         this.transactionUtils = transactionUtils;
         this.dateTimeNowSupplier = dateTimeNowSupplier;
+    }
+
+    public boolean isSubmissionAnUpdate(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
+    }
+
+    SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
+                overseasEntityId);
+        if (submissionOpt.isEmpty()) {
+            throw new SubmissionNotFoundException("Can not determine submission type");
+        }
+
+        String entityNumber = submissionOpt.get().getEntityNumber();
+        if (StringUtils.isNotBlank(entityNumber)) {
+            ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
+                    entityNumber));
+            return SubmissionType.UPDATE;
+        } else {
+            ApiLogger.infoContext(requestId, "Submission without overseas entity number found");
+            return SubmissionType.REGISTRATION;
+        }
     }
 
     public ResponseEntity<Object> createOverseasEntityWithResumeLink(Transaction transaction,
