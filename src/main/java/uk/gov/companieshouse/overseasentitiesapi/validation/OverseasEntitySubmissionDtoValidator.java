@@ -56,7 +56,7 @@ public class OverseasEntitySubmissionDtoValidator {
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         var entityName = overseasEntitySubmissionDto.getEntityName();
-        if (Objects.nonNull(entityName)) {
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
             validateEntityName(entityName, errors, loggingContext);
         }
 

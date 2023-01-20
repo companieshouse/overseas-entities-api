@@ -268,7 +268,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorNotReportedForMissingEntityNameFieldAndOtherBlocksForPartialValidation() {
+    void testErrorReportedForMissingEntityNameFieldButNotOtherBlocksForPartialValidation() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         overseasEntitySubmissionDto.setPresenter(null);
@@ -278,7 +278,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
-        assertFalse(errors.hasErrors());
+
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
@@ -427,11 +430,13 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNoPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
+    void testPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
+        String qualifiedFieldName = ENTITY_NAME_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
