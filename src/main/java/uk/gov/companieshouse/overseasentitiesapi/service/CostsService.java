@@ -40,13 +40,13 @@ public class CostsService {
 
     public Cost getCosts(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
-            return getCostForUpdate();
+            return getCostsForUpdate();
         } else {
-            return getCostForRegistration();
+            return getCostsForRegistration();
         }
     }
 
-    private Cost getCostForRegistration() {
+    private Cost getCostsForRegistration() {
         var cost = new Cost();
         cost.setAmount(registerCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
@@ -61,7 +61,7 @@ public class CostsService {
         return cost;
     }
 
-    private Cost getCostForUpdate() {
+    private Cost getCostsForUpdate() {
         var cost = new Cost();
         cost.setAmount(updateCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));

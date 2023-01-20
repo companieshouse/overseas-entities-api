@@ -59,7 +59,7 @@ public class OverseasEntitiesService {
         return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
     }
 
-    public SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+    SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {

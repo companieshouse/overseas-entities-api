@@ -368,7 +368,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void checkIsSubmissionAnUpadteThrowsServiceExceptionWhenNoSuchSubmission() {
+    void checkIsSubmissionAnUpdateThrowsServiceExceptionWhenNoSuchSubmission() {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1");
