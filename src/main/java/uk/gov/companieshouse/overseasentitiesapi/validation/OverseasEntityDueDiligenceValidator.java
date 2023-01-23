@@ -91,7 +91,8 @@ public class OverseasEntityDueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE,
                 OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD);
-        return StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext);
+        return StringValidators.isLessThanOrEqualToMaxLength(amlNumber, 256, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isValidCharacters(amlNumber, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validatePartnerName(String partnerName, Errors errors, String loggingContext) {
