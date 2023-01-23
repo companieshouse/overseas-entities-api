@@ -14,12 +14,16 @@ public class TransactionUtils {
 
     public boolean isTransactionLinkedToOverseasEntitySubmission(Transaction transaction, String overseasEntitySubmissionSelfLink) {
         if (StringUtils.isBlank(overseasEntitySubmissionSelfLink)) {
+            System.out.println("\n\n\n*** T1 ** \n\n");
             return false;
         }
 
         if (Objects.isNull(transaction) || Objects.isNull(transaction.getResources())) {
+            System.out.println("\n\n\n*** T2 >" + transaction + "< ** \n\n");
             return false;
         }
+
+        System.out.println("\n\n\n*** T3 ** \n\n");
 
         return transaction.getResources().entrySet().stream()
                 .filter(resource -> FILING_KIND_OVERSEAS_ENTITY.equals(resource.getValue().getKind()))
