@@ -41,8 +41,8 @@ public abstract class AbstractTransactionStatusInterceptor implements HandlerInt
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
-        return handleTransactionStatus(transaction, reqId, logMap, response);
+        return handleTransactionStatus(transaction, reqId, logMap, request, response);
     }
 
-    abstract boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletResponse response);
+    abstract boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletRequest request, HttpServletResponse response);
 }

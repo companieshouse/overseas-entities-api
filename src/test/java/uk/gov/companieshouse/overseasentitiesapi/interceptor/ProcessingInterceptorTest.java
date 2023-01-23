@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
@@ -52,11 +53,12 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsClosedPendingPayment() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsClosedPendingPaymentAndNotAGetRequest() throws IOException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
         transaction.setStatus(TransactionStatus.CLOSED_PENDING_PAYMENT);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.name());
         var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
         assertFalse(result);
@@ -81,6 +83,19 @@ class ProcessingInterceptorTest {
         Object mockHandler = new Object();
 
         transaction.setStatus(TransactionStatus.OPEN);
+        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+
+        assertTrue(result);
+        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
+    }
+
+    @Test
+    void testInterceptorReturnsTrueWhenTransactionIsClosedPendingPaymentAndAGetRequest() throws IOException {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+
+        transaction.setStatus(TransactionStatus.CLOSED_PENDING_PAYMENT);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
         var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
         assertTrue(result);
