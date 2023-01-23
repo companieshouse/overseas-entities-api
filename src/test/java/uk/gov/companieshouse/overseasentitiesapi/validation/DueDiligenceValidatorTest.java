@@ -251,6 +251,16 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenAmlNumberFieldContainsInvalidCharacters() {
+        dueDiligenceDto.setAmlNumber("Дракон");
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.AML_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(DueDiligenceDto.AML_NUMBER_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenAgentCodeFieldIsNull() {
         dueDiligenceDto.setAgentCode(null);
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);

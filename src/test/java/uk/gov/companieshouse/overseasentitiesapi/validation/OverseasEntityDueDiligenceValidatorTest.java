@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -254,6 +255,15 @@ class OverseasEntityDueDiligenceValidatorTest {
         assertError(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
     }
 
+    @Test
+    void testErrorReportedWhenAmlNumberFieldContainsInvalidCharacters() {
+        overseasEntityDueDiligenceDto.setAmlNumber("Дракон");
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD, validationMessage, errors);
+    }
 
     private void assertError(String fieldName, String message, Errors errors) {
         String qualifiedFieldName = OVERSEAS_ENTITY_DUE_DILIGENCE + "." + fieldName;
