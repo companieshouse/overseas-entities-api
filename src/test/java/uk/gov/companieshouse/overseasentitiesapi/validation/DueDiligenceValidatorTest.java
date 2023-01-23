@@ -346,6 +346,16 @@ class DueDiligenceValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
+    void testErrorReportedWhenDiligenceFieldContainsInvalidCharacters() {
+        dueDiligenceDto.setDiligence("Дракон");
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
+        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(DueDiligenceDto.DILIGENCE_FIELD, validationMessage, errors);
+    }
+
     private void assertError(String fieldName, String message, Errors errors) {
         String qualifiedFieldName = DUE_DILIGENCE_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
