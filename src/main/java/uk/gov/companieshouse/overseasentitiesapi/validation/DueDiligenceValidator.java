@@ -114,7 +114,8 @@ public class DueDiligenceValidator {
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD,
                 DueDiligenceDto.DILIGENCE_FIELD);
+        String DILIGENCE_AGREE = "agree";
         return StringValidators.isNotBlank(diligence, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.checkIsEqual(diligence, "agree", ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+                && StringValidators.checkIsEqual(diligence, DILIGENCE_AGREE, ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 }
