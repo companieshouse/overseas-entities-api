@@ -33,7 +33,7 @@ public class DueDiligenceMock {
         dueDiligenceDto.setAmlNumber("abc123");
         dueDiligenceDto.setAgentCode("c0de");
         dueDiligenceDto.setPartnerName("John Smith");
-        dueDiligenceDto.setDiligence("Agreed");
+        dueDiligenceDto.setDiligence("agree");
         return dueDiligenceDto;
     }
 }

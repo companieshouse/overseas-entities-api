@@ -329,29 +329,11 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenDiligenceFieldExceedsMaxLength() {
-        dueDiligenceDto.setDiligence(StringUtils.repeat("A", 257));
+    void testErrorReportedWhenDiligenceFieldIsNotAgree() {
+        dueDiligenceDto.setDiligence("not agree");
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
-
-        assertError(DueDiligenceDto.DILIGENCE_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
-    }
-
-    @Test
-    void testNoErrorReportedWhenDiligenceFieldDoesNotExceedMaxLength() {
-        dueDiligenceDto.setDiligence(StringUtils.repeat("A", 256));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
-
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testErrorReportedWhenDiligenceFieldContainsInvalidCharacters() {
-        dueDiligenceDto.setDiligence("Дракон");
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.DILIGENCE_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(DueDiligenceDto.DILIGENCE_FIELD, validationMessage, errors);
     }

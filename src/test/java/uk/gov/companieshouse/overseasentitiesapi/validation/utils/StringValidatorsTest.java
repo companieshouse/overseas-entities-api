@@ -127,4 +127,21 @@ class StringValidatorsTest {
         assertEquals(1, errors.size());
         assertTrue(errors.containsError(err));
     }
+
+    @Test
+    @DisplayName("Validate strings are equal successfully")
+    void validateStringsAreEqual_Successful() {
+        assertTrue(StringValidators.checkIsEqual("agree", "agree", ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+    }
+
+    @Test
+    @DisplayName("Validate strings are equal unsuccessfully")
+    void validateStringsAreEqual_Unsuccessful() {
+        String errMsg = String.format(ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
+        boolean isEqual = StringValidators.checkIsEqual("agree", "disagree", ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+        assertFalse(isEqual);
+        assertEquals(1, errors.size());
+        assertTrue(errors.containsError(err));
+    }
 }

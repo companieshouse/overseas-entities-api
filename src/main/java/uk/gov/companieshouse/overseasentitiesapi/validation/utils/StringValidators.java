@@ -90,4 +90,13 @@ public final class StringValidators {
         }
         return true;
     }
+
+    public static boolean checkIsEqual(String string1, String string2, String errorMsg, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (!StringUtils.equals(string1, string2)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, String.format(errorMsg, qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, String.format(errorMsg, qualifiedFieldName));
+            return false;
+        }
+        return true;
+    }
 }

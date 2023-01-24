@@ -9,6 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
@@ -114,7 +115,6 @@ public class DueDiligenceValidator {
                 OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD,
                 DueDiligenceDto.DILIGENCE_FIELD);
         return StringValidators.isNotBlank(diligence, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(diligence, 256, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(diligence, qualifiedFieldName, errors, loggingContext);
+                && StringValidators.checkIsEqual(diligence, "agree", ValidationMessages.SHOULD_BE_AGREE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 }
