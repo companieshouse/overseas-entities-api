@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
@@ -17,7 +18,7 @@ import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOS
 public class FilingInterceptor extends AbstractTransactionStatusInterceptor {
 
     @Override
-    boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletResponse response) {
+    boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletRequest request, HttpServletResponse response) {
         if (CLOSED.equals(transaction.getStatus())) {
             ApiLogger.infoContext(reqId, "Transaction is closed - filing allowed", logMap);
 
