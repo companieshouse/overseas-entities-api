@@ -12,7 +12,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 public class EntityNameValidator {
 
     public Errors validate(EntityNameDto entityNameDto, Errors errors, String loggingContext) {
-        validateEntityName(entityNameDto.getName(), errors, loggingContext);
+        validateName(entityNameDto.getName(), errors, loggingContext);
         return errors;
     }
 
@@ -21,12 +21,5 @@ public class EntityNameValidator {
         return StringValidators.isNotBlank(name, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(name, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(name, qualifiedFieldName, errors, loggingContext);
-    }
-
-    private boolean validateEntityName(String entityName, Errors errors, String loggingContext) {
-        String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
-        return StringValidators.isNotEmpty(entityName, qualifiedFieldName, errors, loggingContext)
-                    && StringValidators.isLessThanOrEqualToMaxLength(entityName, 160, qualifiedFieldName, errors, loggingContext)
-                    && StringValidators.isValidCharacters(entityName, qualifiedFieldName, errors, loggingContext);
     }
 }
