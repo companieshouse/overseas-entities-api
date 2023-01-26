@@ -119,7 +119,7 @@ public class OverseasEntitiesService {
 
         // Update company name set on the transaction and add a link to our newly created Overseas Entity
         // submission (aka resource) to the transaction (and potentially also a link for the 'resume' journey)
-        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
+        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName().getName(), submissionId,
                 submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s", transaction.getId(), insertedSubmission.getId()));
@@ -149,7 +149,7 @@ public class OverseasEntitiesService {
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
-        transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName());
+        transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
         transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(

@@ -27,7 +27,7 @@ public class OverseasEntitySubmissionDto {
     public static final String TRUST_DATA = "trusts";
 
     @JsonProperty(ENTITY_NAME_FIELD)
-    private String entityName;
+    private EntityNameDto entityName;
 
     @JsonProperty(ENTITY_NUMBER_FIELD)
     private String entityNumber;
@@ -69,7 +69,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty("links")
     private Map<String, String> links;
 
-    public String getEntityName() {
+    public EntityNameDto getEntityName() {
         return entityName;
     }
 
@@ -81,7 +81,7 @@ public class OverseasEntitySubmissionDto {
         return entityNumber;
     }
 
-    public void setEntityName(String entityName) {
+    public void setEntityName(EntityNameDto entityName) {
         this.entityName = entityName;
     }
 

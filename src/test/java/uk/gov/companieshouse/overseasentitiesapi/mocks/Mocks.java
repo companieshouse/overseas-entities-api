@@ -5,6 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -26,7 +27,7 @@ public class Mocks {
 
     public static OverseasEntitySubmissionDto buildSubmissionDto() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("Joe Bloggs Ltd");
+        overseasEntitySubmissionDto.setEntityName(buildEntityNameDto());
         EntityDto entity = buildEntityDto();
         overseasEntitySubmissionDto.setEntity(entity);
         PresenterDto presenter = PresenterMock.getPresenterDto();
@@ -197,6 +198,12 @@ public class Mocks {
         entityDto.setPrincipalAddress(AddressMock.getAddressDto());
         entityDto.setServiceAddressSameAsPrincipalAddress(true);
         return entityDto;
+    }
+
+    private static EntityNameDto buildEntityNameDto() {
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName("Joe Bloggs Ltd");
+        return entityNameDto;
     }
 
     private static DueDiligenceDto buildDueDiligenceDto() {

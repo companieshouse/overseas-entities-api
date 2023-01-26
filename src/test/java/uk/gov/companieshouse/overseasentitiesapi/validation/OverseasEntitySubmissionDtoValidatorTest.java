@@ -9,12 +9,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -48,6 +50,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
     @Mock
+    private EntityNameValidator entityNameValidator;
+    @Mock
     private EntityDtoValidator entityDtoValidator;
     @Mock
     private PresenterDtoValidator presenterDtoValidator;
@@ -57,8 +61,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
     @Mock
     private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
-
-    private final String entityName = "ABC Entity";
+    private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
     private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
     private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
@@ -279,6 +282,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
+        verify(entityNameValidator, times(0)).validate(any(), any(), any());
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
@@ -393,7 +397,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testFullValidationErrorReportedWhenEntityNameFieldIsEmpty() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("  ");
+        overseasEntitySubmissionDto.getEntityName().setName("  ");
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -405,7 +409,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testFullValidationErrorReportedWhenEntityNameFieldExceedsMaxLength() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(StringUtils.repeat("A", 161));
+        overseasEntitySubmissionDto.getEntityName().setName(StringUtils.repeat("A", 161));
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = qualifiedFieldName + " must be 160 characters or less";
@@ -417,7 +421,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testFullValidationErrorReportedWhenEntityNameFieldContainsInvalidCharacters() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("Дракон");
+        overseasEntitySubmissionDto.getEntityName().setName("Дракон");
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -437,7 +441,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testPartialValidationErrorReportedWhenEntityNameFieldIsEmpty() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("  ");
+        overseasEntitySubmissionDto.getEntityName().setName("  ");
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -449,7 +453,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testPartialValidationErrorReportedWhenEntityNameFieldExceedsMaxLength() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(StringUtils.repeat("A", 161));
+        overseasEntitySubmissionDto.getEntityName().setName(StringUtils.repeat("A", 161));
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = qualifiedFieldName + " must be 160 characters or less";
@@ -461,7 +465,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testPartialValidationErrorReportedWhenEntityNameFieldContainsInvalidCharacters() {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName("Дракон");
+        overseasEntitySubmissionDto.getEntityName().setName("Дракон");
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -472,7 +476,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(entityName);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntity(entityDto);
         overseasEntitySubmissionDto.setPresenter(presenterDto);
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(beneficialOwnersStatement);
