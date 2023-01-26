@@ -119,7 +119,9 @@ public class FilingsService {
                         new SubmissionNotFoundException(
                                 String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
 
-        data.put(ENTITY_NAME_FIELD, submissionDto.getEntityName().getName());
+        if (Objects.nonNull(submissionDto.getEntityName())) {
+            data.put(ENTITY_NAME_FIELD, submissionDto.getEntityName().getName());
+        }
         data.put(PRESENTER_FIELD, submissionDto.getPresenter());
         data.put(ENTITY_FIELD, submissionDto.getEntity());
         data.put(DUE_DILIGENCE_FIELD, submissionDto.getDueDiligence());

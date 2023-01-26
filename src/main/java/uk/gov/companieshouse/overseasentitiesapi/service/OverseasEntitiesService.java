@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import java.net.URI;
@@ -149,7 +150,10 @@ public class OverseasEntitiesService {
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
-        transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
+        if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
+            transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
+        }
+
         transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(

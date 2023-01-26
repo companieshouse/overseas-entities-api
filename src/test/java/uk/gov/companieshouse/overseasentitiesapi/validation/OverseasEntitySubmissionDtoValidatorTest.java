@@ -381,7 +381,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldIsNull() {
+    void testFullValidationErrorReportedWhenEntityNameBlockIsNull() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
@@ -392,12 +392,28 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
+    void testPartialValidationErrorReportedWhenEntityNameBlockIsNull() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
         verify(entityNameValidator, times(0)).validate(any(), any(), any());
+    }
+
+    @Test
+    void testFullValidationErrorReportedWhenEntityNameFieldIsNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.getEntityName().setName(null);
+        overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityNameValidator, times(1)).validate(any(), any(), any());
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.getEntityName().setName(null);
+        overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityNameValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
