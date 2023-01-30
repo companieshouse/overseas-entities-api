@@ -197,7 +197,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationAllowedWhenEntityNameBlockToBeNull() throws IOException, URIValidationException, ServiceException, SubmissionNotFoundException, JSONException {
+    void testFilingGenerationAllowedWhenEntityNameBlockIsNull() throws Exception {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
