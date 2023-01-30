@@ -88,22 +88,27 @@ class OverseasEntitiesServiceTest {
 
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
-        testSubmissionCreation(true);
+        testSubmissionCreation(true, ENTITY_NAME);
     }
 
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException {
-        testSubmissionCreation(false);
+        testSubmissionCreation(false, ENTITY_NAME);
     }
 
-    private void testSubmissionCreation(boolean isResumeLinkExpected) throws ServiceException {
+    @Test
+    void testOverseasEntitySubmissionCanBeCreatedWhenEntityNameIsNull() throws ServiceException {
+        testSubmissionCreation(false, null);
+    }
+
+    private void testSubmissionCreation(boolean isResumeLinkExpected, String entityName) throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
         Transaction transaction = buildTransaction();
 
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         EntityNameDto entityNameDto = new EntityNameDto();
-        entityNameDto.setName(ENTITY_NAME);
+        entityNameDto.setName(entityName);
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         overseasEntitySubmissionDao.setId(submissionId);
@@ -154,7 +159,7 @@ class OverseasEntitiesServiceTest {
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
-        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
+        assertEquals(entityName, transactionSent.getCompanyName());
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
