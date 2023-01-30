@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
@@ -15,10 +15,9 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 
 @ExtendWith(MockitoExtension.class)
-public class EntityNameValidatorTest {
+class EntityNameValidatorTest {
 
     private static final String QUALIFIED_FIELD_NAME = OverseasEntitySubmissionDto.ENTITY_NAME_FIELD + "." + EntityNameDto.NAME_FIELD;
     private static final String LOGGING_CONTEXT = "12345";

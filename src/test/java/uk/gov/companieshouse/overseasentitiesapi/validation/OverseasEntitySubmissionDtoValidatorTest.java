@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +48,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 class OverseasEntitySubmissionDtoValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
+
+    private static final String LONG_NAME = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
     @InjectMocks
     private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
     @Mock
@@ -400,66 +405,22 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityNameValidator, times(0)).validate(any(), any(), any());
     }
 
-    @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldIsNull() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {" ", LONG_NAME, "Дракон"} )
+    void testFullValidationErrorReportedWhenEntityNameFieldIsNull(String name) {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName(null);
+        overseasEntitySubmissionDto.getEntityName().setName(name);
         overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityNameValidator, times(1)).validate(any(), any(), any());
     }
 
-    @Test
-    void testPartialValidationErrorReportedWhenEntityNameFieldIsNull() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {" ", LONG_NAME, "Дракон"} )
+    void testPartialValidationErrorReportedWhenEntityNameFieldIsNull(String name) {
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName(null);
-        overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldIsEmpty() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName("  ");
-        overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testPartialValidationErrorReportedWhenEntityNameFieldIsEmpty() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName("  ");
-        overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldIsTooLong() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName(StringUtils.repeat("A", 161));
-        overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testPartialValidationErrorReportedWhenEntityNameIsTooLong() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName(StringUtils.repeat("A", 161));
-        overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testFullValidationErrorReportedWhenEntityNameFieldContainsInvalidCharacters() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName("Дракон");
-        overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityNameValidator, times(1)).validate(any(), any(), any());
-    }
-
-    @Test
-    void testPartialValidationErrorReportedWhenEntityNameContainsInvalidCharacters() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.getEntityName().setName("Дракон");
+        overseasEntitySubmissionDto.getEntityName().setName(name);
         overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityNameValidator, times(1)).validate(any(), any(), any());
     }
