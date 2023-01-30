@@ -310,14 +310,7 @@
         "type": "object",
         "properties": {
           "entity_name": {
-            "allOf" : [
-              {
-                "$ref": "#/components/schemas/FieldPattern"
-              },
-              {
-                "maxLength": 160
-              }
-            ]
+            "$ref": "#/components/schemas/EntityName"
           },
           "entity_number": {
             "allOf" : [
@@ -379,6 +372,21 @@
             "items": {
               "$ref": "#/components/schemas/Trust"
             }
+          }
+        }
+      },
+      "EntityName": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FieldPattern"
+              },
+              {
+                "maxLength": 160
+              }
+            ]
           }
         }
       },
