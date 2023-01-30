@@ -11,6 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
@@ -120,7 +121,7 @@ public class OverseasEntitiesService {
 
         // Update company name set on the transaction and add a link to our newly created Overseas Entity
         // submission (aka resource) to the transaction (and potentially also a link for the 'resume' journey)
-        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName().getName(), submissionId,
+        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
                 submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
         ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s", transaction.getId(), insertedSubmission.getId()));
@@ -150,10 +151,12 @@ public class OverseasEntitiesService {
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
+        String entityName = null;
         if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
-            transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
+            entityName = overseasEntitySubmissionDto.getEntityName().getName();
         }
 
+        transaction.setCompanyName(entityName);
         transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(
@@ -205,13 +208,18 @@ public class OverseasEntitiesService {
     }
 
     private void updateTransactionWithLinksAndCompanyName(Transaction transaction,
-                                                          String companyName,
+                                                          EntityNameDto entityNameDto,
                                                           String submissionId,
                                                           String submissionUri,
                                                           Resource overseasEntityResource,
                                                           String loggingContext,
                                                           boolean addResumeLinkToTransaction) throws ServiceException {
-        transaction.setCompanyName(companyName);
+        String entityName = null;
+        if (Objects.nonNull(entityNameDto)) {
+            entityName = entityNameDto.getName();
+        }
+        transaction.setCompanyName(entityName);
+
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
 
         if (addResumeLinkToTransaction) {
