@@ -70,7 +70,6 @@ public class OverseasEntitiesController {
 
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
-
         try {
             if (isValidationEnabled) {
                 var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), requestId);

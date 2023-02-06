@@ -17,6 +17,9 @@ public class OverseasEntitySubmissionDtoValidator {
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
 
+    private final String REGISTRATION = "REGISTRATION";
+    private final String UPDATE = "UPDATE";
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -31,7 +34,27 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        String submissionType  = null;
 
+        if(UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityNumber(), OverseasEntitySubmissionDto.ENTITY_NUMBER_FIELD, errors, loggingContext));{
+            submissionType = getSubmissionType(overseasEntitySubmissionDto);
+        }
+
+        if(submissionType.equalsIgnoreCase(REGISTRATION)){
+            validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        }else {
+            // Method to be incrementally developed as remaining frontend data for update flows through
+            validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        }
+        return errors;
+    }
+
+    private void validateRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
             entityNameValidator.validate(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
         }
@@ -49,9 +72,10 @@ public class OverseasEntitySubmissionDtoValidator {
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
+    }
 
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-        return errors;
+    private String getSubmissionType(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+        return overseasEntitySubmissionDto.getEntityNumber().startsWith("OE") ? UPDATE : REGISTRATION;
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
