@@ -102,7 +102,6 @@ class OverseasEntitiesControllerTest {
     @Test
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
-
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
