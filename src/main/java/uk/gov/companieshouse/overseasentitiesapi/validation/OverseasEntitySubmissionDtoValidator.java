@@ -79,11 +79,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
     }
 
-//    private String getSubmissionType(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-////        return overseasEntitySubmissionDto.getEntityNumber().startsWith("OE") ? UPDATE : REGISTRATION;
-//    }
-
-
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();

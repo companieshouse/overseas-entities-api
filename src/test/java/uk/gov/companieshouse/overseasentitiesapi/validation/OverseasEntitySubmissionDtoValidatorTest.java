@@ -94,20 +94,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     };
 
     @Test
-    void testOverseasEntityUpdateSubmissionValidatorWithoutOwners() {
-        buildOverseasEntityUpdateSubmissionDto();
-        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
-        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
-        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(
-                eq(overseasEntitySubmissionDto.getDueDiligence()),
-                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-                any(),
-                any());
-        assertFalse(errors.hasErrors());
-    }
-    @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
 
         buildOverseasEntitySubmissionDto();
@@ -255,17 +241,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = ENTITY_NAME_FIELD;
-        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
-        assertError(qualifiedFieldName, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedForMissingEntityField() {
-        buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntity(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-
-        String qualifiedFieldName = ENTITY_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -453,15 +428,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
     }
 
-    private void buildOverseasEntityUpdateSubmissionDto() {
-        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityName(entityNameDto);
-        overseasEntitySubmissionDto.setEntity(entityDto);
-        overseasEntitySubmissionDto.setPresenter(presenterDto);
-        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-    }
-
-    private void assertError(String qualifiedFieldName, String message, Errors errors) {
+    public void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
     }
