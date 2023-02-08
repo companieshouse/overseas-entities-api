@@ -100,6 +100,36 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
+    void testCreatingANewUpdateSubmissionIsSuccessfulWithValidation() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+        overseasEntitySubmissionDto.setEntityNumber("OE112299");
+        when(overseasEntitySubmissionDtoValidator.validateFull(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
+
+        when(overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
+        var response = overseasEntitiesController.createNewSubmission(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(CREATED_SUCCESS_RESPONSE, response);
+
+        verify(overseasEntitiesService).createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+    }
+
+    @Test
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
         when(overseasEntitySubmissionDtoValidator.validateFull(

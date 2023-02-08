@@ -94,6 +94,20 @@ class OverseasEntitySubmissionDtoValidatorTest {
     };
 
     @Test
+    void testOverseasEntityUpdateSubmissionValidatorWithoutOwners() {
+        buildOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto),any(),any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto),any(),any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(
+                eq(overseasEntitySubmissionDto.getDueDiligence()),
+                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                any(),
+                any());
+        assertFalse(errors.hasErrors());
+    }
+    @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
 
         buildOverseasEntitySubmissionDto();
@@ -427,7 +441,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void buildOverseasEntitySubmissionDto() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setEntityNumber("123456");
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntity(entityDto);
         overseasEntitySubmissionDto.setPresenter(presenterDto);
@@ -438,6 +451,14 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
+    }
+
+    private void buildOverseasEntityUpdateSubmissionDto() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntity(entityDto);
+        overseasEntitySubmissionDto.setPresenter(presenterDto);
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
     }
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {

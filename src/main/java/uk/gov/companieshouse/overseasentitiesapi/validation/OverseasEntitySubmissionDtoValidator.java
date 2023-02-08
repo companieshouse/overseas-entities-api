@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -34,19 +35,23 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        String submissionType  = null;
+        String submissionType  = REGISTRATION;
 
-        if(UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityNumber(), OverseasEntitySubmissionDto.ENTITY_NUMBER_FIELD, errors, loggingContext));{
-            submissionType = getSubmissionType(overseasEntitySubmissionDto);
+        if(StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
+            submissionType = UPDATE;
         }
 
         if(submissionType.equalsIgnoreCase(REGISTRATION)){
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }else {
             // Method to be incrementally developed as remaining frontend data for update flows through
-            validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
     private void validateRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -74,9 +79,10 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
     }
 
-    private String getSubmissionType(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return overseasEntitySubmissionDto.getEntityNumber().startsWith("OE") ? UPDATE : REGISTRATION;
-    }
+//    private String getSubmissionType(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+////        return overseasEntitySubmissionDto.getEntityNumber().startsWith("OE") ? UPDATE : REGISTRATION;
+//    }
+
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
