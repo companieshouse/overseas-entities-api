@@ -35,13 +35,13 @@ public class OverseasEntitySubmissionDtoValidator {
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         String submissionType  = REGISTRATION;
 
-        if(StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
+        if (StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
             submissionType = UPDATE;
         }
 
-        if(submissionType.equalsIgnoreCase(REGISTRATION)){
+        if (submissionType.equalsIgnoreCase(REGISTRATION)) {
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
-        }else {
+        } else {
             validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
