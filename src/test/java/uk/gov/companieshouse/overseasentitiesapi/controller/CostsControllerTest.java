@@ -42,7 +42,7 @@ class CostsControllerTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(false);
 
         final CostsController costsController = new CostsController(costsService);
-
+        costsController.setRoeUpdateEnabled(true);
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("13.00", response.getBody().get(0).getAmount());
     }
@@ -52,17 +52,37 @@ class CostsControllerTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
 
         final CostsController costsController = new CostsController(costsService);
+        costsController.setRoeUpdateEnabled(true);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("26.00", response.getBody().get(0).getAmount());
     }
 ;
     @Test
+    void testGetCostsReturnsRegistrationCostsForRegistrationWhenUpdateDisabled() throws SubmissionNotFoundException {
+        final CostsController costsController = new CostsController(costsService);
+        costsController.setRoeUpdateEnabled(false);
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals("13.00", response.getBody().get(0).getAmount());
+    }
+
+    @Test
+    void testGetCostsReturnsRegistrationCostsForUpdateWhenUpdateDisabled() throws SubmissionNotFoundException {
+        final CostsController costsController = new CostsController(costsService);
+        costsController.setRoeUpdateEnabled(false);
+
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals("13.00", response.getBody().get(0).getAmount());
+    }
+
+    @Test
     void testGetCostsSubmissionException() throws SubmissionNotFoundException {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenThrow(
                 new SubmissionNotFoundException("test"));
 
         final CostsController costsController = new CostsController(costsService);
+        costsController.setRoeUpdateEnabled(true);
+
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals(500, response.getStatusCodeValue());
     }

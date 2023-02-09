@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 @RequestMapping("/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/costs")
 public class CostsController {
 
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isRoeUpdateEnabled;
+
     private final CostsService costsService;
 
     @Autowired
@@ -47,12 +51,21 @@ public class CostsController {
         ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
         try {
-            var cost = costsService.getCosts(requestId, overseasEntityId);
+            Cost cost;
+            if (isRoeUpdateEnabled) {
+                cost = costsService.getCosts(requestId, overseasEntityId);
+            } else {
+                cost = costsService.getCostsForRegistration();
+            }
 
             return ResponseEntity.ok(Collections.singletonList(cost));
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, "Error determining submission costs", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    void setRoeUpdateEnabled(boolean value) {
+        isRoeUpdateEnabled = value;
     }
 }
