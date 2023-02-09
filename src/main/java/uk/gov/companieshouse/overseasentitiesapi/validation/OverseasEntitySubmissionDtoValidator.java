@@ -17,8 +17,6 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-    private static final String REGISTRATION = "REGISTRATION";
-    private static final String UPDATE = "UPDATE";
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -33,13 +31,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        String submissionType  = REGISTRATION;
 
-        if (StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
-            submissionType = UPDATE;
-        }
-
-        if (submissionType.equalsIgnoreCase(REGISTRATION)) {
+        if (StringUtils.isBlank(overseasEntitySubmissionDto.getEntityNumber())) {
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
             validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -48,7 +41,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        // Method to be incrementally developed as remaining frontend data for update flows through
+        // Method to be added to as Update journey developed
         validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
