@@ -17,10 +17,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-
     private final String REGISTRATION = "REGISTRATION";
     private final String UPDATE = "UPDATE";
-
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -44,13 +42,13 @@ public class OverseasEntitySubmissionDtoValidator {
         if(submissionType.equalsIgnoreCase(REGISTRATION)){
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }else {
-            // Method to be incrementally developed as remaining frontend data for update flows through
             validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
     }
 
     private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // Method to be incrementally developed as remaining frontend data for update flows through
         validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
