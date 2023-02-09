@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OverseasEntityUpdateSubmissionDtoValidatorTest {
+class OverseasEntityUpdateSubmissionDtoValidatorTest {
     private static final String LOGGING_CONTEXT = "123456";
 
     private static final String LONG_NAME = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABB";

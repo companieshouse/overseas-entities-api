@@ -17,8 +17,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-    private final String REGISTRATION = "REGISTRATION";
-    private final String UPDATE = "UPDATE";
+    private static final String REGISTRATION = "REGISTRATION";
+    private static final String UPDATE = "UPDATE";
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
