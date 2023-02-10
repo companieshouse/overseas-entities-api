@@ -35,7 +35,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        if (StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber()) && isRoeUpdateEnabled) {
+        if (isRoeUpdateEnabled && StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
             validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
