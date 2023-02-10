@@ -17,6 +17,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedTo
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionSummaryDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
@@ -24,6 +25,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
+import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsSummaryRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
 import java.time.LocalDateTime;
@@ -61,6 +63,8 @@ class OverseasEntitiesServiceTest {
     private OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
     private OverseasEntitySubmissionDto submissionDto = new OverseasEntitySubmissionDto();
 
+    private OverseasEntitySubmissionSummaryDao submissionSummaryDao = new OverseasEntitySubmissionSummaryDao();
+
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
 
@@ -69,6 +73,9 @@ class OverseasEntitiesServiceTest {
 
     @Mock
     private OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
+
+    @Mock
+    private OverseasEntitySubmissionsSummaryRepository overseasEntitySubmissionsSummaryRepository;
 
     @Mock
     private Supplier<LocalDateTime> localDateTimeSupplier;
@@ -337,41 +344,38 @@ class OverseasEntitiesServiceTest {
 
     @Test
     void checkSubmissionTypeIsRegistrationIfNoOverseasEntityNumberInSubmission() throws SubmissionNotFoundException {
-        submissionDto.setEntityNumber(null);
-        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        submissionSummaryDao.setEntityNumber(null);
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.of(submissionSummaryDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
         assertEquals(SubmissionType.REGISTRATION, kind);
     }
 
     @Test
     void checkSubmissionTypeIsUpdateIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
-        submissionDto.setEntityNumber("OE111129");
-        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        submissionSummaryDao.setEntityNumber("OE111129");
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.of(submissionSummaryDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
         assertEquals(SubmissionType.UPDATE, kind);
     }
 
     @Test
     void checkIsUpdateSubmissionIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
-        submissionDto.setEntityNumber("OE111129");
-        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        submissionSummaryDao.setEntityNumber("OE111129");
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.of(submissionSummaryDao));
         boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
         assertEquals(true, isUpdate);
     }
     @Test
     void checkIsNotUpdateSubmissionIfNoOverseasNumberInSubmission() throws SubmissionNotFoundException {
-        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        submissionSummaryDao.setEntityNumber(null);
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.of(submissionSummaryDao));
         boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
         assertEquals(false, isUpdate);
     }
 
     @Test
     void checkSubmissionTypeServiceThrowsExceptionWhenNoSuchSubmission() {
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
         });
@@ -379,7 +383,7 @@ class OverseasEntitiesServiceTest {
 
     @Test
     void checkIsSubmissionAnUpdateThrowsServiceExceptionWhenNoSuchSubmission() {
-        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
+        when(overseasEntitySubmissionsSummaryRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(SubmissionNotFoundException.class, () -> {
             overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1");
         });

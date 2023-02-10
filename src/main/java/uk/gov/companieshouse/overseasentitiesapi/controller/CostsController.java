@@ -58,6 +58,8 @@ public class CostsController {
                 cost = costsService.getCostsForRegistration();
             }
 
+            ApiLogger.infoContext(requestId, "Costs  " + cost.getAmount(), logMap);
+
             return ResponseEntity.ok(Collections.singletonList(cost));
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, "Error determining submission costs", e, logMap);

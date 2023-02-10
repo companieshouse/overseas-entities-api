@@ -11,10 +11,12 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionSummaryDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
+import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsSummaryRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
@@ -39,6 +41,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATI
 public class OverseasEntitiesService {
 
     private final OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository;
+
+    private final OverseasEntitySubmissionsSummaryRepository overseasEntitySubmissionsSummaryRepository;
     private final TransactionService transactionService;
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
     private final TransactionUtils transactionUtils;
@@ -46,11 +50,13 @@ public class OverseasEntitiesService {
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
+                                   OverseasEntitySubmissionsSummaryRepository overseasEntitySubmissionsSummaryRepository,
                                    TransactionService transactionService,
                                    OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper,
                                    Supplier<LocalDateTime> dateTimeNowSupplier,
                                    TransactionUtils transactionUtils) {
         this.overseasEntitySubmissionsRepository = overseasEntitySubmissionsRepository;
+        this.overseasEntitySubmissionsSummaryRepository = overseasEntitySubmissionsSummaryRepository;
         this.transactionService = transactionService;
         this.overseasEntityDtoDaoMapper = overseasEntityDtoDaoMapper;
         this.transactionUtils = transactionUtils;
@@ -62,13 +68,12 @@ public class OverseasEntitiesService {
     }
 
     SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
-                overseasEntityId);
-        if (submissionOpt.isEmpty()) {
+        var submissionEntityNumberOpt = getEntityNumberFromOverseasEntitySubmission(overseasEntityId);
+        if (submissionEntityNumberOpt.isEmpty()) {
             throw new SubmissionNotFoundException("Can not determine submission type");
         }
 
-        String entityNumber = submissionOpt.get().getEntityNumber();
+        String entityNumber = submissionEntityNumberOpt.get();
         if (StringUtils.isNotBlank(entityNumber)) {
             ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
                     entityNumber));
@@ -228,6 +233,16 @@ public class OverseasEntitiesService {
         }
 
         transactionService.updateTransaction(transaction, loggingContext);
+    }
+
+    public Optional<String> getEntityNumberFromOverseasEntitySubmission(String submissionId) {
+        Optional<OverseasEntitySubmissionSummaryDao> submission  = overseasEntitySubmissionsSummaryRepository.findById(submissionId);
+        if (submission.isPresent()) {
+            String entityNumber = submission.get().getEntityNumber();
+            return Optional.of(entityNumber == null ? "" : entityNumber);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
