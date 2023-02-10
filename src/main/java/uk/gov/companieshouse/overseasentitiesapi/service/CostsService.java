@@ -46,7 +46,7 @@ public class CostsService {
         }
     }
 
-    private Cost getCostsForRegistration() {
+    public Cost getCostsForRegistration() {
         var cost = new Cost();
         cost.setAmount(registerCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
