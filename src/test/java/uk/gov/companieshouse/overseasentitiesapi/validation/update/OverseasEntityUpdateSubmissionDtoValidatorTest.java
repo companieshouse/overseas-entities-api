@@ -77,8 +77,9 @@ class OverseasEntityUpdateSubmissionDtoValidatorTest {
     };
 
     @Test
-    void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndUpdateFlagOff() {
-        setIsRoeUpdateEnabledFeatureFlag(false);
+    void testRegistrationSubmissionCalledWhenEntityNumberIsNotNullAndUpdateFlagTrue() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
