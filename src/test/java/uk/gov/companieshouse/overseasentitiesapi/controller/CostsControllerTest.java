@@ -37,12 +37,16 @@ class CostsControllerTest {
         ReflectionTestUtils.setField(costsService, "updateCostAmount", "26.00");
     }
 
+    private void setRoeUpdateEnabled(CostsController costsController, boolean value) {
+        ReflectionTestUtils.setField(costsController, "isRoeUpdateEnabled", value);
+    }
+
     @Test
-    void testGetCostsReturnsRegistionCosts() throws SubmissionNotFoundException {
+    void testGetCostsReturnsRegistrationCosts() throws SubmissionNotFoundException {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(false);
 
         final CostsController costsController = new CostsController(costsService);
-        costsController.setRoeUpdateEnabled(true);
+        setRoeUpdateEnabled(costsController, true);
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("13.00", response.getBody().get(0).getAmount());
     }
@@ -52,7 +56,7 @@ class CostsControllerTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
 
         final CostsController costsController = new CostsController(costsService);
-        costsController.setRoeUpdateEnabled(true);
+        setRoeUpdateEnabled(costsController, true);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("26.00", response.getBody().get(0).getAmount());
@@ -61,7 +65,7 @@ class CostsControllerTest {
     @Test
     void testGetCostsReturnsRegistrationCostsForRegistrationWhenUpdateDisabled() throws SubmissionNotFoundException {
         final CostsController costsController = new CostsController(costsService);
-        costsController.setRoeUpdateEnabled(false);
+        setRoeUpdateEnabled(costsController, false);
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("13.00", response.getBody().get(0).getAmount());
     }
@@ -69,7 +73,7 @@ class CostsControllerTest {
     @Test
     void testGetCostsReturnsRegistrationCostsForUpdateWhenUpdateDisabled() throws SubmissionNotFoundException {
         final CostsController costsController = new CostsController(costsService);
-        costsController.setRoeUpdateEnabled(false);
+        setRoeUpdateEnabled(costsController, false);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals("13.00", response.getBody().get(0).getAmount());
@@ -81,7 +85,7 @@ class CostsControllerTest {
                 new SubmissionNotFoundException("test"));
 
         final CostsController costsController = new CostsController(costsService);
-        costsController.setRoeUpdateEnabled(true);
+        setRoeUpdateEnabled(costsController, true);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals(500, response.getStatusCodeValue());
