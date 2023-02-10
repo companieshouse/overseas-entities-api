@@ -66,8 +66,5 @@ public class CostsController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    void setRoeUpdateEnabled(boolean value) {
-        isRoeUpdateEnabled = value;
-    }
 }
+
