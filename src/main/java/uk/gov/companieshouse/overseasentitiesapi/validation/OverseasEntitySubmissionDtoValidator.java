@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -17,6 +18,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isRoeUpdateEnabled;
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -32,10 +35,10 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        if (StringUtils.isBlank(overseasEntitySubmissionDto.getEntityNumber())) {
-            validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
-        } else {
+        if (StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber()) && isRoeUpdateEnabled) {
             validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else {
+            validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
     }
