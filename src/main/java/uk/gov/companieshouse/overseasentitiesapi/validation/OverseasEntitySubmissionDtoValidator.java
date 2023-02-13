@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -16,10 +18,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-
-    private final String REGISTRATION = "REGISTRATION";
-    private final String UPDATE = "UPDATE";
-
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isRoeUpdateEnabled;
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -34,19 +34,18 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        String submissionType  = null;
 
-        if(UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityNumber(), OverseasEntitySubmissionDto.ENTITY_NUMBER_FIELD, errors, loggingContext));{
-            submissionType = getSubmissionType(overseasEntitySubmissionDto);
-        }
-
-        if(submissionType.equalsIgnoreCase(REGISTRATION)){
+        if (isRoeUpdateEnabled && StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
+            validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else {
             validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
-        }else {
-            // Method to be incrementally developed as remaining frontend data for update flows through
-            validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // Method to be added to as Update journey developed
+        validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
     private void validateRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -72,10 +71,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
-    }
-
-    private String getSubmissionType(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return overseasEntitySubmissionDto.getEntityNumber().startsWith("OE") ? UPDATE : REGISTRATION;
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
