@@ -8,6 +8,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
 
 import java.io.File;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class DtoModelChangeTest {
@@ -26,17 +27,19 @@ class DtoModelChangeTest {
      * @throws Exception If DTO model structure incompatibility detected
      */
     @Test
-    public void testCanGenerateDtoModelFromValidJson() throws Exception {
+    void testCanGenerateDtoModelFromValidJson() throws Exception {
 
         TestUtils testUtils = new TestUtils();
         File file = testUtils.getFile("overseas_entity_valid.json");
         String jsonData = testUtils.readFileReturnString(file);
 
-        getObjectMapper().readValue(jsonData, OverseasEntitySubmissionDto.class);
+        OverseasEntitySubmissionDto dto = getObjectMapper().readValue(jsonData, OverseasEntitySubmissionDto.class);
+
+        assertNotNull(dto);
     }
 
     @Test
-    public void testCannotGenerateDtoModelFromInvalidJson() throws Exception {
+    void testCannotGenerateDtoModelFromInvalidJson() throws Exception {
         TestUtils testUtils = new TestUtils();
         File file = testUtils.getFile("overseas_entity_invalid.json");
         String jsonData = testUtils.readFileReturnString(file);
