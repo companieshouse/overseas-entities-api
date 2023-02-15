@@ -68,19 +68,17 @@ public class OverseasEntitiesService {
     }
 
     SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        var submissionEntityNumberOpt = getEntityNumberFromOverseasEntitySubmission(overseasEntityId);
+        var submissionEntityNumberOpt = getEntityNumberFromOverseasEntitySubmission(
+                overseasEntityId);
         if (submissionEntityNumberOpt.isEmpty()) {
-            throw new SubmissionNotFoundException("Can not determine submission type");
-        }
-
-        String entityNumber = submissionEntityNumberOpt.get();
-        if (StringUtils.isNotBlank(entityNumber)) {
-            ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
-                    entityNumber));
-            return SubmissionType.UPDATE;
-        } else {
             ApiLogger.infoContext(requestId, "Submission without overseas entity number found");
             return SubmissionType.REGISTRATION;
+        } else {
+            String entityNumber = submissionEntityNumberOpt.get();
+            ApiLogger.infoContext(requestId,
+                    String.format("Submission with overseas entity number %s found",
+                            entityNumber));
+            return SubmissionType.UPDATE;
         }
     }
 
@@ -235,13 +233,18 @@ public class OverseasEntitiesService {
         transactionService.updateTransaction(transaction, loggingContext);
     }
 
-    public Optional<String> getEntityNumberFromOverseasEntitySubmission(String submissionId) {
-        Optional<OverseasEntitySubmissionSummaryDao> submission  = overseasEntitySubmissionsSummaryRepository.findById(submissionId);
+    public Optional<String> getEntityNumberFromOverseasEntitySubmission(String submissionId) throws SubmissionNotFoundException {
+        Optional<OverseasEntitySubmissionSummaryDao> submission = overseasEntitySubmissionsSummaryRepository.findById(
+                submissionId);
         if (submission.isPresent()) {
             String entityNumber = submission.get().getEntityNumber();
-            return Optional.of(entityNumber == null ? "" : entityNumber);
+            if (StringUtils.isBlank(entityNumber)) {
+                return Optional.empty();
+            } else {
+                return Optional.of(entityNumber);
+            }
         } else {
-            return Optional.empty();
+            throw new SubmissionNotFoundException("Can not determine submission type");
         }
     }
 
