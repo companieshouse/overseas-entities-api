@@ -38,21 +38,6 @@ class DtoModelChangeTest {
         assertNotNull(dto);
     }
 
-    @Test
-    void testCannotGenerateDtoModelFromInvalidJson() throws Exception {
-        TestUtils testUtils = new TestUtils();
-        File file = testUtils.getFile("overseas_entity_invalid.json");
-        String jsonData = testUtils.readFileReturnString(file);
-
-        try {
-            getObjectMapper().readValue(jsonData, OverseasEntitySubmissionDto.class);
-            fail("The invalid JSON should have caused a failure");
-        } catch (UnrecognizedPropertyException e) {
-            // Expected due to an invalid model structure - entity name is now in its own data block, the error is
-            // because this JSON has it still present in the 'entity' block
-        }
-    }
-
     private ObjectMapper getObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();

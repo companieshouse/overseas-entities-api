@@ -13,11 +13,8 @@ public final class TestUtils {
     private static final Logger LOGGER = Logger.getLogger(TestUtils.class.getName());
 
     public String readFileReturnString(File filename) {
-        BufferedReader buff;
         StringBuilder builder = new StringBuilder();
-        try {
-            buff = new BufferedReader(
-                    new FileReader(filename));
+        try (BufferedReader buff = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = buff.readLine()) != null) {
                 builder.append(line);
