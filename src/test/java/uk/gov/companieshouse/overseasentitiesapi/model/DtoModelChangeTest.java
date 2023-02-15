@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
@@ -9,7 +8,6 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class DtoModelChangeTest {
 
