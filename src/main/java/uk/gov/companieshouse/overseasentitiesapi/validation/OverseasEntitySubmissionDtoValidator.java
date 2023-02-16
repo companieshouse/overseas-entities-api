@@ -35,25 +35,29 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        if (isRoeUpdateEnabled && StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber())) {
-            validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        if (isRoeUpdateEnabled && isForUpdate(overseasEntitySubmissionDto)) {
+            validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
-            validateRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
     }
 
-    private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        // Method to be added to as Update journey developed
-        validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    private static boolean isForUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+        return StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber());
     }
 
-    private void validateRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        validateCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // Method to be added to as Update journey developed
+        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
-    private void validateCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
             entityNameValidator.validate(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
         }
