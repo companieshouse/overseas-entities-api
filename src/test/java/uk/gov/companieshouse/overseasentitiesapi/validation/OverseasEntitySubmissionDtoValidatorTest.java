@@ -433,7 +433,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testUnsuccessfulOverseasEntityUpdateSubmissionWhenUpdateFlagOff() {
+    void testRegistrationSubmissionCalledWithEntityNumberAndUpdateFlagFalse() {
         setIsRoeUpdateEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();

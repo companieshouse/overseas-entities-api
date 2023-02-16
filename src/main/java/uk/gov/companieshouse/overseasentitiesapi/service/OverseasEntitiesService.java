@@ -17,7 +17,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.repository.OverseasEntitySubmissionsRepository;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
