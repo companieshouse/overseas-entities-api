@@ -29,7 +29,7 @@ class DtoModelChangeTest {
 
         TestUtils testUtils = new TestUtils();
         File file = testUtils.getFile("overseas_entity_valid.json");
-        String jsonData = testUtils.readFileReturnString(file);
+        String jsonData = testUtils.readString(file);
 
         OverseasEntitySubmissionDto dto = getObjectMapper().readValue(jsonData, OverseasEntitySubmissionDto.class);
 

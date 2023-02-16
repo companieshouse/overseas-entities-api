@@ -12,7 +12,7 @@ public final class TestUtils {
 
     private static final Logger LOGGER = Logger.getLogger(TestUtils.class.getName());
 
-    public String readFileReturnString(File filename) {
+    public String readString(File filename) {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader buff = new BufferedReader(new FileReader(filename))) {
             String line;
