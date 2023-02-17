@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -16,7 +17,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isRoeUpdateEnabled;
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -32,6 +34,25 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
+        if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
+            validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else {
+            validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        }
+        return errors;
+    }
+
+    private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // Method to be added to as Update journey developed
+        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
             entityNameValidator.validate(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
         }
@@ -49,9 +70,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
-
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-        return errors;
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {

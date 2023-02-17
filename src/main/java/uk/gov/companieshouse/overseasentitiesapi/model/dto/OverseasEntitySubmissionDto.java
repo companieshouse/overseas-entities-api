@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
@@ -68,6 +70,11 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty("links")
     private Map<String, String> links;
+
+    @JsonIgnore
+    public boolean isForUpdate() {
+        return StringUtils.isNotBlank(entityNumber);
+    }
 
     public EntityNameDto getEntityName() {
         return entityName;
