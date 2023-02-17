@@ -11,7 +11,6 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidato
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.NatureOfControlValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
@@ -28,10 +26,13 @@ public class BeneficialOwnerIndividualValidator {
     public static final String NATURE_OF_CONTROL_FIELDS = "nature_of_control";
 
     private final AddressDtoValidator addressDtoValidator;
+    private final NationalityValidator nationalityValidator;
 
     @Autowired
-    public BeneficialOwnerIndividualValidator(AddressDtoValidator addressDtoValidator) {
+    public BeneficialOwnerIndividualValidator(AddressDtoValidator addressDtoValidator,
+                                              NationalityValidator nationalityValidator) {
         this.addressDtoValidator = addressDtoValidator;
+        this.nationalityValidator = nationalityValidator;
     }
 
     public Errors validate(List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList, Errors errors, String loggingContext) {
@@ -93,20 +94,24 @@ public class BeneficialOwnerIndividualValidator {
                 && DateValidators.isDateInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
+    private Errors validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
-        return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
-               && StringValidators.isLessThanOrEqualToMaxLength(nationality,  50, qualifiedFieldName, errors, loggingContext)
-               && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
+        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        return errors;
     }
 
-    private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
+    private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
-        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldNameSecondNationality, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, nationality, secondNationality), 50, compoundQualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldNameSecondNationality, errors, loggingContext);
+        nationalityValidator.validateSecondNationality(
+                qualifiedFieldNameFirstNationality,
+                qualifiedFieldNameSecondNationality,
+                nationality,
+                secondNationality,
+                errors,
+                loggingContext);
+
+        return errors;
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {

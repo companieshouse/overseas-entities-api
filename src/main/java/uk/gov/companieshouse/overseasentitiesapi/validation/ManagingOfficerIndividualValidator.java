@@ -24,9 +24,13 @@ public class ManagingOfficerIndividualValidator {
 
     private final AddressDtoValidator addressDtoValidator;
 
+    private final NationalityValidator nationalityValidator;
+
     @Autowired
-    public ManagingOfficerIndividualValidator(AddressDtoValidator addressDtoValidator) {
+    public ManagingOfficerIndividualValidator(AddressDtoValidator addressDtoValidator,
+                                              NationalityValidator nationalityValidator) {
         this.addressDtoValidator = addressDtoValidator;
+        this.nationalityValidator = nationalityValidator;
     }
 
     public Errors validate(List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList, Errors errors, String loggingContext) {
@@ -95,11 +99,10 @@ public class ManagingOfficerIndividualValidator {
             && DateValidators.isDateInPast(dateOfBirth, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNationality(String nationality, Errors errors, String loggingContext) {
+    private Errors validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.NATIONALITY_FIELD);
-        return StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(nationality, 50, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(nationality, qualifiedFieldName, errors, loggingContext);
+        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        return errors;
     }
 
     private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
