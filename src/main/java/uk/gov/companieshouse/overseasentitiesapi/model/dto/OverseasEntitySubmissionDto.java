@@ -74,7 +74,7 @@ public class OverseasEntitySubmissionDto {
     @JsonIgnore
     public boolean isForUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         return StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber());
-    };
+    }
 
     public EntityNameDto getEntityName() {
         return entityName;
