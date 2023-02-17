@@ -83,14 +83,25 @@ public class NationalityValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenBothNationalityFieldsAreWithinTheMaxLength() {
+        Errors errors = new Errors();
+        nationalityValidator.validateSecondNationality(qualifiedFieldName, qualifiedSecondFieldName,StringUtils.repeat("A", 24), StringUtils.repeat("B", 25), errors, LOGGING_CONTEXT);
+        var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldName, qualifiedSecondFieldName);
+        String validationMessage = compoundQualifiedFieldName + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "50");
+        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(validationMessage).build();
+        assertFalse(errors.containsError(err));
+    }
+
+    @Test
     void testErrorReportedWhenBothNationalityFieldsAreTooLong() {
         Errors errors = new Errors();
-        nationalityValidator.validateSecondNationality(qualifiedFieldName, qualifiedSecondFieldName,"French", StringUtils.repeat("A", 51), errors, LOGGING_CONTEXT);
+        nationalityValidator.validateSecondNationality(qualifiedFieldName, qualifiedSecondFieldName,StringUtils.repeat("A", 25), StringUtils.repeat("B", 25), errors, LOGGING_CONTEXT);
         var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldName, qualifiedSecondFieldName);
         String validationMessage = compoundQualifiedFieldName + ValidationMessages.MAX_LENGTH_EXCEEDED_ERROR_MESSAGE.replace("%s", "50");
         Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(validationMessage).build();
         assertTrue(errors.containsError(err));
     }
+
     @Test
     void testErrorReportedWhenSecondNationalityFieldEqualsTheNationalityGiven() {
         Errors errors = new Errors();
