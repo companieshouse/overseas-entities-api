@@ -76,7 +76,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setFirstName("Test");
         dto.setLastName("Bo");
         dto.setDateOfBirth(LocalDate.of(1990,1,1));
-        dto.setNationality("Utopian");
+        dto.setNationality("French");
         dto.setServiceAddressSameAsUsualResidentialAddress(true);
         dto.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();

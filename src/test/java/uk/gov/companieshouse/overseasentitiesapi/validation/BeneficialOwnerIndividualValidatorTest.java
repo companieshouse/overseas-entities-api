@@ -33,13 +33,16 @@ class BeneficialOwnerIndividualValidatorTest {
     @InjectMocks
     private AddressDtoValidator addressDtoValidator;
 
+    @InjectMocks
+    private NationalityValidator nationalityValidator;
+
     private BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
 
     private List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList;
 
     @BeforeEach
     public void init() {
-        beneficialOwnerIndividualValidator = new BeneficialOwnerIndividualValidator(addressDtoValidator);
+        beneficialOwnerIndividualValidator = new BeneficialOwnerIndividualValidator(addressDtoValidator, nationalityValidator);
         beneficialOwnerIndividualDtoList = new ArrayList<>();
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setUsualResidentialAddress(AddressMock.getAddressDto());
@@ -207,87 +210,6 @@ class BeneficialOwnerIndividualValidatorTest {
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenNationalityFieldExceedsMaxLength() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 51));
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
-
-        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, qualifiedFieldName + " must be 50 characters or less", errors);
-    }
-
-    @Test
-    void testNoErrorReportedWhenBothNationalityFieldsAreWithinMaxLength() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
-        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 24));
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testErrorReportedWhenBothNationalityFieldsExceedMaxLength() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality(StringUtils.repeat("A", 25));
-        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(StringUtils.repeat("B", 25));
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-
-        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
-
-        String qualifiedFieldNameSecondNationality = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-
-        String compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
-        Err err = Err.invalidBodyBuilderWithLocation(compoundQualifiedFieldName).withError(compoundQualifiedFieldName + " must be 50 characters or less").build();
-        assertTrue(errors.containsError(err));
-    }
-
-    @Test
-    void testErrorReportedWhenNationalityFieldContainsInvalidCharacters() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality("Дракон");
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(BeneficialOwnerIndividualDto.NATIONALITY_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenSecondNationalityFieldContainsInvalidCharacters() {
-        beneficialOwnerIndividualDtoList.get(0).setSecondNationality("Дракон");
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testNoErrorReportedWhenSecondNationalityFieldIsNotEqualToTheNationalityGiven() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality("French");
-        beneficialOwnerIndividualDtoList.get(0).setSecondNationality("Algerian");
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
-    }
-    @Test
-    void testErrorReportedWhenSecondNationalityFieldEqualsTheNationalityGiven() {
-        beneficialOwnerIndividualDtoList.get(0).setNationality("French");
-        beneficialOwnerIndividualDtoList.get(0).setSecondNationality("French");
-        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-                BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        String validationMessage = String.format(ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldName);
-        assertError(BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD, validationMessage, errors);
     }
 
     @Test

@@ -17,7 +17,7 @@ public class ManagingOfficerMock {
         dto.setHasFormerNames(true);
         dto.setFormerNames("Someone");
         dto.setDateOfBirth(LocalDate.of(1990,1,1));
-        dto.setNationality("Utopian");
+        dto.setNationality("French");
         dto.setUsualResidentialAddress(AddressMock.getAddressDto());
         dto.setServiceAddressSameAsUsualResidentialAddress(true);
         dto.setOccupation("Some occupation");
