@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
 
@@ -117,6 +118,7 @@ public class DueDiligenceDto {
         this.diligence = diligence;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return Objects.isNull(identityDate) &&
                StringUtils.isBlank(name) &&
