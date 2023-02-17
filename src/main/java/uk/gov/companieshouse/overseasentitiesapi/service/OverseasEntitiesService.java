@@ -68,7 +68,7 @@ public class OverseasEntitiesService {
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();
-        if (new OverseasEntitySubmissionDto().isForUpdate(submissionOpt.get())) {
+        if (submissionOpt.get().isForUpdate()) {
             ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.UPDATE;

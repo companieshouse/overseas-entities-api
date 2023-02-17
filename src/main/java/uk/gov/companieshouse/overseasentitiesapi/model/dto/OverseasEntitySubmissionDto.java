@@ -72,8 +72,8 @@ public class OverseasEntitySubmissionDto {
     private Map<String, String> links;
 
     @JsonIgnore
-    public boolean isForUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber());
+    public boolean isForUpdate() {
+        return StringUtils.isNotBlank(entityNumber);
     }
 
     public EntityNameDto getEntityName() {
@@ -187,5 +187,4 @@ public class OverseasEntitySubmissionDto {
     public void setLinks(Map<String, String> links) {
         this.links = links;
     }
-
 }
