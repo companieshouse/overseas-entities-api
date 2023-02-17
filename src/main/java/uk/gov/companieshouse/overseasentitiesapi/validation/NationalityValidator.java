@@ -262,14 +262,15 @@ public class NationalityValidator {
 
     public void validateAgainstNationalityList(String qualifiedFieldName, String nationality, Errors errors, String loggingContext) {
 
-        boolean nationalityNotBlank = StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext);
+        boolean nationalityIsPresent = StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext);
+        if (!nationalityIsPresent) {
+            return;
+        }
 
-        if (nationalityNotBlank) {
-            if (!nationalities.contains(nationality)) {
-                var validationMessage = String.format(ValidationMessages.NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(nationality));
-                setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
-                ApiLogger.infoContext(loggingContext, validationMessage);
-            }
+        if (!nationalities.contains(nationality)) {
+            var validationMessage = String.format(ValidationMessages.NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(nationality));
+            setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
+            ApiLogger.infoContext(loggingContext, validationMessage);
         }
     }
 
