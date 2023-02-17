@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @ExtendWith(MockitoExtension.class)
-public class NationalityValidatorTest {
+class NationalityValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
