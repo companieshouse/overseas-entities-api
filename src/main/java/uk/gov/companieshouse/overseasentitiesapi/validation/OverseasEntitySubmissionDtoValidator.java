@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,16 +34,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        if (isRoeUpdateEnabled && isForUpdate(overseasEntitySubmissionDto)) {
+        if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate(overseasEntitySubmissionDto)) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
-    }
-
-    private static boolean isForUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return StringUtils.isNotBlank(overseasEntitySubmissionDto.getEntityNumber());
     }
 
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {

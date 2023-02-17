@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,7 @@ public class OverseasEntitiesService {
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();
-        if (StringUtils.isNotBlank(entityNumber)) {
+        if (new OverseasEntitySubmissionDto().isForUpdate(submissionOpt.get())) {
             ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.UPDATE;
