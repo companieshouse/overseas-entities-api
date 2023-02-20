@@ -107,8 +107,8 @@ public class BeneficialOwnerIndividualValidator {
     private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        boolean isNotBlank = StringUtils.isNotBlank(secondNationality);
-        if (isNotBlank) {
+        boolean isSecondNationalityNotBlank = StringUtils.isNotBlank(secondNationality);
+        if (isSecondNationalityNotBlank) {
             nationalityValidator.validateSecondNationality(
                     qualifiedFieldNameFirstNationality,
                     qualifiedFieldNameSecondNationality,

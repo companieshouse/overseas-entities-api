@@ -112,8 +112,8 @@ public class ManagingOfficerIndividualValidator {
     private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.NATIONALITY_FIELD);
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
-        boolean isNotBlank = StringUtils.isNotBlank(secondNationality);
-        if (isNotBlank) {
+        boolean isSecondNationalityNotBlank = StringUtils.isNotBlank(secondNationality);
+        if (isSecondNationalityNotBlank) {
             nationalityValidator.validateSecondNationality(
                     qualifiedFieldNameFirstNationality,
                     qualifiedFieldNameSecondNationality,
