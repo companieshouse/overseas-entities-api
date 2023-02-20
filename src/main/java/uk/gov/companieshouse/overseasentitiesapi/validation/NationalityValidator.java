@@ -69,7 +69,7 @@ public class NationalityValidator {
         modifiableListOfNationalities.add("Citizen of Kiribati");
         modifiableListOfNationalities.add("Citizen of Seychelles");
         modifiableListOfNationalities.add("Citizen of the Dominican Republic");
-        modifiableListOfNationalities.add("Citizen of Vanuatu ");
+        modifiableListOfNationalities.add("Citizen of Vanuatu");
         modifiableListOfNationalities.add("Colombian");
         modifiableListOfNationalities.add("Comoran");
         modifiableListOfNationalities.add("Congolese (Congo)");
@@ -259,11 +259,6 @@ public class NationalityValidator {
 
     public void validateAgainstNationalityList(String qualifiedFieldName, String nationality, Errors errors, String loggingContext) {
 
-        boolean nationalityIsPresent = StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext);
-        if (!nationalityIsPresent) {
-            return;
-        }
-
         if (!nationalities.contains(nationality)) {
             var validationMessage = String.format(ValidationMessages.NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE, dataSanitisation.makeStringSafeForLogging(nationality));
             setErrorMsgToLocation(errors, qualifiedFieldName, validationMessage);
@@ -273,9 +268,11 @@ public class NationalityValidator {
 
     public Errors validateSecondNationality(String fieldNameNationality, String fieldNameSecondNationality, String nationality, String secondNationality, Errors errors, String loggingContext) {
         var compoundQualifiedFieldName = String.format("%s and %s", fieldNameNationality, fieldNameSecondNationality);
+
         StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, fieldNameSecondNationality, errors, loggingContext);
         StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, nationality, secondNationality), 50, compoundQualifiedFieldName, errors, loggingContext);
         validateAgainstNationalityList(fieldNameSecondNationality, secondNationality, errors, loggingContext);
+
         return errors;
     }
 }

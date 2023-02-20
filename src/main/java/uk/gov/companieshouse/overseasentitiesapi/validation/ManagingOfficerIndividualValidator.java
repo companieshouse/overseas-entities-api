@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -101,17 +102,28 @@ public class ManagingOfficerIndividualValidator {
 
     private Errors validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.NATIONALITY_FIELD);
-        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        boolean nationalityIsPresent = StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext);
+        if (nationalityIsPresent) {
+            nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        }
         return errors;
     }
 
-    private boolean validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
+    private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.NATIONALITY_FIELD);
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.SECOND_NATIONALITY_FIELD);
-        var compoundQualifiedFieldName = String.format("%s and %s", qualifiedFieldNameFirstNationality, qualifiedFieldNameSecondNationality);
-        return StringValidators.checkIsNotEqual(nationality, secondNationality, ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT, qualifiedFieldNameSecondNationality, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(String.format(CONCATENATED_STRING_FORMAT, nationality, secondNationality), 50, compoundQualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(secondNationality, qualifiedFieldNameSecondNationality, errors, loggingContext);
+        boolean isNotBlank = StringUtils.isNotBlank(secondNationality);
+        if (isNotBlank) {
+            nationalityValidator.validateSecondNationality(
+                    qualifiedFieldNameFirstNationality,
+                    qualifiedFieldNameSecondNationality,
+                    nationality,
+                    secondNationality,
+                    errors,
+                    loggingContext);
+
+        }
+        return errors;
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
