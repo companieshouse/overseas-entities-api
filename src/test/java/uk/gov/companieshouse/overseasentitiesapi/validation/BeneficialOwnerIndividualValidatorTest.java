@@ -213,6 +213,20 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenOptionalSecondNationalityFieldIsEmpty() {
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality("  ");
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenOptionalSecondNationalityFieldIsNull() {
+        beneficialOwnerIndividualDtoList.get(0).setSecondNationality(null);
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         beneficialOwnerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

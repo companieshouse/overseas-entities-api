@@ -284,6 +284,20 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenOptionalSecondNationalityFieldIsEmpty() {
+        managingOfficerIndividualDtoList.get(0).setSecondNationality("  ");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenOptionalSecondNationalityFieldIsNull() {
+        managingOfficerIndividualDtoList.get(0).setSecondNationality(null);
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenSameAddressFieldIsNull() {
         managingOfficerIndividualDtoList.get(0).setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

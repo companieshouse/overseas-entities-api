@@ -47,24 +47,6 @@ class NationalityValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenNationalityFieldIsEmpty() {
-        Errors errors = new Errors();
-        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, "", errors, LOGGING_CONTEXT);
-        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
-        assertTrue(errors.containsError(err));
-    }
-
-    @Test
-    void testErrorReportedWhenNationalityFieldIsNull() {
-        Errors errors = new Errors();
-        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, null, errors, LOGGING_CONTEXT);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(validationMessage).build();
-        assertTrue(errors.containsError(err));
-    }
-
-    @Test
     void testErrorReportedWhenNationalityFieldIsNotOnTheList() {
         String noNationality = "Utopian";
         when(dataSanitisation.makeStringSafeForLogging(any())).thenReturn(Encode.forJava(noNationality));

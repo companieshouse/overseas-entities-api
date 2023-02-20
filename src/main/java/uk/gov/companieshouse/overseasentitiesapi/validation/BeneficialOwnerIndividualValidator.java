@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
@@ -96,21 +97,26 @@ public class BeneficialOwnerIndividualValidator {
 
     private Errors validateNationality(String nationality, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
-        nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        boolean nationalityIsPresent = StringValidators.isNotBlank(nationality, qualifiedFieldName, errors, loggingContext);
+        if (nationalityIsPresent) {
+            nationalityValidator.validateAgainstNationalityList(qualifiedFieldName, nationality, errors, loggingContext);
+        }
         return errors;
     }
 
     private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors, String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.NATIONALITY_FIELD);
         String qualifiedFieldNameSecondNationality = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.SECOND_NATIONALITY_FIELD);
-        nationalityValidator.validateSecondNationality(
-                qualifiedFieldNameFirstNationality,
-                qualifiedFieldNameSecondNationality,
-                nationality,
-                secondNationality,
-                errors,
-                loggingContext);
-
+        boolean isSecondNationalityNotBlank = StringUtils.isNotBlank(secondNationality);
+        if (isSecondNationalityNotBlank) {
+            nationalityValidator.validateSecondNationality(
+                    qualifiedFieldNameFirstNationality,
+                    qualifiedFieldNameSecondNationality,
+                    nationality,
+                    secondNationality,
+                    errors,
+                    loggingContext);
+        }
         return errors;
     }
 
