@@ -63,7 +63,7 @@ public class FilingsService {
     @Value("${OE01_UPDATE_COST}")
     private String updateCostAmount;
 
-    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022}")
+    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
     private boolean isTrustsSubmissionThroughWebEnabled;
 
     private final OverseasEntitiesService overseasEntitiesService;
