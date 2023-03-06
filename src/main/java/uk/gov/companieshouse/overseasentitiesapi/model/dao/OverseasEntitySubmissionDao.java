@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Document(collection = "overseas_entities_submissions")
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class OverseasEntitySubmissionDao {
 
     @Id
