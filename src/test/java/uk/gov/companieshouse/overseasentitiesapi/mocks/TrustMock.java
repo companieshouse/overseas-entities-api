@@ -24,6 +24,7 @@ public class TrustMock {
         List<HistoricalBeneficialOwnerDao> historicalBeneficialOwnerDaos = new ArrayList<>();
         HistoricalBeneficialOwnerDao historicalBeneficialOwnerDao = getHistoricalBeneficialOwnerDao();
         historicalBeneficialOwnerDaos.add(historicalBeneficialOwnerDao);
+        historicalBeneficialOwnerDaos.add(getHistoricalBeneficialOwnerCorporateDao());
         trustDataDao.setHistoricalBeneficialOwners(historicalBeneficialOwnerDaos);
 
         List<TrustIndividualDao> trustIndividualDaos = new ArrayList<>();
@@ -44,6 +45,17 @@ public class TrustMock {
         dao.setForename("Test");
         dao.setOtherForenames("Other");
         dao.setSurname("Hbo");
+        dao.setCeasedDate(LocalDate.of(1990,1,1));
+        dao.setNotifiedDate(LocalDate.of(1990,1,1));
+        dao.setCorporateIndicator(false);
+
+        return dao;
+    }
+
+    public static HistoricalBeneficialOwnerDao getHistoricalBeneficialOwnerCorporateDao()  {
+        HistoricalBeneficialOwnerDao dao = new HistoricalBeneficialOwnerDao();
+        dao.setCorporateName("Test Company");
+        dao.setCorporateIndicator(true);
         dao.setCeasedDate(LocalDate.of(1990,1,1));
         dao.setNotifiedDate(LocalDate.of(1990,1,1));
 
@@ -91,6 +103,7 @@ public class TrustMock {
         List<HistoricalBeneficialOwnerDto> historicalBeneficialOwnerDtos = new ArrayList<>();
         HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto = getHistoricalBeneficialOwnerDto();
         historicalBeneficialOwnerDtos.add(historicalBeneficialOwnerDto);
+        historicalBeneficialOwnerDtos.add(getHistoricalBeneficialOwnerCorporateDto());
         trustDataDto.setHistoricalBeneficialOwners(historicalBeneficialOwnerDtos);
 
         List<TrustIndividualDto> trustIndividualDtos = new ArrayList<>();
@@ -113,6 +126,17 @@ public class TrustMock {
         Dto.setSurname("Hbo");
         Dto.setCeasedDate(LocalDate.of(1990,1,1));
         Dto.setNotifiedDate(LocalDate.of(1990,1,1));
+        Dto.setCorporateIndicator(false);
+
+        return Dto;
+    }
+
+    public static HistoricalBeneficialOwnerDto getHistoricalBeneficialOwnerCorporateDto()  {
+        HistoricalBeneficialOwnerDto Dto = new HistoricalBeneficialOwnerDto();
+        Dto.setCorporateName("Test Company");
+        Dto.setCeasedDate(LocalDate.of(1990,1,1));
+        Dto.setNotifiedDate(LocalDate.of(1990,1,1));
+        Dto.setCorporateIndicator(true);
 
         return Dto;
     }

@@ -20,6 +20,12 @@ public class HistoricalBeneficialOwnerDto {
     @JsonProperty("notified_date")
     private LocalDate notifiedDate;
 
+    @JsonProperty("corporate_indicator")
+    private boolean corporateIndicator;
+
+    @JsonProperty("corporate_name")
+    private String corporateName;
+
     public String getForename() {
         return forename;
     }
@@ -59,4 +65,21 @@ public class HistoricalBeneficialOwnerDto {
     public void setNotifiedDate(LocalDate notifiedDate) {
         this.notifiedDate = notifiedDate;
     }
+
+    public boolean isCorporateIndicator() {
+        return corporateIndicator;
+    }
+
+    public void setCorporateIndicator(boolean corporateIndicator) {
+        this.corporateIndicator = corporateIndicator;
+    }
+
+    public String getCorporateName() {
+        return corporateName;
+    }
+
+    public void setCorporateName(String corporateName) {
+        this.corporateName = corporateName;
+    }
+    
 }
