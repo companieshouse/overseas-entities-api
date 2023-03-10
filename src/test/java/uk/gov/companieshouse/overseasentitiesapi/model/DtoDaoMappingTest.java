@@ -387,7 +387,8 @@ class DtoDaoMappingTest {
         assertEquals(trustDto.getUnableToObtainAllTrustInfo(), trustDao.isUnableToObtainAllTrustInfo());
 
         assertTrustIndividualsAreEqual(trustDto.getIndividuals().get(0), trustDao.getIndividuals().get(0));
-        assertTrustHistoricalBeneficialOwnerIndividualAreEqual(trustDto.getHistoricalBeneficialOwners().get(0), trustDao.getHistoricalBeneficialOwners().get(0));
+        assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(0), trustDao.getHistoricalBeneficialOwners().get(0));
+        assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(1), trustDao.getHistoricalBeneficialOwners().get(1));
         assertTrustCorporatesAreEqual(trustDto.getCorporates().get(0), trustDao.getCorporates().get(0) );
     }
 
@@ -401,10 +402,12 @@ class DtoDaoMappingTest {
         assertEquals(dto.getType().toLowerCase(), dao.getType().getValue().toLowerCase());
     }
 
-    private void assertTrustHistoricalBeneficialOwnerIndividualAreEqual(HistoricalBeneficialOwnerDto dto, HistoricalBeneficialOwnerDao dao) {
+    private void assertTrustHistoricalBeneficialOwnerAreEqual(HistoricalBeneficialOwnerDto dto, HistoricalBeneficialOwnerDao dao) {
         assertEquals(dto.getForename(), dao.getForename());
         assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
         assertEquals(dto.getSurname(), dao.getSurname());
+        assertEquals(dto.getCorporateName(), dao.getCorporateName());
+        assertEquals(dto.isCorporateIndicator(), dao.isCorporateIndicator());      
         assertEquals(dto.getCeasedDate(), dao.getCeasedDate());
         assertEquals(dto.getNotifiedDate(), dao.getNotifiedDate());
     }
