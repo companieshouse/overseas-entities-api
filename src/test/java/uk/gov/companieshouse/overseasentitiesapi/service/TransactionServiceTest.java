@@ -109,7 +109,7 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
@@ -128,7 +128,7 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
@@ -144,7 +144,7 @@ class TransactionServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
 
-        when(apiClientService.getInternalApiKeyClient()).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateTransaction()).thenReturn(privateTransactionResourceHandler);
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
