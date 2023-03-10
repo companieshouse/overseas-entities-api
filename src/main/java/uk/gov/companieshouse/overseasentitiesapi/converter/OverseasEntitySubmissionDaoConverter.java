@@ -1,13 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.mongodb.core.convert.MongoConverter;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 
 import java.util.Objects;
@@ -16,6 +12,12 @@ import static uk.gov.companieshouse.overseasentitiesapi.converter.OverseasEntity
 
 @ReadingConverter
 public class OverseasEntitySubmissionDaoConverter implements Converter<Document, OverseasEntitySubmissionDao> {
+
+    private MongoConverter defaultMongoConverter;
+
+    public OverseasEntitySubmissionDaoConverter(MongoConverter defaultMongoConverter) {
+        this.defaultMongoConverter = defaultMongoConverter;
+    }
 
     @Override
     public OverseasEntitySubmissionDao convert(final Document document) {
@@ -50,20 +52,21 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
                 throw new UnsupportedOperationException("Model version not recognised");
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        objectMapper.registerModule(new JavaTimeModule());
-        try {
-            overseasEntitySubmissionDao = objectMapper.readValue(document.toJson(), OverseasEntitySubmissionDao.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+//        objectMapper.registerModule(new JavaTimeModule());
+//        try {
+//            overseasEntitySubmissionDao = objectMapper.readValue(document.toJson(), OverseasEntitySubmissionDao.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        // Also tried using Gson and getting the vanilla converter but no joy...
+        overseasEntitySubmissionDao = defaultMongoConverter.read(OverseasEntitySubmissionDao.class, document);
 
         return overseasEntitySubmissionDao;
     }
+
 
     private ModelVersion getModelVersionOfDocument(Document document) {
         Object entityNameDocument = document.get("entity_name");

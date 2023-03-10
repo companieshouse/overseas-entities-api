@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.convert.*;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.companieshouse.overseasentitiesapi.converter.OverseasEntitySubmissionDaoConverter;
@@ -66,10 +67,21 @@ class DtoModelChangeTest {
         conv.afterPropertiesSet();
     }
 
+    private static final MongoConverter getDefaultMongoConverter(MongoDatabaseFactory factory) {
+        System.out.println("\n\n**** 1");
+
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
+        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, new MongoMappingContext());
+        converter.afterPropertiesSet();
+        System.out.println("\n\n**** 2");
+
+        return converter;
+    }
+
     private MongoCustomConversions mongoCustomConversions() {
         return new MongoCustomConversions(
                 Arrays.asList(
-                        new OverseasEntitySubmissionDaoConverter()
+                        new OverseasEntitySubmissionDaoConverter(getDefaultMongoConverter(mongoTemplate.getMongoDatabaseFactory()))
                 ));
     }
 
