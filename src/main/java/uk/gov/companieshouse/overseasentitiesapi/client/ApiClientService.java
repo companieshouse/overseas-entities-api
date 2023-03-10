@@ -13,11 +13,7 @@ public class ApiClientService {
         return ApiSdkManager.getSDK(ericPassThroughHeader);
     }
 
-    public InternalApiClient getInternalOauthAuthenticatedClient(String ericPassThroughHeader) throws IOException {
-        return ApiSdkManager.getPrivateSDK(ericPassThroughHeader);
-    }
-
-    public InternalApiClient getInternalApiKeyClient() {
+    public InternalApiClient getInternalApiClient() {
         return ApiSdkManager.getPrivateSDK();
     }
 }

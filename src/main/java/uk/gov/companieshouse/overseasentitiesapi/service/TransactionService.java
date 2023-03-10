@@ -41,7 +41,7 @@ public class TransactionService {
             // The internal API key client is used here as the transaction service will call back into the OE API to get
             // the costs (if a costs end-point has already been set on the transaction) and those calls cannot be made
             // with a user token
-            var response = apiClientService.getInternalApiKeyClient()
+            var response = apiClientService.getInternalApiClient()
                     .privateTransaction().patch(uri, transaction).execute();
 
             if (response.getStatusCode() != 204) {
