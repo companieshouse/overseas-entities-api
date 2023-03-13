@@ -68,12 +68,9 @@ class DtoModelChangeTest {
     }
 
     private static final MongoConverter getDefaultMongoConverter(MongoDatabaseFactory factory) {
-        System.out.println("\n\n**** 1");
-
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, new MongoMappingContext());
         converter.afterPropertiesSet();
-        System.out.println("\n\n**** 2");
 
         return converter;
     }
@@ -109,6 +106,16 @@ class DtoModelChangeTest {
     void testCanGenerateCorrectlyPopulatedDtoModelFromVersion3_0Json() throws Exception {
 
         loadJsonDataIntoMongo("overseas_entity_v_3_0.json");
+
+        List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
+
+        checkSubmissions(submissions);
+    }
+
+    @Test
+    void testCanGenerateCorrectlyPopulatedDtoModelFromVersion3_1Json() throws Exception {
+
+        loadJsonDataIntoMongo("overseas_entity_v_3_1.json");
 
         List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
 

@@ -4,6 +4,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class PresenterDao {
 
+    // This temp change was only made to prove that the annotations are being used by the Mongo default converter
+    // when converting fields that have not been subject to structure changes
     @Field("full_nameXXX")
     private String fullName;
 
