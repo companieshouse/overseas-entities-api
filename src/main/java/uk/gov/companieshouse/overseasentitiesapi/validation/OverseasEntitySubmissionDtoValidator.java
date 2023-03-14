@@ -1,13 +1,15 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import java.util.Objects;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import java.util.Objects;
 
 @Component
 public class OverseasEntitySubmissionDtoValidator {
@@ -17,19 +19,24 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
+    private final TrustDetailsValidator trustDetailsValidator;
+
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator,
-                                                DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator) {
+                                                DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator,
+                                                TrustDetailsValidator trustDetailsValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.dueDiligenceDataBlockValidator = dueDiligenceDataBlockValidator;
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
+        this.trustDetailsValidator = trustDetailsValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -63,6 +70,10 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        }
+
+        if(!CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+            trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
         }
 
         dueDiligenceDataBlockValidator.validateDueDiligenceFields(
