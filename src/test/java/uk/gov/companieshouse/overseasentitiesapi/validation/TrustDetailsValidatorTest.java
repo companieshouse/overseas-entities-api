@@ -155,7 +155,7 @@ class TrustDetailsValidatorTest {
         trustDataDtoList.get(0).setUnableToObtainAllTrustInfo(null);
         Errors errors = trustDetailsValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.UNABLE_TO_OBTAIN_ALL_TRUST_INFO);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);

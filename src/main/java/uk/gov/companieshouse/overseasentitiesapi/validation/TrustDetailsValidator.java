@@ -75,7 +75,7 @@ public class TrustDetailsValidator {
     }
 
     private boolean validateUnableToObtainAllTrustInfo(Boolean partialInfo, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.UNABLE_TO_OBTAIN_ALL_TRUST_INFO);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD);
 
         return UtilsValidators.isNotNull(partialInfo, qualifiedFieldName, errors, loggingContext);
     }
