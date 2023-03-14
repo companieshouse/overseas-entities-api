@@ -106,9 +106,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
         trustDataDtoList.add(TrustMock.getTrustDataDto());
     };
 
-
     @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
+
+        setIsTrustWebEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
@@ -120,6 +121,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntitySubmissionValidatorWithOverseasEntityDueDiligence() {
+
+        setIsTrustWebEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -137,6 +140,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                 eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                 any(),
                 any());
+        verify(trustDetailsValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -230,6 +234,24 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenTrustDetailsAreNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorR2eportedWhenTrustDetailsAreEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(new ArrayList<>());
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedForMissingEntityNameField() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
@@ -283,6 +305,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
     @Test
@@ -302,6 +325,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
     @Test
@@ -503,6 +527,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
         setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
@@ -514,6 +540,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
     private void buildOverseasEntityUpdateSubmissionDtoWithFullDto() {
         setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         buildPartialOverseasEntityUpdateSubmissionDto();
@@ -527,5 +555,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void setIsRoeUpdateEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isRoeUpdateEnabled", value);
+    }
+
+    private void setIsTrustWebEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
     }
 }

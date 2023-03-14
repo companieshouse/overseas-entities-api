@@ -75,16 +75,20 @@ public class OverseasEntitySubmissionDtoValidator {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
 
-        if(isTrustWebEnabled &&
-                !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
-            trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-        }
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         dueDiligenceDataBlockValidator.validateDueDiligenceFields(
                 overseasEntitySubmissionDto.getDueDiligence(),
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
+    }
+
+    private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        if(isTrustWebEnabled &&
+                !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+            trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+        }
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -115,6 +119,9 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         return errors;
     }
 
