@@ -173,6 +173,4 @@ class TrustDetailsValidatorTest {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
     }
-
-
 }

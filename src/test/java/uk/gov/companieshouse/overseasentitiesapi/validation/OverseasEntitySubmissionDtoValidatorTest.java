@@ -243,7 +243,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNoErrorR2eportedWhenTrustDetailsAreEmpty() {
+    void testNoErrorReportedWhenTrustDetailsAreEmpty() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setTrusts(new ArrayList<>());

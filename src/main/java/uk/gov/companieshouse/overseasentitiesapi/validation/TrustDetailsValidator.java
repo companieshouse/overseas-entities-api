@@ -34,7 +34,6 @@ public class TrustDetailsValidator {
         return errors;
     }
 
-
     private boolean validateDuplicateId(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA,
                 TrustDataDto.TRUST_ID_FIELD);
