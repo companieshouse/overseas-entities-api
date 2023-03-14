@@ -73,12 +73,40 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
+            validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else {
+            validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        }
+        return errors;
+    }
+
+    public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        return errors;
+    }
+
+    public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityNameValidator.validate(entityNameDto, errors, loggingContext);
         }
 
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+        if (Objects.nonNull(entityDto)) {
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
+        }
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+        return errors;
+    }
+
+    public Errors validatePartialCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         var presenterDto = overseasEntitySubmissionDto.getPresenter();
         if (Objects.nonNull(presenterDto)) {
             presenterDtoValidator.validate(presenterDto, errors, loggingContext);
@@ -94,13 +122,6 @@ public class OverseasEntitySubmissionDtoValidator {
                     loggingContext);
         }
 
-        var entityDto = overseasEntitySubmissionDto.getEntity();
-        if (Objects.nonNull(entityDto)) {
-            entityDtoValidator.validate(entityDto, errors, loggingContext);
-        }
-
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         return errors;
     }
-
 }
