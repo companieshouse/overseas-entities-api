@@ -24,6 +24,9 @@ public class OverseasEntitySubmissionDtoValidator {
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
+    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
+    private boolean isTrustWebEnabled;
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -72,7 +75,8 @@ public class OverseasEntitySubmissionDtoValidator {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
 
-        if(!CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+        if(isTrustWebEnabled &&
+                !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
         }
 
