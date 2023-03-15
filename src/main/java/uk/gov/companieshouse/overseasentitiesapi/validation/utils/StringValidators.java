@@ -14,6 +14,9 @@ public final class StringValidators {
 
     private static final String REG_EXP_FOR_INVALID_CHARACTERS = "^[-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
 
+    // same as REG_EXP_FOR_INVALID_CHARACTERS but also allows carriage returns
+    private static final String REG_EXP_FOR_INVALID_CHARACTERS_FOR_TEXT_BOX = "^[\\n\\r\\-,.:; 0-9A-Z&@$£¥€'\"«»?!/\\\\()\\[\\]{}<>*=#%+ÀÁÂÃÄÅĀĂĄÆǼÇĆĈĊČÞĎÐÈÉÊËĒĔĖĘĚĜĞĠĢĤĦÌÍÎÏĨĪĬĮİĴĶĹĻĽĿŁÑŃŅŇŊÒÓÔÕÖØŌŎŐǾŒŔŖŘŚŜŞŠŢŤŦÙÚÛÜŨŪŬŮŰŲŴẀẂẄỲÝŶŸŹŻŽa-zſƒǺàáâãäåāăąæǽçćĉċčþďðèéêëēĕėęěĝģğġĥħìíîïĩīĭįĵķĺļľŀłñńņňŋòóôõöøōŏőǿœŕŗřśŝşšţťŧùúûüũūŭůűųŵẁẃẅỳýŷÿźżž]*$";
+
     private StringValidators() {}
 
     public static boolean isNotBlank(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
@@ -33,6 +36,16 @@ public final class StringValidators {
 
     public static boolean isValidCharacters(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         var pattern = Pattern.compile(REG_EXP_FOR_INVALID_CHARACTERS);
+        return isValidCharactersForPattern(pattern, toTest, qualifiedFieldName, errs, loggingContext);
+    }
+
+    public static boolean isValidCharactersForTextBox(String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
+        var pattern = Pattern.compile(REG_EXP_FOR_INVALID_CHARACTERS_FOR_TEXT_BOX);
+        return isValidCharactersForPattern(pattern, toTest, qualifiedFieldName, errs, loggingContext);
+    }
+
+
+    private static boolean isValidCharactersForPattern(Pattern pattern, String toTest, String qualifiedFieldName, Errors errs, String loggingContext) {
         var matcher = pattern.matcher(toTest);
 
         if (!matcher.matches()) {

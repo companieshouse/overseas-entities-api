@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
@@ -137,9 +139,10 @@ class ManagingOfficerIndividualValidatorTest {
         assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
     }
 
-    @Test
-    void testErrorReportedWhenLastNameFieldContainsInvalidCharacters() {
-        managingOfficerIndividualDtoList.get(0).setLastName("Дракон");
+    @ParameterizedTest
+    @ValueSource(strings = {"Name\n", "Name\r", "Дракон"})
+    void testErrorReportedWhenLastNameFieldContainsInvalidCharacters(String name) {
+        managingOfficerIndividualDtoList.get(0).setLastName(name);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
@@ -424,6 +427,20 @@ class ManagingOfficerIndividualValidatorTest {
                 ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD);
 
         assertError(ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenLineFeedIsUsed() {
+        managingOfficerIndividualDtoList.get(0).setRoleAndResponsibilities("abc\nxyz");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenCarriageReturnIsUsed() {
+        managingOfficerIndividualDtoList.get(0).setRoleAndResponsibilities("abc\rxyz");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
