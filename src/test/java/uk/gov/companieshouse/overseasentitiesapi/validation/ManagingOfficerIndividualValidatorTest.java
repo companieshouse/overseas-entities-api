@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
@@ -137,33 +139,10 @@ class ManagingOfficerIndividualValidatorTest {
         assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, qualifiedFieldName + " must be 160 characters or less", errors);
     }
 
-    @Test
-    void testErrorReportedWhenLastNameFieldContainsLineFeed() {
-        managingOfficerIndividualDtoList.get(0).setLastName("Name\n");
-        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
-                ManagingOfficerIndividualDto.LAST_NAME_FIELD);
-        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
-
-        assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenLastNameFieldContainsCarriageReturn() {
-        managingOfficerIndividualDtoList.get(0).setLastName("Name\r");
-        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
-                ManagingOfficerIndividualDto.LAST_NAME_FIELD);
-        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
-
-        assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
-    }
-
-    @Test
-    void testErrorReportedWhenLastNameFieldContainsInvalidCharacters() {
-        managingOfficerIndividualDtoList.get(0).setLastName("Дракон");
+    @ParameterizedTest
+    @ValueSource(strings = {"Name\n", "Name\r", "Дракон"})
+    void testErrorReportedWhenLastNameFieldContainsInvalidCharacters(String name) {
+        managingOfficerIndividualDtoList.get(0).setLastName(name);
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
