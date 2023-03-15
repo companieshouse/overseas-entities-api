@@ -129,7 +129,7 @@ public class ManagingOfficerCorporateValidator {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.ROLE_AND_RESPONSIBILITIES_FIELD);
         return StringValidators.isNotBlank (name, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(name, 256, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(name, qualifiedFieldName, errors, loggingContext);
+                && StringValidators.isValidCharactersForTextBox(name, qualifiedFieldName, errors, loggingContext);
     }
 
     private boolean validateContactFullName(String name, Errors errors, String loggingContext) {

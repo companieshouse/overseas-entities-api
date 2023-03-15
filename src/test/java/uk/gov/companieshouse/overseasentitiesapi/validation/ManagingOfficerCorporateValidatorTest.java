@@ -85,6 +85,28 @@ class ManagingOfficerCorporateValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenNameFieldContainsLineFeed() {
+        managingOfficerCorporateDtoList.get(0).setName("Name\n");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(ManagingOfficerCorporateDto.NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenNameFieldContainsCarriageReturn() {
+        managingOfficerCorporateDtoList.get(0).setName("Name\r");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerCorporateDto.NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(ManagingOfficerCorporateDto.NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         managingOfficerCorporateDtoList.get(0).setName("Дракон");
         Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);

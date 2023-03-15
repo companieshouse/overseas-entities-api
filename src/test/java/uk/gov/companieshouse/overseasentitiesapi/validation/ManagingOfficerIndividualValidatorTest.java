@@ -138,6 +138,30 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenLastNameFieldContainsLineFeed() {
+        managingOfficerIndividualDtoList.get(0).setLastName("Name\n");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.LAST_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenLastNameFieldContainsCarriageReturn() {
+        managingOfficerIndividualDtoList.get(0).setLastName("Name\r");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.LAST_NAME_FIELD);
+        String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.LAST_NAME_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenLastNameFieldContainsInvalidCharacters() {
         managingOfficerIndividualDtoList.get(0).setLastName("Дракон");
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
