@@ -1,13 +1,15 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import java.util.Objects;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import java.util.Objects;
 
 @Component
 public class OverseasEntitySubmissionDtoValidator {
@@ -17,19 +19,27 @@ public class OverseasEntitySubmissionDtoValidator {
     private final PresenterDtoValidator presenterDtoValidator;
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
+    private final TrustDetailsValidator trustDetailsValidator;
+
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
+    @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
+    private boolean isTrustWebEnabled;
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator,
-                                                DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator) {
+                                                DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator,
+                                                TrustDetailsValidator trustDetailsValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.dueDiligenceDataBlockValidator = dueDiligenceDataBlockValidator;
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
+        this.trustDetailsValidator = trustDetailsValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -65,11 +75,20 @@ public class OverseasEntitySubmissionDtoValidator {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
 
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         dueDiligenceDataBlockValidator.validateDueDiligenceFields(
                 overseasEntitySubmissionDto.getDueDiligence(),
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
                 loggingContext);
+    }
+
+    private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        if(isTrustWebEnabled &&
+                !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+            trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+        }
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -100,6 +119,9 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         return errors;
     }
 
