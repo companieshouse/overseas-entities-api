@@ -427,6 +427,20 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenLineFeedIsUsed() {
+        managingOfficerIndividualDtoList.get(0).setRoleAndResponsibilities("abc\nxyz");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenCarriageReturnIsUsed() {
+        managingOfficerIndividualDtoList.get(0).setRoleAndResponsibilities("abc\rxyz");
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenRoleAndResponsibilitiesFieldContainsInvalidCharacters() {
         managingOfficerIndividualDtoList.get(0).setRoleAndResponsibilities("Дракон");
         Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);

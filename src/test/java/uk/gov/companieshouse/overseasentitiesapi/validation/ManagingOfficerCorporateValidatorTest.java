@@ -395,6 +395,21 @@ class ManagingOfficerCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenLineFeedIsUsed() {
+        managingOfficerCorporateDtoList.get(0).setRoleAndResponsibilities("abc\nxyz");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenCarriageReturnIsUsed() {
+        managingOfficerCorporateDtoList.get(0).setRoleAndResponsibilities("abc\rxyz");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+
+    @Test
     void testErrorReportedWhenRoleAndResponsibilitiesFieldContainsInvalidCharacters() {
         managingOfficerCorporateDtoList.get(0).setRoleAndResponsibilities("Дракон");
         Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
