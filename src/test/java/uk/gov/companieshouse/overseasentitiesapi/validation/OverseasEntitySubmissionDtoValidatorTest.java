@@ -500,6 +500,17 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testPartialUpdateValidationNoEntity() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setEntity(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(0)).validate(any(), any(), any());
+        assertFalse(errors.hasErrors());
+    }
+
+
+    @Test
     void testPartialUpdateValidationNoEntityEmail() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
