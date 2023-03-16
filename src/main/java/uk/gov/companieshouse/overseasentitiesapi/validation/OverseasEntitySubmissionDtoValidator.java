@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         // Method to be added to as Update journey developed
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -85,6 +87,16 @@ public class OverseasEntitySubmissionDtoValidator {
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+
+        if (Objects.nonNull(entityDto)) {
+            var entityEmail = entityDto.getEmail();
+            if (StringUtils.isNotBlank(entityEmail)) {
+                entityDtoValidator.validate(entityDto, errors, loggingContext);
+            }
+        }
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         return errors;
     }
 
