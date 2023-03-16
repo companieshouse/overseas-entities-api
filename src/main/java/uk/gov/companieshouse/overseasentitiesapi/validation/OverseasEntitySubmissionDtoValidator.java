@@ -117,7 +117,6 @@ public class OverseasEntitySubmissionDtoValidator {
             }
         }
 
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
         return errors;
     }
 
