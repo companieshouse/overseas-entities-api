@@ -1,40 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
-import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
-import uk.gov.companieshouse.service.rest.err.Err;
-import uk.gov.companieshouse.service.rest.err.Errors;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +9,44 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
+import uk.gov.companieshouse.service.rest.err.Err;
+import uk.gov.companieshouse.service.rest.err.Errors;
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntitySubmissionDtoValidatorTest {
@@ -66,13 +69,17 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
     @Mock
     private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
+    @Mock
+    private TrustDetailsValidator trustDetailsValidator;
+
     private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
     private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
     private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
     private final BeneficialOwnersStatementType beneficialOwnersStatement = BeneficialOwnersStatementType.NONE_IDENTIFIED;
-    private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
     private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+
+    private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
     {
         beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
     };
@@ -94,8 +101,15 @@ class OverseasEntitySubmissionDtoValidatorTest {
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
     };
 
+    private final List<TrustDataDto> trustDataDtoList = new ArrayList<>();
+    {
+        trustDataDtoList.add(TrustMock.getTrustDataDto());
+    };
+
     @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
+
+        setIsTrustWebEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
@@ -107,6 +121,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testOverseasEntitySubmissionValidatorWithOverseasEntityDueDiligence() {
+
+        setIsTrustWebEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -124,6 +140,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                 eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                 any(),
                 any());
+        verify(trustDetailsValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -217,6 +234,24 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenTrustDetailsAreNull() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenTrustDetailsAreEmpty() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(new ArrayList<>());
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedForMissingEntityNameField() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityName(null);
@@ -270,6 +305,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
     @Test
@@ -289,6 +325,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
     @Test
@@ -535,10 +572,13 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
         setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
@@ -546,10 +586,13 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setPresenter(presenterDto);
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
     }
 
     private void buildOverseasEntityUpdateSubmissionDtoWithFullDto() {
         setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         buildPartialOverseasEntityUpdateSubmissionDto();
@@ -563,5 +606,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void setIsRoeUpdateEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isRoeUpdateEnabled", value);
+    }
+
+    private void setIsTrustWebEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
     }
 }

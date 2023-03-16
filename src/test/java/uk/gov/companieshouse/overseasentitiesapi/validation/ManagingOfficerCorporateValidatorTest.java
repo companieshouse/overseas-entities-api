@@ -84,9 +84,10 @@ class ManagingOfficerCorporateValidatorTest {
         assertError(ManagingOfficerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 
-    @Test
-    void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
-        managingOfficerCorporateDtoList.get(0).setName("Дракон");
+    @ParameterizedTest
+    @ValueSource(strings = {"Name\n", "Name\r", "Дракон"})
+    void testErrorReportedWhenNameFieldContainsInvalidCharacters(String name) {
+        managingOfficerCorporateDtoList.get(0).setName(name);
         Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 MANAGING_OFFICERS_CORPORATE_FIELD,
@@ -393,6 +394,21 @@ class ManagingOfficerCorporateValidatorTest {
         String validationMessage = qualifiedFieldName + " must be 256 characters or less";
         assertError(ManagingOfficerCorporateDto.ROLE_AND_RESPONSIBILITIES_FIELD, validationMessage, errors);
     }
+
+    @Test
+    void testNoErrorReportedWhenLineFeedIsUsed() {
+        managingOfficerCorporateDtoList.get(0).setRoleAndResponsibilities("abc\nxyz");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenCarriageReturnIsUsed() {
+        managingOfficerCorporateDtoList.get(0).setRoleAndResponsibilities("abc\rxyz");
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
 
     @Test
     void testErrorReportedWhenRoleAndResponsibilitiesFieldContainsInvalidCharacters() {

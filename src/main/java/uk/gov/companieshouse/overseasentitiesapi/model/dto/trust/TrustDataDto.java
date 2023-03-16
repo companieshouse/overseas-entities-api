@@ -10,16 +10,21 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class TrustDataDto {
 
-    @JsonProperty("trust_id")
+    public static final String TRUST_ID_FIELD = "trust_id";
+    public static final String TRUST_NAME_FIELD = "trust_name";
+    public static final String CREATION_DATE_FIELD = "creation_date";
+    public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
+
+    @JsonProperty(TRUST_ID_FIELD)
     private String trustId;
 
-    @JsonProperty("trust_name")
+    @JsonProperty(TRUST_NAME_FIELD)
     private String trustName;
 
-    @JsonProperty("creation_date")
+    @JsonProperty(CREATION_DATE_FIELD)
     private LocalDate creationDate;
 
-    @JsonProperty("unable_to_obtain_all_trust_info")
+    @JsonProperty(UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD)
     private Boolean unableToObtainAllTrustInfo;
 
     @JsonInclude(NON_NULL)

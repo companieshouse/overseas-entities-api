@@ -154,6 +154,6 @@ public class ManagingOfficerIndividualValidator {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.ROLE_AND_RESPONSIBILITIES_FIELD);
         return StringValidators.isNotBlank(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(roleAndResponsibilities, 256, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isValidCharacters(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext);
+                && StringValidators.isValidCharactersForTextBox(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext);
     }
 }
