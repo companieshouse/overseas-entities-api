@@ -106,8 +106,6 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
         var entityDto = overseasEntitySubmissionDto.getEntity();
 
         if (Objects.nonNull(entityDto)) {
@@ -117,6 +115,8 @@ public class OverseasEntitySubmissionDtoValidator {
             }
         }
 
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         return errors;
     }
 
@@ -125,6 +125,11 @@ public class OverseasEntitySubmissionDtoValidator {
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityNameValidator.validate(entityNameDto, errors, loggingContext);
+        }
+
+        var entityDto = overseasEntitySubmissionDto.getEntity();
+        if (Objects.nonNull(entityDto)) {
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
         }
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -148,12 +153,6 @@ public class OverseasEntitySubmissionDtoValidator {
                     loggingContext);
         }
 
-        if (!isRoeUpdateEnabled) {
-            var entityDto = overseasEntitySubmissionDto.getEntity();
-            if (Objects.nonNull(entityDto)) {
-                entityDtoValidator.validate(entityDto, errors, loggingContext);
-            }
-        }
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
