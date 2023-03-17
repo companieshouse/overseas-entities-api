@@ -34,6 +34,10 @@ public class TrustIndividualDto {
     private String nationality;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("second_nationality")
+    private String secondNationality;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("service_address")
     private AddressDto serviceAddress;
 
@@ -360,4 +364,13 @@ public class TrustIndividualDto {
     public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
+
+    public String getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(String secondNationality) {
+        this.secondNationality = secondNationality;
+    }
+
 }

@@ -24,6 +24,9 @@ public class TrustIndividualDao {
     @Field("nationality")
     private String nationality;
 
+    @Field("second_nationality")
+    private String secondNationality;
+
     @Field("service_address")
     private AddressDao serviceAddress;
 
@@ -104,4 +107,13 @@ public class TrustIndividualDao {
     public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
+
+    public String getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(String secondNationality) {
+        this.secondNationality = secondNationality;
+    }
+    
 }
