@@ -69,6 +69,7 @@ public class TrustMock {
         dao.setSurname("Surname");
         dao.setDateOfBirth(LocalDate.of(1960, 1, 1));
         dao.setNationality("Nationality");
+        dao.setSecondNationality("My Dual Nationality");
         dao.setServiceAddress(AddressMock.getAddressDao());
         dao.setUsualResidentialAddress(AddressMock.getAddressDao());
         dao.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
@@ -148,6 +149,7 @@ public class TrustMock {
         Dto.setSurname("Surname");
         Dto.setDateOfBirth(LocalDate.of(1960, 1, 1));
         Dto.setNationality("Nationality");
+        Dto.setSecondNationality("My Dual Nationality");
         Dto.setServiceAddress(AddressMock.getAddressDto());
         Dto.setUsualResidentialAddress(AddressMock.getAddressDto());
         Dto.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));

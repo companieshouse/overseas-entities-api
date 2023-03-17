@@ -396,6 +396,7 @@ class DtoDaoMappingTest {
         assertEquals(dto.getDateBecameInterestedPerson(), dao.getDateBecameInterestedPerson());
         assertEquals(dto.getDateOfBirth(), dao.getDateOfBirth());
         assertEquals(dto.getNationality(), dao.getNationality());
+        assertEquals(dto.getSecondNationality(), dao.getSecondNationality());
         assertEquals(dto.getForename(), dao.getForename());
         assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
         assertEquals(dto.getSurname(), dao.getSurname());
