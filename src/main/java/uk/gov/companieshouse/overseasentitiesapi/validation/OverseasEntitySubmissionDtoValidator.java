@@ -115,6 +115,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Objects.nonNull(entityDto)) {
             var entityEmail = entityDto.getEmail();
+            // Temporary as initial public data Entity fetch has no Email Address, Needs to change once private data fetch is implemented
             if (StringUtils.isNotBlank(entityEmail)) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
