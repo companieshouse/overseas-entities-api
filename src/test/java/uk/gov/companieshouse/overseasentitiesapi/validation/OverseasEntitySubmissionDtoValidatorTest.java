@@ -500,6 +500,25 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testFullUpdateValidationWithoutTrusts() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(
+                    eq(overseasEntitySubmissionDto.getDueDiligence()),
+                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                    any(),
+                    any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testPartialUpdateValidationNoEntity() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
