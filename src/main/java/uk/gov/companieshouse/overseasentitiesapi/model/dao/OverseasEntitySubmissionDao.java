@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 
 import java.time.LocalDateTime;
@@ -66,6 +67,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("links")
     private Map<String, String> links;
+
+    @Field("schema_version")
+    private SchemaVersion schemaVersion;
 
     public String getId() {
         return id;
@@ -209,5 +213,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setHttpRequestId(String httpRequestId) {
         this.httpRequestId = httpRequestId;
+    }
+
+    public SchemaVersion getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(double versionNumber) {
+        this.schemaVersion = SchemaVersion.getSchemaVersionByConfigVersionNumber(versionNumber);
     }
 }

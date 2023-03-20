@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.transaction.Resource;
@@ -42,6 +43,9 @@ public class OverseasEntitiesService {
     private final OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
     private final TransactionUtils transactionUtils;
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
+
+    @Value("${CURRENT_SCHEMA_VERSION}")
+    private double configVersionNumber;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
@@ -109,6 +113,7 @@ public class OverseasEntitiesService {
 
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+        overseasEntitySubmissionDao.setSchemaVersion(configVersionNumber);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         final String submissionId = insertedSubmission.getId();

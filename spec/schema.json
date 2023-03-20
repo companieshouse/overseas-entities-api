@@ -305,7 +305,8 @@
         "required": [
           "entity",
           "presenter",
-          "beneficial_owners_statement"
+          "beneficial_owners_statement",
+          "schema_version"
         ],
         "type": "object",
         "properties": {
@@ -313,7 +314,7 @@
             "$ref": "#/components/schemas/EntityName"
           },
           "entity_number": {
-            "allOf" : [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/FieldPattern"
               },
@@ -372,6 +373,12 @@
             "items": {
               "$ref": "#/components/schemas/Trust"
             }
+          },
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "VERSION_3_1"
+            ]
           }
         }
       },
