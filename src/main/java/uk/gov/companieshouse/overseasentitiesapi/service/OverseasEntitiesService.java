@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CURRENT_VERSION;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CURRENT_MONGO_SCHEMA_VERSION;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
@@ -110,7 +110,7 @@ public class OverseasEntitiesService {
 
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
-        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_VERSION);
+        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         final String submissionId = insertedSubmission.getId();
@@ -149,7 +149,7 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setId(submissionId);
-        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_VERSION);
+        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
@@ -235,7 +235,7 @@ public class OverseasEntitiesService {
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
         var submission = overseasEntitySubmissionsRepository.findById(submissionId);
         if (submission.isPresent()) {
-            OverseasEntitySubmissionDao overseasEntitySubmissionDao = submission.get();
+            var overseasEntitySubmissionDao = submission.get();
             ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", overseasEntitySubmissionDao.getId()));
             if (overseasEntitySubmissionDao.getSchemaVersion() != null) {
                 ApiLogger.info(String.format("Schema version %s", overseasEntitySubmissionDao.getSchemaVersion()));
