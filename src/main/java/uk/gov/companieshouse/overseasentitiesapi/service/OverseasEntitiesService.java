@@ -236,11 +236,7 @@ public class OverseasEntitiesService {
         var submission = overseasEntitySubmissionsRepository.findById(submissionId);
         if (submission.isPresent()) {
             var overseasEntitySubmissionDao = submission.get();
-            ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", overseasEntitySubmissionDao.getId()));
-            if (overseasEntitySubmissionDao.getSchemaVersion() != null) {
-                ApiLogger.info(String.format("Schema version %s", overseasEntitySubmissionDao.getSchemaVersion()));
-            }
-
+            ApiLogger.info(String.format("%s: Overseas Entities Submission found. Version %s. About to return", overseasEntitySubmissionDao.getId(), overseasEntitySubmissionDao.getSchemaVersion()));
             var dto = overseasEntityDtoDaoMapper.daoToDto(overseasEntitySubmissionDao);
             return Optional.of(dto);
         } else {
