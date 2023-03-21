@@ -16,9 +16,9 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityNameDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -39,14 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.UPDATE_RESUME_JOURNEY_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 
 @ExtendWith(MockitoExtension.class)
@@ -166,6 +166,85 @@ class OverseasEntitiesServiceTest {
 
         if (isResumeLinkExpected) {
             assertEquals(String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
+        } else {
+            assertNull(transactionSent.getResumeJourneyUri());
+        }
+
+        // assert response
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        OverseasEntitySubmissionCreatedResponseDto responseDto = ((OverseasEntitySubmissionCreatedResponseDto) response.getBody());
+        assertNotNull(responseDto);
+        assertEquals(submissionId, responseDto.getId());
+    }
+
+    @Test
+    void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException  {
+        testUpdateSubmissionCreation(true, ENTITY_NAME);
+    }
+
+    @Test
+    void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException  {
+        testUpdateSubmissionCreation(false, ENTITY_NAME);
+    }
+
+    @Test
+    void testOverseasEntityUpdateSubmissionCanBeCreatedWhenEntityNameIsNull() throws ServiceException {
+        testUpdateSubmissionCreation(false, null);
+    }
+
+    private void testUpdateSubmissionCreation(boolean isResumeLinkExpected, String entityName) throws ServiceException {
+        final String submissionId = "434jhg43hj34534";
+
+        Transaction transaction = buildTransaction();
+
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName(entityName);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111129");
+
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setId(submissionId);
+
+
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        ResponseEntity<Object> response;
+
+        // make the call to test
+        if (isResumeLinkExpected) {
+            response = overseasEntitiesService.createOverseasEntityWithResumeLink(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    REQUEST_ID,
+                    USER_ID);
+        } else {
+            response = overseasEntitiesService.createOverseasEntity(
+                    transaction,
+                    overseasEntitySubmissionDto,
+                    REQUEST_ID,
+                    USER_ID);
+        }
+
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        verify(localDateTimeSupplier, times(1)).get();
+
+        String submissionUri = String.format("/transactions/%s/overseas-entity/%s", transaction.getId(), overseasEntitySubmissionDao.getId());
+
+        // assert 'self' link is set on dao object
+        assertEquals(submissionUri, overseasEntitySubmissionDao.getLinks().get("self"));
+
+        // assert transaction resources are updated to point to submission
+        Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(entityName, transactionSent.getCompanyName());
+        assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
+        assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
+        assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
+
+        if (isResumeLinkExpected) {
+            assertEquals(String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
         } else {
             assertNull(transactionSent.getResumeJourneyUri());
         }

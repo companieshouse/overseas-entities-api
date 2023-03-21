@@ -25,6 +25,8 @@ public class Constants {
     public static final String TRANSACTIONS_PUBLIC_API_PREFIX = "/transactions/";
     public static final String RESUME_JOURNEY_URI_PATTERN = "/register-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
 
+    public static final String UPDATE_RESUME_JOURNEY_URI_PATTERN = "/update-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
+
     // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
     public static final String LINK_SELF = "self";
