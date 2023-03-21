@@ -125,7 +125,8 @@ public class OverseasEntitiesService {
         updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
                 submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
-        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s, schema version %s", transaction.getId(), insertedSubmission.getId(), CURRENT_VERSION));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s, schema version %s",
+                transaction.getId(), insertedSubmission.getId(), overseasEntitySubmissionDao.getSchemaVersion()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
@@ -162,7 +163,7 @@ public class OverseasEntitiesService {
 
         ApiLogger.infoContext(requestId, String.format(
                 "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %s",
-                transaction.getId(), submissionId, CURRENT_VERSION));
+                transaction.getId(), submissionId, overseasEntitySubmissionDao.getSchemaVersion()));
 
         return ResponseEntity.ok().build();
     }
