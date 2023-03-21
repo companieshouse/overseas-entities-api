@@ -305,8 +305,7 @@
         "required": [
           "entity",
           "presenter",
-          "beneficial_owners_statement",
-          "schema_version"
+          "beneficial_owners_statement"
         ],
         "type": "object",
         "properties": {
@@ -373,12 +372,6 @@
             "items": {
               "$ref": "#/components/schemas/Trust"
             }
-          },
-          "schema_version": {
-            "type": "string",
-            "enum": [
-              "VERSION_3_1"
-            ]
           }
         }
       },

@@ -89,11 +89,6 @@ class OverseasEntitiesServiceTest {
     private OverseasEntitiesService overseasEntitiesService;
     private Object responseBody;
 
-    @BeforeEach
-    void setup() {
-        ReflectionTestUtils.setField(overseasEntitiesService, "configVersionNumber", 3.1);
-    }
-
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
         testSubmissionCreation(true, ENTITY_NAME);

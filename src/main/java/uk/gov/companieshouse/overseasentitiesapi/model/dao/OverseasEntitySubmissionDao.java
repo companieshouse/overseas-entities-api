@@ -219,7 +219,7 @@ public class OverseasEntitySubmissionDao {
         return schemaVersion;
     }
 
-    public void setSchemaVersion(double versionNumber) {
-        this.schemaVersion = SchemaVersion.getSchemaVersionByConfigVersionNumber(versionNumber);
+    public void setSchemaVersion(SchemaVersion schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 }
