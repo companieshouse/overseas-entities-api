@@ -215,8 +215,7 @@ public class OverseasEntitiesService {
                                                           String loggingContext,
                                                           boolean addResumeLinkToTransaction) throws ServiceException {
         String entityName = null;
-        EntityNameDto entityNameDto = overseasEntitySubmissionDto.getEntityName();
-        String overseasEntityID = overseasEntitySubmissionDto.getEntityNumber();
+        var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityName = entityNameDto.getName();
         }
