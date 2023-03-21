@@ -45,7 +45,7 @@ public class OverseasEntitiesService {
     private final Supplier<LocalDateTime> dateTimeNowSupplier;
 
     @Value("${CURRENT_SCHEMA_VERSION}")
-    private double configVersionNumber;
+    private double configSchemaVersionNumber;
 
     @Autowired
     public OverseasEntitiesService(OverseasEntitySubmissionsRepository overseasEntitySubmissionsRepository,
@@ -113,7 +113,7 @@ public class OverseasEntitiesService {
 
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
-        overseasEntitySubmissionDao.setSchemaVersion(configVersionNumber);
+        overseasEntitySubmissionDao.setSchemaVersion(configSchemaVersionNumber);
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         final String submissionId = insertedSubmission.getId();
@@ -128,7 +128,7 @@ public class OverseasEntitiesService {
         updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
                 submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
-        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s", transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s, schema version %.1f", transaction.getId(), insertedSubmission.getId(), configSchemaVersionNumber));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
@@ -151,7 +151,7 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setId(submissionId);
-        overseasEntitySubmissionDao.setSchemaVersion(configVersionNumber);
+        overseasEntitySubmissionDao.setSchemaVersion(configSchemaVersionNumber);
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
@@ -164,8 +164,8 @@ public class OverseasEntitiesService {
         transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(
-                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
-                transaction.getId(), submissionId));
+                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %.1f",
+                transaction.getId(), submissionId, configSchemaVersionNumber));
 
         return ResponseEntity.ok().build();
     }
