@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -16,6 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
@@ -85,6 +88,11 @@ class OverseasEntitiesServiceTest {
     @InjectMocks
     private OverseasEntitiesService overseasEntitiesService;
     private Object responseBody;
+
+    @BeforeEach
+    void setup() {
+        ReflectionTestUtils.setField(overseasEntitiesService, "configVersionNumber", 3.1);
+    }
 
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
@@ -156,6 +164,9 @@ class OverseasEntitiesServiceTest {
 
         // assert trust data is added to submission
         assertEquals(1, overseasEntitySubmissionDao.getTrusts().size());
+
+        // assert expected version is present
+        assertEquals(SchemaVersion.VERSION_3_1, overseasEntitySubmissionDao.getSchemaVersion());
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
@@ -229,6 +240,9 @@ class OverseasEntitiesServiceTest {
 
         verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
         var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        // assert expected version is present
+        assertEquals(SchemaVersion.VERSION_3_1, overseasEntitySubmissionDao.getSchemaVersion());
 
         assertEquals(SUBMISSION_ID, savedSubmission.getId());
         assertEquals(REQUEST_ID, savedSubmission.getHttpRequestId());

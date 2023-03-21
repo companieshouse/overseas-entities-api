@@ -151,7 +151,7 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setId(submissionId);
-
+        overseasEntitySubmissionDao.setSchemaVersion(configVersionNumber);
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
