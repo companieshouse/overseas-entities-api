@@ -67,6 +67,9 @@ public class OverseasEntitySubmissionDao {
     @Field("links")
     private Map<String, String> links;
 
+    @Field("schema_version")
+    private String schemaVersion;
+
     public String getId() {
         return id;
     }
@@ -209,5 +212,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setHttpRequestId(String httpRequestId) {
         this.httpRequestId = httpRequestId;
+    }
+
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(String schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 }

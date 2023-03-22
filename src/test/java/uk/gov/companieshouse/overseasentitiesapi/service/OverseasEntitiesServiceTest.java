@@ -16,9 +16,9 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionCreatedResponseDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -157,6 +157,9 @@ class OverseasEntitiesServiceTest {
         // assert trust data is added to submission
         assertEquals(1, overseasEntitySubmissionDao.getTrusts().size());
 
+        // assert expected version is present
+        assertEquals(SchemaVersion.VERSION_3_1.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
+
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
         assertEquals(entityName, transactionSent.getCompanyName());
@@ -229,6 +232,9 @@ class OverseasEntitiesServiceTest {
 
         verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
         var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        // assert expected version is present
+        assertEquals(SchemaVersion.VERSION_3_1.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
 
         assertEquals(SUBMISSION_ID, savedSubmission.getId());
         assertEquals(REQUEST_ID, savedSubmission.getHttpRequestId());

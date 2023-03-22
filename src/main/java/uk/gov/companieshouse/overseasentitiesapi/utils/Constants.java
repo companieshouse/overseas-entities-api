@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
+
 public class Constants {
 
     private Constants() {
@@ -34,4 +36,5 @@ public class Constants {
 
     public static final String CONCATENATED_STRING_FORMAT = "%s,%s";
     public static final String CONCATENATED_STRING_FORMAT_NO_COMMA = "%s%s";
+    public static final SchemaVersion CURRENT_MONGO_SCHEMA_VERSION = SchemaVersion.VERSION_3_1;
 }
