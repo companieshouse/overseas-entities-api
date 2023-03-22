@@ -16,12 +16,4 @@ public enum SchemaVersion {
         return version;
     }
 
-    public static SchemaVersion getSchemaVersion(String versionValue) {
-        for (SchemaVersion value: values()) {
-            if(value.version.equals(versionValue)) {
-                return value;
-            }
-        }
-        return null;
-    }
 }
