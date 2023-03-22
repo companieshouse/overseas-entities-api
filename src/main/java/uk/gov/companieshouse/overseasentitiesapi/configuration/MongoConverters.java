@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import uk.gov.companieshouse.overseasentitiesapi.converter.OverseasEntitySubmissionDaoConverter;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class MongoConverters {
     private MongoConverters() { }
 
     public static MongoCustomConversions getMongoCustomConversions(MongoDatabaseFactory mongoDatabaseFactory) {
+        ApiLogger.info("Adding Mongo Custom Converters - OverseasEntitySubmissionDaoConverter");
         return new MongoCustomConversions(
                 List.of(
                         new OverseasEntitySubmissionDaoConverter(getDefaultMongoConverter(mongoDatabaseFactory))

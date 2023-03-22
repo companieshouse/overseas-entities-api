@@ -19,11 +19,9 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
     @Override
     public OverseasEntitySubmissionDao convert(final Document document) {
 
-        System.out.println("\n\n**************** Document: \n\n\n");
-        System.out.println(document.toString());
-
         OverseasEntitySubmissionDao overseasEntitySubmissionDao;
 
+        // TODO - select and apply correct translation based on the schema version.
 
         overseasEntitySubmissionDao = defaultMongoConverter.read(OverseasEntitySubmissionDao.class, document);
 
