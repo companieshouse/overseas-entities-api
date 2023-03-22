@@ -18,6 +18,9 @@ public class TrustCorporateDao {
     @Field("service_address")
     private AddressDao serviceAddress;
 
+    @Field("is_service_address_same_as_principal_address")
+    private Boolean isServiceAddressSameAsPrincipalAddress;
+
     @Field("identification_country_registration")
     private String identificationCountryRegistration;
 
@@ -66,6 +69,14 @@ public class TrustCorporateDao {
 
     public void setServiceAddress(AddressDao serviceAddress) {
         this.serviceAddress = serviceAddress;
+    }
+
+    public Boolean getServiceAddressSameAsPrincipalAddress() {
+        return isServiceAddressSameAsPrincipalAddress;
+    }
+
+    public void setServiceAddressSameAsPrincipalAddress(Boolean serviceAddressSameAsPrincipalAddress) {
+        isServiceAddressSameAsPrincipalAddress = serviceAddressSameAsPrincipalAddress;
     }
 
     public String getIdentificationCountryRegistration() {
