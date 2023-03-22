@@ -1,4 +1,9 @@
 {
+  "_id" : "640ad65c61bd3f0a23219ac7",
+  "created_on" : "2023-03-10T07:05:07.414",
+  "created_by_user_id" : "xBjfyx0li07r6test8",
+  "http_request_id" : "W-w0S_iGzwdVTthEV_T7uyCN72-k",
+
   "entity_name" : {
     "name" : "ARMS DIRECT"
   },
@@ -250,9 +255,92 @@
     }
   ],
   "trusts" : [
-
+    {
+      "_id" : "string",
+      "name" : "string",
+      "creation_date" : "2022-06-10",
+      "unable_to_obtain_all_trust_info" : true,
+      "historical_beneficial_owners" : [
+        {
+          "forename" : "string",
+          "other_forenames" : "string",
+          "surname" : "string",
+          "ceased_date" : "2022-06-10",
+          "notified_date" : "2022-06-10",
+          "corporate_indicator" : false
+        }
+      ],
+      "individuals" : [
+        {
+          "type" : "GRANTOR",
+          "forename" : "string",
+          "other_forenames" : "string",
+          "surname" : "string",
+          "date_of_birth" : "2022-06-10",
+          "nationality" : "Italian",
+          "service_address" : {
+            "property_name_number" : "string",
+            "line_1" : "string",
+            "line_2" : "string",
+            "county" : "string",
+            "country" : "string",
+            "postcode" : "string",
+            "care_of" : "string",
+            "po_box" : "string",
+            "locality" : "string"
+          },
+          "usual_residential_address" : {
+            "property_name_number" : "string",
+            "line_1" : "string",
+            "line_2" : "string",
+            "county" : "string",
+            "country" : "string",
+            "postcode" : "string",
+            "care_of" : "string",
+            "po_box" : "string",
+            "locality" : "string"
+          },
+          "date_became_interested_person" : "2022-06-10"
+        }
+      ],
+      "corporates" : [
+        {
+          "type" : "BENEFICIARY",
+          "name" : "string",
+          "registered_office_address" : {
+            "property_name_number" : "string",
+            "line_1" : "string",
+            "line_2" : "string",
+            "county" : "string",
+            "country" : "string",
+            "postcode" : "string",
+            "care_of" : "string",
+            "po_box" : "string",
+            "locality" : "string"
+          },
+          "service_address" : {
+            "property_name_number" : "string",
+            "line_1" : "string",
+            "line_2" : "string",
+            "county" : "string",
+            "country" : "string",
+            "postcode" : "string",
+            "care_of" : "string",
+            "po_box" : "string",
+            "locality" : "string"
+          },
+          "identification_country_registration" : "string",
+          "identification_legal_authority" : "string",
+          "identification_legal_form" : "string",
+          "identification_place_registered" : "string",
+          "identification_registration_number" : "string",
+          "date_became_interested_person" : "2022-06-10"
+        }
+      ]
+    }
   ],
   "links" : {
     "self" : "/transactions/040551-775916-764584/overseas-entity/63ecba0100a65d6d4704ac34"
-  }
+  },
+  "_class" : "uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao"
 }
