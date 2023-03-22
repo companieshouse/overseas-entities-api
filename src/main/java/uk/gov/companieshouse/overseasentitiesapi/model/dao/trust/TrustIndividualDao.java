@@ -1,9 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dao.trust;
 
-import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
-
 import java.time.LocalDate;
+
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
 public class TrustIndividualDao {
     @Field("type")
@@ -29,6 +30,9 @@ public class TrustIndividualDao {
 
     @Field("service_address")
     private AddressDao serviceAddress;
+
+    @Field("is_service_address_same_as_usual_residential_address")
+    private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
     @Field("usual_residential_address")
     private AddressDao usualResidentialAddress;
@@ -90,6 +94,14 @@ public class TrustIndividualDao {
 
     public void setServiceAddress(AddressDao serviceAddress) {
         this.serviceAddress = serviceAddress;
+    }
+
+    public Boolean getServiceAddressSameAsUsualResidentialAddress() {
+        return isServiceAddressSameAsUsualResidentialAddress;
+    }
+
+    public void setServiceAddressSameAsUsualResidentialAddress(Boolean serviceAddressSameAsUsualResidentialAddress) {
+        isServiceAddressSameAsUsualResidentialAddress = serviceAddressSameAsUsualResidentialAddress;
     }
 
     public AddressDao getUsualResidentialAddress() {

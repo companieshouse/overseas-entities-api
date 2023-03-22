@@ -71,6 +71,7 @@ public class TrustMock {
         dao.setNationality("Nationality");
         dao.setSecondNationality("My Dual Nationality");
         dao.setServiceAddress(AddressMock.getAddressDao());
+        dao.setServiceAddressSameAsUsualResidentialAddress(false);
         dao.setUsualResidentialAddress(AddressMock.getAddressDao());
         dao.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         dao.setType("Grantor");
@@ -84,6 +85,7 @@ public class TrustMock {
         dao.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         dao.setRegisteredOfficeAddress(AddressMock.getAddressDao());
         dao.setServiceAddress(AddressMock.getAddressDao());
+        dao.setServiceAddressSameAsPrincipalAddress(false);
         dao.setIdentificationCountryRegistration("Identification Country");
         dao.setIdentificationLegalAuthority("Identification Legal Authority");
         dao.setIdentificationLegalForm("Identification Legal Form");
@@ -151,6 +153,7 @@ public class TrustMock {
         Dto.setNationality("Nationality");
         Dto.setSecondNationality("My Dual Nationality");
         Dto.setServiceAddress(AddressMock.getAddressDto());
+        Dto.setServiceAddressSameAsUsualResidentialAddress(false);
         Dto.setUsualResidentialAddress(AddressMock.getAddressDto());
         Dto.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         Dto.setType("Grantor");
@@ -163,6 +166,7 @@ public class TrustMock {
         Dto.setName("Name");
         Dto.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         Dto.setRegisteredOfficeAddress(AddressMock.getAddressDto());
+        Dto.setServiceAddressSameAsPrincipalAddress(false);
         Dto.setServiceAddress(AddressMock.getAddressDto());
         Dto.setIdentificationCountryRegistration("Identification Country");
         Dto.setIdentificationLegalAuthority("Identification Legal Authority");
