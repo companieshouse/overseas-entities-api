@@ -38,6 +38,7 @@ public class MongoConfig {
     @Bean
     public MongoTemplate mongoTemplate(@NotNull Environment environment) {
         String mongoDbName = environment.getProperty(MONGO_DB_NAME_PROPERTY);
+        ApiLogger.info(String.format("Configuring mongoTemplate bean with mongo db name %s,", mongoDbName));
         MongoTemplate mongoTemplate = new MongoTemplate(
                 mongoClient(environment),
                 Objects.requireNonNull(mongoDbName));
@@ -46,7 +47,6 @@ public class MongoConfig {
         MongoCustomConversions mongoCustomConversions = getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory());
         converter.setCustomConversions(mongoCustomConversions);
         converter.afterPropertiesSet();
-        ApiLogger.info(String.format("Configuring mongoTemplate bean with mongo db name %s,", mongoDbName));
         return mongoTemplate;
     }
 }
