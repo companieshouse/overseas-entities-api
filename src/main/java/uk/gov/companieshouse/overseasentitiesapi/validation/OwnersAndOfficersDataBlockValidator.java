@@ -2,7 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -81,13 +80,7 @@ public class OwnersAndOfficersDataBlockValidator {
 
 
     private boolean isCorrectCombinationOfOwnersAndOfficersForStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        BeneficialOwnersStatementType boStatementType = overseasEntitySubmissionDto.getBeneficialOwnersStatement();
-        if (boStatementType == null) {
-            logValidationErrorMessage(errors, loggingContext, INVALID_BENEFICIAL_OWNER_STATEMENT);
-            return false;
-        }
-
-        switch (boStatementType) {
+        switch (overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
             case ALL_IDENTIFIED_ALL_DETAILS:
                  if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
                      logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that all can be identified", MISSING_BENEFICIAL_OWNER));
