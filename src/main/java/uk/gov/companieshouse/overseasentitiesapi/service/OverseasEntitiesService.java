@@ -225,13 +225,13 @@ public class OverseasEntitiesService {
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
 
         if (addResumeLinkToTransaction) {
+            String resumeJourneyUri;
             if (overseasEntitySubmissionDto.isForUpdate()) {
-                final var updateResumeJourneyUri = String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
-                transaction.setResumeJourneyUri(updateResumeJourneyUri);
+                resumeJourneyUri = String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
             } else {
-                final var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
-                transaction.setResumeJourneyUri(resumeJourneyUri);
+                resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
             }
+            transaction.setResumeJourneyUri(resumeJourneyUri);
         }
 
         transactionService.updateTransaction(transaction, loggingContext);
