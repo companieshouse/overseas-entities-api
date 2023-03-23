@@ -313,7 +313,7 @@
             "$ref": "#/components/schemas/EntityName"
           },
           "entity_number": {
-            "allOf" : [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/FieldPattern"
               },
@@ -1198,6 +1198,9 @@
           "nationality": {
             "type": "string"
           },
+          "second_nationality": {
+             "type": "string"
+          },
           "sa_address_line_1": {
             "type": "string"
           },
@@ -1224,6 +1227,9 @@
           },
           "sa_address_region": {
             "type": "string"
+          },
+          "is_service_address_same_as_usual_residential_address": {
+            "type": "boolean"
           },
           "ura_address_line_1": {
             "type": "string"
@@ -1293,6 +1299,9 @@
           },
           "sa_address_region": {
             "type": "string"
+          },
+          "is_service_address_same_as_principal_address": {
+            "type": "boolean"
           },
           "ro_address_line_1": {
             "type": "string"

@@ -78,6 +78,10 @@ public class TrustIndividualDto {
     private String saAddressRegion;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("is_service_address_same_as_usual_residential_address")
+    private Boolean isServiceAddressSameAsUsualResidentialAddress;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("usual_residential_address")
     private AddressDto usualResidentialAddress;
 
@@ -239,6 +243,14 @@ public class TrustIndividualDto {
 
     public void setSaAddressRegion(String saAddressRegion) {
         this.saAddressRegion = saAddressRegion;
+    }
+
+    public Boolean getServiceAddressSameAsUsualResidentialAddress() {
+        return isServiceAddressSameAsUsualResidentialAddress;
+    }
+
+    public void setServiceAddressSameAsUsualResidentialAddress(Boolean serviceAddressSameAsUsualResidentialAddress) {
+        isServiceAddressSameAsUsualResidentialAddress = serviceAddressSameAsUsualResidentialAddress;
     }
 
     public AddressDto getServiceAddress() {

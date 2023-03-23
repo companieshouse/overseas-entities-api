@@ -28,9 +28,11 @@ import java.net.URI;
 import java.util.function.Supplier;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CURRENT_MONGO_SCHEMA_VERSION;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.UPDATE_RESUME_JOURNEY_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.SUBMISSION_URI_PATTERN;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.VALIDATION_STATUS_URI_SUFFIX;
 
@@ -109,6 +111,7 @@ public class OverseasEntitiesService {
 
         // add the overseas entity submission into MongoDB
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         var insertedSubmission = overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao);
 
         final String submissionId = insertedSubmission.getId();
@@ -120,10 +123,11 @@ public class OverseasEntitiesService {
 
         // Update company name set on the transaction and add a link to our newly created Overseas Entity
         // submission (aka resource) to the transaction (and potentially also a link for the 'resume' journey)
-        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto.getEntityName(), submissionId,
+        updateTransactionWithLinksAndCompanyName(transaction, overseasEntitySubmissionDto, submissionId,
                 submissionUri, overseasEntityResource, requestId, addResumeLinkToTransaction);
 
-        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s", transaction.getId(), insertedSubmission.getId()));
+        ApiLogger.infoContext(requestId, String.format("Overseas Entity Submission created for transaction id: %s with overseas-entity submission id: %s, schema version %s",
+                transaction.getId(), insertedSubmission.getId(), overseasEntitySubmissionDao.getSchemaVersion()));
         var overseasEntitySubmissionCreatedResponseDto = new OverseasEntitySubmissionCreatedResponseDto();
         overseasEntitySubmissionCreatedResponseDto.setId(insertedSubmission.getId());
         return ResponseEntity.created(URI.create(submissionUri)).body(overseasEntitySubmissionCreatedResponseDto);
@@ -146,7 +150,7 @@ public class OverseasEntitiesService {
         var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
 
         overseasEntitySubmissionDao.setId(submissionId);
-
+        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
         // Update company name set on the transaction, to ensure it matches the value received with this OE submission
@@ -159,8 +163,8 @@ public class OverseasEntitiesService {
         transactionService.updateTransaction(transaction, requestId);
 
         ApiLogger.infoContext(requestId, String.format(
-                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s",
-                transaction.getId(), submissionId));
+                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %s",
+                transaction.getId(), submissionId, overseasEntitySubmissionDao.getSchemaVersion()));
 
         return ResponseEntity.ok().build();
     }
@@ -207,22 +211,29 @@ public class OverseasEntitiesService {
     }
 
     private void updateTransactionWithLinksAndCompanyName(Transaction transaction,
-                                                          EntityNameDto entityNameDto,
+                                                          OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                           String submissionId,
                                                           String submissionUri,
                                                           Resource overseasEntityResource,
                                                           String loggingContext,
                                                           boolean addResumeLinkToTransaction) throws ServiceException {
         String entityName = null;
+        var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityName = entityNameDto.getName();
         }
+
         transaction.setCompanyName(entityName);
 
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
 
         if (addResumeLinkToTransaction) {
-            final var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            String resumeJourneyUri;
+            if (overseasEntitySubmissionDto.isForUpdate()) {
+                resumeJourneyUri = String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            } else {
+                resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            }
             transaction.setResumeJourneyUri(resumeJourneyUri);
         }
 
@@ -232,9 +243,9 @@ public class OverseasEntitiesService {
     public Optional<OverseasEntitySubmissionDto> getOverseasEntitySubmission(String submissionId) {
         var submission = overseasEntitySubmissionsRepository.findById(submissionId);
         if (submission.isPresent()) {
-            ApiLogger.info(String.format("%s: Overseas Entities Submission found. About to return", submission.get().getId()));
-
-            var dto = overseasEntityDtoDaoMapper.daoToDto(submission.get());
+            var overseasEntitySubmissionDao = submission.get();
+            ApiLogger.info(String.format("%s: Overseas Entities Submission found. Schema version %s. About to return", overseasEntitySubmissionDao.getId(), overseasEntitySubmissionDao.getSchemaVersion()));
+            var dto = overseasEntityDtoDaoMapper.daoToDto(overseasEntitySubmissionDao);
             return Optional.of(dto);
         } else {
             return Optional.empty();

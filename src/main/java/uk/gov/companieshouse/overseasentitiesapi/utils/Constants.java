@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
+
 public class Constants {
 
     private Constants() {
@@ -25,6 +27,8 @@ public class Constants {
     public static final String TRANSACTIONS_PUBLIC_API_PREFIX = "/transactions/";
     public static final String RESUME_JOURNEY_URI_PATTERN = "/register-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
 
+    public static final String UPDATE_RESUME_JOURNEY_URI_PATTERN = "/update-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
+
     // Filings
     public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
     public static final String LINK_SELF = "self";
@@ -34,4 +38,5 @@ public class Constants {
 
     public static final String CONCATENATED_STRING_FORMAT = "%s,%s";
     public static final String CONCATENATED_STRING_FORMAT_NO_COMMA = "%s%s";
+    public static final SchemaVersion CURRENT_MONGO_SCHEMA_VERSION = SchemaVersion.VERSION_3_1;
 }
