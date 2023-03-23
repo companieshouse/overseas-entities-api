@@ -6,7 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public class TranslatorFactory {
     @Autowired
     private List<Translator> translators;
 
-    private static final Map<SchemaVersion, Translator> translatorMap = new HashMap<>();
+    private static final Map<SchemaVersion, Translator> translatorMap = new EnumMap<>(SchemaVersion.class);
 
     @PostConstruct
     public void initialiseTranslatorMap() {
@@ -26,7 +26,7 @@ public class TranslatorFactory {
     }
 
     public static Translator getTranslator(SchemaVersion forSchemaVersion) throws ServiceException {
-        Translator translator = translatorMap.get(forSchemaVersion);
+        var translator = translatorMap.get(forSchemaVersion);
         if (translator == null) {
             throw new ServiceException("Submission model translator not found for version " + forSchemaVersion);
         }
