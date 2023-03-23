@@ -53,6 +53,9 @@ public class BeneficialOwnerCorporateDao {
     @Field("trust_ids")
     private List<String> trustIds;
 
+    @Field("ceased_date")
+    private LocalDate ceasedDate;
+
     public String getName() {
         return name;
     }
@@ -172,4 +175,8 @@ public class BeneficialOwnerCorporateDao {
     public void setTrustIds(List<String> trustIds) {
         this.trustIds = trustIds;
     }
+
+    public void setCeasedDate(LocalDate ceasedDate) { this.ceasedDate = ceasedDate; }
+
+    public LocalDate getCeasedDate() { return ceasedDate; }
 }

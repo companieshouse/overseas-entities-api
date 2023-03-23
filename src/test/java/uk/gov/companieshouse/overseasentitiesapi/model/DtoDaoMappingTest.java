@@ -299,6 +299,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getServiceAddressSameAsUsualResidentialAddress(),
                 boDao.getServiceAddressSameAsUsualResidentialAddress());
         assertEquals(boDto.getStartDate(), boDao.getStartDate());
+        assertEquals(boDto.getCeasedDate(), boDao.getCeasedDate());
         assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
         assertEquals(boDto.getTrusteesNatureOfControlTypes(), boDao.getTrusteesNatureOfControlTypes());
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
@@ -319,6 +320,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getPublicRegisterName(), boDao.getPublicRegisterName());
         assertEquals(boDto.getRegistrationNumber(), boDao.getRegistrationNumber());
         assertEquals(boDto.getStartDate(), boDao.getStartDate());
+        assertEquals(boDto.getCeasedDate(), boDao.getCeasedDate());
         assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
         assertEquals(boDto.getTrusteesNatureOfControlTypes(), boDao.getTrusteesNatureOfControlTypes());
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
@@ -335,6 +337,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getLegalForm(), boDao.getLegalForm());
         assertEquals(boDto.getLawGoverned(), boDao.getLawGoverned());
         assertEquals(boDto.getStartDate(), boDao.getStartDate());
+        assertEquals(boDto.getCeasedDate(), boDao.getCeasedDate());
         assertEquals(boDto.getBeneficialOwnerNatureOfControlTypes(), boDao.getBeneficialOwnerNatureOfControlTypes());
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());

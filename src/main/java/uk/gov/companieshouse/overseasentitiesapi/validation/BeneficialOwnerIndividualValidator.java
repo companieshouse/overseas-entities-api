@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -68,6 +69,7 @@ public class BeneficialOwnerIndividualValidator {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
             validateNatureOfControl(fields, errors, loggingContext);
+            validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
         }
 
         return errors;
@@ -153,5 +155,12 @@ public class BeneficialOwnerIndividualValidator {
     private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, NATURE_OF_CONTROL_FIELDS);
         return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.CEASED_DATE_FIELD);
+        return UtilsValidators.isNotNull(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }

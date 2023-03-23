@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
@@ -60,6 +61,7 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
             validateNatureOfControl(fields, errors, loggingContext);
 
             validateOnSanctionsList(beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(), errors, loggingContext);
+            validateCeasedDate(beneficialOwnerGovernmentOrPublicAuthorityDto.getCeasedDate(), beneficialOwnerGovernmentOrPublicAuthorityDto.getStartDate(), errors, loggingContext);
         }
         return errors;
     }
@@ -116,5 +118,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,  BeneficialOwnerGovernmentOrPublicAuthorityDto.IS_ON_SANCTIONS_LIST_FIELD);
         return UtilsValidators.isNotNull(onSanctionsList, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
+        return UtilsValidators.isNotNull(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }
