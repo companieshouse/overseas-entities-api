@@ -80,7 +80,7 @@ public class OwnersAndOfficersDataBlockValidator {
 
 
     private boolean isCorrectCombinationOfOwnersAndOfficersForStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        switch(overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
+        switch (overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
             case ALL_IDENTIFIED_ALL_DETAILS:
                  if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
                      logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that all can be identified", MISSING_BENEFICIAL_OWNER));
