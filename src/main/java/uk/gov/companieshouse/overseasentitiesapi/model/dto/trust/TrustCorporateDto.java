@@ -1,13 +1,14 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto.trust;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class TrustCorporateDto {
     @JsonProperty("type")
@@ -100,6 +101,10 @@ public class TrustCorporateDto {
     @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
+
+    @JsonInclude(NON_NULL)
+    @JsonProperty("is_service_address_same_as_principal_address")
+    private Boolean isServiceAddressSameAsPrincipalAddress;
 
     @JsonInclude(NON_NULL)
     @JsonProperty("identification_country_registration")
@@ -331,6 +336,14 @@ public class TrustCorporateDto {
 
     public void setServiceAddress(AddressDto serviceAddress) {
         this.serviceAddress = serviceAddress;
+    }
+
+    public Boolean getServiceAddressSameAsPrincipalAddress() {
+        return isServiceAddressSameAsPrincipalAddress;
+    }
+
+    public void setServiceAddressSameAsPrincipalAddress(Boolean serviceAddressSameAsPrincipalAddress) {
+        isServiceAddressSameAsPrincipalAddress = serviceAddressSameAsPrincipalAddress;
     }
 
     public String getIdentificationCountryRegistration() {

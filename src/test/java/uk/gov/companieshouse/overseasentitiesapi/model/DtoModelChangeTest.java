@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConverters.getMongoCustomConversions;
 
 /**
  * If any of the tests in this class start failing it's likely due to a DTO model structure change which is an indication
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * model structure should be added to the test resources folder and a new test added to successfully read and process
  * the new, up-to-date DAO/DTO structure.
  */
+
 @AutoConfigureDataMongo
 @SpringBootTest
 class DtoModelChangeTest {
@@ -51,6 +54,11 @@ class DtoModelChangeTest {
         mongoTemplate.remove(new Query(), TEST_COLLECTION_NAME);
         mongoTemplate.dropCollection(TEST_COLLECTION_NAME);
         mongoTemplate.createCollection(TEST_COLLECTION_NAME);
+
+        MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
+        // tell mongodb to use the custom converters
+        converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory()));
+        converter.afterPropertiesSet();
     }
 
     @Test
