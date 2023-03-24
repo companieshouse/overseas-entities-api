@@ -69,7 +69,9 @@ public class BeneficialOwnerIndividualValidator {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
             validateNatureOfControl(fields, errors, loggingContext);
-            validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getCeasedDate())) {
+                validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
+            }
         }
 
         return errors;
@@ -159,8 +161,7 @@ public class BeneficialOwnerIndividualValidator {
 
     private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, BeneficialOwnerIndividualDto.CEASED_DATE_FIELD);
-        return UtilsValidators.isNotNull(ceasedDate, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
+        return DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
                 && DateValidators.isCeasedDateAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }
