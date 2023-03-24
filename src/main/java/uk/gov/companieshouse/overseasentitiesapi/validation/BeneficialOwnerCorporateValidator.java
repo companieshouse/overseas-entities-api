@@ -76,7 +76,6 @@ public class BeneficialOwnerCorporateValidator {
             if (Objects.nonNull(beneficialOwnerCorporateDto.getCeasedDate())) {
                 validateCeasedDate(beneficialOwnerCorporateDto.getCeasedDate(), beneficialOwnerCorporateDto.getStartDate(), errors, loggingContext);
             }
-
         }
         return errors;
     }
