@@ -4,7 +4,7 @@ import org.bson.Document;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 
 /**
- * Interface to be implemented by model transformers.
+ * Implemented by model transformers identified by their version.
  */
 public interface Transformer {
 
@@ -16,7 +16,7 @@ public interface Transformer {
     /**
      * Transform the supplied document into the current version of the model
      *
-     * @param submissionDocument
+     * @param submissionDocument containing the bson data to be transformed
      */
     void transform(Document submissionDocument);
 }

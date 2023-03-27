@@ -60,7 +60,7 @@ class DtoModelChangeTest {
         mongoTemplate.createCollection(TEST_COLLECTION_NAME);
 
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
-        // tell mongodb to use the custom converters
+        // transformer factory argument instructs mongodb to use the custom converters
         converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory));
         converter.afterPropertiesSet();
     }

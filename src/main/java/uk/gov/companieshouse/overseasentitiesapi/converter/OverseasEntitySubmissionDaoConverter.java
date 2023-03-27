@@ -6,6 +6,7 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
         SchemaVersion schemaVersion = getSchemaVersion(document);
 
-        System.out.println("\n\n *** schema version is " + schemaVersion + " ** \n\n");
+        ApiLogger.info("\n\n *** schema version is " + schemaVersion + " ** \n\n");
 
         Optional<Transformer> transformer = transformerFactory.getTranformer(schemaVersion);
 

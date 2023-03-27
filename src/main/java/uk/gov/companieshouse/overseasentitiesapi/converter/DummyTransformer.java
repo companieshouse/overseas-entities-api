@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.converter;
 import org.bson.Document;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 /**
  * TODO Remove this transformer when one or more concrete transformers have been added to the API service. Only present
@@ -18,6 +19,6 @@ public class DummyTransformer implements Transformer {
 
     @Override
     public void transform(Document submissionDocument) {
-        System.out.println("\n\n !!! transforming !!! \n\n");
+        ApiLogger.info("\n\n !!! transforming !!! \n\n");
     }
 }
