@@ -2,16 +2,17 @@ package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
+import uk.gov.companieshouse.overseasentitiesapi.converter.Version1_0Transformer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class Version1_0TranslatorTest {
+public class Version1_0TransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 
-    private Version1_0Translator translator = new Version1_0Translator();
+    private Version1_0Transformer transformer = new Version1_0Transformer();
 
     @Test
     void testTranslation() {
@@ -21,7 +22,7 @@ public class Version1_0TranslatorTest {
         entityDocument.put("name", ENTITY_NAME);
         submissionDocument.put("entity", entityDocument);
 
-        translator.translate(submissionDocument);
+        transformer.transform(submissionDocument);
 
         Document nameDocument = (Document) submissionDocument.get("entity_name");
 
