@@ -37,9 +37,9 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
         SchemaVersion schemaVersion = getSchemaVersion(document);
 
-        ApiLogger.info("\n\n *** schema version is " + schemaVersion + " ** \n\n");
+        ApiLogger.info("Schema version is " + schemaVersion);
 
-        Optional<Transformer> transformer = transformerFactory.getTranformer(schemaVersion);
+        Optional<SchemaVersionTransformer> transformer = transformerFactory.getTransformer(schemaVersion);
 
         // Note that a transformer may not be found - either because an older version of the model requires no
         // transformation or this document was saved with the latest version of the model structure
@@ -59,8 +59,11 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
             return SchemaVersion.fromString(modelVersion.toString());
         }
 
-        // Infer model version as not present in older documents...
-
+        /*
+         * Infer model version as it is not present in older documents. This can be
+         * achieved by examining where in the data model the entity name field is,
+         * as this is the only field that has been changed between the versions <= 3.0
+         */
         Object entityNameDocument = document.get("entity_name");
 
         if (Objects.isNull(entityNameDocument)) {             // Must be a version 1.0 model

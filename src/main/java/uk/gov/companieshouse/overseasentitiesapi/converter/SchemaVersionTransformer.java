@@ -6,7 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 /**
  * Implemented by model transformers identified by their version.
  */
-public interface Transformer {
+public interface SchemaVersionTransformer {
 
     /**
      * @return The schema version that this transformer is intended for

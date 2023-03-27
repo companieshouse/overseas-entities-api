@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
 
 import java.io.File;
@@ -33,8 +34,8 @@ class OverseasEntitySubmissionDaoConverterTest {
     void testDocumentConversion() {
         Document document = getDocument("overseas_entity_v_3_0.json");
         overseasEntitySubmissionDaoConverter.convert(document);
-        verify(transformerFactory, times(1)).getTranformer(SchemaVersion.VERSION_3_0);
-        verify(defaultMongoConverter, times(1)).read(any(), eq(document));
+        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_3_0);
+        verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
     }
 
     private Document getDocument(String filename) {
