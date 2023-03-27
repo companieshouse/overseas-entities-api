@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
@@ -69,6 +68,7 @@ public class BeneficialOwnerIndividualValidator {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
             validateNatureOfControl(fields, errors, loggingContext);
+
             if (Objects.nonNull(beneficialOwnerIndividualDto.getCeasedDate())) {
                 validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
             }
