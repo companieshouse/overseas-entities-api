@@ -316,7 +316,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
-    void testNoErrorsWhenCeasedDateFieldIsInThePast() {
+    void testNoErrorsWhenCeasedDateIsAfterStartDate() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(2));
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
@@ -324,16 +324,29 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
-    void testNoErrorsWhenCeasedDateFieldIsNow() {
+    void testNoErrorsWhenCeasedDateFieldIsToday() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now());
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testErrorReportedWhenCeasedDateIsBeforeStartDate() {
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now());
+    void testErrorWhenCeasedDateIsBeforeStartDate() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(2));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorWhenCeasedDateIsSameAsStartDate() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
