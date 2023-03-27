@@ -20,7 +20,7 @@ class TransformerFactoryTest {
     @BeforeEach
     void initialise() {
         transformerFactory = new TransformerFactory();
-        List<SchemaVersionTransformer> transformers = new ArrayList<>();
+        List<DocumentTransformer> transformers = new ArrayList<>();
         transformers.add(new TestTransformer());
         ReflectionTestUtils.setField(transformerFactory, "transformers", transformers);
     }
@@ -28,7 +28,7 @@ class TransformerFactoryTest {
     @Test
     void testTransformerFactoryWhenTransformerFound() {
         transformerFactory.initialiseTransformerMap();
-        Optional<SchemaVersionTransformer> transformer = transformerFactory.getTransformer(SchemaVersion.VERSION_3_1);
+        Optional<DocumentTransformer> transformer = transformerFactory.getTransformer(SchemaVersion.VERSION_3_1);
         assertTrue(transformer.isPresent());
         assertEquals(SchemaVersion.VERSION_3_1, transformer.get().forSchemaVersion());
     }
@@ -36,11 +36,11 @@ class TransformerFactoryTest {
     @Test
     void testTransformerFactoryWhenTransformerNotFound() {
         transformerFactory.initialiseTransformerMap();
-        Optional<SchemaVersionTransformer> transformer = transformerFactory.getTransformer(SchemaVersion.VERSION_1_0);
+        Optional<DocumentTransformer> transformer = transformerFactory.getTransformer(SchemaVersion.VERSION_1_0);
         assertTrue(transformer.isEmpty());
     }
 
-    public class TestTransformer implements SchemaVersionTransformer {
+    public class TestTransformer implements DocumentTransformer {
 
         @Override
         public SchemaVersion forSchemaVersion() {

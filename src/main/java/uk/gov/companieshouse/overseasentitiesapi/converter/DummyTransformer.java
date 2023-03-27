@@ -10,7 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
  *      to avoid a Spring bean wiring error on start-up, because no candidate transformers are found for the factory
  */
 @Component
-public class DummyTransformer implements SchemaVersionTransformer {
+public class DummyTransformer implements DocumentTransformer {
 
     @Override
     public SchemaVersion forSchemaVersion() {
