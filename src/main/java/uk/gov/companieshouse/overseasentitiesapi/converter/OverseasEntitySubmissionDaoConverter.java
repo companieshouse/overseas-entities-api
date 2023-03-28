@@ -6,6 +6,7 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,9 +37,9 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
         SchemaVersion schemaVersion = getSchemaVersion(document);
 
-        System.out.println("\n\n *** schema version is " + schemaVersion + " ** \n\n");
+        ApiLogger.info("Schema version is " + schemaVersion);
 
-        Optional<Transformer> transformer = transformerFactory.getTranformer(schemaVersion);
+        Optional<DocumentTransformer> transformer = transformerFactory.getTransformer(schemaVersion);
 
         // Note that a transformer may not be found - either because an older version of the model requires no
         // transformation or this document was saved with the latest version of the model structure
@@ -58,8 +59,10 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
             return SchemaVersion.fromString(modelVersion.toString());
         }
 
-        // Infer model version as not present in older documents...
-
+        /*
+         * Major version changes can be detected by examining where the 'entity name' was historically stored.
+         * Its location in the document can be used to determine the schema version.
+         */
         Object entityNameDocument = document.get("entity_name");
 
         if (Objects.isNull(entityNameDocument)) {             // Must be a version 1.0 model

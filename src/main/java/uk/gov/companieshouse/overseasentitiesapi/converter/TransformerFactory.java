@@ -15,18 +15,18 @@ import java.util.Optional;
 public class TransformerFactory {
 
     @Autowired
-    private List<Transformer> transformers;
+    private List<DocumentTransformer> transformers;
 
-    private static final Map<SchemaVersion, Transformer> transformerMap = new EnumMap<>(SchemaVersion.class);
+    private static final Map<SchemaVersion, DocumentTransformer> transformerMap = new EnumMap<>(SchemaVersion.class);
 
     @PostConstruct
     public void initialiseTransformerMap() {
-        for (Transformer transformer : transformers) {
+        for (DocumentTransformer transformer : transformers) {
             transformerMap.put(transformer.forSchemaVersion(), transformer);
         }
     }
 
-    public Optional<Transformer> getTranformer(SchemaVersion forSchemaVersion) {
+    public Optional<DocumentTransformer> getTransformer(SchemaVersion forSchemaVersion) {
         var transformer = transformerMap.get(forSchemaVersion);
         if (Objects.isNull(transformer)) {
             return Optional.empty();
