@@ -6,12 +6,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 @Component
-public class Version1_0Transformer implements DocumentTransformer {
+public class Version_1_0_DocumentTransformer implements DocumentTransformer {
 
     private static final String ENTITY_BLOCK_NAME = "entity";
-    private static final String OLD_ENTITY_NAME_FIELD_NAME = "name";
-    private static final String NEW_ENTITY_NAME_BLOCK_NAME = "name";
-    private static final String NEW_ENTITY_NAME_FIELD_NAME = "entity_name";
+    private static final String ENTITY_NAME_FIELD_NAME = "name";
+    private static final String NEW_ENTITY_NAME_BLOCK_NAME = "entity_name";
 
     @Override
     public SchemaVersion forSchemaVersion() {
@@ -23,10 +22,10 @@ public class Version1_0Transformer implements DocumentTransformer {
         ApiLogger.info("Transforming a version 1.0 document...");
 
         Document entityDocument = (Document) submissionDocument.get(ENTITY_BLOCK_NAME);
-        String entityName = entityDocument.getString(OLD_ENTITY_NAME_FIELD_NAME);
+        String entityName = entityDocument.getString(ENTITY_NAME_FIELD_NAME);
         Document entityNameDocument = new Document();
-        entityNameDocument.put(NEW_ENTITY_NAME_BLOCK_NAME, entityName);
-        submissionDocument.put(NEW_ENTITY_NAME_FIELD_NAME, entityNameDocument);
-        entityDocument.remove(OLD_ENTITY_NAME_FIELD_NAME);
+        entityNameDocument.put(ENTITY_NAME_FIELD_NAME, entityName);
+        submissionDocument.put(NEW_ENTITY_NAME_BLOCK_NAME, entityNameDocument);
+        entityDocument.remove(ENTITY_NAME_FIELD_NAME);
     }
 }
