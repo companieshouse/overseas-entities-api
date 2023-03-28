@@ -6,7 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 @Component
-public class Version_2_0_Transformer implements DocumentTransformer {
+public class Version_2_0_DocumentTransformer implements DocumentTransformer {
     private static final String ENTITY_NAME = "entity_name";
     private static final String NEW_ENTITY_NAME_FIELD_NAME = "name";
 
