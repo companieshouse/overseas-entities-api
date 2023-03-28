@@ -15,7 +15,7 @@ public class Version1_0TransformerTest {
     private Version1_0Transformer transformer = new Version1_0Transformer();
 
     @Test
-    void testTranslation() {
+    void testTransformation() {
         Document submissionDocument = new Document();
         Document entityDocument = new Document();
 
