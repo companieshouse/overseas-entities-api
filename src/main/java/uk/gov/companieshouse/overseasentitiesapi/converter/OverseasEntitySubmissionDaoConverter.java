@@ -25,9 +25,9 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
     private final MongoConverter defaultMongoConverter;
 
-    private TransformerFactory transformerFactory;
+    private DocumentTransformerFactory transformerFactory;
 
-    public OverseasEntitySubmissionDaoConverter(MongoConverter defaultMongoConverter, TransformerFactory transformerFactory) {
+    public OverseasEntitySubmissionDaoConverter(MongoConverter defaultMongoConverter, DocumentTransformerFactory transformerFactory) {
         this.defaultMongoConverter = defaultMongoConverter;
         this.transformerFactory = transformerFactory;
     }

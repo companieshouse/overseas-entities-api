@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class TransformerFactory {
+public class DocumentTransformerFactory {
 
     @Autowired
     private List<DocumentTransformer> transformers;

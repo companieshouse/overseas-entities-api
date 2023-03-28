@@ -13,13 +13,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TransformerFactoryTest {
+class DocumentTransformerFactoryTest {
 
-    private TransformerFactory transformerFactory;
+    private DocumentTransformerFactory transformerFactory;
 
     @BeforeEach
     void initialise() {
-        transformerFactory = new TransformerFactory();
+        transformerFactory = new DocumentTransformerFactory();
         List<DocumentTransformer> transformers = new ArrayList<>();
         transformers.add(new TestTransformer());
         ReflectionTestUtils.setField(transformerFactory, "transformers", transformers);
