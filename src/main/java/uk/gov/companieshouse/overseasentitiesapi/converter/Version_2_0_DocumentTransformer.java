@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+/**
+ * A version 2.0 document has the entity name in an 'entity_name' field at the top level of the submission model and
+ * not in any block. Transformation requires this field to be moved to a new, top-level 'entity_name' block.
+ */
 @Component
 public class Version_2_0_DocumentTransformer implements DocumentTransformer {
     private static final String ENTITY_NAME = "entity_name";
