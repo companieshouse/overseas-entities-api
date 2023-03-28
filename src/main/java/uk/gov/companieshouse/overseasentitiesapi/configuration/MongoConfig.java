@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import uk.gov.companieshouse.overseasentitiesapi.converter.TransformerFactory;
+import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import javax.validation.constraints.NotNull;
@@ -37,7 +37,7 @@ public class MongoConfig {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(@NotNull Environment environment, TransformerFactory transformerFactory) {
+    public MongoTemplate mongoTemplate(@NotNull Environment environment, DocumentTransformerFactory transformerFactory) {
         String mongoDbName = environment.getProperty(MONGO_DB_NAME_PROPERTY);
         ApiLogger.info(String.format("Configuring mongoTemplate bean with mongo db name %s,", mongoDbName));
         MongoTemplate mongoTemplate = new MongoTemplate(

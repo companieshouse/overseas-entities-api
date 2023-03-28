@@ -28,7 +28,7 @@ class OverseasEntitySubmissionDaoConverterTest {
     private MongoConverter defaultMongoConverter;
 
     @Mock
-    private TransformerFactory transformerFactory;
+    private DocumentTransformerFactory transformerFactory;
 
     @Test
     void testDocumentConversion() {

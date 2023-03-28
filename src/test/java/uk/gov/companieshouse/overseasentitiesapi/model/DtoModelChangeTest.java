@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
-import uk.gov.companieshouse.overseasentitiesapi.converter.TransformerFactory;
+import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
@@ -51,7 +51,7 @@ class DtoModelChangeTest {
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
 
     @Autowired
-    private TransformerFactory transformerFactory;
+    private DocumentTransformerFactory transformerFactory;
 
     @BeforeEach
     void removeAllMongoRecords() {
