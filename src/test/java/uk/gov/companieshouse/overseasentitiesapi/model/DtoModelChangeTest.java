@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
+import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
@@ -49,6 +50,9 @@ class DtoModelChangeTest {
     @Autowired
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
 
+    @Autowired
+    private DocumentTransformerFactory transformerFactory;
+
     @BeforeEach
     void removeAllMongoRecords() {
         mongoTemplate.remove(new Query(), TEST_COLLECTION_NAME);
@@ -56,8 +60,8 @@ class DtoModelChangeTest {
         mongoTemplate.createCollection(TEST_COLLECTION_NAME);
 
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
-        // tell mongodb to use the custom converters
-        converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory()));
+        // transformer factory argument instructs mongodb to use the custom converters
+        converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory));
         converter.afterPropertiesSet();
     }
 
