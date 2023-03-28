@@ -31,13 +31,12 @@ class OverseasEntitySubmissionDaoConverterTest {
     private DocumentTransformerFactory transformerFactory;
 
     @Test
-    void testDocumentConversionForV3() {
-        Document document = getDocument("overseas_entity_v_3_0.json");
+    void testDocumentConversionFor1_0() {
+        Document document = getDocument("overseas_entity_v_1_0.json");
         overseasEntitySubmissionDaoConverter.convert(document);
-        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_3_0);
+        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_1_0);
         verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
     }
-
     @Test
     void testDocumentConversionFor2_0() {
         Document document = getDocument("overseas_entity_v_2_0.json");
@@ -45,6 +44,16 @@ class OverseasEntitySubmissionDaoConverterTest {
         verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_2_0);
         verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
     }
+
+    @Test
+    void testDocumentConversionFor3_0() {
+        Document document = getDocument("overseas_entity_v_3_0.json");
+        overseasEntitySubmissionDaoConverter.convert(document);
+        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_3_0);
+        verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
+    }
+
+
 
     private Document getDocument(String filename) {
         TestUtils testUtils = new TestUtils();
