@@ -73,6 +73,9 @@ public class BeneficialOwnerCorporateValidator {
 
             validateOnSanctionsList(beneficialOwnerCorporateDto.getOnSanctionsList(), errors, loggingContext);
 
+            if (Objects.nonNull(beneficialOwnerCorporateDto.getCeasedDate())) {
+                validateCeasedDate(beneficialOwnerCorporateDto.getCeasedDate(), beneficialOwnerCorporateDto.getStartDate(), errors, loggingContext);
+            }
         }
         return errors;
     }
@@ -160,5 +163,11 @@ public class BeneficialOwnerCorporateValidator {
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.IS_ON_SANCTIONS_LIST_FIELD);
         return UtilsValidators.isNotNull(onSanctionsList, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.CEASED_DATE_FIELD);
+        return DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }

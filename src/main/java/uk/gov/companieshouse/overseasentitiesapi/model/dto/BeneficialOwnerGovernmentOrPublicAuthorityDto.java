@@ -18,6 +18,7 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
     public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -48,6 +49,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
     @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
+
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     public String getName() {
         return name;
@@ -127,5 +131,13 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
     public void setOnSanctionsList(Boolean onSanctionsList) {
         isOnSanctionsList = onSanctionsList;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 }

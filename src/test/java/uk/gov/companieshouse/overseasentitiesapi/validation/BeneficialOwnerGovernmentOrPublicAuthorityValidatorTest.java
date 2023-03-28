@@ -10,6 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -311,6 +313,47 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.START_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorsWhenCeasedDateIsAfterStartDate() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(2));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsWhenCeasedDateFieldIsToday() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now());
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorWhenCeasedDateIsBeforeStartDate() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(2));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorWhenCeasedDateIsSameAsStartDate() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD, validationMessage, errors);
     }
 
     @Test

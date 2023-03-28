@@ -24,6 +24,7 @@ public class BeneficialOwnerCorporateDto {
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
     public static final String TRUST_IDS_FIELD = "trust_ids";
     public static final String TRUST_DATA_FIELD = "trust_data";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -72,6 +73,9 @@ public class BeneficialOwnerCorporateDto {
 
     @JsonProperty(TRUST_DATA_FIELD)
     private String trustData;
+
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     public String getName() {
         return name;
@@ -199,5 +203,13 @@ public class BeneficialOwnerCorporateDto {
 
     public void setTrustData(String trustData) {
         this.trustData = trustData;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 }
