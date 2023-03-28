@@ -53,8 +53,6 @@ class OverseasEntitySubmissionDaoConverterTest {
         verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
     }
 
-
-
     private Document getDocument(String filename) {
         TestUtils testUtils = new TestUtils();
         File file = testUtils.getFile(filename);
