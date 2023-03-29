@@ -126,6 +126,10 @@ public class TrustCorporateDto {
     @JsonProperty("identification_registration_number")
     private String identificationRegistrationNumber;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("is_on_register_in_country_formed_in")
+    private Boolean onRegisterInCountryFormedIn;
+
     public String getType() {
         return type;
     }
@@ -393,5 +397,13 @@ public class TrustCorporateDto {
             }
         }
         return false;
+    }
+
+    public Boolean getOnRegisterInCountryFormedIn() {
+        return onRegisterInCountryFormedIn;
+    }
+
+    public void setOnRegisterInCountryFormedIn(Boolean onRegisterInCountryFormedIn) {
+        this.onRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 }

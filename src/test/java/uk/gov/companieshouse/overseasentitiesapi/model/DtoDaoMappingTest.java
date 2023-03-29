@@ -425,6 +425,7 @@ class DtoDaoMappingTest {
         assertEquals(dto.getIdentificationLegalForm(), dao.getIdentificationLegalForm());
         assertEquals(dto.getIdentificationPlaceRegistered(), dao.getIdentificationPlaceRegistered());
         assertEquals(dto.getIdentificationRegistrationNumber(), dao.getIdentificationRegistrationNumber());
+        assertEquals(dto.getOnRegisterInCountryFormedIn(), dao.getOnRegisterInCountryFormedIn());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {
