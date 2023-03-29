@@ -66,7 +66,7 @@ class DtoModelChangeTest {
     }
 
     @Test
-    void testCanGenerateDtoModelFromJsonVersion1_0() {
+    void testCanGenerateDtoModelFromJsonVersion_1_0() {
 
         loadJsonDataIntoMongo("overseas_entity_v_1_0.json");
 
@@ -76,7 +76,7 @@ class DtoModelChangeTest {
     }
 
     @Test
-    void testCanGenerateDtoModelFromJsonVersion2_0() {
+    void testCanGenerateDtoModelFromJsonVersion_2_0() {
 
         loadJsonDataIntoMongo("overseas_entity_v_2_0.json");
 
@@ -86,8 +86,17 @@ class DtoModelChangeTest {
     }
 
     @Test
-    void testCanGenerateDtoModelFromJsonVersion3_0() throws Exception {
+    void testCanGenerateDtoModelFromJsonVersion_3_0() throws Exception {
         loadJsonDataIntoMongo("overseas_entity_v_3_0.json");
+
+        List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
+
+        checkSubmissions(submissions);
+    }
+
+    @Test
+    void testCanGenerateDtoModelFromJsonVersion_3_1() throws Exception {
+        loadJsonDataIntoMongo("overseas_entity_v_3_1.json");
 
         List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
 
