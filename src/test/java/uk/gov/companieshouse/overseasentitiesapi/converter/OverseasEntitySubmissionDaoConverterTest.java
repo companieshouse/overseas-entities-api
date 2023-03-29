@@ -31,7 +31,23 @@ class OverseasEntitySubmissionDaoConverterTest {
     private DocumentTransformerFactory transformerFactory;
 
     @Test
-    void testDocumentConversion() {
+    void testDocumentConversionFor_1_0_Model() {
+        Document document = getDocument("overseas_entity_v_1_0.json");
+        overseasEntitySubmissionDaoConverter.convert(document);
+        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_1_0);
+        verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
+    }
+
+    @Test
+    void testDocumentConversionFor_2_0_Model() {
+        Document document = getDocument("overseas_entity_v_2_0.json");
+        overseasEntitySubmissionDaoConverter.convert(document);
+        verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_2_0);
+        verify(defaultMongoConverter, times(1)).read(OverseasEntitySubmissionDao.class, document);
+    }
+
+    @Test
+    void testDocumentConversionFor_3_0_Model() {
         Document document = getDocument("overseas_entity_v_3_0.json");
         overseasEntitySubmissionDaoConverter.convert(document);
         verify(transformerFactory, times(1)).getTransformer(SchemaVersion.VERSION_3_0);
