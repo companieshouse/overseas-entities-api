@@ -11,7 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
  */
 @Component
 public class Version_2_0_DocumentTransformer implements DocumentTransformer {
-    private static final String ENTITY_NAME = "entity_name";
+    private static final String ENTITY_NAME_FIELD_AND_BLOCK_NAME = "entity_name";
     private static final String NEW_ENTITY_NAME_FIELD_NAME = "name";
 
     @Override
@@ -22,10 +22,10 @@ public class Version_2_0_DocumentTransformer implements DocumentTransformer {
     @Override
     public void transform(Document submissionDocument) {
         ApiLogger.info("Transforming a version 2.0 document...");
-        String entityField = (String) submissionDocument.get(ENTITY_NAME);
-        submissionDocument.remove(ENTITY_NAME);
+        String entityName = (String) submissionDocument.get(ENTITY_NAME_FIELD_AND_BLOCK_NAME);
+        submissionDocument.remove(ENTITY_NAME_FIELD_AND_BLOCK_NAME);
         Document entityNameDocument = new Document();
-        entityNameDocument.put(NEW_ENTITY_NAME_FIELD_NAME, entityField);
-        submissionDocument.put(ENTITY_NAME, entityNameDocument);
+        entityNameDocument.put(NEW_ENTITY_NAME_FIELD_NAME, entityName);
+        submissionDocument.put(ENTITY_NAME_FIELD_AND_BLOCK_NAME, entityNameDocument);
     }
 }
