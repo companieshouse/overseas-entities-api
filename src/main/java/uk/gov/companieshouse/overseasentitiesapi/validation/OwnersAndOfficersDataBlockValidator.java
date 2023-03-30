@@ -55,7 +55,13 @@ public class OwnersAndOfficersDataBlockValidator {
         }
     }
 
-    public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public void validateOwnersAndOfficersWithStatementPresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        beneficialOwnersStatementValidator.validate(overseasEntitySubmissionDto.getBeneficialOwnersStatement(), errors, loggingContext);
+        validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
             beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
