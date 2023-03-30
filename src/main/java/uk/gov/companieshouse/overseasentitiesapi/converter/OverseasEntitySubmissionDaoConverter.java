@@ -47,9 +47,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
             transformer.get().transform(document);
         }
 
-        OverseasEntitySubmissionDao overseasEntitySubmissionDao = defaultMongoConverter.read(OverseasEntitySubmissionDao.class, document);
-
-        return overseasEntitySubmissionDao;
+        return defaultMongoConverter.read(OverseasEntitySubmissionDao.class, document);
     }
 
     private SchemaVersion getSchemaVersion(final Document document) {
