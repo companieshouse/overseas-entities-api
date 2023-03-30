@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
@@ -60,8 +61,10 @@ class DtoModelChangeTest {
         mongoTemplate.createCollection(TEST_COLLECTION_NAME);
 
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
+        MappingContext mappingContext = converter.getMappingContext();
+
         // transformer factory argument instructs mongodb to use the custom converters
-        converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory));
+        converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory, mappingContext));
         converter.afterPropertiesSet();
     }
 

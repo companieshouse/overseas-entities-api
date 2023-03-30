@@ -45,7 +45,7 @@ public class MongoConfig {
                 Objects.requireNonNull(mongoDbName));
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
         // tell mongodb to use the custom converters
-        MongoCustomConversions mongoCustomConversions = getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory);
+        MongoCustomConversions mongoCustomConversions = getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory, converter.getMappingContext());
         converter.setCustomConversions(mongoCustomConversions);
         converter.afterPropertiesSet();
         return mongoTemplate;
