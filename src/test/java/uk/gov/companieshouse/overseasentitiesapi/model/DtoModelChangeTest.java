@@ -2,7 +2,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,38 +69,12 @@ class DtoModelChangeTest {
         converter.afterPropertiesSet();
     }
 
-    @Test
-    void testCanGenerateDtoModelFromJsonVersion_1_0() {
+    @ParameterizedTest
+    @ValueSource(strings = {"overseas_entity_v_1_0.json", "overseas_entity_v_2_0.json",
+                            "overseas_entity_v_3_0.json",  "overseas_entity_v_3_1.json" })
+    void testCanGenerateDtoModelFromJsonVersion_1_0(String fileName) {
 
-        loadJsonDataIntoMongo("overseas_entity_v_1_0.json");
-
-        List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
-
-        checkSubmissions(submissions);
-    }
-
-    @Test
-    void testCanGenerateDtoModelFromJsonVersion_2_0() {
-
-        loadJsonDataIntoMongo("overseas_entity_v_2_0.json");
-
-        List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
-
-        checkSubmissions(submissions);
-    }
-
-    @Test
-    void testCanGenerateDtoModelFromJsonVersion_3_0() throws Exception {
-        loadJsonDataIntoMongo("overseas_entity_v_3_0.json");
-
-        List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
-
-        checkSubmissions(submissions);
-    }
-
-    @Test
-    void testCanGenerateDtoModelFromJsonVersion_3_1() throws Exception {
-        loadJsonDataIntoMongo("overseas_entity_v_3_1.json");
+        loadJsonDataIntoMongo(fileName);
 
         List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
 

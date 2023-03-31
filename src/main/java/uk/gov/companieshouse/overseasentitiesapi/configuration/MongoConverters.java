@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.converter.OverseasEntitySubmissionDaoConverter;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -19,7 +21,7 @@ public class MongoConverters {
 
     public static MongoCustomConversions getMongoCustomConversions(MongoDatabaseFactory mongoDatabaseFactory,
                                                                    DocumentTransformerFactory transformerFactory,
-                                                                   MappingContext mappingContext) {
+                                                                   MappingContext<? extends MongoPersistentEntity<?>, MongoPersistentProperty> mappingContext) {
         ApiLogger.info("Adding Mongo Custom Converters - OverseasEntitySubmissionDaoConverter");
         return new MongoCustomConversions(
                 List.of(
@@ -27,7 +29,8 @@ public class MongoConverters {
                 ));
     }
 
-    private static MongoConverter getDefaultMongoConverter(MongoDatabaseFactory factory, MappingContext mappingContext) {
+    private static MongoConverter getDefaultMongoConverter(MongoDatabaseFactory factory,
+                                                           MappingContext<? extends MongoPersistentEntity<?>, MongoPersistentProperty> mappingContext) {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
         var converter = new MappingMongoConverter(dbRefResolver, mappingContext);
         converter.afterPropertiesSet();
