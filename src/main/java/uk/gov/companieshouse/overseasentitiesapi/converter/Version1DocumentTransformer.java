@@ -10,7 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
  * 'name' field (and its value) to be moved to a new, top-level 'entity_name' block.
  */
 @Component
-public class Version_1_0_DocumentTransformer implements DocumentTransformer {
+public class Version1DocumentTransformer implements DocumentTransformer {
 
     private static final String ENTITY_BLOCK_NAME = "entity";
     private static final String ENTITY_NAME_FIELD_NAME = "name";

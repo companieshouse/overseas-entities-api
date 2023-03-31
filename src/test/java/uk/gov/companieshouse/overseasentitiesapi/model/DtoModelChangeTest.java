@@ -71,8 +71,8 @@ class DtoModelChangeTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"overseas_entity_v_1_0.json", "overseas_entity_v_2_0.json",
-                            "overseas_entity_v_3_0.json",  "overseas_entity_v_3_1.json" })
-    void testCanGenerateDtoModelFromJsonVersion_1_0(String fileName) {
+                            "overseas_entity_v_3_0.json", "overseas_entity_v_3_1.json" })
+    void testCanGenerateDtoModelFromAllJsonVersions(String fileName) {
 
         loadJsonDataIntoMongo(fileName);
 

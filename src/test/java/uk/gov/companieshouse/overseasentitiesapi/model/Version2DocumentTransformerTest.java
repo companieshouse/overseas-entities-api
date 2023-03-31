@@ -2,25 +2,22 @@ package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.overseasentitiesapi.converter.Version_1_0_DocumentTransformer;
+import uk.gov.companieshouse.overseasentitiesapi.converter.Version2DocumentTransformer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-class Version_1_0_DocumentTransformerTest {
+class Version2DocumentTransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 
-    private Version_1_0_DocumentTransformer transformer = new Version_1_0_DocumentTransformer();
+    private Version2DocumentTransformer transformer = new Version2DocumentTransformer();
 
     @Test
     void testTransformation() {
         Document submissionDocument = new Document();
-        Document entityDocument = new Document();
 
-        entityDocument.put("name", ENTITY_NAME);
-        submissionDocument.put("entity", entityDocument);
+        submissionDocument.put("entity_name", ENTITY_NAME);
 
         transformer.transform(submissionDocument);
 
@@ -28,7 +25,5 @@ class Version_1_0_DocumentTransformerTest {
 
         assertNotNull(nameDocument);
         assertEquals(ENTITY_NAME, nameDocument.get("name"));
-
-        assertNull(((Document) submissionDocument.get("entity")).get("name"));
     }
 }
