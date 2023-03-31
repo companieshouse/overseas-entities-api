@@ -13,6 +13,12 @@ public enum BeneficialOwnersStatementType {
    BeneficialOwnersStatementType(String beneficialOwnersStatement) {
         this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
+
+    /**
+     * Json creator allows non-matching enum values to be interpreted by the JSON serialiser as null
+     * @param beneficialOwnersStatement
+     * @return
+     */
    @JsonCreator
    public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
        for (BeneficialOwnersStatementType type: values()) {
