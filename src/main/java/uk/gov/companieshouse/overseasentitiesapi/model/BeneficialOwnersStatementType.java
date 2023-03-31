@@ -13,13 +13,13 @@ public enum BeneficialOwnersStatementType {
    BeneficialOwnersStatementType(String beneficialOwnersStatement) {
         this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
-    @JsonCreator
-    public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
-        for (BeneficialOwnersStatementType type: values()) {
-            if(type.beneficialOwnersStatement.equals(beneficialOwnersStatement)) {
-                return type;
-            }
-        }
-        return null;
-    }
+   @JsonCreator
+   public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
+       for (BeneficialOwnersStatementType type: values()) {
+           if(type.beneficialOwnersStatement.equals(beneficialOwnersStatement)) {
+               return type;
+           }
+       }
+       return null;
+   }
 }
