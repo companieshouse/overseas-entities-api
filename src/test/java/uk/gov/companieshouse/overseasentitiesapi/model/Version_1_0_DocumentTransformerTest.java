@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class Version_1_0_DocumentTransformerTest {
+class Version_1_0_DocumentTransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 

@@ -7,7 +7,7 @@ import uk.gov.companieshouse.overseasentitiesapi.converter.Version_2_0_DocumentT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class Version_2_0_DocumentTransformerTest {
+class Version_2_0_DocumentTransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 
@@ -26,5 +26,4 @@ public class Version_2_0_DocumentTransformerTest {
         assertNotNull(nameDocument);
         assertEquals(ENTITY_NAME, nameDocument.get("name"));
     }
-
 }

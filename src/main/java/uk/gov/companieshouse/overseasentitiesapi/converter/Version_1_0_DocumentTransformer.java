@@ -25,9 +25,9 @@ public class Version_1_0_DocumentTransformer implements DocumentTransformer {
     public void transform(Document submissionDocument) {
         ApiLogger.info("Transforming a version 1.0 document...");
 
-        Document entityDocument = (Document) submissionDocument.get(ENTITY_BLOCK_NAME);
-        String entityName = entityDocument.getString(ENTITY_NAME_FIELD_NAME);
-        Document entityNameDocument = new Document();
+        var entityDocument = (Document) submissionDocument.get(ENTITY_BLOCK_NAME);
+        var entityName = entityDocument.getString(ENTITY_NAME_FIELD_NAME);
+        var entityNameDocument = new Document();
         entityNameDocument.put(ENTITY_NAME_FIELD_NAME, entityName);
         submissionDocument.put(NEW_ENTITY_NAME_BLOCK_NAME, entityNameDocument);
         entityDocument.remove(ENTITY_NAME_FIELD_NAME);

@@ -29,7 +29,7 @@ public class MongoConverters {
 
     private static MongoConverter getDefaultMongoConverter(MongoDatabaseFactory factory, MappingContext mappingContext) {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
-        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mappingContext);
+        var converter = new MappingMongoConverter(dbRefResolver, mappingContext);
         converter.afterPropertiesSet();
         return converter;
     }

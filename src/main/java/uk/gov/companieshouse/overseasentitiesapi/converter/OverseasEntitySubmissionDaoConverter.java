@@ -35,7 +35,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
     @Override
     public OverseasEntitySubmissionDao convert(final Document document) {
 
-        SchemaVersion schemaVersion = getSchemaVersion(document);
+        var schemaVersion = getSchemaVersion(document);
 
         ApiLogger.info("Schema version is " + schemaVersion);
 

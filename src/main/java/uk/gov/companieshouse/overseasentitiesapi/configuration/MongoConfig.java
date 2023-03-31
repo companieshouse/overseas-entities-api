@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -30,9 +29,8 @@ public class MongoConfig {
     public MongoClient mongoClient(@NotNull Environment environment) {
         String mongoDbUri = environment.getProperty(MONGO_DB_URI_PROPERTY);
         ApiLogger.info(String.format("Configuring mongoClient bean with connection string %s", mongoDbUri));
-        final ConnectionString connectionString = new ConnectionString(
-                Objects.requireNonNull(mongoDbUri));
-        final MongoClientSettings mongoClientSettings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
+        final var connectionString = new ConnectionString(Objects.requireNonNull(mongoDbUri));
+        final var mongoClientSettings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
         return MongoClients.create(mongoClientSettings);
     }
 
@@ -40,12 +38,12 @@ public class MongoConfig {
     public MongoTemplate mongoTemplate(@NotNull Environment environment, DocumentTransformerFactory transformerFactory) {
         String mongoDbName = environment.getProperty(MONGO_DB_NAME_PROPERTY);
         ApiLogger.info(String.format("Configuring mongoTemplate bean with mongo db name %s,", mongoDbName));
-        MongoTemplate mongoTemplate = new MongoTemplate(
+        var mongoTemplate = new MongoTemplate(
                 mongoClient(environment),
                 Objects.requireNonNull(mongoDbName));
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
         // tell mongodb to use the custom converters
-        MongoCustomConversions mongoCustomConversions = getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory, converter.getMappingContext());
+        var mongoCustomConversions = getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory, converter.getMappingContext());
         converter.setCustomConversions(mongoCustomConversions);
         converter.afterPropertiesSet();
         return mongoTemplate;
