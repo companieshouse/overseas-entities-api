@@ -15,7 +15,7 @@ public enum BeneficialOwnersStatementType {
     }
 
     /**
-     * Json creator allows non-matching enum values to be interpreted by the JSON serialiser as null
+     * Json creator allows non-matching enum values to be interpreted by the method which determines them as null
      * @param beneficialOwnersStatement
      * @return
      */
