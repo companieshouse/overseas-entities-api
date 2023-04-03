@@ -24,7 +24,7 @@ class BeneficialOwnersStatementValidatorTest {
     void testNoErrorReportedWhenBeneficialOwnersStatementIsPresent() {
         beneficialOwnersStatementValidator = new BeneficialOwnersStatementValidator();
         Errors errors = beneficialOwnersStatementValidator.validate(BeneficialOwnersStatementType.NONE_IDENTIFIED, new Errors(), CONTEXT);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT);
+        String validationMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT);
         Err err = Err.invalidBodyBuilderWithLocation(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT).withError(validationMessage).build();
         assertFalse(errors.containsError(err));
     }
@@ -33,7 +33,7 @@ class BeneficialOwnersStatementValidatorTest {
     void testErrorReportedWhenBeneficialOwnersStatementIsNull() {
         beneficialOwnersStatementValidator = new BeneficialOwnersStatementValidator();
         Errors errors = beneficialOwnersStatementValidator.validate(null, new Errors(), CONTEXT);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT);
+        String validationMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT);
         Err err = Err.invalidBodyBuilderWithLocation(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT).withError(validationMessage).build();
         assertTrue(errors.containsError(err));
     }
