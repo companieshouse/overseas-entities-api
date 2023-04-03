@@ -80,11 +80,13 @@ class FilingServiceTest {
 
     private static final String REQUEST_ID = "xyz987";
     private static final String OVERSEAS_ENTITY_ID = "abc123";
+
     private static final String TRANSACTION_ID = "3324324324-3243243-32424";
     private static final String PAYMENT_METHOD = "credit-card";
     private static final String PAYMENT_REFERENCE = "332432432423";
     private static final String FILING_DESCRIPTION_IDENTIFIER = "Filing Description Id";
-    private static final String FILING_DESCRIPTION = "Filing Description with registration date {registration date}";
+    private static final String FILING_DESCRIPTION = "Filing Description with registration date {date}";
+    private static final String UPDATE_FILING_DESCRIPTION = "Overseas entity update statement made {date}";
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
@@ -157,15 +159,6 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForRegistration() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-        testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType.REGISTRATION);
-    }
-
-    @Test
-    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-        testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType.UPDATE);
-    }
-
-    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecks(SubmissionType submissionType) throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
@@ -173,7 +166,7 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
-        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(submissionType == SubmissionType.UPDATE);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(false);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
@@ -182,6 +175,39 @@ class FilingServiceTest {
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Filing Description with registration date 26 March 2022", filing.getDescription());
+        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
+        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
+        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
+
+        checkDueDiligence(filing);
+        checkOverseasEntityDueDiligence(filing);
+        checkTrustDataIsEmpty(filing);
+        checkBeneficialOwners(filing);
+        checkManagingOfficers(filing);
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
         assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
         final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
         assertEquals("Joe Bloggs", presenterInFiling.getFullName());
@@ -256,6 +282,7 @@ class FilingServiceTest {
         checkBeneficialOwners(filing);
         checkManagingOfficers(filing);
     }
+
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecks()
@@ -556,6 +583,7 @@ class FilingServiceTest {
                 when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
+
 
     private void checkTrustDataIsEmpty(FilingApi filing) {
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
