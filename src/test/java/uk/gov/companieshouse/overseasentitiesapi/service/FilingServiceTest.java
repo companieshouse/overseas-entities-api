@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.ApiClient;
@@ -46,6 +47,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.OEPublicDataRetrievalHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TransactionUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -121,6 +124,9 @@ class FilingServiceTest {
     @Mock
     private PaymentGet paymentGet;
 
+    @Mock
+    private OEPublicDataRetrievalHelper oePublicDataRetrievalHelper;
+
     private Transaction transaction;
 
     @BeforeEach
@@ -170,6 +176,8 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(oePublicDataRetrievalHelper, times(0)).getOverseasEntityPublicData(Mockito.anyString(), Mockito.anyString());
+
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
@@ -203,6 +211,7 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(oePublicDataRetrievalHelper, times(1)).getOverseasEntityPublicData(Mockito.anyString(), Mockito.anyString());
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
@@ -229,6 +238,7 @@ class FilingServiceTest {
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
         overseasEntitySubmissionDto.setEntityName(null);
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
