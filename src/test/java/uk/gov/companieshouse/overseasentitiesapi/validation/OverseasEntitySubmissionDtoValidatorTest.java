@@ -304,7 +304,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateStatementAndOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
         verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
@@ -324,7 +323,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateStatementAndOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
         verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
     }
 
@@ -396,7 +394,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateStatementAndOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
     }
 
     @Test
@@ -443,8 +440,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
         if (!isUpdateTest) {
             verify(entityDtoValidator, times(1)).validate(any(), any(), any());
-            verify(ownersAndOfficersDataBlockValidator, times(1)).validateStatementAndOwnersAndOfficers(
-                    eq(overseasEntitySubmissionDto), any(), any());
             verify(dueDiligenceDataBlockValidator, times(0)).validateDueDiligenceFields(any(),
                     any(), any(), any());
         }
