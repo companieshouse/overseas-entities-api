@@ -61,6 +61,9 @@ public class OverseasEntitySubmissionDao {
     @Field("managing_officers_corporate")
     private List<ManagingOfficerCorporateDao> managingOfficersCorporate;
 
+    @Field("update")
+    private UpdateDao update;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -182,6 +185,13 @@ public class OverseasEntitySubmissionDao {
         this.trusts = trusts;
     }
 
+    public UpdateDao getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(UpdateDao update) {
+        this.update = update;
+    }
     public Map<String, String> getLinks() {
         return links;
     }

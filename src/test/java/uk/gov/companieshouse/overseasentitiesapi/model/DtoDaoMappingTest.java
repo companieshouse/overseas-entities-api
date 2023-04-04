@@ -21,6 +21,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.PresenterDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.UpdateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
@@ -38,11 +39,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,6 +147,12 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDao.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDao);
 
+        UpdateDao updateDao = new UpdateDao();
+        updateDao.setDateOfCreation(LocalDate.of(2020,1,1));
+        updateDao.setBoMoDataFetched(false);
+        updateDao.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmission.setUpdate(updateDao);
+
         List<TrustDataDao> trustDataDao = new ArrayList<>();
         TrustDataDao trustData = TrustMock.getTrustDataDao();
         trustDataDao.add(trustData);
@@ -221,6 +230,12 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDto.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDto);
 
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setDateOfCreation(LocalDate.of(2020,1,1));
+        updateDto.setBoMoDataFetched(false);
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmission.setUpdate(updateDto);
+
         List<TrustDataDto> trustDataDto = new ArrayList<>();
         TrustDataDto trustData = TrustMock.getTrustDataDto();
         trustDataDto.add(trustData);
@@ -263,6 +278,7 @@ class DtoDaoMappingTest {
         assertManagingOfficerIndividualAreEqual(dto, dao);
         assertManagingOfficerCorporateAreEqual(dto, dao);
         assertTrustsAreEqual(dto, dao);
+        assertUpdateIsEqual(dto.getUpdate(), dao.getUpdate());
     }
 
     private void assertDueDiligenceIsEqual(DueDiligenceDao dueDiligenceDao, DueDiligenceDto dueDiligenceDto) {
@@ -393,6 +409,12 @@ class DtoDaoMappingTest {
         assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(0), trustDao.getHistoricalBeneficialOwners().get(0));
         assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(1), trustDao.getHistoricalBeneficialOwners().get(1));
         assertTrustCorporatesAreEqual(trustDto.getCorporates().get(0), trustDao.getCorporates().get(0) );
+    }
+
+    private void assertUpdateIsEqual(UpdateDto updateDto, UpdateDao updateDao) {
+        assertEquals(updateDto.getDateOfCreation(), updateDao.getDateOfCreation());
+        assertEquals(updateDto.isBoMoDataFetched(), updateDao.isBoMoDataFetched());
+        assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
     }
 
     private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {

@@ -28,6 +28,8 @@ public class OverseasEntitySubmissionDto {
     public static final String MANAGING_OFFICERS_CORPORATE_FIELD = "managing_officers_corporate";
     public static final String TRUST_DATA = "trusts";
 
+    public static final String UPDATE_FIELD = "update";
+
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
 
@@ -67,6 +69,9 @@ public class OverseasEntitySubmissionDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(TRUST_DATA)
     private List<TrustDataDto> trusts;
+
+    @JsonProperty(UPDATE_FIELD)
+    private UpdateDto update;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -178,6 +183,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setTrusts(List<TrustDataDto> trusts) {
         this.trusts = trusts;
+    }
+
+    public UpdateDto getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(UpdateDto update) {
+        this.update = update;
     }
 
     public Map<String, String> getLinks() {
