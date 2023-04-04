@@ -22,7 +22,7 @@ public enum BeneficialOwnersStatementType {
    @JsonCreator
    public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
        for (BeneficialOwnersStatementType type: values()) {
-           if(type.beneficialOwnersStatement.equals(beneficialOwnersStatement)) {
+           if(type.beneficialOwnersStatement.equalsIgnoreCase(beneficialOwnersStatement)) {
                return type;
            }
        }
