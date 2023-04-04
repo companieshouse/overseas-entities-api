@@ -1370,6 +1370,12 @@
           "notified_date": {
             "type": "string",
             "format": "date"
+          },
+          "corporate_indicator": {
+            "type": "boolean"
+          },
+          "corporate_name": {
+            "type": "string"
           }
         }
       },
