@@ -71,6 +71,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     @Mock
     private TrustDetailsValidator trustDetailsValidator;
+    @Mock
+    private HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
 
     private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
