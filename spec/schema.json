@@ -372,6 +372,9 @@
             "items": {
               "$ref": "#/components/schemas/Trust"
             }
+          },
+          "update": {
+            "$ref": "#/components/schemas/Update"
           }
         }
       },
@@ -1348,6 +1351,21 @@
           "date_became_interested_person": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "Update": {
+        "type": "object",
+        "properties": {
+          "date_of_creation": {
+            "type": "string",
+            "format": "date"
+          },
+          "bo_mo_data_fetched": {
+            "type": "boolean"
+          },
+          "registrable_beneficial_owner": {
+            "type": "boolean"
           }
         }
       },
