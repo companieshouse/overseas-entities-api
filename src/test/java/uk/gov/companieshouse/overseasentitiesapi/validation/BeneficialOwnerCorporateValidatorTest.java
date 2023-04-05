@@ -475,6 +475,15 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorWhenCeasedDateIsSameAsStartDate() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerCorporateDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenOnSanctionListFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnSanctionsList(null);
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);

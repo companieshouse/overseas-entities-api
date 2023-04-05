@@ -344,16 +344,12 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     }
 
     @Test
-    void testErrorWhenCeasedDateIsSameAsStartDate() {
+    void testNoErrorWhenCeasedDateIsSameAsStartDate() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
-        String qualifiedFieldName = getQualifiedFieldName(
-                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
-                BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
-        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
 
-        assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD, validationMessage, errors);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
