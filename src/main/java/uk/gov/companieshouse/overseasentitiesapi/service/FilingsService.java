@@ -57,7 +57,7 @@ public class FilingsService {
     @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
     private String filingDescription;
 
-    @Value("${OVERSEAS_ENTITIES_UPDATE_FILING_DESCRIPTION}: 'Overseas entity update statement made {date}'")
+    @Value("${OVERSEAS_ENTITIES_UPDATE_FILING_DESCRIPTION}")
     private String updateFilingDescription;
 
     @Value("${OE01_COST}")
