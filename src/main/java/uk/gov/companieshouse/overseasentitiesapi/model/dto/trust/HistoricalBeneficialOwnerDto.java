@@ -5,25 +5,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 
 public class HistoricalBeneficialOwnerDto {
-    @JsonProperty("forename")
+
+    public static final String FORENAME_FIELD = "forename";
+    public static final String SURNAME_FIELD = "surname";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
+    public static final String NOTIFIED_DATE_FIELD = "notified_date";
+    public static final String CORPORATE_NAME_FIELD = "corporate_name";
+
+    @JsonProperty(FORENAME_FIELD)
     private String forename;
 
     @JsonProperty("other_forenames")
     private String otherForenames;
 
-    @JsonProperty("surname")
+    @JsonProperty(SURNAME_FIELD)
     private String surname;
 
-    @JsonProperty("ceased_date")
+    @JsonProperty(CEASED_DATE_FIELD)
     private LocalDate ceasedDate;
 
-    @JsonProperty("notified_date")
+    @JsonProperty(NOTIFIED_DATE_FIELD)
     private LocalDate notifiedDate;
 
     @JsonProperty("corporate_indicator")
     private boolean corporateIndicator;
 
-    @JsonProperty("corporate_name")
+    @JsonProperty(CORPORATE_NAME_FIELD)
     private String corporateName;
 
     public String getForename() {
@@ -81,5 +88,5 @@ public class HistoricalBeneficialOwnerDto {
     public void setCorporateName(String corporateName) {
         this.corporateName = corporateName;
     }
-    
+
 }
