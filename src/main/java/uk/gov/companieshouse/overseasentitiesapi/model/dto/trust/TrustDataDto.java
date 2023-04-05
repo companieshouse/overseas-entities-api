@@ -33,7 +33,7 @@ public class TrustDataDto {
     private List<TrustIndividualDto> individuals;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("HISTORICAL_BO")
+    @JsonProperty(HISTORICAL_BO_FIELD)
     private List<HistoricalBeneficialOwnerDto> historicalBeneficialOwners;
 
     @JsonInclude(NON_NULL)

@@ -34,7 +34,7 @@ public class HistoricalBeneficialOwnerValidator {
                         validateForename(historicalBeneficialOwnerDto.getForename(), errors, loggingContext);
                         validateSurname(historicalBeneficialOwnerDto.getSurname(), errors, loggingContext);
                     } else {
-                        validateCorporatename(historicalBeneficialOwnerDto.getCorporateName(), errors, loggingContext);
+                        validateCorporateName(historicalBeneficialOwnerDto.getCorporateName(), errors, loggingContext);
                     }
 
                 }
@@ -77,14 +77,14 @@ public class HistoricalBeneficialOwnerValidator {
                 && DateValidators.isDateInPast(notifiedDate, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateCorporatename(String corporatename, Errors errors, String loggingContext) {
+    private boolean validateCorporateName(String corporateName, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 HistoricalBeneficialOwnerDto.CORPORATE_NAME_FIELD);
 
-        return StringValidators.isNotBlank(corporatename, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(corporatename, 160, qualifiedFieldName, errors,
+        return StringValidators.isNotBlank(corporateName, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(corporateName, 160, qualifiedFieldName, errors,
                         loggingContext)
-                && StringValidators.isValidCharacters(corporatename, qualifiedFieldName, errors, loggingContext);
+                && StringValidators.isValidCharacters(corporateName, qualifiedFieldName, errors, loggingContext);
     }
 
 }

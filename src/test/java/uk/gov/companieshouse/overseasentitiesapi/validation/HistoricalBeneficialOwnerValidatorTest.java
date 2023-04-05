@@ -71,7 +71,7 @@ class HistoricalBeneficialOwnerValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenforenameFieldIsNotEmpty() {
+    void testNoErrorReportedWhenForenameFieldIsNotEmpty() {
         individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0).setForename("TESTY OVERSEAS ENTITY");
         Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),
                 LOGGING_CONTEXT);
@@ -80,7 +80,7 @@ class HistoricalBeneficialOwnerValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenforenameFieldExceedsMaxLength() {
+    void testErrorReportedWhenForenameFieldExceedsMaxLength() {
         individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0)
                 .setForename(StringUtils.repeat("A", 161));
         Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),

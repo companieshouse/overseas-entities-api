@@ -143,6 +143,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                 any(),
                 any());
         verify(trustDetailsValidator, times(1)).validate(any(), any(), any());
+        verify(historicalBeneficialOwnerValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test
@@ -307,6 +308,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
+        verify(historicalBeneficialOwnerValidator, times(0)).validate(any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
     }
 
@@ -327,6 +329,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateDueDiligenceFields(any(), any(), any(), any());
         verify(trustDetailsValidator, times(0)).validate(any(), any(), any());
+        verify(historicalBeneficialOwnerValidator, times(0)).validate(any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
     }
 
