@@ -32,8 +32,8 @@ public class DateValidators {
         return false;
     }
 
-    public static boolean isCeasedDateAfterStartDate(LocalDate ceasedDate, LocalDate startDate, String qualifiedFieldName, Errors errors, String loggingContext) {
-        if (ceasedDate.isBefore(startDate) || ceasedDate.isEqual(startDate)) {
+    public static boolean isCeasedDateOnOrAfterStartDate(LocalDate ceasedDate, LocalDate startDate, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (ceasedDate.isBefore(startDate)) {
             setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             return false;

@@ -168,6 +168,6 @@ public class BeneficialOwnerCorporateValidator {
     private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, BeneficialOwnerCorporateDto.CEASED_DATE_FIELD);
         return DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isCeasedDateAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
+                && DateValidators.isCeasedDateOnOrAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }
