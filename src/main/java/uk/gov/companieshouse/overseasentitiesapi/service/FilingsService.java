@@ -98,21 +98,41 @@ public class FilingsService {
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> userSubmission = new HashMap<>();
 
-        boolean isUpdateFiling = setSubmissionData(data, overseasEntityId, logMap);
-        setPaymentData(data, transaction, passThroughTokenHeader, logMap);
+        boolean isUpdateFiling = setSubmissionData(userSubmission, overseasEntityId, logMap);
+        setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
-        filing.setData(data);
         if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("user_submission", userSubmission);
+            updateData.put("changes", getUpdateChanges(overseasEntityId));
+            filing.setData(userSubmission);
             filing.setCost(updateCostAmount);
         } else {
+            filing.setData(userSubmission);
             filing.setCost(registerCostAmount);
         }
 
         setDescriptionFields(filing, isUpdateFiling);
     }
 
+    private HashMap<String, Object> getUpdateChanges(String overseasEntityId) throws SubmissionNotFoundException {
+        Optional<OverseasEntitySubmissionDto> submissionOpt =
+                overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        OverseasEntitySubmissionDto submissionDto = submissionOpt
+                .orElseThrow(() ->
+                        new SubmissionNotFoundException(
+                                String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
+        
+        HashMap<String, Object> changes = new HashMap<>();
+        // TODO
+        // call public API
+        // call private API
+        // calculate diffs from private/public to submissionDto
+        return changes;
+    }
+    
     private boolean setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
