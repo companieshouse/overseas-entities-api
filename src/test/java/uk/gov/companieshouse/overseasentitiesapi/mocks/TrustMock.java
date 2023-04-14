@@ -92,6 +92,7 @@ public class TrustMock {
         dao.setIdentificationPlaceRegistered("Identification Place Registered");
         dao.setIdentificationRegistrationNumber("Registration Number");
         dao.setType("Beneficiary");
+        dao.setOnRegisterInCountryFormedIn(true);
 
         return dao;
     }
@@ -174,6 +175,7 @@ public class TrustMock {
         Dto.setIdentificationPlaceRegistered("Identification Place Registered");
         Dto.setIdentificationRegistrationNumber("Registration Number");
         Dto.setType("Beneficiary");
+        Dto.setOnRegisterInCountryFormedIn(true);
 
         return Dto;
     }

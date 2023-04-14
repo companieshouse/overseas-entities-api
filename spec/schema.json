@@ -372,6 +372,9 @@
             "items": {
               "$ref": "#/components/schemas/Trust"
             }
+          },
+          "update": {
+            "$ref": "#/components/schemas/Update"
           }
         }
       },
@@ -1351,6 +1354,21 @@
           }
         }
       },
+      "Update": {
+        "type": "object",
+        "properties": {
+          "date_of_creation": {
+            "type": "string",
+            "format": "date"
+          },
+          "bo_mo_data_fetched": {
+            "type": "boolean"
+          },
+          "registrable_beneficial_owner": {
+            "type": "boolean"
+          }
+        }
+      },
       "HistoricalBeneficialOwner": {
         "type": "object",
         "properties": {
@@ -1370,6 +1388,12 @@
           "notified_date": {
             "type": "string",
             "format": "date"
+          },
+          "corporate_indicator": {
+            "type": "boolean"
+          },
+          "corporate_name": {
+            "type": "string"
           }
         }
       },

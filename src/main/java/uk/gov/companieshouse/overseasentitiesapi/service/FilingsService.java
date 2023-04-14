@@ -57,6 +57,9 @@ public class FilingsService {
     @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
     private String filingDescription;
 
+    @Value("${OVERSEAS_ENTITIES_UPDATE_FILING_DESCRIPTION}")
+    private String updateFilingDescription;
+
     @Value("${OE01_COST}")
     private String registerCostAmount;
 
@@ -97,7 +100,7 @@ public class FilingsService {
 
         Map<String, Object> data = new HashMap<>();
 
-        setSubmissionData(data, overseasEntityId, logMap);
+        boolean isUpdateFiling = setSubmissionData(data, overseasEntityId, logMap);
         setPaymentData(data, transaction, passThroughTokenHeader, logMap);
 
         filing.setData(data);
@@ -107,12 +110,13 @@ public class FilingsService {
             filing.setCost(registerCostAmount);
         }
 
-        setDescriptionFields(filing);
+        setDescriptionFields(filing, isUpdateFiling);
     }
 
-    private void setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
+    private boolean setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        boolean isUpdateReturn = submissionOpt.isPresent() && submissionOpt.get().isForUpdate();
 
         OverseasEntitySubmissionDto submissionDto = submissionOpt
                 .orElseThrow(() ->
@@ -138,6 +142,8 @@ public class FilingsService {
             data.put(TRUST_DATA, submissionDto.getTrusts());
         }
         ApiLogger.debug("Submission data has been set on filing", logMap);
+
+        return isUpdateReturn;
     }
 
     private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
@@ -262,10 +268,14 @@ public class FilingsService {
         }
     }
 
-    private void setDescriptionFields(FilingApi filing) {
-        String formattedRegistrationDate = dateNowSupplier.get().format(formatter);
+    private void setDescriptionFields(FilingApi filing, boolean isUpdateFiling) {
+        String formattedDate = dateNowSupplier.get().format(formatter);
         filing.setDescriptionIdentifier(filingDescriptionIdentifier);
-        filing.setDescription(filingDescription.replace("{registration date}", formattedRegistrationDate));
+        if (isUpdateFiling) {
+            filing.setDescription(updateFilingDescription.replace("{date}", formattedDate));
+        } else {
+            filing.setDescription(filingDescription.replace("{date}", formattedDate));
+        }
         Map<String, String> values = new HashMap<>();
         filing.setDescriptionValues(values);
     }

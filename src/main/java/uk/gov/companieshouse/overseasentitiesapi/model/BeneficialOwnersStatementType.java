@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum BeneficialOwnersStatementType {
 
     ALL_IDENTIFIED_ALL_DETAILS("all_identified_all_details"),
@@ -12,12 +14,18 @@ public enum BeneficialOwnersStatementType {
         this.beneficialOwnersStatement = beneficialOwnersStatement;
     }
 
-    public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
-        for (BeneficialOwnersStatementType type: values()) {
-            if(type.beneficialOwnersStatement.equals(beneficialOwnersStatement)) {
-                return type;
-            }
-        }
-        return null;
-    }
+    /**
+     * Json creator allows non-matching enum values to be interpreted by the method which determines them as null
+     * @param beneficialOwnersStatement
+     * @return
+     */
+   @JsonCreator
+   public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(String beneficialOwnersStatement) {
+       for (BeneficialOwnersStatementType type: values()) {
+           if(type.beneficialOwnersStatement.equalsIgnoreCase(beneficialOwnersStatement)) {
+               return type;
+           }
+       }
+       return null;
+   }
 }

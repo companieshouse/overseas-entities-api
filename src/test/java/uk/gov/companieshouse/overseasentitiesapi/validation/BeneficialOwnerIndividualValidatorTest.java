@@ -312,6 +312,43 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorsWhenCeasedDateFieldIsInThePast() {
+        beneficialOwnerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(2));
+        beneficialOwnerIndividualDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsWhenCeasedDateFieldIsNow() {
+        beneficialOwnerIndividualDtoList.get(0).setCeasedDate(LocalDate.now());
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenCeasedDateIsBeforeStartDate() {
+        beneficialOwnerIndividualDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
+        beneficialOwnerIndividualDtoList.get(0).setCeasedDate(LocalDate.now());
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
+                BeneficialOwnerIndividualDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerIndividualDto.CEASED_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorWhenCeasedDateIsSameAsStartDate() {
+        beneficialOwnerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerIndividualDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenNoNatureOfControlValuesAreAllNull() {
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);

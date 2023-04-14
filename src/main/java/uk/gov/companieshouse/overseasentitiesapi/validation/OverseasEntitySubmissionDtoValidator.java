@@ -23,6 +23,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private final OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
     private final DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
     private final TrustDetailsValidator trustDetailsValidator;
+    private final HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
@@ -36,13 +37,15 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 PresenterDtoValidator presenterDtoValidator,
                                                 OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator,
                                                 DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator,
-                                                TrustDetailsValidator trustDetailsValidator) {
+                                                TrustDetailsValidator trustDetailsValidator,
+                                                HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
         this.dueDiligenceDataBlockValidator = dueDiligenceDataBlockValidator;
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
         this.trustDetailsValidator = trustDetailsValidator;
+        this.historicalBeneficialOwnerValidator = historicalBeneficialOwnerValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -97,6 +100,7 @@ public class OverseasEntitySubmissionDtoValidator {
         if(isTrustWebEnabled &&
                 !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
         }
     }
 

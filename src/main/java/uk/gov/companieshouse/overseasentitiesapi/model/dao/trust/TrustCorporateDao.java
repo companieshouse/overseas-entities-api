@@ -39,6 +39,9 @@ public class TrustCorporateDao {
     @Field("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
+    @Field("is_on_register_in_country_formed_in")
+    private Boolean onRegisterInCountryFormedIn;
+
     public BeneficialOwnerType getType() {
         return type;
     }
@@ -126,4 +129,13 @@ public class TrustCorporateDao {
     public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
+
+    public Boolean getOnRegisterInCountryFormedIn() {
+        return onRegisterInCountryFormedIn;
+    }
+
+    public void setOnRegisterInCountryFormedIn(Boolean onRegisterInCountryFormedIn) {
+        this.onRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
+    }
+ 
 }

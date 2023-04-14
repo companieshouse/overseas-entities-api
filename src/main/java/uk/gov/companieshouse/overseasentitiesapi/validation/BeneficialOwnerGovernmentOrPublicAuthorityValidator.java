@@ -60,6 +60,10 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
             validateNatureOfControl(fields, errors, loggingContext);
 
             validateOnSanctionsList(beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(), errors, loggingContext);
+
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getCeasedDate())) {
+                validateCeasedDate(beneficialOwnerGovernmentOrPublicAuthorityDto.getCeasedDate(), beneficialOwnerGovernmentOrPublicAuthorityDto.getStartDate(), errors, loggingContext);
+            }
         }
         return errors;
     }
@@ -108,6 +112,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
                 && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
+
+
     private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, NATURE_OF_CONTROL_FIELDS);
         return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
@@ -116,5 +122,11 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,  BeneficialOwnerGovernmentOrPublicAuthorityDto.IS_ON_SANCTIONS_LIST_FIELD);
         return UtilsValidators.isNotNull(onSanctionsList, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, BeneficialOwnerGovernmentOrPublicAuthorityDto.CEASED_DATE_FIELD);
+        return DateValidators.isDateInPast(ceasedDate, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateOnOrAfterStartDate(ceasedDate, startDate, qualifiedFieldName, errors, loggingContext);
     }
 }

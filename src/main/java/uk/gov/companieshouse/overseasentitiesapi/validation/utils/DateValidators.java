@@ -31,4 +31,14 @@ public class DateValidators {
         ApiLogger.infoContext(loggingContext, qualifiedFieldName + " must be in the past 3 months");
         return false;
     }
+
+    public static boolean isCeasedDateOnOrAfterStartDate(LocalDate ceasedDate, LocalDate startDate, String qualifiedFieldName, Errors errors, String loggingContext) {
+        if (ceasedDate.isBefore(startDate)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -14,6 +14,7 @@ public class TrustDataDto {
     public static final String TRUST_NAME_FIELD = "trust_name";
     public static final String CREATION_DATE_FIELD = "creation_date";
     public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
+    public static final String HISTORICAL_BO_FIELD = "HISTORICAL_BO";
 
     @JsonProperty(TRUST_ID_FIELD)
     private String trustId;
@@ -32,7 +33,7 @@ public class TrustDataDto {
     private List<TrustIndividualDto> individuals;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("HISTORICAL_BO")
+    @JsonProperty(HISTORICAL_BO_FIELD)
     private List<HistoricalBeneficialOwnerDto> historicalBeneficialOwners;
 
     @JsonInclude(NON_NULL)

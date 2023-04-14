@@ -24,6 +24,7 @@ public class OwnersAndOfficersDataBlockValidator {
     public static final String INCORRECTLY_ADDED_BENEFICIAL_OWNER = "Incorrectly added beneficial owner";
     public static final String INCORRECTLY_ADDED_MANAGING_OFFICER = "Incorrectly added managing officer";
     public static final String INVALID_BENEFICIAL_OWNER_STATEMENT = "Invalid statement supplied";
+    public static final String MISSING_BENEFICIAL_OWNER_STATEMENT = "Unable to validate owner officer combination due to missing beneficial owners statement";
     private final BeneficialOwnersStatementValidator beneficialOwnersStatementValidator;
     private final BeneficialOwnerIndividualValidator beneficialOwnerIndividualValidator;
     private final BeneficialOwnerCorporateValidator beneficialOwnerCorporateValidator;
@@ -56,6 +57,7 @@ public class OwnersAndOfficersDataBlockValidator {
     }
 
     public void validateOwnersAndOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
         List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         if (hasIndividualBeneficialOwnersPresent(beneficialOwnerIndividualDtoList)) {
             beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, errors, loggingContext);
@@ -78,8 +80,12 @@ public class OwnersAndOfficersDataBlockValidator {
         }
     }
 
-
     private boolean isCorrectCombinationOfOwnersAndOfficersForStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        var beneficialOwnersStatementType =  overseasEntitySubmissionDto.getBeneficialOwnersStatement();
+        if (beneficialOwnersStatementType == null) {
+            logValidationErrorMessage(errors, loggingContext, MISSING_BENEFICIAL_OWNER_STATEMENT);
+            return false;
+        }
         switch (overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
             case ALL_IDENTIFIED_ALL_DETAILS:
                  if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {

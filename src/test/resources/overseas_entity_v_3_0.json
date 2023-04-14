@@ -339,6 +339,11 @@
       ]
     }
   ],
+  "update": {
+    "date_of_creation": "2022-12-01",
+    "bo_mo_data_fetched": false,
+    "registrable_beneficial_owner": false
+  },
   "links" : {
     "self" : "/transactions/040551-775916-764584/overseas-entity/63ecba0100a65d6d4704ac34"
   },

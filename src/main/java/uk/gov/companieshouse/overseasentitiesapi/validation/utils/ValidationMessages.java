@@ -6,6 +6,7 @@ public class ValidationMessages {
 
     public static final String NOT_NULL_ERROR_MESSAGE = "%s must not be null";
     public static final String NOT_EMPTY_ERROR_MESSAGE = "%s must not be empty and must not only consist of whitespace";
+    public static final String NOT_VALID_ERROR_MESSAGE = "%s is not a valid value";
     public static final String SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE = "%s should not be populated";
     public static final String SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE = "%s should not both be present, only one should be present";
     public static final String SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE = "%s should not both be absent, one should be present";
@@ -19,4 +20,5 @@ public class ValidationMessages {
     public static final String NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE = "%s is not on the list of nationalities";
     public static final String SECOND_NATIONALITY_SHOULD_BE_DIFFERENT = "%s should not be the same as the nationality given";
     public static final String DUPLICATE_TRUST_ID = "Duplicate Trust Id for %s";
+    public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be on or after the appointed date";
 }

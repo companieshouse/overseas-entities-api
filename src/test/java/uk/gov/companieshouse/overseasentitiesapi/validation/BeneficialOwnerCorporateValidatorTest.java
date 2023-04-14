@@ -447,6 +447,43 @@ class BeneficialOwnerCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorsWhenCeasedDateFieldIsInThePast() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(2));
+        beneficialOwnerCorporateDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsWhenCeasedDateFieldIsNow() {
+        beneficialOwnerCorporateDtoList.get(0).setCeasedDate(LocalDate.now());
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenCeasedDateIsBeforeStartDate() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
+        beneficialOwnerCorporateDtoList.get(0).setCeasedDate(LocalDate.now());
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_CORPORATE_FIELD,
+                BeneficialOwnerCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerCorporateDto.CEASED_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorWhenCeasedDateIsSameAsStartDate() {
+        beneficialOwnerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        beneficialOwnerCorporateDtoList.get(0).setCeasedDate(LocalDate.now().minusDays(1));
+        Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenOnSanctionListFieldIsNull() {
         beneficialOwnerCorporateDtoList.get(0).setOnSanctionsList(null);
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
