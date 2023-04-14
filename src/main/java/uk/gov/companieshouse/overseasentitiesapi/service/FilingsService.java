@@ -103,7 +103,7 @@ public class FilingsService {
         OverseasEntitySubmissionDto submissionDto = setSubmissionData(userSubmission, overseasEntityId, logMap);
         setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
-        if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
+        if (submissionDto.isForUpdate()) {
             Map<String, Object> updateData = new HashMap<>();
             updateData.put("user_submission", userSubmission);
             updateData.put("changes", getUpdateChanges(overseasEntityId, submissionDto));
