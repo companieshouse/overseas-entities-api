@@ -136,8 +136,6 @@ public class FilingsService {
                         new SubmissionNotFoundException(
                                 String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
 
-        boolean isUpdateReturn = submissionDto.isForUpdate();
-
         if (Objects.isNull(submissionDto.getEntityName())) {
             data.put(ENTITY_NAME_FIELD, null);
         } else {
