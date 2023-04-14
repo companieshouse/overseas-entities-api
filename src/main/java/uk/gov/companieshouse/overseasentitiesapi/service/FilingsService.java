@@ -105,9 +105,10 @@ public class FilingsService {
 
         if (submissionDto.isForUpdate()) {
             Map<String, Object> updateData = new HashMap<>();
+            updateData.put("company_number", submissionDto.getEntityNumber());
             updateData.put("user_submission", userSubmission);
             updateData.put("changes", getUpdateChanges(overseasEntityId, submissionDto));
-            filing.setData(userSubmission);
+            filing.setData(updateData);
             filing.setCost(updateCostAmount);
         } else {
             filing.setData(userSubmission);
