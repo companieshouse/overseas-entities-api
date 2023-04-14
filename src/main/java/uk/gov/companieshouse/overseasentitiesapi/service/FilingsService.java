@@ -100,13 +100,13 @@ public class FilingsService {
 
         Map<String, Object> userSubmission = new HashMap<>();
 
-        boolean isUpdateFiling = setSubmissionData(userSubmission, overseasEntityId, logMap);
+        OverseasEntitySubmissionDto submissionDto = setSubmissionData(userSubmission, overseasEntityId, logMap);
         setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
         if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
             Map<String, Object> updateData = new HashMap<>();
             updateData.put("user_submission", userSubmission);
-            updateData.put("changes", getUpdateChanges(overseasEntityId));
+            updateData.put("changes", getUpdateChanges(overseasEntityId, submissionDto));
             filing.setData(userSubmission);
             filing.setCost(updateCostAmount);
         } else {
@@ -114,18 +114,12 @@ public class FilingsService {
             filing.setCost(registerCostAmount);
         }
 
-        setDescriptionFields(filing, isUpdateFiling);
+        setDescriptionFields(filing, submissionDto.isForUpdate());
     }
 
-    private HashMap<String, Object> getUpdateChanges(String overseasEntityId) throws SubmissionNotFoundException {
-        Optional<OverseasEntitySubmissionDto> submissionOpt =
-                overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-        OverseasEntitySubmissionDto submissionDto = submissionOpt
-                .orElseThrow(() ->
-                        new SubmissionNotFoundException(
-                                String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
-        
+    private HashMap<String, Object> getUpdateChanges(String overseasEntityId, OverseasEntitySubmissionDto submissionDto) throws SubmissionNotFoundException {
         HashMap<String, Object> changes = new HashMap<>();
+        String companyNumber = submissionDto.getEntityNumber();
         // TODO
         // call public API
         // call private API
@@ -133,15 +127,16 @@ public class FilingsService {
         return changes;
     }
     
-    private boolean setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
+    private OverseasEntitySubmissionDto setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-        boolean isUpdateReturn = submissionOpt.isPresent() && submissionOpt.get().isForUpdate();
 
         OverseasEntitySubmissionDto submissionDto = submissionOpt
                 .orElseThrow(() ->
                         new SubmissionNotFoundException(
                                 String.format("Empty submission returned when generating filing for %s", overseasEntityId)));
+
+        boolean isUpdateReturn = submissionDto.isForUpdate();
 
         if (Objects.isNull(submissionDto.getEntityName())) {
             data.put(ENTITY_NAME_FIELD, null);
@@ -163,8 +158,9 @@ public class FilingsService {
         }
         ApiLogger.debug("Submission data has been set on filing", logMap);
 
-        return isUpdateReturn;
+        return submissionDto;
     }
+
 
     private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
         List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualSubmissionData = new ArrayList<>();
