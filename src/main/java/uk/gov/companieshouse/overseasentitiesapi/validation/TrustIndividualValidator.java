@@ -59,6 +59,7 @@ public class TrustIndividualValidator {
 
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
+
                     boolean isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
                             trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors,
                             loggingContext);
@@ -66,7 +67,8 @@ public class TrustIndividualValidator {
                             .equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
                         validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD,
                                 trustIndividualDto.getServiceAddress(), errors, loggingContext);
-                    } else {
+                    } else if (isSameAddressFlagValid && Boolean.TRUE
+                            .equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
                         validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD,
                                 trustIndividualDto.getServiceAddress(), errors, loggingContext);
                     }
@@ -160,16 +162,14 @@ public class TrustIndividualValidator {
 
     private boolean validateServiceAddressSameAsUsualResidentialAddress(Boolean same, Errors errors,
             String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(
-                PARENT_FIELD,
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateOtherAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors,
             String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(
-                PARENT_FIELD, addressField);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
         addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
     }

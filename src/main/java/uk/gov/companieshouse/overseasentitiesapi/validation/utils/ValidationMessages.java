@@ -20,10 +20,6 @@ public class ValidationMessages {
     public static final String NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE = "%s is not on the list of nationalities";
     public static final String SECOND_NATIONALITY_SHOULD_BE_DIFFERENT = "%s should not be the same as the nationality given";
     public static final String DUPLICATE_TRUST_ID = "Duplicate Trust Id for %s";
-<<<<<<< Updated upstream
     public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be on or after the appointed date";
-=======
-    public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be after the appointed date";
     public static final String TRUST_INDIVIDUAL_TYPE_ERROR_MESSAGE = "Individual trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
->>>>>>> Stashed changes
 }

@@ -291,6 +291,7 @@ public class TrustIndividualDto {
             serviceAddress.setLine2(saAddressLine2);
             serviceAddress.setCounty(saAddressRegion);
             serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setTown(uraAddressLocality);
             serviceAddress.setCountry(saAddressCountry);
             serviceAddress.setCareOf(saAddressCareOf);
             serviceAddress.setPoBox(saAddressPoBox);
