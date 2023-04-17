@@ -10,11 +10,36 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto.areAnyStringsNonNull;
 
 public class TrustIndividualDto {
-    @JsonProperty("type")
-    private String type;
+
+    public static final String FORENAME_FIELD = "forename";
+    public static final String SURNAME_FIELD = "surname";
+    public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
+    public static final String TYPE_FIELD = "type";
+    public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
+    public static final String NATIONALITY_FIELD = "nationality";
+    public static final String SECOND_NATIONALITY_FIELD = "second_nationality";
+
+    public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
+    public static final String URA_ADDRESS_LINE_1_FIELD = "ura_address_line_1";
+    public static final String URA_ADDRESS_LINE_2_FIELD = "ura_address_line_2";
+    public static final String URA_ADDRESS_COUNTRY_FIELD = "ura_address_country";
+    public static final String URA_ADDRESS_LOCALITY_FIELD = "ura_address_locality";
+    public static final String URA_ADDRESS_POSTAL_CODE_FIELD = "ura_address_postal_code";
+    public static final String URA_ADDRESS_PREMISES_FIELD = "ura_address_premises";
+    public static final String URA_ADDRESS_REGION_FIELD = "ura_address_region";
+
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String SA_ADDRESS_LINE_1_FIELD = "sa_address_line_1";
+    public static final String SA_ADDRESS_LINE_2_FIELD = "sa_address_line_2";
+    public static final String SA_ADDRESS_LOCALITY_FIELD = "sa_address_locality";
+    public static final String SA_ADDRESS_PREMISES_FIELD = "sa_address_premises";
+    public static final String SA_ADDRESS_REGION_FIELD = "sa_address_region";
+    public static final String SA_ADDRESS_COUNTRY_FIELD = "sa_address_country";
+    public static final String SA_ADDRESS_POSTAL_CODE_FIELD = "sa_address_postal_code";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("forename")
+    @JsonProperty(FORENAME_FIELD)
     private String forename;
 
     @JsonInclude(NON_NULL)
@@ -22,31 +47,38 @@ public class TrustIndividualDto {
     private String otherForenames;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("surname")
+    @JsonProperty(SURNAME_FIELD)
     private String surname;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("date_of_birth")
+    @JsonProperty(DATE_OF_BIRTH_FIELD)
     private LocalDate dateOfBirth;
 
+    @JsonProperty(TYPE_FIELD)
+    private String type;
+
     @JsonInclude(NON_NULL)
-    @JsonProperty("nationality")
+    @JsonProperty(DATE_BECAME_INTERESTED_PERSON_FIELD)
+    private LocalDate dateBecameInterestedPerson;
+
+    @JsonInclude(NON_NULL)
+    @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("second_nationality")
+    @JsonProperty(SECOND_NATIONALITY_FIELD)
     private String secondNationality;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_line_1")
+    @JsonProperty(SA_ADDRESS_LINE_1_FIELD)
     private String saAddressLine1;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_line_2")
+    @JsonProperty(SA_ADDRESS_LINE_2_FIELD)
     private String saAddressLine2;
 
     @JsonInclude(NON_NULL)
@@ -54,11 +86,11 @@ public class TrustIndividualDto {
     private String saAddressCareOf;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_country")
+    @JsonProperty(SA_ADDRESS_COUNTRY_FIELD)
     private String saAddressCountry;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_locality")
+    @JsonProperty(SA_ADDRESS_LOCALITY_FIELD)
     private String saAddressLocality;
 
     @JsonInclude(NON_NULL)
@@ -66,31 +98,31 @@ public class TrustIndividualDto {
     private String saAddressPoBox;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_postal_code")
+    @JsonProperty(SA_ADDRESS_POSTAL_CODE_FIELD)
     private String saAddressPostalCode;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_premises")
+    @JsonProperty(SA_ADDRESS_PREMISES_FIELD)
     private String saAddressPremises;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("sa_address_region")
+    @JsonProperty(SA_ADDRESS_REGION_FIELD)
     private String saAddressRegion;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("is_service_address_same_as_usual_residential_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("usual_residential_address")
+    @JsonProperty(USUAL_RESIDENTIAL_ADDRESS_FIELD)
     private AddressDto usualResidentialAddress;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_line_1")
+    @JsonProperty(URA_ADDRESS_LINE_1_FIELD)
     private String uraAddressLine1;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_line_2")
+    @JsonProperty(URA_ADDRESS_LINE_2_FIELD)
     private String uraAddressLine2;
 
     @JsonInclude(NON_NULL)
@@ -98,11 +130,11 @@ public class TrustIndividualDto {
     private String uraAddressCareOf;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_country")
+    @JsonProperty(URA_ADDRESS_COUNTRY_FIELD)
     private String uraAddressCountry;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_locality")
+    @JsonProperty(URA_ADDRESS_LOCALITY_FIELD)
     private String uraAddressLocality;
 
     @JsonInclude(NON_NULL)
@@ -110,20 +142,16 @@ public class TrustIndividualDto {
     private String uraAddressPoBox;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_postal_code")
+    @JsonProperty(URA_ADDRESS_POSTAL_CODE_FIELD)
     private String uraAddressPostalCode;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_premises")
+    @JsonProperty(URA_ADDRESS_PREMISES_FIELD)
     private String uraAddressPremises;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("ura_address_region")
+    @JsonProperty(URA_ADDRESS_REGION_FIELD)
     private String uraAddressRegion;
-
-    @JsonInclude(NON_NULL)
-    @JsonProperty("date_became_interested_person")
-    private LocalDate dateBecameInterestedPerson;
 
     public String getType() {
         return type;
@@ -263,6 +291,7 @@ public class TrustIndividualDto {
             serviceAddress.setLine2(saAddressLine2);
             serviceAddress.setCounty(saAddressRegion);
             serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setTown(uraAddressLocality);
             serviceAddress.setCountry(saAddressCountry);
             serviceAddress.setCareOf(saAddressCareOf);
             serviceAddress.setPoBox(saAddressPoBox);
@@ -357,6 +386,7 @@ public class TrustIndividualDto {
             usualResidentialAddress.setLine2(uraAddressLine2);
             usualResidentialAddress.setCounty(uraAddressRegion);
             usualResidentialAddress.setLocality(uraAddressLocality);
+            usualResidentialAddress.setTown(uraAddressLocality);
             usualResidentialAddress.setCountry(uraAddressCountry);
             usualResidentialAddress.setCareOf(uraAddressCareOf);
             usualResidentialAddress.setPoBox(uraAddressPoBox);
