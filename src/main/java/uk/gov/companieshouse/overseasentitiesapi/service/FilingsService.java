@@ -18,6 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.OEPublicDataRetrievalHelper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -74,15 +75,19 @@ public class FilingsService {
     private final Supplier<LocalDate> dateNowSupplier;
     private final ObjectMapper objectMapper;
 
+    private final OEPublicDataRetrievalHelper oePublicDataRetrievalHelper;
+
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
                           ApiClientService apiClientService,
                           Supplier<LocalDate> dateNowSupplier,
-                          ObjectMapper objectMapper) {
+                          ObjectMapper objectMapper,
+                          OEPublicDataRetrievalHelper oePublicDataRetrievalHelper) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
         this.objectMapper = objectMapper;
+        this.oePublicDataRetrievalHelper = oePublicDataRetrievalHelper;
     }
 
     public FilingApi generateOverseasEntityFiling(String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -98,25 +103,28 @@ public class FilingsService {
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> userSubmission = new HashMap<>();
 
-        boolean isUpdateFiling = setSubmissionData(data, overseasEntityId, logMap);
-        setPaymentData(data, transaction, passThroughTokenHeader, logMap);
+        OverseasEntitySubmissionDto submissionDto = setSubmissionData(userSubmission, overseasEntityId, logMap);
+        setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
-        filing.setData(data);
+        if (submissionDto.isForUpdate()) {
+            oePublicDataRetrievalHelper.getOverseasEntityPublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
+        }
+
+        filing.setData(userSubmission);
         if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
             filing.setCost(updateCostAmount);
         } else {
             filing.setCost(registerCostAmount);
         }
 
-        setDescriptionFields(filing, isUpdateFiling);
+        setDescriptionFields(filing, submissionDto.isForUpdate());
     }
 
-    private boolean setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
+    private OverseasEntitySubmissionDto setSubmissionData(Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap) throws SubmissionNotFoundException, ServiceException {
         Optional<OverseasEntitySubmissionDto> submissionOpt =
                 overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-        boolean isUpdateReturn = submissionOpt.isPresent() && submissionOpt.get().isForUpdate();
 
         OverseasEntitySubmissionDto submissionDto = submissionOpt
                 .orElseThrow(() ->
@@ -143,7 +151,7 @@ public class FilingsService {
         }
         ApiLogger.debug("Submission data has been set on filing", logMap);
 
-        return isUpdateReturn;
+        return submissionDto;
     }
 
     private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(OverseasEntitySubmissionDto submissionDto) throws ServiceException {
