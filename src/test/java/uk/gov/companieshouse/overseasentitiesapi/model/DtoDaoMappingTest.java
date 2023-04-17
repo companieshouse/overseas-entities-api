@@ -321,6 +321,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());
         assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
+        assertEquals(boDto.getChipsReference(), boDao.getChipsReference());
     }
 
     private void assertCorporateBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao)
@@ -342,6 +343,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());
         assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
+        assertEquals(boDto.getChipsReference(), boDao.getChipsReference());
     }
 
     private void assertGovernmentBeneficialOwnersAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
@@ -358,6 +360,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getNonLegalFirmMembersNatureOfControlTypes(),
                 boDao.getNonLegalFirmMembersNatureOfControlTypes());
         assertEquals(boDto.getOnSanctionsList(), boDao.getOnSanctionsList());
+        assertEquals(boDto.getChipsReference(), boDao.getChipsReference());
     }
 
     private void assertManagingOfficerIndividualAreEqual(OverseasEntitySubmissionDto dto, OverseasEntitySubmissionDao dao) {
@@ -373,7 +376,10 @@ class DtoDaoMappingTest {
         assertEquals(moiDto.getServiceAddressSameAsUsualResidentialAddress(),
                 moiDao.getServiceAddressSameAsUsualResidentialAddress());
         assertEquals(moiDto.getOccupation(), moiDao.getOccupation());
+        assertEquals(moiDto.getStartDate(), moiDao.getStartDate());
+        assertEquals(moiDto.getResignedOn(), moiDao.getResignedOn());
         assertEquals(moiDto.getRoleAndResponsibilities(), moiDao.getRoleAndResponsibilities());
+        assertEquals(moiDto.getChipsReference(), moiDao.getChipsReference());
 
         assertAddressesAreEqual(moiDto.getUsualResidentialAddress(), moiDao.getUsualResidentialAddress());
     }
@@ -391,6 +397,9 @@ class DtoDaoMappingTest {
         assertEquals(mocDto.getRegistrationNumber(), mocDao.getRegistrationNumber());
         assertEquals(mocDto.getRoleAndResponsibilities(), mocDao.getRoleAndResponsibilities());
         assertEquals(mocDto.getContactFullName(), mocDao.getContactFullName());
+        assertEquals(mocDto.getStartDate(), mocDao.getStartDate());
+        assertEquals(mocDto.getResignedOn(), mocDao.getResignedOn());
+        assertEquals(mocDto.getChipsReference(), mocDao.getChipsReference());
         assertEquals(EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES, mocDao.getContactEmail());
 
         assertAddressesAreEqual(mocDto.getPrincipalAddress(), mocDao.getPrincipalAddress());

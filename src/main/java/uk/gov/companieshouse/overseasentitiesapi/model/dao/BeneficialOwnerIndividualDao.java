@@ -53,6 +53,9 @@ public class BeneficialOwnerIndividualDao {
     @Field("ceased_date")
     private LocalDate ceasedDate;
 
+    @Field("ch_reference")
+    private String chipsReference;
+
     public String getFirstName() {
         return firstName;
     }
@@ -168,4 +171,12 @@ public class BeneficialOwnerIndividualDao {
     public void setCeasedDate(LocalDate ceasedDate) { this.ceasedDate = ceasedDate; }
 
     public LocalDate getCeasedDate() { return ceasedDate; }
+
+    public String getChipsReference() {
+        return chipsReference;
+    }
+
+    public void setChipsReference(String chipsReference) {
+        this.chipsReference = chipsReference;
+    }
 }
