@@ -176,7 +176,6 @@ public class ManagingOfficerCorporateDto {
         this.startDate = startDate;
     }
 
-
     public LocalDate getResignedOn() {
         return resignedOn;
     }

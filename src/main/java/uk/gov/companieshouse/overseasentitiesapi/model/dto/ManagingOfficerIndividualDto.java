@@ -170,7 +170,6 @@ public class ManagingOfficerIndividualDto {
         return resignedOn;
     }
 
-
     public LocalDate getStartDate() {
         return startDate;
     }
