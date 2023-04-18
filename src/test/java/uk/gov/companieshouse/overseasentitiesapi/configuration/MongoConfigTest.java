@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MongoConfigTest {
+class MongoConfigTest {
 
     @Mock
     private Environment environment;
