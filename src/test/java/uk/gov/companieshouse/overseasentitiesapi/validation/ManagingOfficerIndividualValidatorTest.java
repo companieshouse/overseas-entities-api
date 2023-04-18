@@ -491,4 +491,35 @@ class ManagingOfficerIndividualValidatorTest {
 
         assertFalse(errors.hasErrors());
     }
+
+    @Test
+    void testNoErrorWhenNoResignedOnDateAndNoStartDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(null);
+        managingOfficerIndividualDtoList.get(0).setResignedOn(null);
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorWhenResignedOnDateAndNoStartDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(null);
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().minusDays(1));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorWhenResignedOnDateIsInFutureAndNoStartDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(null);
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().plusDays(1));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD, validationMessage, errors);
+    }
 }
