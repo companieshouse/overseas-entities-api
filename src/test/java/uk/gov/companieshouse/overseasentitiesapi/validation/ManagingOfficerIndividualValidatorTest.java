@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -459,5 +461,34 @@ class ManagingOfficerIndividualValidatorTest {
         String qualifiedFieldName = MANAGING_OFFICERS_INDIVIDUAL_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
+    }
+
+    @Test
+    void testNoErrorsWhenResignedOnDateFieldIsNow() {
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now());
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenResignedOnDateIsBeforeStartDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(LocalDate.now().plusDays(1));
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now());
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorWhenResignedOnDateIsSameAsStartDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().minusDays(1));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
     }
 }
