@@ -11,11 +11,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class TrustCorporateDto {
+
+    public static final String NAME_FIELD = "name";
+
     @JsonProperty("type")
     private String type;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("name")
+    @JsonProperty(NAME_FIELD)
     private String name;
 
     @JsonInclude(NON_NULL)
