@@ -11,6 +11,7 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.test.context.ActiveProfiles;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
@@ -36,10 +37,13 @@ import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConve
  * Once those things have been considered and addressed, existing tests should pass again. Then, a file with the new JSON
  * model structure should be added to the test resources folder and a new test added to successfully read and process
  * the new, up-to-date DAO/DTO structure.
+ *
+ * Note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not loaded
+ * during this test (as the specific in-memory Mongo DB config needs to be picked up).
  */
-
 @AutoConfigureDataMongo
 @SpringBootTest
+@ActiveProfiles("test")
 class DtoModelChangeTest {
 
     private static final String TEST_COLLECTION_NAME = "TestCollection";
