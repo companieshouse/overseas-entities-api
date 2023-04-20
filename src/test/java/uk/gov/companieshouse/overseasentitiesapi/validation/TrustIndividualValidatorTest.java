@@ -261,6 +261,35 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testErrorReportedWhenSecondNationalityBlank() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("");
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityBlankWhiteSpace() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("     ");
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityNull() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality(null);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalityNotSameAsFirstNationality() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Afghan");
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));

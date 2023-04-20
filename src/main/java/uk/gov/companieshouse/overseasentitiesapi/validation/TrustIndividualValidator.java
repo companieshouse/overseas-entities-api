@@ -54,8 +54,8 @@ public class TrustIndividualValidator {
                     validateDateBecameInterestedPerson(trustIndividualDto.getDateBecameInterestedPerson(), errors,
                             loggingContext);
                     validateNationality(trustIndividualDto.getNationality(), errors, loggingContext);
-                    validateSecondNationality(trustIndividualDto.getSecondNationality(), loggingContext, errors,
-                            loggingContext);
+                    validateSecondNationality(trustIndividualDto.getNationality(),
+                            trustIndividualDto.getSecondNationality(), errors, loggingContext);
 
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
