@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumMap;
@@ -17,13 +18,16 @@ public class DocumentTransformerFactory {
     @Autowired
     private List<DocumentTransformer> transformers;
 
-    private static final Map<SchemaVersion, DocumentTransformer> transformerMap = new EnumMap<>(SchemaVersion.class);
+    private final Map<SchemaVersion, DocumentTransformer> transformerMap = new EnumMap<>(SchemaVersion.class);
+
 
     @PostConstruct
     public void initialiseTransformerMap() {
         for (DocumentTransformer transformer : transformers) {
             transformerMap.put(transformer.forSchemaVersion(), transformer);
         }
+
+        ApiLogger.info("Document transformer factory initialised with " + transformerMap.size() + " transformers");
     }
 
     public Optional<DocumentTransformer> getTransformer(SchemaVersion forSchemaVersion) {
