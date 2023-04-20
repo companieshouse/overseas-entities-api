@@ -18,6 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.OEPrivateDataRetrievalHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.OEPublicDataRetrievalHelper;
 
 import java.io.IOException;
@@ -76,18 +77,21 @@ public class FilingsService {
     private final ObjectMapper objectMapper;
 
     private final OEPublicDataRetrievalHelper oePublicDataRetrievalHelper;
+    private final OEPrivateDataRetrievalHelper oePrivateDataRetrievalHelper;
 
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
                           ApiClientService apiClientService,
                           Supplier<LocalDate> dateNowSupplier,
                           ObjectMapper objectMapper,
-                          OEPublicDataRetrievalHelper oePublicDataRetrievalHelper) {
+                          OEPublicDataRetrievalHelper oePublicDataRetrievalHelper,
+                          OEPrivateDataRetrievalHelper oePrivateDataRetrievalHelper) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
         this.objectMapper = objectMapper;
         this.oePublicDataRetrievalHelper = oePublicDataRetrievalHelper;
+        this.oePrivateDataRetrievalHelper = oePrivateDataRetrievalHelper;
     }
 
     public FilingApi generateOverseasEntityFiling(String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -110,6 +114,7 @@ public class FilingsService {
 
         if (submissionDto.isForUpdate()) {
             oePublicDataRetrievalHelper.getOverseasEntityPublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
+            oePrivateDataRetrievalHelper.getOverseasEntityPrivateData(submissionDto.getEntityNumber());
         }
 
         filing.setData(userSubmission);
