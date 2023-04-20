@@ -283,7 +283,7 @@ class TrustIndividualValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenSecondNationalityNotSameAsFirstNationality() {
+    void testErrorReportedWhenSecondNationalitySameAsFirstNationality() {
         trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
         trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Afghan");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
