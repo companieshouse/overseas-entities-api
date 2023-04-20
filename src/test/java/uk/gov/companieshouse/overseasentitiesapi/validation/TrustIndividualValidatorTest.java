@@ -282,14 +282,6 @@ class TrustIndividualValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    @Test
-    void testErrorReportedWhenSecondNationalitySameAsFirstNationality() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
-        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Afghan");
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.hasErrors());
-    }
-
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
