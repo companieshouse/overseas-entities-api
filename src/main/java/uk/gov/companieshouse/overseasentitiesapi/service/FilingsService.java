@@ -18,7 +18,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.utils.OEPublicDataRetrievalHelper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -75,19 +74,19 @@ public class FilingsService {
     private final Supplier<LocalDate> dateNowSupplier;
     private final ObjectMapper objectMapper;
 
-    private final OEPublicDataRetrievalHelper oePublicDataRetrievalHelper;
+    private final PublicDataRetrievalService publicDataRetrievalService;
 
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
                           ApiClientService apiClientService,
                           Supplier<LocalDate> dateNowSupplier,
                           ObjectMapper objectMapper,
-                          OEPublicDataRetrievalHelper oePublicDataRetrievalHelper) {
+                          PublicDataRetrievalService publicDataRetrievalService) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
         this.objectMapper = objectMapper;
-        this.oePublicDataRetrievalHelper = oePublicDataRetrievalHelper;
+        this.publicDataRetrievalService = publicDataRetrievalService;
     }
 
     public FilingApi generateOverseasEntityFiling(String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -109,7 +108,7 @@ public class FilingsService {
         setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
         if (submissionDto.isForUpdate()) {
-            oePublicDataRetrievalHelper.getOverseasEntityPublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
+            publicDataRetrievalService.initialisePublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
         }
 
         filing.setData(userSubmission);
