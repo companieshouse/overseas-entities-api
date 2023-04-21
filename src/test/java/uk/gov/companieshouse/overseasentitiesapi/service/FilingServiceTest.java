@@ -125,6 +125,9 @@ class FilingServiceTest {
     @Mock
     private PublicDataRetrievalService publicDataRetrievalService;
 
+    @Mock
+    private PrivateDataRetrievalService privateDataRetrievalService;
+
     private Transaction transaction;
 
     @BeforeEach
