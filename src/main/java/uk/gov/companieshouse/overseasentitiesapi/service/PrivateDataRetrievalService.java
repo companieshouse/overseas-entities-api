@@ -1,26 +1,29 @@
-package uk.gov.companieshouse.overseasentitiesapi.utils;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 @Component
-public class OEPrivateDataRetrievalHelper {
+public class PrivateDataRetrievalService {
   public static final String COMPANY_NUMBER = "company_number";
 
   private final ApiClientService apiClientService;
 
-  public OEPrivateDataRetrievalHelper(ApiClientService apiClientService) {
+  private OverseasEntityDataApi overseasEntityDataApi;
+
+  public PrivateDataRetrievalService(ApiClientService apiClientService) {
     this.apiClientService = apiClientService;
   }
 
-  public void getOverseasEntityPrivateData(String companyNumber) throws ServiceException {
-    getOverseasEntityData(companyNumber);
+  public void initialisePrivateData(String companyNumber) throws ServiceException {
+    this.overseasEntityDataApi = getOverseasEntityData(companyNumber);
   }
 
   private OverseasEntityDataApi getOverseasEntityData(String companyNumber)
@@ -30,12 +33,12 @@ public class OEPrivateDataRetrievalHelper {
           apiClientService
               .getInternalApiClient()
               .privateOverseasEntityDataHandler()
-              .getEmail("/overseas-entity/" + companyNumber + "/entity-data")
+              .getOverseasEntityData("/overseas-entity/" + companyNumber + "/entity-data")
               .execute()
               .getData();
       var logMap = new HashMap<String, Object>();
-      logMap.put(COMPANY_NUMBER, overseasEntityData.getEmail());
 
+      logMap.put(COMPANY_NUMBER, companyNumber);
       ApiLogger.info("Retrieving overseas entity data for company number " + logMap);
 
       return overseasEntityData;

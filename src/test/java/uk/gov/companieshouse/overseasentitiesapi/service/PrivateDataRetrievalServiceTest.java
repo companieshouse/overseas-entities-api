@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.utils;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OEPrivateDataRetrievalHelperTest {
+class PrivateDataRetrievalServiceTest {
   private static final String COMPANY_REFERENCE = "OE123456";
 
-  @InjectMocks private OEPrivateDataRetrievalHelper oePrivateDataRetrievalHelper;
+  @InjectMocks private PrivateDataRetrievalService privateDataRetrievalService;
 
   @Mock private ApiClientService apiClientService;
 
@@ -44,7 +44,7 @@ class OEPrivateDataRetrievalHelperTest {
   public void init() throws IOException {
     when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
     when(apiClient.privateOverseasEntityDataHandler()).thenReturn(overseasEntity);
-    when(overseasEntity.getEmail(Mockito.anyString())).thenReturn(overseasEntityDataGet);
+    when(overseasEntity.getOverseasEntityData(Mockito.anyString())).thenReturn(overseasEntityDataGet);
   }
 
   @Test
@@ -55,7 +55,7 @@ class OEPrivateDataRetrievalHelperTest {
     when(overseasEntityDataGet.execute()).thenReturn(apiGetResponse);
     when(apiGetResponse.getData()).thenReturn(overseasEntityApi);
 
-    oePrivateDataRetrievalHelper.getOverseasEntityPrivateData(COMPANY_REFERENCE);
+    privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
     verify(apiClientService, times(1)).getInternalApiClient();
   }
 
@@ -67,7 +67,7 @@ class OEPrivateDataRetrievalHelperTest {
     assertThrows(
         ServiceException.class,
         () -> {
-          oePrivateDataRetrievalHelper.getOverseasEntityPrivateData((COMPANY_REFERENCE));
+          privateDataRetrievalService.initialisePrivateData((COMPANY_REFERENCE));
         });
   }
 
@@ -79,7 +79,7 @@ class OEPrivateDataRetrievalHelperTest {
     assertThrows(
         ServiceException.class,
         () -> {
-          oePrivateDataRetrievalHelper.getOverseasEntityPrivateData(COMPANY_REFERENCE);
+          privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
         });
   }
 }
