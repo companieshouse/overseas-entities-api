@@ -139,7 +139,7 @@ public class TrustIndividualValidator {
         return errors;
     }
 
-    private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors,
+     private Errors validateSecondNationality(String nationality, String secondNationality, Errors errors,
             String loggingContext) {
         String qualifiedFieldNameFirstNationality = getQualifiedFieldName(PARENT_FIELD,
                 TrustIndividualDto.NATIONALITY_FIELD);

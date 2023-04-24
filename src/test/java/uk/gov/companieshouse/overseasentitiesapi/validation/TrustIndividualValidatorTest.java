@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.TrustIndividualValidator.PARENT_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 import java.time.LocalDate;
@@ -23,6 +24,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividual
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TrustIndividualValidatorTest {
@@ -259,6 +262,46 @@ class TrustIndividualValidatorTest {
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenSecondNationalitySameAsFirstNationality() {
+
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.NATIONALITY_FIELD);
+        String qualifiedFieldNameForSecondNationality = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        when(nationalityValidator.validateSecondNationality(eq(qualifiedFieldNameFirstNationality),
+                eq(qualifiedFieldNameForSecondNationality), eq("Afghan"), eq("Afghan"), any(Errors.class),
+                eq(LOGGING_CONTEXT))).thenCallRealMethod();
+
+        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Afghan");
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String validationMessage = ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT.replace("%s", qualifiedFieldNameForSecondNationality);
+
+        assertError(qualifiedFieldNameForSecondNationality, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedWhenSecondNationalityDifferentToFirstNationality() {
+
+        String qualifiedFieldNameFirstNationality = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.NATIONALITY_FIELD);
+        String qualifiedFieldNameForSecondNationality = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.SECOND_NATIONALITY_FIELD);
+
+        when(nationalityValidator.validateSecondNationality(eq(qualifiedFieldNameFirstNationality),
+                eq(qualifiedFieldNameForSecondNationality), eq("Afghan"), eq("Spain"), any(Errors.class),
+                eq(LOGGING_CONTEXT))).thenCallRealMethod();
+
+        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
+        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Spain");
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
     }
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
