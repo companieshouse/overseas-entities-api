@@ -20,7 +20,6 @@ import uk.gov.companieshouse.api.model.psc.PscApi;
 import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.service.PublicDataRetrievalService;
 
 import java.io.IOException;
 import java.util.List;

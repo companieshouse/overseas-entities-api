@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.utils;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -7,19 +7,20 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 import java.io.IOException;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class OEPublicDataRetrievalHelper {
+public class PublicDataRetrievalService {
     public static final String COMPANY_NUMBER = "company_number";
     public static final String PSCS_NAME = "pscs_name";
 
     private final ApiClientService apiClientService;
 
-    public OEPublicDataRetrievalHelper(ApiClientService apiClientService) {
+    public PublicDataRetrievalService(ApiClientService apiClientService) {
         this.apiClientService = apiClientService;
     }
 
@@ -31,7 +32,11 @@ public class OEPublicDataRetrievalHelper {
     private CompanyProfileApi getCompanyProfile(String companyNumber, String passThroughTokenHeader) throws ServiceException {
         try {
             CompanyProfileApi companyProfileData = apiClientService
-                    .getOauthAuthenticatedClient(passThroughTokenHeader).company().get("/company/" + companyNumber).execute().getData();
+                    .getOauthAuthenticatedClient(passThroughTokenHeader)
+                    .company()
+                    .get("/company/" + companyNumber)
+                    .execute()
+                    .getData();
 
             var logMap = new HashMap<String, Object>();
             logMap.put(COMPANY_NUMBER, companyProfileData.getCompanyNumber());
@@ -50,8 +55,10 @@ public class OEPublicDataRetrievalHelper {
     private PscsApi getCompanyPSCs(String companyNumber, String passthroughTokenHeader) throws ServiceException{
         try {
             ApiResponse<PscsApi> pscsApiResponse = apiClientService
-                    .getOauthAuthenticatedClient(passthroughTokenHeader).pscs()
-                    .list("/company/" + companyNumber + "/persons-with-significant-control").execute();
+                    .getOauthAuthenticatedClient(passthroughTokenHeader)
+                    .pscs()
+                    .list("/company/" + companyNumber + "/persons-with-significant-control")
+                    .execute();
 
             PscsApi pscsData = pscsApiResponse.getData();
 
