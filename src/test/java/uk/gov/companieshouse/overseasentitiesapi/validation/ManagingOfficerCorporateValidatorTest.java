@@ -551,6 +551,19 @@ class ManagingOfficerCorporateValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenResignedOnDateIsInPast() {
+        managingOfficerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        managingOfficerCorporateDtoList.get(0).setResignedOn(LocalDate.now().plusDays(1));
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_CORPORATE_FIELD,
+                ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerCorporateDto.RESIGNED_ON_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testNoErrorWhenResignedOnDateIsSameAsStartDate() {
         managingOfficerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
         managingOfficerCorporateDtoList.get(0).setResignedOn(LocalDate.now().minusDays(1));

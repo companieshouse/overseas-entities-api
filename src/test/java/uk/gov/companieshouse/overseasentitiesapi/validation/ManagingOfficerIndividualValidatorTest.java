@@ -484,6 +484,19 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenResignedOnDateIsInPast() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().plusDays(1));
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                MANAGING_OFFICERS_INDIVIDUAL_FIELD,
+                ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
     void testNoErrorWhenResignedOnDateIsSameAsStartDate() {
         managingOfficerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
         managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().minusDays(1));
