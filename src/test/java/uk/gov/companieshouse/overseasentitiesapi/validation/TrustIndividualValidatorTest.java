@@ -272,6 +272,15 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIs() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddressSameAsUsualResidentialAddress(true);
+        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddress(null);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
