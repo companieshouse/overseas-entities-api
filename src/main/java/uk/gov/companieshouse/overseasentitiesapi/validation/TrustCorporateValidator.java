@@ -22,7 +22,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 @Component
 public class TrustCorporateValidator {
     public static final String PARENT_FIELD = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA,
-            TrustDataDto.CORPORATES_FIELD);
+            TrustDataDto.CORPORATE_FIELD);
 
     private final AddressDtoValidator addressDtoValidator;
 
@@ -46,7 +46,7 @@ public class TrustCorporateValidator {
                     validateAddress(TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD,
                             trustCorporateDto.getRegisteredOfficeAddress(), errors, loggingContext);
 
-                    boolean isSameAddressFlagValid = validateServiceAddressSameAsRegisteredOfficeAddress(
+                    boolean isSameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(
                             trustCorporateDto.getServiceAddressSameAsPrincipalAddress(), errors,
                             loggingContext);
 
@@ -84,16 +84,16 @@ public class TrustCorporateValidator {
     }
 
     private Errors validateServiceAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors,
-                                                     String loggingContext) {
+                                                       String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
         addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
     }
 
-    private boolean validateServiceAddressSameAsRegisteredOfficeAddress(Boolean same, Errors errors,
-                                                                        String loggingContext) {
+    private boolean validateServiceAddressSameAsPrincipalAddress(Boolean same, Errors errors,
+                                                                 String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
-                TrustCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_REGISTERED_OFFICE_ADDRESS_FIELD);
+                TrustCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
     }
 
@@ -134,14 +134,15 @@ public class TrustCorporateValidator {
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
-        addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors,
+        errors = addressDtoValidator.validate(qualifiedFieldName, addressDto, CountryLists.getAllCountries(), errors,
                 loggingContext);
 
         return errors;
     }
 
     private boolean validateIdentificationLegalForm(String legalForm, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
+                TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
 
         return StringValidators.isNotBlank(legalForm, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(legalForm, 160, qualifiedFieldName, errors,

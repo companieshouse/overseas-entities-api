@@ -23,11 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.TrustCorporateValidator.PARENT_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+
 @ExtendWith(MockitoExtension.class)
 class TrustCorporateValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
+    @Mock
     private AddressDtoValidator addressDtoValidator;
 
     private TrustCorporateValidator trustCorporateValidator;
@@ -35,8 +39,6 @@ class TrustCorporateValidatorTest {
 
     @BeforeEach
     public void init() {
-        addressDtoValidator = new AddressDtoValidator(null);
-
         trustCorporateValidator = new TrustCorporateValidator(addressDtoValidator);
         trustDataDtoList = new ArrayList<>();
 
@@ -180,6 +182,8 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenRegisteredOfficeAddressFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setRegisteredOfficeAddress(null);
+
+        when(addressDtoValidator.validate(any(), any(), any(), any(), any())).thenCallRealMethod();
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD);
@@ -193,7 +197,7 @@ class TrustCorporateValidatorTest {
         trustDataDtoList.get(0).getCorporates().get(0).setServiceAddressSameAsPrincipalAddress(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_REGISTERED_OFFICE_ADDRESS_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -469,9 +473,23 @@ class TrustCorporateValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    // todo - validateOnRegisteredInCountryFormedInNotSupplied
-    // todo - validateOnRegisteredInCountryFormedInSupplied
-    //        by setting / unsetting onRegister boolean and testing different parameters
+    @Test
+    void testErrorRegisteredInCountryFormedInNotSupplied() {
+        trustDataDtoList.get(0).getCorporates().get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
+        String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorRegisteredInCountryFormedInSupplied() {
+        trustDataDtoList.get(0).getCorporates().get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
