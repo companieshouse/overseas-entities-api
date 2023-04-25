@@ -16,7 +16,7 @@ public class TrustCorporateDto {
     public static final String TYPE_FIELD = "type";
     public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
     public static final String REGISTERED_OFFICE_ADDRESS_FIELD = "registered_office_address";
-    public static final String IS_SERVICE_ADDRESS_SAME_AS_REGISTERED_OFFICE_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
     public static final String SERVICE_ADDRESS_FIELD = "service_address";
     public static final String IDENTIFICATION_LEGAL_FORM_FIELD = "identification_legal_form";
     public static final String IDENTIFICATION_LEGAL_AUTHORITY_FIELD = "identification_legal_authority";
@@ -118,7 +118,7 @@ public class TrustCorporateDto {
     private String saAddressRegion;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("is_service_address_same_as_principal_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
     @JsonInclude(NON_NULL)
@@ -251,6 +251,7 @@ public class TrustCorporateDto {
             registeredOfficeAddress.setLine2(roAddressLine2);
             registeredOfficeAddress.setCounty(roAddressRegion);
             registeredOfficeAddress.setLocality(roAddressLocality);
+            registeredOfficeAddress.setTown(roAddressLocality);
             registeredOfficeAddress.setCountry(roAddressCountry);
             registeredOfficeAddress.setCareOf(roAddressCareOf);
             registeredOfficeAddress.setPoBox(roAddressPoBox);
@@ -345,6 +346,7 @@ public class TrustCorporateDto {
             serviceAddress.setLine2(saAddressLine2);
             serviceAddress.setCounty(saAddressRegion);
             serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setTown(saAddressLocality);
             serviceAddress.setCountry(saAddressCountry);
             serviceAddress.setCareOf(saAddressCareOf);
             serviceAddress.setPoBox(saAddressPoBox);
