@@ -222,6 +222,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenDateBecomeInterestedPersonFieldIsNull() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
@@ -232,7 +233,16 @@ class TrustIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenTypeFieldIsNotIntestestedPersonAndDateBecomeInterestedPersonFieldIsNull() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
+        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(null);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testNoErrorReportedWhenDateBecomeInterestedPersonFieldIsInThePast() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.of(1970, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -240,6 +250,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenDateBecomeInterestedPersonIsInTheFuture() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.now().plusDays(1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 

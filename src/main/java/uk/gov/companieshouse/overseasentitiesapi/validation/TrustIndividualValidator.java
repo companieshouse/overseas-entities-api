@@ -43,6 +43,7 @@ public class TrustIndividualValidator {
     }
 
     public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
+        String type = null;
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustIndividualDto> trustIndividuals = trustDataDto.getIndividuals();
             if (!CollectionUtils.isEmpty(trustIndividuals)) {
@@ -50,28 +51,21 @@ public class TrustIndividualValidator {
                     validateForename(trustIndividualDto.getForename(), errors, loggingContext);
                     validateSurname(trustIndividualDto.getSurname(), errors, loggingContext);
                     validateDateOfBirth(trustIndividualDto.getDateOfBirth(), errors, loggingContext);
-                    validateType(trustIndividualDto.getType(), errors, loggingContext);
-                    validateDateBecameInterestedPerson(trustIndividualDto.getDateBecameInterestedPerson(), errors,
-                            loggingContext);
+
+                    type = trustIndividualDto.getType();
+                    if (validateType(type, errors, loggingContext) && BeneficialOwnerType
+                            .findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                        validateDateBecameInterestedPerson(trustIndividualDto.getDateBecameInterestedPerson(), errors,
+                                loggingContext);
+                    }
+
                     validateNationality(trustIndividualDto.getNationality(), errors, loggingContext);
                     validateSecondNationality(trustIndividualDto.getNationality(),
                             trustIndividualDto.getSecondNationality(), errors, loggingContext);
 
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
-
-                    boolean isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
-                            trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors,
-                            loggingContext);
-                    if (isSameAddressFlagValid && Boolean.FALSE
-                            .equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
-                        validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD,
-                                trustIndividualDto.getServiceAddress(), errors, loggingContext);
-                    } else if (isSameAddressFlagValid && Boolean.TRUE
-                            .equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
-                        validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD,
-                                trustIndividualDto.getServiceAddress(), errors, loggingContext);
-                    }
+                    validateSameAsAddress(trustIndividualDto, errors, loggingContext);
                 }
             }
         }
@@ -172,6 +166,21 @@ public class TrustIndividualValidator {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
         addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
+    }
+
+    private void validateSameAsAddress(TrustIndividualDto trustIndividualDto, Errors errors, String loggingContext) {
+        boolean isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
+                trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
+        if (isSameAddressFlagValid
+                && Boolean.FALSE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
+            validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD, trustIndividualDto.getServiceAddress(), errors,
+                    loggingContext);
+        } else if (isSameAddressFlagValid
+                && Boolean.TRUE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
+            validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD,
+                    trustIndividualDto.getServiceAddress(), errors, loggingContext);
+        }
+
     }
 
 }
