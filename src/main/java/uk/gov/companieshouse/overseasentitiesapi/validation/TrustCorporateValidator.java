@@ -39,9 +39,14 @@ public class TrustCorporateValidator {
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
                     validateName(trustCorporateDto.getName(), errors, loggingContext);
-                    validateType(trustCorporateDto.getType(), errors, loggingContext);
-                    validateDateBecameInterestedPerson(trustCorporateDto.getDateBecameInterestedPerson(), errors,
-                            loggingContext);
+
+                    String type = trustCorporateDto.getType();
+                    if(validateType(type, errors, loggingContext) && BeneficialOwnerType
+                            .findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+
+                        validateDateBecameInterestedPerson(trustCorporateDto.getDateBecameInterestedPerson(), errors,
+                                loggingContext);
+                    }
 
                     validateAddress(TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD,
                             trustCorporateDto.getRegisteredOfficeAddress(), errors, loggingContext);
