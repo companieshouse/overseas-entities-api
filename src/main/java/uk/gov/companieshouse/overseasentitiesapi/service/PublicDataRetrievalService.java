@@ -6,7 +6,6 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
-import uk.gov.companieshouse.api.model.psc.PscApi;
 import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -32,11 +31,11 @@ public class PublicDataRetrievalService {
         this.apiClientService = apiClientService;
     }
 
-    public OfficersApi getOfficerApi() {
+    public OfficersApi getOfficers() {
         return officers;
     }
 
-    public PscsApi getPscsApi() {
+    public PscsApi getPscs() {
         return pscs;
     }
 
@@ -104,6 +103,7 @@ public class PublicDataRetrievalService {
 
     private PscsApi getPSCs(String companyNumber, String passthroughTokenHeader) throws ServiceException{
         var logMap = new HashMap<String, Object>();
+
         logMap.put(COMPANY_NUMBER, companyNumber);
         ApiLogger.debug("Retrieving PSCs data for Company Number", logMap);
 
@@ -117,13 +117,10 @@ public class PublicDataRetrievalService {
             PscsApi pscsData = pscsApiResponse.getData();
 
             if (pscsApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                logMap.put(COMPANY_NUMBER, companyNumber);
                 ApiLogger.info("No PSCs for Company Number " + logMap);
             } else {
-                for(PscApi psc :  pscsData.getItems()) {
-                    logMap.put(PSCS_NAME, psc.getName());
-                    ApiLogger.debug("Retrieved PSCs data for PSC name ", logMap);
-                }
+                logMap.put(PSCS_NAME, pscsData.getItems().size());
+                ApiLogger.debug("Retrieved PSCs data with total of pscs: ", logMap);
             }
 
             return pscsData;

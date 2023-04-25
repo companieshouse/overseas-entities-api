@@ -108,7 +108,7 @@ public class FilingsService {
         setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
         if (submissionDto.isForUpdate()) {
-            publicDataRetrievalService.getOverseasEntityPublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
+            publicDataRetrievalService.initialisePublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
         }
 
         filing.setData(userSubmission);
