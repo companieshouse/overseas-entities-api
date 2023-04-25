@@ -43,7 +43,6 @@ public class TrustIndividualValidator {
     }
 
     public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
-        String type = null;
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustIndividualDto> trustIndividuals = trustDataDto.getIndividuals();
             if (!CollectionUtils.isEmpty(trustIndividuals)) {
@@ -52,7 +51,7 @@ public class TrustIndividualValidator {
                     validateSurname(trustIndividualDto.getSurname(), errors, loggingContext);
                     validateDateOfBirth(trustIndividualDto.getDateOfBirth(), errors, loggingContext);
 
-                    type = trustIndividualDto.getType();
+                    String type = trustIndividualDto.getType();
                     if (validateType(type, errors, loggingContext) && BeneficialOwnerType
                             .findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
                         validateDateBecameInterestedPerson(trustIndividualDto.getDateBecameInterestedPerson(), errors,
