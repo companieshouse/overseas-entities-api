@@ -105,7 +105,7 @@ public class FilingsService {
         Map<String, Object> userSubmission = new HashMap<>();
 
         OverseasEntitySubmissionDto submissionDto = setSubmissionData(userSubmission, overseasEntityId, logMap);
-        //setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
+        setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
         if (submissionDto.isForUpdate()) {
             publicDataRetrievalService.getOverseasEntityPublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
