@@ -6,6 +6,7 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
+import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -18,18 +19,24 @@ import java.util.HashMap;
 public class PublicDataRetrievalService {
     public static final String COMPANY_NUMBER = "company_number";
     public static final String OFFICER_NAME = "officer_name";
+    public static final String PSCS_NAME = "pscs_name";
 
     private final ApiClientService apiClientService;
 
     private CompanyProfileApi companyProfile;
     private OfficersApi officers;
+    private PscsApi pscs;
 
     public PublicDataRetrievalService(ApiClientService apiClientService) {
         this.apiClientService = apiClientService;
     }
 
-    public OfficersApi getOfficerApi() {
+    public OfficersApi getOfficers() {
         return officers;
+    }
+
+    public PscsApi getPscs() {
+        return pscs;
     }
 
     public CompanyProfileApi getCompanyProfile() {
@@ -39,6 +46,7 @@ public class PublicDataRetrievalService {
     public void initialisePublicData(String companyNumber, String passThroughTokenHeader) throws ServiceException {
         this.companyProfile = getCompanyProfile(companyNumber, passThroughTokenHeader);
         this.officers = getOfficers(companyNumber, passThroughTokenHeader);
+        this.pscs = getPSCs(companyNumber, passThroughTokenHeader);
     }
 
     private CompanyProfileApi getCompanyProfile(String companyNumber, String passThroughTokenHeader) throws ServiceException {
@@ -79,7 +87,7 @@ public class PublicDataRetrievalService {
             if (officersApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
                 ApiLogger.info("No Officer for Company Number ", logMap);
             } else {
-                for (CompanyOfficerApi officer: officersData.getItems()) {
+                for (CompanyOfficerApi officer : officersData.getItems()) {
                     logMap.put(OFFICER_NAME, officer.getName());
                     ApiLogger.debug("Retrieved Officers data for Officer name ", logMap);
                 }
@@ -88,6 +96,36 @@ public class PublicDataRetrievalService {
             return officersData;
         } catch (URIValidationException | IOException e) {
             var message = "Error Retrieving Officers data for " + companyNumber;
+            ApiLogger.error(message, e, logMap);
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    private PscsApi getPSCs(String companyNumber, String passthroughTokenHeader) throws ServiceException{
+        var logMap = new HashMap<String, Object>();
+
+        logMap.put(COMPANY_NUMBER, companyNumber);
+        ApiLogger.debug("Retrieving PSCs data for Company Number", logMap);
+
+        try {
+            ApiResponse<PscsApi> pscsApiResponse = apiClientService
+                    .getOauthAuthenticatedClient(passthroughTokenHeader)
+                    .pscs()
+                    .list("/company/" + companyNumber + "/persons-with-significant-control")
+                    .execute();
+
+            PscsApi pscsData = pscsApiResponse.getData();
+
+            if (pscsApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info("No PSCs for Company Number ", logMap);
+            } else {
+                logMap.put(PSCS_NAME, pscsData.getItems().size());
+                ApiLogger.debug("Retrieved PSCs data with total of pscs: ", logMap);
+            }
+
+            return pscsData;
+        } catch (URIValidationException | IOException e) {
+            var message = "Error Retrieving PSCs Data for " + companyNumber;
             ApiLogger.error(message, e, logMap);
             throw new ServiceException(e.getMessage(), e);
         }

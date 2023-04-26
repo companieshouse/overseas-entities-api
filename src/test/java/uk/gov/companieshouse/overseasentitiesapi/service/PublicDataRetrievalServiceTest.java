@@ -18,6 +18,10 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
+import uk.gov.companieshouse.api.handler.psc.PscsResourceHandler;
+import uk.gov.companieshouse.api.handler.psc.request.PscsList;
+import uk.gov.companieshouse.api.model.psc.PscApi;
+import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
@@ -49,6 +53,9 @@ class PublicDataRetrievalServiceTest {
 
     @Mock
     private ApiResponse<OfficersApi> apiGetResponseOfficers;
+    
+    @Mock
+    private ApiResponse<PscsApi> apiGetResponsePscs;
 
     @Mock
     private CompanyResourceHandler company;
@@ -61,6 +68,12 @@ class PublicDataRetrievalServiceTest {
 
     @Mock
     private OfficersList officersList;
+
+    @Mock
+    private PscsList pscsList;
+
+    @Mock
+    private PscsResourceHandler pscs;
 
     @BeforeEach
     public void init() throws IOException {
@@ -75,8 +88,14 @@ class PublicDataRetrievalServiceTest {
         var companyProfileApi = new CompanyProfileApi();
         var officersApi = new OfficersApi();
         var companyOfficerApi = new CompanyOfficerApi();
+        var pscsApi = new PscsApi();
+        var companyPSCsApi = new PscApi();
+
         companyOfficerApi.setName("Tim Bill");
         officersApi.setItems(List.of(companyOfficerApi));
+
+        companyPSCsApi.setName("Test Name");
+        pscsApi.setItems(List.of(companyPSCsApi));
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
         when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
@@ -85,30 +104,78 @@ class PublicDataRetrievalServiceTest {
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenReturn(apiGetResponseOfficers);
 
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenReturn(apiGetResponsePscs);
+
+        when(apiGetResponsePscs.getData()).thenReturn(pscsApi);
         when(apiGetResponseOfficers.getData()).thenReturn(officersApi);
 
         publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
-        verify(apiClientService, times(2)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
+        verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
     void testInitialisePublicDataOfficersDataNotFound() throws IOException, URIValidationException, ServiceException {
         var companyProfileApi = new CompanyProfileApi();
+        var pscsApi = new PscsApi();
+        var companyPSCsApi = new PscApi();
         var officersApi = new OfficersApi();
         var companyOfficerApi = new CompanyOfficerApi();
         var officersApiResponse = new ApiResponse<OfficersApi>(404, null);
+
+        companyPSCsApi.setName("Test Name");
+        pscsApi.setItems(List.of(companyPSCsApi));
+
         companyOfficerApi.setName("Tim Bill");
         officersApi.setItems(List.of(companyOfficerApi));
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
         when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
 
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenReturn(apiGetResponsePscs);
+        when(apiGetResponsePscs.getData()).thenReturn(pscsApi);
+
         when(apiClient.officers()).thenReturn(officers);
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenReturn(officersApiResponse);
 
         publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
-        verify(apiClientService, times(2)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
+        verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
+    }
+
+    @Test
+    void testGetOverseasEntityPublicPscsNotFound() throws IOException, URIValidationException, ServiceException {
+        var companyProfileApi = new CompanyProfileApi();
+        var officersApi = new OfficersApi();
+        var companyOfficerApi = new CompanyOfficerApi();
+        var pscsApi = new PscsApi();
+        var companyPSCsApi = new PscApi();
+        var pscsApiResponse = new ApiResponse<PscsApi>(404, null);
+
+        companyOfficerApi.setName("Tim Bill");
+        officersApi.setItems(List.of(companyOfficerApi));
+
+        companyPSCsApi.setName("Test name");
+        pscsApi.setItems(List.of(companyPSCsApi));
+
+        when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
+        when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
+
+        when(apiClient.officers()).thenReturn(officers);
+        when(officers.list(Mockito.anyString())).thenReturn(officersList);
+        when(officersList.execute()).thenReturn(apiGetResponseOfficers);
+        when(apiGetResponseOfficers.getData()).thenReturn(officersApi);
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenReturn(pscsApiResponse);
+
+        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
@@ -155,6 +222,58 @@ class PublicDataRetrievalServiceTest {
         when(apiClient.officers()).thenReturn(officers);
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+
+        assertThrows(ServiceException.class, () -> {
+            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        });
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenInitialisePublicDataForPscsDataThrowsIOException() throws IOException, URIValidationException {
+        var companyProfileApi = new CompanyProfileApi();
+        var officersApi = new OfficersApi();
+        var companyOfficerApi = new CompanyOfficerApi();
+
+        companyOfficerApi.setName("Tim Bill");
+        officersApi.setItems(List.of(companyOfficerApi));
+
+        when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
+        when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
+
+        when(apiClient.officers()).thenReturn(officers);
+        when(officers.list(Mockito.anyString())).thenReturn(officersList);
+        when(officersList.execute()).thenReturn(apiGetResponseOfficers);
+        when(apiGetResponseOfficers.getData()).thenReturn(officersApi);
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+
+        assertThrows(ServiceException.class, () -> {
+            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        });
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenInitialisePublicDataForPscsDataThrowsURIValidationException() throws IOException, URIValidationException {
+        var companyProfileApi = new CompanyProfileApi();
+        var officersApi = new OfficersApi();
+        var companyOfficerApi = new CompanyOfficerApi();
+
+        companyOfficerApi.setName("Tim Bill");
+        officersApi.setItems(List.of(companyOfficerApi));
+
+        when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
+        when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
+
+        when(apiClient.officers()).thenReturn(officers);
+        when(officers.list(Mockito.anyString())).thenReturn(officersList);
+        when(officersList.execute()).thenReturn(apiGetResponseOfficers);
+        when(apiGetResponseOfficers.getData()).thenReturn(officersApi);
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenThrow(new URIValidationException("ERROR"));
 
         assertThrows(ServiceException.class, () -> {
             publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
