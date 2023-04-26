@@ -117,7 +117,7 @@ public class PublicDataRetrievalService {
             PscsApi pscsData = pscsApiResponse.getData();
 
             if (pscsApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                ApiLogger.info("No PSCs for Company Number " + logMap);
+                ApiLogger.info("No PSCs for Company Number ", logMap);
             } else {
                 logMap.put(PSCS_NAME, pscsData.getItems().size());
                 ApiLogger.debug("Retrieved PSCs data with total of pscs: ", logMap);
