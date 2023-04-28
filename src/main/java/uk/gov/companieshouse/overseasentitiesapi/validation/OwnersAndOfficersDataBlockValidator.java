@@ -86,7 +86,7 @@ public class OwnersAndOfficersDataBlockValidator {
             logValidationErrorMessage(errors, loggingContext, MISSING_BENEFICIAL_OWNER_STATEMENT);
             return false;
         }
-        switch(overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
+        switch (overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
             case ALL_IDENTIFIED_ALL_DETAILS:
                  if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
                      logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that all can be identified", MISSING_BENEFICIAL_OWNER));

@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -48,6 +49,11 @@ public class Mocks {
         List<ManagingOfficerCorporateDto> managingOfficersCorporateInFiling = buildManagingOfficersCorporateInFiling();
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateInFiling);
         return overseasEntitySubmissionDto;
+    }
+
+    public static OverseasEntitySubmissionDao buildSubmissionDao() {
+        OverseasEntitySubmissionDao overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        return overseasEntitySubmissionDao;
     }
 
     public static OverseasEntitySubmissionDto buildSubmissionDtoWithBoIndividualTrust() {

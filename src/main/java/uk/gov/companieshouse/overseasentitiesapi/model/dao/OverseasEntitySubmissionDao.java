@@ -13,6 +13,8 @@ import java.util.Map;
 @Document(collection = "overseas_entities_submissions")
 public class OverseasEntitySubmissionDao {
 
+    public static final String SCHEMA_VERSION_FIELD = "schema_version";
+
     @Id
     private String id;
 
@@ -70,7 +72,7 @@ public class OverseasEntitySubmissionDao {
     @Field("links")
     private Map<String, String> links;
 
-    @Field("schema_version")
+    @Field(SCHEMA_VERSION_FIELD)
     private String schemaVersion;
 
     public String getId() {
