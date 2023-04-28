@@ -25,6 +25,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private final TrustDetailsValidator trustDetailsValidator;
     private final TrustIndividualValidator trustIndividualValidator;
     private final HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
+    private final TrustCorporateValidator trustCorporateValidator;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
@@ -40,6 +41,7 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator,
                                                 TrustDetailsValidator trustDetailsValidator,
                                                 TrustIndividualValidator trustIndividualValidator,
+                                                TrustCorporateValidator trustCorporateValidator,
                                                 HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
@@ -48,6 +50,7 @@ public class OverseasEntitySubmissionDtoValidator {
         this.ownersAndOfficersDataBlockValidator = ownersAndOfficersDataBlockValidator;
         this.trustDetailsValidator = trustDetailsValidator;
         this.trustIndividualValidator = trustIndividualValidator;
+        this.trustCorporateValidator = trustCorporateValidator;
         this.historicalBeneficialOwnerValidator = historicalBeneficialOwnerValidator;
     }
 
@@ -105,6 +108,7 @@ public class OverseasEntitySubmissionDtoValidator {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
             trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
             historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
         }
     }
 

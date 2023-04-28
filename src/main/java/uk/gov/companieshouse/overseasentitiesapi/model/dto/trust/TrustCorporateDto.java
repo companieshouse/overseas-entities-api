@@ -7,23 +7,38 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
+
 public class TrustCorporateDto {
-    @JsonProperty("type")
+
+    public static final String NAME_FIELD = "name";
+    public static final String TYPE_FIELD = "type";
+    public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
+    public static final String REGISTERED_OFFICE_ADDRESS_FIELD = "registered_office_address";
+    public static final String IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD = "is_service_address_same_as_principal_address";
+    public static final String SERVICE_ADDRESS_FIELD = "service_address";
+    public static final String IDENTIFICATION_LEGAL_FORM_FIELD = "identification_legal_form";
+    public static final String IDENTIFICATION_LEGAL_AUTHORITY_FIELD = "identification_legal_authority";
+    public static final String IDENTIFICATION_PLACE_REGISTERED_FIELD = "identification_place_registered";
+    public static final String IDENTIFICATION_COUNTRY_REGISTRATION_FIELD = "identification_country_registration";
+    public static final String IDENTIFICATION_REGISTRATION_NUMBER_FIELD = "identification_registration_number";
+
+    public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN = "is_on_register_in_country_formed_in";
+
+    @JsonProperty(TYPE_FIELD)
     private String type;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("name")
+    @JsonProperty(NAME_FIELD)
     private String name;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("date_became_interested_person")
+    @JsonProperty(DATE_BECAME_INTERESTED_PERSON_FIELD)
     private LocalDate dateBecameInterestedPerson;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("registered_office_address")
+    @JsonProperty(REGISTERED_OFFICE_ADDRESS_FIELD)
     private AddressDto registeredOfficeAddress;
 
     @JsonInclude(NON_NULL)
@@ -63,7 +78,7 @@ public class TrustCorporateDto {
     private String roAddressRegion;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("service_address")
+    @JsonProperty(SERVICE_ADDRESS_FIELD)
     private AddressDto serviceAddress;
 
     @JsonInclude(NON_NULL)
@@ -103,31 +118,31 @@ public class TrustCorporateDto {
     private String saAddressRegion;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("is_service_address_same_as_principal_address")
+    @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("identification_country_registration")
+    @JsonProperty(IDENTIFICATION_COUNTRY_REGISTRATION_FIELD)
     private String identificationCountryRegistration;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("identification_legal_authority")
+    @JsonProperty(IDENTIFICATION_LEGAL_AUTHORITY_FIELD)
     private String identificationLegalAuthority;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("identification_legal_form")
+    @JsonProperty(IDENTIFICATION_LEGAL_FORM_FIELD)
     private String identificationLegalForm;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("identification_place_registered")
+    @JsonProperty(IDENTIFICATION_PLACE_REGISTERED_FIELD)
     private String identificationPlaceRegistered;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("identification_registration_number")
+    @JsonProperty(IDENTIFICATION_REGISTRATION_NUMBER_FIELD)
     private String identificationRegistrationNumber;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty("is_on_register_in_country_formed_in")
+    @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN)
     private Boolean onRegisterInCountryFormedIn;
 
     public String getType() {
@@ -236,6 +251,7 @@ public class TrustCorporateDto {
             registeredOfficeAddress.setLine2(roAddressLine2);
             registeredOfficeAddress.setCounty(roAddressRegion);
             registeredOfficeAddress.setLocality(roAddressLocality);
+            registeredOfficeAddress.setTown(roAddressLocality);
             registeredOfficeAddress.setCountry(roAddressCountry);
             registeredOfficeAddress.setCareOf(roAddressCareOf);
             registeredOfficeAddress.setPoBox(roAddressPoBox);
@@ -330,6 +346,7 @@ public class TrustCorporateDto {
             serviceAddress.setLine2(saAddressLine2);
             serviceAddress.setCounty(saAddressRegion);
             serviceAddress.setLocality(saAddressLocality);
+            serviceAddress.setTown(saAddressLocality);
             serviceAddress.setCountry(saAddressCountry);
             serviceAddress.setCareOf(saAddressCareOf);
             serviceAddress.setPoBox(saAddressPoBox);
