@@ -151,6 +151,7 @@ class TrustCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenDateBecameInterestedPersonFieldIsNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
@@ -169,6 +170,7 @@ class TrustCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenDateBecameInterestedPersonIsInTheFuture() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.now().plusDays(1));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
