@@ -65,8 +65,11 @@ public class ManagingOfficerIndividualValidator {
     private void validateResignedOn(ManagingOfficerIndividualDto managingOfficerIndividualDto, Errors errors, String loggingContext) {
         if (managingOfficerIndividualDto.getStartDate() != null) {
             validateStartDate(managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
-            validateResignedOnDateAgainstStartDate(managingOfficerIndividualDto.getResignedOn(), managingOfficerIndividualDto.getStartDate(),
-                    errors, loggingContext);
+            if (managingOfficerIndividualDto.getResignedOn() != null) {
+                validateResignedOnDateAgainstStartDate(managingOfficerIndividualDto.getResignedOn(),
+                        managingOfficerIndividualDto.getStartDate(),
+                        errors, loggingContext);
+            }
         } else {
             if (managingOfficerIndividualDto.getResignedOn() != null) {
                 validateResignedOnDate(managingOfficerIndividualDto.getResignedOn(), errors,

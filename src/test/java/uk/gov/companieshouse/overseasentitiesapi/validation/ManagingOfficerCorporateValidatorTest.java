@@ -572,7 +572,6 @@ class ManagingOfficerCorporateValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-
     @Test
     void testNoErrorWhenNoResignedOnDateAndNoStartDate() {
         managingOfficerCorporateDtoList.get(0).setStartDate(null);
@@ -591,6 +590,15 @@ class ManagingOfficerCorporateValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
+    void testNoErrorWhenNoResignedOnDate() {
+        managingOfficerCorporateDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        managingOfficerCorporateDtoList.get(0).setResignedOn(null);
+        Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+    
     @Test
     void testErrorWhenResignedOnDateIsInFutureAndNoStartDate() {
         managingOfficerCorporateDtoList.get(0).setStartDate(null);

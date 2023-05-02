@@ -524,6 +524,15 @@ class ManagingOfficerIndividualValidatorTest {
     }
 
     @Test
+    void testNoErrorWhenNoResignedOnDate() {
+        managingOfficerIndividualDtoList.get(0).setStartDate(LocalDate.now().minusDays(1));
+        managingOfficerIndividualDtoList.get(0).setResignedOn(null);
+        Errors errors = managingOfficerIndividualValidator.validate(managingOfficerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorWhenResignedOnDateIsInFutureAndNoStartDate() {
         managingOfficerIndividualDtoList.get(0).setStartDate(null);
         managingOfficerIndividualDtoList.get(0).setResignedOn(LocalDate.now().plusDays(1));

@@ -57,7 +57,11 @@ public class ManagingOfficerCorporateValidator {
 
             if (managingOfficerCorporateDto.getStartDate() != null) {
                 validateStartDate(managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
-                validateResignedOnDateAgainstStartDate(managingOfficerCorporateDto.getResignedOn(), managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+                if (managingOfficerCorporateDto.getResignedOn() != null) {
+                    validateResignedOnDateAgainstStartDate(
+                            managingOfficerCorporateDto.getResignedOn(),
+                            managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+                }
             } else {
                 if (managingOfficerCorporateDto.getResignedOn() != null) {
                     validateResignedOnDate(managingOfficerCorporateDto.getResignedOn(), errors, loggingContext);
