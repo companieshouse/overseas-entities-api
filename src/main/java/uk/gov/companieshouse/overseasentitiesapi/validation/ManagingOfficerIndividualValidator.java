@@ -57,16 +57,22 @@ public class ManagingOfficerIndividualValidator {
             validateOccupation(managingOfficerIndividualDto.getOccupation(), errors, loggingContext);
             validateRoleAndResponsibilities(managingOfficerIndividualDto.getRoleAndResponsibilities(), errors, loggingContext);
 
-            if (managingOfficerIndividualDto.getStartDate() != null) {
-                validateStartDate(managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
-                validateResignedOnDateAgainstStartDate(managingOfficerIndividualDto.getResignedOn(), managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
-            } else {
-                if (managingOfficerIndividualDto.getResignedOn() != null) {
-                    validateResignedOnDate(managingOfficerIndividualDto.getResignedOn(), errors, loggingContext);
-                }
-            }
+            validateResignedOn(managingOfficerIndividualDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateResignedOn(ManagingOfficerIndividualDto managingOfficerIndividualDto, Errors errors, String loggingContext) {
+        if (managingOfficerIndividualDto.getStartDate() != null) {
+            validateStartDate(managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
+            validateResignedOnDateAgainstStartDate(managingOfficerIndividualDto.getResignedOn(), managingOfficerIndividualDto.getStartDate(),
+                    errors, loggingContext);
+        } else {
+            if (managingOfficerIndividualDto.getResignedOn() != null) {
+                validateResignedOnDate(managingOfficerIndividualDto.getResignedOn(), errors,
+                        loggingContext);
+            }
+        }
     }
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {

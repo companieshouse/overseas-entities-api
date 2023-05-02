@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
