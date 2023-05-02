@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -16,7 +16,7 @@ public class PrivateDataRetrievalService {
   public static final String MANAGING_OFFICER_ID = "managing_officer_id";
 
   private final ApiClientService apiClientService;
-  private ManagingOfficerDataApi managingOfficerData;
+  private ManagingOfficerListDataApi managingOfficerData;
 
   public PrivateDataRetrievalService(ApiClientService apiClientService) {
     this.apiClientService = apiClientService;
@@ -27,7 +27,7 @@ public class PrivateDataRetrievalService {
     this.managingOfficerData = getManagingOfficerData(companyNumber);
   }
 
-  private ManagingOfficerDataApi getManagingOfficerData(String companyNumber)
+  private ManagingOfficerListDataApi getManagingOfficerData(String companyNumber)
       throws ServiceException {
     var logMap = new HashMap<String, Object>();
     logMap.put(COMPANY_NUMBER, companyNumber);
@@ -38,7 +38,8 @@ public class PrivateDataRetrievalService {
           .execute()
           .getData();
 
-      logMap.put(MANAGING_OFFICER_ID, managingOfficerData.getManagingOfficerId());
+      logMap.put(MANAGING_OFFICER_ID,
+          managingOfficerData.getManagingOfficerData().get(0).getManagingOfficerId());
       ApiLogger.debug("Retrieving Managing Officer data for Company Number ", logMap);
 
       return managingOfficerData;
