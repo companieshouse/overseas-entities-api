@@ -261,10 +261,10 @@ class TrustCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenLegalAuthorityIsNull() {
-        trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(null);
+        trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalAuthority(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_AUTHORITY_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -272,10 +272,10 @@ class TrustCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenLegalAuthorityIsEmpty() {
-        trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm("  ");
+        trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalAuthority("  ");
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_AUTHORITY_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);

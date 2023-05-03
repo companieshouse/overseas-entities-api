@@ -156,7 +156,8 @@ public class TrustCorporateValidator {
     }
 
     private boolean validateIdentificationLegalAuthority(String legalAuthor, Errors errors, String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
+                TrustCorporateDto.IDENTIFICATION_LEGAL_AUTHORITY_FIELD);
 
         return StringValidators.isNotBlank(legalAuthor, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(legalAuthor, 160, qualifiedFieldName, errors,
