@@ -1,8 +1,10 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updateSubmission;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updateSubmission.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.additions.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.cessations.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes.Change;
 
 import java.util.List;
 
@@ -23,10 +25,10 @@ public class UpdateSubmission {
     private FilingForDate filingForDate;
 
     @JsonProperty("noChangesInFilingPeriodStatement")
-    private String noChangesInFilingPeriodStatement;
+    private Boolean noChangesInFilingPeriodStatement;
 
     @JsonProperty("anyBOsOrMOsAddedOrCeased")
-    private String anyBOsOrMOsAddedOrCeased;
+    private Boolean anyBOsOrMOsAddedOrCeased;
 
     @JsonProperty("beneficialOwnerStatement")
     private String beneficialOwnerStatement;
@@ -35,10 +37,10 @@ public class UpdateSubmission {
     private List<Change> changes;
 
     @JsonProperty("additions")
-    private List<Change> additions;
+    private List<Addition> additions;
 
     @JsonProperty("cessations")
-    private List<Change> cessations;
+    private List<Cessation> cessations;
 
     public String getType() {
         return type;
@@ -80,19 +82,19 @@ public class UpdateSubmission {
         this.filingForDate = filingForDate;
     }
 
-    public String getNoChangesInFilingPeriodStatement() {
+    public Boolean getNoChangesInFilingPeriodStatement() {
         return noChangesInFilingPeriodStatement;
     }
 
-    public void setNoChangesInFilingPeriodStatement(String noChangesInFilingPeriodStatement) {
+    public void setNoChangesInFilingPeriodStatement(Boolean noChangesInFilingPeriodStatement) {
         this.noChangesInFilingPeriodStatement = noChangesInFilingPeriodStatement;
     }
 
-    public String getAnyBOsOrMOsAddedOrCeased() {
+    public Boolean getAnyBOsOrMOsAddedOrCeased() {
         return anyBOsOrMOsAddedOrCeased;
     }
 
-    public void setAnyBOsOrMOsAddedOrCeased(String anyBOsOrMOsAddedOrCeased) {
+    public void setAnyBOsOrMOsAddedOrCeased(Boolean anyBOsOrMOsAddedOrCeased) {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
     }
 
@@ -112,19 +114,19 @@ public class UpdateSubmission {
         this.changes = changes;
     }
 
-    public List<Change> getAdditions() {
+    public List<Addition> getAdditions() {
         return additions;
     }
 
-    public void setAdditions(List<Change> additions) {
+    public void setAdditions(List<Addition> additions) {
         this.additions = additions;
     }
 
-    public List<Change> getCessations() {
+    public List<Cessation> getCessations() {
         return cessations;
     }
 
-    public void setCessations(List<Change> cessations) {
+    public void setCessations(List<Cessation> cessations) {
         this.cessations = cessations;
     }
 }

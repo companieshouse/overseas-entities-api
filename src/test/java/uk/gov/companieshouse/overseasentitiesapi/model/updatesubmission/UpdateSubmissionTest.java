@@ -1,10 +1,12 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updateSubmission;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updateSubmission.changes.overseasEntity.OENameChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.additions.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.cessations.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes.Change;
 
 import java.util.Arrays;
 
@@ -25,12 +27,12 @@ class UpdateSubmissionTest {
                 "\"email\":\"emai@test.com\",\"supervisoryBody\":\"Supervisory body\",\"partnerName\":\"Partner name\"}," +
             "\"presenter\":{\"name\":\"John Doe\",\"email\":\"john@test.com\"}," +
             "\"filingForDate\":{\"year\":\"2000\",\"month\":\"01\",\"day\":\"01\"}," +
-            "\"noChangesInFilingPeriodStatement\":\"No\"," +
-            "\"anyBOsOrMOsAddedOrCeased\":\"Yes\"," +
+            "\"noChangesInFilingPeriodStatement\":true," +
+            "\"anyBOsOrMOsAddedOrCeased\":true," +
             "\"beneficialOwnerStatement\":\"BO Statement\"," +
-            "\"changes\":[{\"change\":\"changeOfEntityName\",\"proposedCorporateBodyName\":\"New Name\"}]," +
-            "\"additions\":[{\"change\":\"changeOfEntityName\",\"proposedCorporateBodyName\":\"New Name\"}]," +
-            "\"cessations\":[{\"change\":\"changeOfEntityName\",\"proposedCorporateBodyName\":\"New Name\"}]}";
+            "\"changes\":[{\"change\":\"Change 1\"},{\"change\":\"Change 2\"}]," +
+            "\"additions\":[{\"change\":\"Addition 1\",\"kind\":\"Kind 1\"},{\"change\":\"Addition 2\",\"kind\":\"Kind 2\"}]," +
+            "\"cessations\":[{\"change\":\"Cessation 1\"},{\"change\":\"Cessation 2\"}]}";
     
     @Test
     void testJsonSerialisation() throws Exception {
@@ -69,13 +71,18 @@ class UpdateSubmissionTest {
             setSupervisoryBody("Supervisory body");
             setPartnerName("Partner name");
         }});
-        updateSubmission.setChanges(Arrays.asList(new OENameChange(){{ setProposedCorporateBodyName("New Name"); }}));
-        //TODO: These will need to be changed to Addition/Cessation changes when added for consistency
-        updateSubmission.setAdditions(Arrays.asList(new OENameChange(){{ setProposedCorporateBodyName("New Name"); }}));
-        updateSubmission.setCessations(Arrays.asList(new OENameChange(){{ setProposedCorporateBodyName("New Name"); }}));
+        updateSubmission.setChanges(Arrays.asList(
+            new Change(){{ setChangeName("Change 1"); }},
+            new Change(){{ setChangeName("Change 2");}}));
+        updateSubmission.setAdditions(Arrays.asList(
+            new Addition(){{ setChangeName("Addition 1"); setKind("Kind 1"); }},
+            new Addition(){{ setChangeName("Addition 2"); setKind("Kind 2"); }}));
+        updateSubmission.setCessations(Arrays.asList(
+            new Cessation(){{ setChangeName("Cessation 1"); }},
+            new Cessation(){{ setChangeName("Cessation 2");}}));
         updateSubmission.setBeneficialOwnerStatement("BO Statement");
-        updateSubmission.setAnyBOsOrMOsAddedOrCeased("Yes");
-        updateSubmission.setNoChangesInFilingPeriodStatement("No");
+        updateSubmission.setAnyBOsOrMOsAddedOrCeased(true);
+        updateSubmission.setNoChangesInFilingPeriodStatement(true);
 
         return updateSubmission;
     }

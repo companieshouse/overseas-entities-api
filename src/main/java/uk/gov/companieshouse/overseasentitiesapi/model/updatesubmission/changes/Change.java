@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updateSubmission.changes;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
