@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.DataSanitisation;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -95,7 +94,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenIdentityDateFieldIsInTheFuture() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -111,13 +110,29 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenIdentityDateFieldIsNullEvenWithIdentityDateIncluded() {
+        overseasEntityDueDiligenceDto.setIdentityDate(null);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
     }
 
     @Test

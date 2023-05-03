@@ -31,7 +31,22 @@ public class DueDiligenceDataBlockValidator {
 
     }
 
-    public boolean validateDueDiligenceFields(DueDiligenceDto dueDiligenceDto,
+    public boolean validateFullDueDiligenceFields(DueDiligenceDto dueDiligenceDto,
+                                              OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
+                                              Errors errors,
+                                              String loggingContext) {
+
+        if (onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
+            if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
+                overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, errors, loggingContext);
+            } else {
+                dueDiligenceValidator.validateWithIdentityDate(dueDiligenceDto, errors, loggingContext);
+            }
+        }
+        return false;
+    }
+
+    public boolean validatePartialDueDiligenceFields(DueDiligenceDto dueDiligenceDto,
                                               OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
                                               Errors errors,
                                               String loggingContext) {

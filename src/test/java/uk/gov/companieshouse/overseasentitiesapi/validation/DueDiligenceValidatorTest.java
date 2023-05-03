@@ -88,9 +88,9 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsInTheFuture() {
+    void testErrorReportedWhenIdentityDateFieldIsInTheFutureForFullValidation() {
         dueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
-        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = dueDiligenceValidator.validateWithIdentityDate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -98,9 +98,16 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsNull() {
-        dueDiligenceDto.setIdentityDate(null);
+    void testNoErrorReportedWhenIdentityDateFieldIsInTheFutureForPartialValidation() {
+        dueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenIdentityDateFieldIsNullForFullValidation() {
+        dueDiligenceDto.setIdentityDate(null);
+        Errors errors = dueDiligenceValidator.validateWithIdentityDate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -108,13 +115,27 @@ class DueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
-        dueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
+    void testNoErrorReportedWhenIdentityDateFieldIsNullForPartialValidation() {
+        dueDiligenceDto.setIdentityDate(null);
         Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForFullValidation() {
+        dueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
+        Errors errors = dueDiligenceValidator.validateWithIdentityDate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(DueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(DueDiligenceDto.IDENTITY_DATE_FIELD, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForPartialValidation() {
+        dueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
+        Errors errors = dueDiligenceValidator.validate(dueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
