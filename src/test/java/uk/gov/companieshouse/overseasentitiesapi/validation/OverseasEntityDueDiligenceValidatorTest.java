@@ -92,7 +92,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsInTheFuture() {
+    void testErrorReportedWhenIdentityDateFieldIsInTheFutureForFullValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
         Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
@@ -102,10 +102,9 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenIdentityDateFieldIsNull() {
-        overseasEntityDueDiligenceDto.setIdentityDate(null);
+    void testNoErrorReportedWhenIdentityDateFieldIsInTheFutureForPartialValidation() {
+        overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
-
         assertFalse(errors.hasErrors());
     }
 
@@ -118,7 +117,15 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
+    void testNoErrorReportedWhenIdentityDateFieldIsNull() {
+        overseasEntityDueDiligenceDto.setIdentityDate(null);
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForFullValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
         Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
@@ -128,7 +135,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePast() {
+    void testNoErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForPartialValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
         Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 

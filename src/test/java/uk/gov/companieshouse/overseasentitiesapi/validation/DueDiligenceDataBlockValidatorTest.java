@@ -119,15 +119,29 @@ class DueDiligenceDataBlockValidatorTest {
    }
 
    @Test
-   void testOverseasDueDiligenceValidatorIsCalled() {
+   void testOverseasDueDiligenceValidatorIsCalledForFullValidation() {
       dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
       verify(overseasEntityDueDiligenceValidator, times(1)).validateWithIdentityDate(eq(overseasEntityDueDiligenceDto), any(), any());
    }
 
    @Test
-   void testDueDiligenceValidatorIsCalled() {
+   void testDueDiligenceValidatorIsCalledForFullValidation() {
       dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
       verify(dueDiligenceValidator, times(1)).validateWithIdentityDate(eq(dueDiligenceDto), any(), any());
+   }
+
+   @Test
+   void testOverseasDueDiligenceValidatorIsCalledForPartialValidation() {
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+      verify(overseasEntityDueDiligenceValidator, times(0)).validateWithIdentityDate(eq(overseasEntityDueDiligenceDto), any(), any());
+      verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto), any(), any());
+   }
+
+   @Test
+   void testDueDiligenceValidatorIsCalledForPartialValidation() {
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
+      verify(dueDiligenceValidator, times(0)).validateWithIdentityDate(eq(dueDiligenceDto), any(), any());
+      verify(dueDiligenceValidator, times(1)).validate(eq(dueDiligenceDto), any(), any());
    }
 
    private void assertError(String fieldName, String message, Errors errors) {

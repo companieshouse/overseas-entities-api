@@ -459,6 +459,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
             verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
             verify(dueDiligenceDataBlockValidator, times(0)).validateFullDueDiligenceFields(any(),
                     any(), any(), any());
+            verify(dueDiligenceDataBlockValidator, times(0)).validatePartialDueDiligenceFields(any(),
+                    any(), any(), any());
         }
     }
 
