@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
+import java.time.LocalDate;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class ManagingOfficerCorporateDao {
@@ -39,6 +40,15 @@ public class ManagingOfficerCorporateDao {
 
     @Field("contact_email")
     private String contactEmail;
+
+    @Field("start_date")
+    private LocalDate startDate;
+
+    @Field("resigned_on")
+    private LocalDate resignedOn;
+
+    @Field("ch_reference")
+    private String chipsReference;
 
     public String getName() {
         return name;
@@ -134,5 +144,30 @@ public class ManagingOfficerCorporateDao {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getResignedOn(){
+        return resignedOn;
+    }
+
+    public void setResignedOn(LocalDate resignedOn) {
+        this.resignedOn = resignedOn;
+    }
+
+    public String getChipsReference() {
+        return chipsReference;
+    }
+
+    public void setChipsReference(String chipsReference) {
+        this.chipsReference = chipsReference;
     }
 }

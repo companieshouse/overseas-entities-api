@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class ManagingOfficerCorporateDto {
@@ -18,6 +19,12 @@ public class ManagingOfficerCorporateDto {
     public static final String ROLE_AND_RESPONSIBILITIES_FIELD = "role_and_responsibilities";
     public static final String CONTACT_FULL_NAME_FIELD = "contact_full_name";
     public static final String CONTACT_EMAIL_FIELD = "contact_email";
+
+    public static final String START_DATE_FIELD = "start_date";
+
+    public static final String RESIGNED_ON_DATE_FIELD = "resigned_on";
+
+    public static final String CH_REFERENCE_FIELD = "ch_reference";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -54,6 +61,15 @@ public class ManagingOfficerCorporateDto {
 
     @JsonProperty(CONTACT_EMAIL_FIELD)
     private String contactEmail;
+
+    @JsonProperty(START_DATE_FIELD)
+    private LocalDate startDate;
+
+    @JsonProperty(RESIGNED_ON_DATE_FIELD)
+    private LocalDate resignedOn;
+
+    @JsonProperty(CH_REFERENCE_FIELD)
+    private String chipsReference;
 
     public String getName() {
         return name;
@@ -149,5 +165,30 @@ public class ManagingOfficerCorporateDto {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = Objects.isNull(contactEmail) ? null : contactEmail.trim();
+    }
+
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getResignedOn() {
+        return resignedOn;
+    }
+
+    public void setResignedOn(LocalDate resignedOn) {
+        this.resignedOn = resignedOn;
+    }
+
+    public String getChipsReference() {
+        return chipsReference;
+    }
+
+    public void setChipsReference(String chipsReference) {
+        this.chipsReference = chipsReference;
     }
 }

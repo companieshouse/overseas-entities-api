@@ -19,6 +19,12 @@ public class ManagingOfficerIndividualDto {
     public static final String OCCUPATION_FIELD = "occupation";
     public static final String ROLE_AND_RESPONSIBILITIES_FIELD = "role_and_responsibilities";
 
+    public static final String START_DATE_FIELD = "start_date";
+
+    public static final String RESIGNED_ON_DATE_FIELD = "resigned_on";
+
+    public static final String CH_REFERENCE_FIELD = "ch_reference";
+
     @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
 
@@ -54,6 +60,15 @@ public class ManagingOfficerIndividualDto {
 
     @JsonProperty(ROLE_AND_RESPONSIBILITIES_FIELD)
     private String roleAndResponsibilities;
+
+    @JsonProperty(START_DATE_FIELD)
+    private LocalDate startDate;
+
+    @JsonProperty(RESIGNED_ON_DATE_FIELD)
+    private LocalDate resignedOn;
+
+    @JsonProperty(CH_REFERENCE_FIELD)
+    private String chipsReference;
 
     public String getFirstName() {
         return firstName;
@@ -149,5 +164,29 @@ public class ManagingOfficerIndividualDto {
 
     public void setRoleAndResponsibilities(String roleAndResponsibilities) {
         this.roleAndResponsibilities = roleAndResponsibilities;
+    }
+
+    public LocalDate getResignedOn() {
+        return resignedOn;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setResignedOn(LocalDate resignedOn) {
+        this.resignedOn = resignedOn;
+    }
+
+    public String getChipsReference() {
+        return chipsReference;
+    }
+
+    public void setChipsReference(String chipsReference) {
+        this.chipsReference = chipsReference;
     }
 }
