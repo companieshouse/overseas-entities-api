@@ -71,23 +71,22 @@ public class FilingsService {
     private final ApiClientService apiClientService;
     private final Supplier<LocalDate> dateNowSupplier;
     private final ObjectMapper objectMapper;
-
     private final PublicDataRetrievalService publicDataRetrievalService;
     private final PrivateDataRetrievalService privateDataRetrievalService;
 
     @Autowired
     public FilingsService(OverseasEntitiesService overseasEntitiesService,
-        ApiClientService apiClientService,
-        Supplier<LocalDate> dateNowSupplier,
-        ObjectMapper objectMapper,
-        PublicDataRetrievalService publicDataRetrievalService,
-        PrivateDataRetrievalService privateDataRetrievalService) {
+                          ApiClientService apiClientService,
+                          Supplier<LocalDate> dateNowSupplier,
+                          ObjectMapper objectMapper,
+                          PrivateDataRetrievalService privateDataRetrievalService,
+                          PublicDataRetrievalService publicDataRetrievalService) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.apiClientService = apiClientService;
         this.dateNowSupplier = dateNowSupplier;
         this.objectMapper = objectMapper;
-        this.publicDataRetrievalService = publicDataRetrievalService;
         this.privateDataRetrievalService = privateDataRetrievalService;
+        this.publicDataRetrievalService = publicDataRetrievalService;
     }
 
     public FilingApi generateOverseasEntityFiling(String requestId, String overseasEntityId, Transaction transaction, String passThroughTokenHeader)
@@ -109,8 +108,7 @@ public class FilingsService {
         setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
         if (submissionDto.isForUpdate()) {
-            publicDataRetrievalService.initialisePublicData(submissionDto.getEntityNumber(),
-                passThroughTokenHeader);
+            publicDataRetrievalService.initialisePublicData(submissionDto.getEntityNumber(), passThroughTokenHeader);
             privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
         }
 

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import uk.gov.companieshouse.api.handler.managingofficerdata.PrivateManagingOffi
 import uk.gov.companieshouse.api.handler.managingofficerdata.request.PrivateManagingOfficerDataGet;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
@@ -39,7 +41,7 @@ class PrivateDataRetrievalServiceTest {
   private InternalApiClient apiClient;
 
   @Mock
-  private ApiResponse<ManagingOfficerDataApi> apiGetResponse;
+  private ApiResponse<ManagingOfficerListDataApi> apiGetResponse;
 
   @Mock
   private PrivateManagingOfficerDataResourceHandler privateManagingOfficerDataResourceHandler;
@@ -52,17 +54,19 @@ class PrivateDataRetrievalServiceTest {
     when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
     when(apiClient.privateManagingOfficerDataResourceHandler()).thenReturn(
         privateManagingOfficerDataResourceHandler);
-    when(privateManagingOfficerDataResourceHandler.getMOData(Mockito.anyString())).thenReturn(
+    when(privateManagingOfficerDataResourceHandler.getManagingOfficerData(Mockito.anyString())).thenReturn(
         privateManagingOfficerDataGet);
   }
 
   @Test
   void testManagingOfficerPrivateDataIsSuccessful()
       throws IOException, URIValidationException, ServiceException {
-    var overseasEntityApi = new ManagingOfficerDataApi();
+    var managingOfficerListDataApi = new ManagingOfficerListDataApi(
+        List.of(new ManagingOfficerDataApi())
+    );
 
     when(privateManagingOfficerDataGet.execute()).thenReturn(apiGetResponse);
-    when(apiGetResponse.getData()).thenReturn(overseasEntityApi);
+    when(apiGetResponse.getData()).thenReturn(managingOfficerListDataApi);
 
     oePrivateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
     verify(apiClientService, times(1)).getInternalApiClient();
