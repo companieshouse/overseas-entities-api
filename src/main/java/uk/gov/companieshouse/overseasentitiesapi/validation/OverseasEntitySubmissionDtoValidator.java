@@ -95,7 +95,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        dueDiligenceDataBlockValidator.validateDueDiligenceFields(
+        dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                 overseasEntitySubmissionDto.getDueDiligence(),
                 overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                 errors,
@@ -166,7 +166,7 @@ public class OverseasEntitySubmissionDtoValidator {
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
         if (Objects.nonNull(dueDiligenceDto) || Objects.nonNull(overseasEntityDueDiligenceDto)) {
-            dueDiligenceDataBlockValidator.validateDueDiligenceFields(
+            dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(
                     dueDiligenceDto,
                     overseasEntityDueDiligenceDto,
                     errors,
