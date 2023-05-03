@@ -16,6 +16,7 @@ public class TrustDataDto {
     public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
     public static final String INDIVIDUAL_FIELD = "INDIVIDUAL";
     public static final String HISTORICAL_BO_FIELD = "HISTORICAL_BO";
+    public static final String CORPORATE_FIELD = "CORPORATE";
 
     @JsonProperty(TRUST_ID_FIELD)
     private String trustId;

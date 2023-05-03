@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -52,8 +54,26 @@ public class ManagingOfficerCorporateValidator {
             validateRoleAndResponsibilities(managingOfficerCorporateDto.getRoleAndResponsibilities(), errors, loggingContext);
             validateContactFullName(managingOfficerCorporateDto.getContactFullName(), errors, loggingContext);
             validateContactEmail(managingOfficerCorporateDto.getContactEmail(), errors, loggingContext);
+
+            validateAppointmentDates(managingOfficerCorporateDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateAppointmentDates(ManagingOfficerCorporateDto managingOfficerCorporateDto, Errors errors, String loggingContext) {
+        if (managingOfficerCorporateDto.getStartDate() != null) {
+            validateStartDate(managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+            if (managingOfficerCorporateDto.getResignedOn() != null) {
+                validateResignedOnDateAgainstStartDate(
+                        managingOfficerCorporateDto.getResignedOn(),
+                        managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+            }
+        } else {
+            if (managingOfficerCorporateDto.getResignedOn() != null) {
+                validateResignedOnDate(managingOfficerCorporateDto.getResignedOn(), errors,
+                        loggingContext);
+            }
+        }
     }
 
     private boolean validateName(String name, Errors errors, String loggingContext) {
@@ -144,5 +164,21 @@ public class ManagingOfficerCorporateValidator {
         return StringValidators.isNotBlank (name, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(name, 250, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidEmailAddress(name, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateStartDate(LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.START_DATE_FIELD);
+        return DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateResignedOnDateAgainstStartDate(LocalDate resignedOn, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.RESIGNED_ON_DATE_FIELD);
+        return DateValidators.isDateInPast(resignedOn, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateOnOrAfterStartDate(resignedOn, startDate, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateResignedOnDate(LocalDate resignedOn, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.RESIGNED_ON_DATE_FIELD);
+        return DateValidators.isDateInPast(resignedOn, qualifiedFieldName, errors, loggingContext);
     }
 }
