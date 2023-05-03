@@ -57,12 +57,12 @@ public class ManagingOfficerIndividualValidator {
             validateOccupation(managingOfficerIndividualDto.getOccupation(), errors, loggingContext);
             validateRoleAndResponsibilities(managingOfficerIndividualDto.getRoleAndResponsibilities(), errors, loggingContext);
 
-            validateResignedOn(managingOfficerIndividualDto, errors, loggingContext);
+            validateAppointmentDates(managingOfficerIndividualDto, errors, loggingContext);
         }
         return errors;
     }
 
-    private void validateResignedOn(ManagingOfficerIndividualDto managingOfficerIndividualDto, Errors errors, String loggingContext) {
+    private void validateAppointmentDates(ManagingOfficerIndividualDto managingOfficerIndividualDto, Errors errors, String loggingContext) {
         if (managingOfficerIndividualDto.getStartDate() != null) {
             validateStartDate(managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
             if (managingOfficerIndividualDto.getResignedOn() != null) {

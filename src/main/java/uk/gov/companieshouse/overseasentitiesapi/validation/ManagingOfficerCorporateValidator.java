@@ -55,20 +55,25 @@ public class ManagingOfficerCorporateValidator {
             validateContactFullName(managingOfficerCorporateDto.getContactFullName(), errors, loggingContext);
             validateContactEmail(managingOfficerCorporateDto.getContactEmail(), errors, loggingContext);
 
-            if (managingOfficerCorporateDto.getStartDate() != null) {
-                validateStartDate(managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
-                if (managingOfficerCorporateDto.getResignedOn() != null) {
-                    validateResignedOnDateAgainstStartDate(
-                            managingOfficerCorporateDto.getResignedOn(),
-                            managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
-                }
-            } else {
-                if (managingOfficerCorporateDto.getResignedOn() != null) {
-                    validateResignedOnDate(managingOfficerCorporateDto.getResignedOn(), errors, loggingContext);
-                }
-            }
+            validateAppointmentDates(managingOfficerCorporateDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateAppointmentDates(ManagingOfficerCorporateDto managingOfficerCorporateDto, Errors errors, String loggingContext) {
+        if (managingOfficerCorporateDto.getStartDate() != null) {
+            validateStartDate(managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+            if (managingOfficerCorporateDto.getResignedOn() != null) {
+                validateResignedOnDateAgainstStartDate(
+                        managingOfficerCorporateDto.getResignedOn(),
+                        managingOfficerCorporateDto.getStartDate(), errors, loggingContext);
+            }
+        } else {
+            if (managingOfficerCorporateDto.getResignedOn() != null) {
+                validateResignedOnDate(managingOfficerCorporateDto.getResignedOn(), errors,
+                        loggingContext);
+            }
+        }
     }
 
     private boolean validateName(String name, Errors errors, String loggingContext) {
