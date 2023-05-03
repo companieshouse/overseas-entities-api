@@ -6,19 +6,21 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 @Component
 public class PrivateDataRetrievalService {
-  public static final String COMPANY_NUMBER = "company_number";
-  public static final String MANAGING_OFFICER_ID = "managing_officer_id";
 
+  private static final String COMPANY_NUMBER = "company_number";
+  private static final String MANAGING_OFFICER_ID = "managing_officer_id";
+  private static final String OVERSEAS_ENTITY_URI_SECTION = "/overseas-entity/";
   private final ApiClientService apiClientService;
   private ManagingOfficerListDataApi managingOfficerData;
-
   private PrivateBoDataListApi beneficialOwnerData;
+  private OverseasEntityDataApi overseasEntityData;
 
   public PrivateDataRetrievalService(ApiClientService apiClientService) {
     this.apiClientService = apiClientService;
@@ -26,32 +28,57 @@ public class PrivateDataRetrievalService {
 
   public void initialisePrivateData(String companyNumber)
       throws ServiceException {
-    this.managingOfficerData = getManagingOfficerData(companyNumber);
     this.beneficialOwnerData = getBeneficialOwnersData(companyNumber);
+    this.overseasEntityData = getOverseasEntityData(companyNumber);
+    this.managingOfficerData = getManagingOfficerData(companyNumber);
   }
 
   private ManagingOfficerListDataApi getManagingOfficerData(String companyNumber)
       throws ServiceException {
+
     var logMap = new HashMap<String, Object>();
     logMap.put(COMPANY_NUMBER, companyNumber);
     try {
-      var managingOfficerData = apiClientService.getInternalApiClient()
+      var managingOfficerDataList = apiClientService.getInternalApiClient()
           .privateManagingOfficerDataResourceHandler()
-          .getManagingOfficerData("/overseas-entity/" + companyNumber + "/managing-officers")
+          .getManagingOfficerData(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/managing-officers")
           .execute()
           .getData();
 
-      if (managingOfficerData != null && managingOfficerData.getManagingOfficerData() != null
-          && !managingOfficerData.getManagingOfficerData().isEmpty()) {
+      if (managingOfficerDataList != null && managingOfficerDataList.getManagingOfficerData() != null
+          && !managingOfficerDataList.getManagingOfficerData().isEmpty()) {
         logMap.put(MANAGING_OFFICER_ID,
-            managingOfficerData.getManagingOfficerData().get(0).getManagingOfficerId());
+            managingOfficerDataList.getManagingOfficerData().get(0).getManagingOfficerId());
       }
-      ApiLogger.debug("Retrieving Managing Officer data for Company Number ", logMap);
 
-      return managingOfficerData;
+      ApiLogger.debug("Retrieving Managing Officer data for Company Number ", logMap);
+      return managingOfficerDataList;
+
     } catch (URIValidationException | IOException e) {
       var message = "Error Retrieving Managing Officer data for " + companyNumber;
       ApiLogger.error(message, e, logMap);
+      throw new ServiceException(e.getMessage(), e);
+    }
+  }
+
+  private OverseasEntityDataApi getOverseasEntityData(String companyNumber)
+      throws ServiceException {
+    try {
+      OverseasEntityDataApi overseasEntityDataApi = apiClientService
+          .getInternalApiClient()
+          .privateOverseasEntityDataHandler()
+          .getOverseasEntityData(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/entity-data")
+          .execute()
+          .getData();
+      var logMap = new HashMap<String, Object>();
+
+      logMap.put(COMPANY_NUMBER, companyNumber);
+      ApiLogger.info("Retrieving overseas entity data for company number ",  logMap);
+
+      return overseasEntityDataApi;
+    } catch (URIValidationException | IOException e) {
+      var message = "Error Retrieving overseas entity data for " + companyNumber;
+      ApiLogger.errorContext(message, e);
       throw new ServiceException(e.getMessage(), e);
     }
   }
@@ -66,13 +93,16 @@ public class PrivateDataRetrievalService {
     try {
       PrivateBoDataListApi beneficialOwnerDataList = apiClientService.getInternalApiClient()
           .privateBeneficialOwnerResourceHandler()
-          .getBeneficialOwners("/overseas-entity/" + companyNumber + "/beneficial-owners")
+          .getBeneficialOwners(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/beneficial-owners")
           .execute()
           .getData();
 
-      if (beneficialOwnerDataList.getBoPrivateData() != null && !beneficialOwnerDataList.getBoPrivateData().isEmpty()){
+      if (beneficialOwnerDataList != null && beneficialOwnerDataList.getBoPrivateData() != null
+          && !beneficialOwnerDataList.getBoPrivateData().isEmpty()) {
         int numberOfBOs = beneficialOwnerDataList.getBoPrivateData().size();
-        ApiLogger.info(String.format("Retrieved %d Beneficial Owners for Company Number %s", numberOfBOs, companyNumber));
+        ApiLogger
+            .info(String.format("Retrieved %d Beneficial Owners for Company Number %s",
+                numberOfBOs, companyNumber));
       } else {
         ApiLogger.info("No Beneficial Owners found for Company Number " + companyNumber);
       }
@@ -87,7 +117,14 @@ public class PrivateDataRetrievalService {
   }
 
   public PrivateBoDataListApi getBeneficialOwnerData() {
-    return beneficialOwnerData;
+    return this.beneficialOwnerData;
   }
 
+  public OverseasEntityDataApi getOverseasEntityData() {
+    return this.overseasEntityData;
+  }
+
+  public ManagingOfficerListDataApi getManagingOfficerData() {
+    return this.managingOfficerData;
+  }
 }
