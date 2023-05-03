@@ -45,7 +45,22 @@ class DueDiligenceDataBlockValidatorTest {
       overseasEntityDueDiligenceDto.setName("OeTest");
       overseasEntityDueDiligenceDto.setAmlNumber("abc123");
 
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testErrorReportedWhenBothDueDiligenceBlocksPresentWithSomeFieldsPopulatedForBothWithoutIdentityDate() {
+      Errors errors = new Errors();
+      DueDiligenceDto dueDiligenceDto = new DueDiligenceDto();
+      dueDiligenceDto.setName("Test");
+      dueDiligenceDto.setEmail("test@test.gov.uk");
+      OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = new OverseasEntityDueDiligenceDto();
+      overseasEntityDueDiligenceDto.setName("OeTest");
+      overseasEntityDueDiligenceDto.setAmlNumber("abc123");
+
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -53,7 +68,15 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksPresentWithAllFieldsPopulatedForBoth() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testErrorReportedWhenBothDueDiligenceBlocksPresentWithAllFieldsPopulatedForBothWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_PRESENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -61,7 +84,15 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothNull() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, null, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(null, null, errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothNullWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(null, null, errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -69,7 +100,15 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothEmpty() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(new DueDiligenceDto(), new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(new DueDiligenceDto(), new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testErrorReportedWhenBothDueDiligenceBlocksAbsentBothEmptyWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(new DueDiligenceDto(), new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -77,7 +116,15 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentDueDiligenceNullOtherEmpty() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(new DueDiligenceDto(), null, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(new DueDiligenceDto(), null, errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testErrorReportedWhenBothDueDiligenceBlocksAbsentDueDiligenceNullOtherEmptyWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(new DueDiligenceDto(), null, errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
@@ -85,49 +132,99 @@ class DueDiligenceDataBlockValidatorTest {
    @Test
    void testErrorReportedWhenBothDueDiligenceBlocksAbsentOverseasEntityDueDiligenceNullOtherEmpty() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(null, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
       String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
       assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
    }
 
    @Test
-   void testErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherEmpty() {
+   void testErrorReportedWhenBothDueDiligenceBlocksAbsentOverseasEntityDueDiligenceNullOtherEmptyWithoutIdentityDate() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(null, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
+      String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BOTH_BE_ABSENT_ERROR_MESSAGE, QUALIFIED_FIELD_NAMES);
+      assertError(QUALIFIED_FIELD_NAMES, validationMessage, errors);
+   }
+
+   @Test
+   void testNoErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherEmpty() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
       assertFalse(errors.hasErrors());
    }
 
    @Test
-   void testErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherNull() {
+   void testNoErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherEmptyWithoutIdentityDate() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, null, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, new OverseasEntityDueDiligenceDto(), errors, LOGGING_CONTEXT);
       assertFalse(errors.hasErrors());
    }
 
    @Test
-   void testErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherEmpty() {
+   void testNoErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherNull() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(new DueDiligenceDto(), overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, null, errors, LOGGING_CONTEXT);
       assertFalse(errors.hasErrors());
    }
 
    @Test
-   void testErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherNull() {
+   void testNoErrorReportedWhenOnlyDueDiligenceBlocksPresentOtherNullWithoutIdentityDate() {
       Errors errors = new Errors();
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, null, errors, LOGGING_CONTEXT);
       assertFalse(errors.hasErrors());
    }
 
    @Test
-   void testOverseasDueDiligenceValidatorIsCalled() {
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+   void testnoErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherEmpty() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(new DueDiligenceDto(), overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      assertFalse(errors.hasErrors());
+   }
+
+   @Test
+   void testnoErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherEmptyWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(new DueDiligenceDto(), overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      assertFalse(errors.hasErrors());
+   }
+
+   @Test
+   void testNoErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherNull() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      assertFalse(errors.hasErrors());
+   }
+
+   @Test
+   void testNoErrorReportedWhenOnlyOverseasEntitiesDueDiligenceBlocksPresentOtherNullWithoutIdentityDate() {
+      Errors errors = new Errors();
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(null, overseasEntityDueDiligenceDto, errors, LOGGING_CONTEXT);
+      assertFalse(errors.hasErrors());
+   }
+
+   @Test
+   void testOverseasDueDiligenceValidatorIsCalledForFullValidation() {
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
       verify(overseasEntityDueDiligenceValidator, times(1)).validate(eq(overseasEntityDueDiligenceDto), any(), any());
    }
 
    @Test
-   void testDueDiligenceValidatorIsCalled() {
-      dueDiligenceDataBlockValidator.validateDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
+   void testDueDiligenceValidatorIsCalledForFullValidation() {
+      dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
       verify(dueDiligenceValidator, times(1)).validate(eq(dueDiligenceDto), any(), any());
+   }
+
+   @Test
+   void testOverseasDueDiligenceValidatorIsCalledForPartialValidation() {
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(null, overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+      verify(overseasEntityDueDiligenceValidator, times(0)).validate(eq(overseasEntityDueDiligenceDto), any(), any());
+      verify(overseasEntityDueDiligenceValidator, times(1)).validateWithoutIdentityDate(eq(overseasEntityDueDiligenceDto), any(), any());
+   }
+
+   @Test
+   void testDueDiligenceValidatorIsCalledForPartialValidation() {
+      dueDiligenceDataBlockValidator.validatePartialDueDiligenceFields(dueDiligenceDto, null, new Errors(), LOGGING_CONTEXT);
+      verify(dueDiligenceValidator, times(0)).validate(eq(dueDiligenceDto), any(), any());
+      verify(dueDiligenceValidator, times(1)).validateWithoutIdentityDate(eq(dueDiligenceDto), any(), any());
    }
 
    private void assertError(String fieldName, String message, Errors errors) {

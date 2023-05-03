@@ -26,6 +26,11 @@ public class OverseasEntityDueDiligenceValidator {
 
     public Errors validate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
         validateIdentityDate(overseasEntityDueDiligenceDto.getIdentityDate(), errors, loggingContext);
+        validateWithoutIdentityDate(overseasEntityDueDiligenceDto, errors, loggingContext);
+        return errors;
+    }
+
+    public Errors validateWithoutIdentityDate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
         validateName(overseasEntityDueDiligenceDto.getName(), errors, loggingContext);
         validateAddress(overseasEntityDueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(overseasEntityDueDiligenceDto.getEmail(), errors, loggingContext);
