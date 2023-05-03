@@ -38,9 +38,9 @@ public class DueDiligenceDataBlockValidator {
 
         if (onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
             if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
-                overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, errors, loggingContext);
+                overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, errors, loggingContext);
             } else {
-                dueDiligenceValidator.validateWithIdentityDate(dueDiligenceDto, errors, loggingContext);
+                dueDiligenceValidator.validate(dueDiligenceDto, errors, loggingContext);
             }
         }
         return false;
@@ -53,9 +53,9 @@ public class DueDiligenceDataBlockValidator {
 
         if (onlyOneBlockPresent(dueDiligenceDto, overseasEntityDueDiligenceDto, errors, loggingContext)) {
             if (Objects.nonNull(overseasEntityDueDiligenceDto) && !overseasEntityDueDiligenceDto.isEmpty()) {
-                overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, errors, loggingContext);
+                overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, errors, loggingContext);
             } else {
-                dueDiligenceValidator.validate(dueDiligenceDto, errors, loggingContext);
+                dueDiligenceValidator.validateWithoutIdentityDate(dueDiligenceDto, errors, loggingContext);
             }
         }
         return false;

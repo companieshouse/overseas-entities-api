@@ -24,13 +24,13 @@ public class OverseasEntityDueDiligenceValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validateWithIdentityDate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
+    public Errors validate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
         validateIdentityDate(overseasEntityDueDiligenceDto.getIdentityDate(), errors, loggingContext);
-        validate(overseasEntityDueDiligenceDto, errors, loggingContext);
+        validateWithoutIdentityDate(overseasEntityDueDiligenceDto, errors, loggingContext);
         return errors;
     }
 
-    public Errors validate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
+    public Errors validateWithoutIdentityDate(OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto, Errors errors, String loggingContext) {
         validateName(overseasEntityDueDiligenceDto.getName(), errors, loggingContext);
         validateAddress(overseasEntityDueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(overseasEntityDueDiligenceDto.getEmail(), errors, loggingContext);

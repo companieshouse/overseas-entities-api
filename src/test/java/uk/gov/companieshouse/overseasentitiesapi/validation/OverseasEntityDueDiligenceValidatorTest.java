@@ -48,7 +48,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsNow() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now());
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -74,7 +74,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenCountryIsInTheUk() {
         overseasEntityDueDiligenceDto.getAddress().setCountry("Wales");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -84,7 +84,7 @@ class OverseasEntityDueDiligenceValidatorTest {
         final String invalidCountry = "France";
         when(dataSanitisation.makeStringSafeForLogging(invalidCountry)).thenReturn(invalidCountry);
         overseasEntityDueDiligenceDto.getAddress().setCountry(invalidCountry);
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = OverseasEntityDueDiligenceDto.IDENTITY_ADDRESS_FIELD + "." + AddressDto.COUNTRY_FIELD;
         String validationMessage = String.format(ValidationMessages.COUNTRY_NOT_ON_LIST_ERROR_MESSAGE, invalidCountry);
 
@@ -94,7 +94,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenIdentityDateFieldIsInTheFutureForFullValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
-        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -104,14 +104,14 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsInTheFutureForPartialValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.now().plusDays(1));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsNullEvenWithIdentityDateIncluded() {
         overseasEntityDueDiligenceDto.setIdentityDate(null);
-        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -119,7 +119,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsNull() {
         overseasEntityDueDiligenceDto.setIdentityDate(null);
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -127,7 +127,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForFullValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
-        Errors errors = overseasEntityDueDiligenceValidator.validateWithIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.IDENTITY_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_WITHIN_PAST_3_MONTHS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -137,7 +137,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testNoErrorReportedWhenIdentityDateFieldIsGreaterThan3MonthsInThePastForPartialValidation() {
         overseasEntityDueDiligenceDto.setIdentityDate(LocalDate.of(2022, 3,20));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -145,7 +145,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsEmpty() {
         overseasEntityDueDiligenceDto.setName("  ");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -155,7 +155,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsNull() {
         overseasEntityDueDiligenceDto.setName(null);
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -165,7 +165,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         overseasEntityDueDiligenceDto.setName(StringUtils.repeat("A", 257));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.NAME_FIELD);
 
         assertError(OverseasEntityDueDiligenceDto.NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -174,7 +174,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         overseasEntityDueDiligenceDto.setName("Дракон");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -184,7 +184,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsEmpty() {
         overseasEntityDueDiligenceDto.setEmail("  ");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -194,7 +194,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldIsNull() {
         overseasEntityDueDiligenceDto.setEmail(null);
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -204,7 +204,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldExceedsMaxLength() {
         overseasEntityDueDiligenceDto.setEmail(StringUtils.repeat("A", 257) + "@long.com");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.EMAIL_FIELD);
 
         assertError(OverseasEntityDueDiligenceDto.EMAIL_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -213,7 +213,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenEmailFieldContainsInvalidCharacters() {
         overseasEntityDueDiligenceDto.setEmail("wrong.com");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.EMAIL_FIELD);
         String validationMessage = ValidationMessages.INVALID_EMAIL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -226,14 +226,14 @@ class OverseasEntityDueDiligenceValidatorTest {
             "socarrollA123456789B132456798C123456798D123456789E123456789F123XX@T123465798U123456789V123456789W123456789X123456789Y123456.companieshouse.gov.uk"})
     void testNoErrorReportedWithLongEmailAddress(String email) {
         overseasEntityDueDiligenceDto.setEmail(email);
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenSupervisoryNameFieldExceedsMaxLength() {
         overseasEntityDueDiligenceDto.setSupervisoryName(StringUtils.repeat("A", 257));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.SUPERVISORY_NAME_FIELD);
 
         assertError(OverseasEntityDueDiligenceDto.SUPERVISORY_NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -242,7 +242,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenSupervisoryNameFieldContainsInvalidCharacters() {
         overseasEntityDueDiligenceDto.setSupervisoryName("Дракон");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.SUPERVISORY_NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -252,7 +252,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenPartnerNameFieldExceedsMaxLength() {
         overseasEntityDueDiligenceDto.setPartnerName(StringUtils.repeat("A", 257));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.PARTNER_NAME_FIELD);
 
         assertError(OverseasEntityDueDiligenceDto.PARTNER_NAME_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -261,7 +261,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenPartnerNameFieldContainsInvalidCharacters() {
         overseasEntityDueDiligenceDto.setPartnerName("Дракон");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.PARTNER_NAME_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
@@ -271,7 +271,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAmlNumberFieldExceedsMaxLength() {
         overseasEntityDueDiligenceDto.setAmlNumber(StringUtils.repeat("A", 257));
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD);
 
         assertError(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD, qualifiedFieldName + " must be 256 characters or less", errors);
@@ -280,7 +280,7 @@ class OverseasEntityDueDiligenceValidatorTest {
     @Test
     void testErrorReportedWhenAmlNumberFieldContainsInvalidCharacters() {
         overseasEntityDueDiligenceDto.setAmlNumber("Дракон");
-        Errors errors = overseasEntityDueDiligenceValidator.validate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = overseasEntityDueDiligenceValidator.validateWithoutIdentityDate(overseasEntityDueDiligenceDto, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntityDueDiligenceDto.AML_NUMBER_FIELD);
         String validationMessage = ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 

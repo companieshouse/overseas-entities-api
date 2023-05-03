@@ -28,13 +28,13 @@ public class DueDiligenceValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validateWithIdentityDate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
+    public Errors validate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
         validateIdentityDate(dueDiligenceDto.getIdentityDate(), errors, loggingContext);
-        validate(dueDiligenceDto, errors, loggingContext);
+        validateWithoutIdentityDate(dueDiligenceDto, errors, loggingContext);
         return errors;
     }
 
-    public Errors validate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
+    public Errors validateWithoutIdentityDate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
         validateName(dueDiligenceDto.getName(), errors, loggingContext);
         validateAddress(dueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(dueDiligenceDto.getEmail(), errors, loggingContext);
