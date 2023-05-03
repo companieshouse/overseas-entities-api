@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.InternalApiClient;
-import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.update.PrivateOverseasEntityDataHandler;
 import uk.gov.companieshouse.api.handler.update.request.PrivateOverseasEntityDataGet;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,117 +32,83 @@ import static org.mockito.Mockito.when;
 class PrivateDataRetrievalServiceTest {
   private static final String COMPANY_REFERENCE = "OE123456";
 
-  @InjectMocks
-  private PrivateDataRetrievalService privateDataRetrievalService;
+  @InjectMocks private PrivateDataRetrievalService privateDataRetrievalService;
 
-  @Mock
-  private ApiClientService apiClientService;
+  @Mock private ApiClientService apiClientService;
 
-  @Mock
-  private InternalApiClient apiClient;
+  @Mock private InternalApiClient apiClient;
 
-  @Mock
-  private ApiResponse<OverseasEntityDataApi> apiGetResponse;
+  @Mock private ApiResponse<OverseasEntityDataApi> apiGetResponse;
 
-  @Mock
-  private PrivateOverseasEntityDataHandler overseasEntity;
+  @Mock private PrivateOverseasEntityDataHandler overseasEntity;
 
-  @Mock
-  private PrivateOverseasEntityDataGet overseasEntityDataGet;
+  @Mock private PrivateOverseasEntityDataGet overseasEntityDataGet;
 
-  @InjectMocks
-  private PrivateDataRetrievalService oePrivateDataRetrievalService;
+  @Mock private ApiResponse<PrivateBoDataListApi> apiBoDataListGetResponse;
 
-  @Mock
-  private ApiResponse<PrivateBoDataListApi> apiBoDataListGetResponse;
+  @Mock private PrivateBeneficialOwnerResourceHandler privateBeneficialOwnerResourceHandler;
 
-  @Mock
-  private PrivateBeneficialOwnerResourceHandler privateBeneficialOwnerResourceHandler;
-
-  @Mock
-  private PrivateBeneficialOwnerGet privateBeneficialOwnerGet;
+  @Mock private PrivateBeneficialOwnerGet privateBeneficialOwnerGet;
 
   @BeforeEach
   public void init() throws IOException {
     when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
     when(apiClient.privateOverseasEntityDataHandler()).thenReturn(overseasEntity);
-    when(overseasEntity.getOverseasEntityData(Mockito.anyString())).thenReturn(overseasEntityDataGet);
-    when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
-        when(apiClient.privateBeneficialOwnerResourceHandler()).thenReturn(
-                privateBeneficialOwnerResourceHandler);
-        when(privateBeneficialOwnerResourceHandler.getBeneficialOwners(Mockito.anyString())).thenReturn(
-                privateBeneficialOwnerGet);
+    when(overseasEntity.getOverseasEntityData(Mockito.anyString()))
+        .thenReturn(overseasEntityDataGet);
+    when(apiClient.privateBeneficialOwnerResourceHandler())
+        .thenReturn(privateBeneficialOwnerResourceHandler);
+    when(privateBeneficialOwnerResourceHandler.getBeneficialOwners(Mockito.anyString()))
+        .thenReturn(privateBeneficialOwnerGet);
   }
 
   @Test
-  void testGetOverseasEntityPrivateDataIsSuccessful()
+  void testGetPrivateDataIsSuccessful()
       throws IOException, URIValidationException, ServiceException {
     var overseasEntityApi = new OverseasEntityDataApi();
+    List<PrivateBoDataApi> privateBoDataApiList = Collections.emptyList();
+    var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
 
     when(overseasEntityDataGet.execute()).thenReturn(apiGetResponse);
     when(apiGetResponse.getData()).thenReturn(overseasEntityApi);
 
+    when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
+    when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
+
     privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
-    verify(apiClientService, times(1)).getInternalApiClient();
+    verify(apiClientService, times(2)).getInternalApiClient();
   }
 
   @Test
-  void testServiceExceptionThrownWhenGetOverseasEntityPrivateDataThrowsURIValidationException()
-      throws IOException, URIValidationException {
-    when(overseasEntityDataGet.execute()).thenThrow(new URIValidationException("ERROR"));
+  void testGetPrivateDataOverseasEntityDataNotFound()
+      throws IOException, URIValidationException, ServiceException {
+    var overseasEntityApiResponse = new ApiResponse<OverseasEntityDataApi>(404, null);
 
-    assertThrows(
-        ServiceException.class,
-        () -> {
-          privateDataRetrievalService.initialisePrivateData((COMPANY_REFERENCE));
-        });
-  }
-
-  @Test
-  void testServiceExceptionThrownWhenGetOverseasEntityPrivateDataThrowsIOException()
-      throws IOException, URIValidationException {
-    when(overseasEntityDataGet.execute())
-        .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
-    assertThrows(
-        ServiceException.class,
-        () -> {
-          privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
-        });
-  }
-
-  @Test
-  void testBeneficialOwnerPrivateDataIsSuccessful() throws IOException, URIValidationException, ServiceException {
     List<PrivateBoDataApi> privateBoDataApiList = Collections.emptyList();
-    var overseasEntityApi = new PrivateBoDataListApi(privateBoDataApiList);
+    var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
+
+    when(overseasEntityDataGet.execute()).thenReturn(overseasEntityApiResponse);
 
     when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-    when(apiBoDataListGetResponse.getData()).thenReturn(overseasEntityApi);
+    when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
 
-    oePrivateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
-    verify(apiClientService, times(1)).getInternalApiClient();
+    privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
+    verify(apiClientService, times(2)).getInternalApiClient();
   }
 
   @Test
-    void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsURIValidationException()
-            throws IOException, URIValidationException {
-        when(privateBeneficialOwnerGet.execute()).thenThrow(new URIValidationException("ERROR"));
+  void testGetPrivateDataBeneficialOwnerDataNotFound()
+      throws IOException, URIValidationException, ServiceException {
+    var overseasEntityApi = new OverseasEntityDataApi();
+    var boDataListApiResponse = new ApiResponse<PrivateBoDataListApi>(404, null);
 
-        assertThrows(
-                ServiceException.class,
-                () -> {
-                    oePrivateDataRetrievalService.initialisePrivateData((COMPANY_REFERENCE));
-                });
-    }
+    when(overseasEntityDataGet.execute()).thenReturn(apiGetResponse);
+    when(apiGetResponse.getData()).thenReturn(overseasEntityApi);
 
-  @Test
-    void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsIOException()
-            throws IOException, URIValidationException {
-        when(privateBeneficialOwnerGet.execute())
-                .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
-        assertThrows(
-                ServiceException.class,
-                () -> {
-                    oePrivateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
-                });
-    }
+    when(privateBeneficialOwnerGet.execute()).thenReturn(boDataListApiResponse);
+
+    privateDataRetrievalService.initialisePrivateData(COMPANY_REFERENCE);
+    verify(apiClientService, times(2)).getInternalApiClient();
+  }
 }

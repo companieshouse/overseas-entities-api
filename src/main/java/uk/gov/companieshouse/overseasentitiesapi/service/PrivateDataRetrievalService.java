@@ -26,8 +26,8 @@ public class PrivateDataRetrievalService {
   }
 
   public void initialisePrivateData(String companyNumber) throws ServiceException {
-    this.overseasEntityData = getOverseasEntityData(companyNumber);
-    this.beneficialOwnerData = getBeneficialOwnersData(companyNumber);
+    overseasEntityData = getOverseasEntityData(companyNumber);
+    beneficialOwnerData = getBeneficialOwnersData(companyNumber);
   }
 
   private OverseasEntityDataApi getOverseasEntityData(String companyNumber)
@@ -66,7 +66,7 @@ public class PrivateDataRetrievalService {
           .execute()
           .getData();
 
-      if (beneficialOwnerDataList.getBoPrivateData() != null && !beneficialOwnerDataList.getBoPrivateData().isEmpty()) {
+      if (beneficialOwnerDataList != null && beneficialOwnerDataList.getBoPrivateData() != null && !beneficialOwnerDataList.getBoPrivateData().isEmpty()) {
         int numberOfBOs = beneficialOwnerDataList.getBoPrivateData().size();
         ApiLogger
             .info(String.format("Retrieved %d Beneficial Owners for Company Number %s", numberOfBOs, companyNumber));
