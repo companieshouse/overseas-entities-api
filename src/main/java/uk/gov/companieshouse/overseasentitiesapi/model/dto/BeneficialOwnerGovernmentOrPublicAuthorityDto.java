@@ -18,7 +18,10 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
     public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
+
     public static final String CEASED_DATE_FIELD = "ceased_date";
+
+    public static final String CH_REFERENCE_FIELD = "ch_reference";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -52,6 +55,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
     @JsonProperty(CEASED_DATE_FIELD)
     private LocalDate ceasedDate;
+
+    @JsonProperty(CH_REFERENCE_FIELD)
+    private String chipsReference;
 
     public String getName() {
         return name;
@@ -140,4 +146,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     public void setCeasedDate(LocalDate ceasedDate) {
         this.ceasedDate = ceasedDate;
     }
+
+    public String getChipsReference() { return chipsReference; }
+
+    public void setChipsReference(String chipsReference) { this.chipsReference = chipsReference; }
 }

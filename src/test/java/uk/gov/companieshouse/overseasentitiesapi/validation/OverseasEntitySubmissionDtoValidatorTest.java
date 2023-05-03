@@ -75,6 +75,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private TrustIndividualValidator trustIndividualValidator;
     @Mock
     private HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
+    @Mock
+    private TrustCorporateValidator trustCorporateValidator;
 
     private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
@@ -147,6 +149,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(trustDetailsValidator, times(1)).validate(any(), any(), any());
         verify(trustIndividualValidator, times(1)).validate(any(), any(), any());
         verify(historicalBeneficialOwnerValidator, times(1)).validate(any(), any(), any());
+        verify(trustCorporateValidator, times(1)).validate(any(), any(), any());
     }
 
     @Test

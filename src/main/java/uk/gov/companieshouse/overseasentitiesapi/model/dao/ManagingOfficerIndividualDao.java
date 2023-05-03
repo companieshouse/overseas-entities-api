@@ -42,6 +42,15 @@ public class ManagingOfficerIndividualDao {
     @Field("role_and_responsibilities")
     private String roleAndResponsibilities;
 
+    @Field("start_date")
+    private LocalDate startDate;
+
+    @Field("resigned_on")
+    private LocalDate resignedOn;
+
+    @Field("ch_reference")
+    private String chipsReference;
+
     public String getFirstName() {
         return firstName;
     }
@@ -136,5 +145,28 @@ public class ManagingOfficerIndividualDao {
 
     public void setRoleAndResponsibilities(String roleAndResponsibilities) {
         this.roleAndResponsibilities = roleAndResponsibilities;
+    }
+
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getResignedOn() { return resignedOn; }
+
+    public void setResignedOn(LocalDate resignedOn) {
+        this.resignedOn = resignedOn;
+    }
+
+    public String getChipsReference() {
+        return chipsReference;
+    }
+
+    public void setChipsReference(String chipsReference) {
+        this.chipsReference = chipsReference;
     }
 }

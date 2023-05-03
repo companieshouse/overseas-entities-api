@@ -10,14 +10,12 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
@@ -58,8 +56,26 @@ public class ManagingOfficerIndividualValidator {
             }
             validateOccupation(managingOfficerIndividualDto.getOccupation(), errors, loggingContext);
             validateRoleAndResponsibilities(managingOfficerIndividualDto.getRoleAndResponsibilities(), errors, loggingContext);
+
+            validateAppointmentDates(managingOfficerIndividualDto, errors, loggingContext);
         }
         return errors;
+    }
+
+    private void validateAppointmentDates(ManagingOfficerIndividualDto managingOfficerIndividualDto, Errors errors, String loggingContext) {
+        if (managingOfficerIndividualDto.getStartDate() != null) {
+            validateStartDate(managingOfficerIndividualDto.getStartDate(), errors, loggingContext);
+            if (managingOfficerIndividualDto.getResignedOn() != null) {
+                validateResignedOnDateAgainstStartDate(managingOfficerIndividualDto.getResignedOn(),
+                        managingOfficerIndividualDto.getStartDate(),
+                        errors, loggingContext);
+            }
+        } else {
+            if (managingOfficerIndividualDto.getResignedOn() != null) {
+                validateResignedOnDate(managingOfficerIndividualDto.getResignedOn(), errors,
+                        loggingContext);
+            }
+        }
     }
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {
@@ -123,6 +139,7 @@ public class ManagingOfficerIndividualValidator {
                     loggingContext);
 
         }
+
         return errors;
     }
 
@@ -155,5 +172,21 @@ public class ManagingOfficerIndividualValidator {
         return StringValidators.isNotBlank(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isLessThanOrEqualToMaxLength(roleAndResponsibilities, 256, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharactersForTextBox(roleAndResponsibilities, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateStartDate(LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.START_DATE_FIELD);
+        return DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateResignedOnDateAgainstStartDate(LocalDate resignedOn, LocalDate startDate, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        return DateValidators.isDateInPast(resignedOn, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateOnOrAfterStartDate(resignedOn, startDate, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private boolean validateResignedOnDate(LocalDate resignedOn, Errors errors, String loggingContext) {
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD, ManagingOfficerIndividualDto.RESIGNED_ON_DATE_FIELD);
+        return DateValidators.isDateInPast(resignedOn, qualifiedFieldName, errors, loggingContext);
     }
 }

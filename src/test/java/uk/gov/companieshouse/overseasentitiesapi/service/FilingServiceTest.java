@@ -46,7 +46,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.utils.OEPublicDataRetrievalHelper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -123,7 +122,7 @@ class FilingServiceTest {
     private PaymentGet paymentGet;
 
     @Mock
-    private OEPublicDataRetrievalHelper oePublicDataRetrievalHelper;
+    private PublicDataRetrievalService publicDataRetrievalService;
 
     @Mock
     private PrivateDataRetrievalService privateDataRetrievalService;
@@ -177,7 +176,7 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(oePublicDataRetrievalHelper, times(0)).getOverseasEntityPublicData(Mockito.anyString(), Mockito.anyString());
+        verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
 
 
         verify(localDateSupplier, times(1)).get();
@@ -212,8 +211,8 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(oePublicDataRetrievalHelper, times(1)).getOverseasEntityPublicData(Mockito.anyString(), Mockito.anyString());
-        verify(privateDataRetrievalService, times(1)).initialisePrivateData((Mockito.anyString()));
+        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
+        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
