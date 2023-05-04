@@ -1,8 +1,8 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class Change {
+public abstract class ChangeListItem {
     @JsonProperty("change")
     private String changeName;
 

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.additions.Cessation;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.cessations.Addition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 
 import java.util.Arrays;
 
@@ -31,7 +31,7 @@ class UpdateSubmissionTest {
             "\"anyBOsOrMOsAddedOrCeased\":true," +
             "\"beneficialOwnerStatement\":\"BO Statement\"," +
             "\"changes\":[{\"change\":\"Change 1\"},{\"change\":\"Change 2\"}]," +
-            "\"additions\":[{\"change\":\"Addition 1\",\"kind\":\"Kind 1\"},{\"change\":\"Addition 2\",\"kind\":\"Kind 2\"}]," +
+            "\"additions\":[{\"change\":\"Addition 1\",\"type\":\"Type 1\"},{\"change\":\"Addition 2\",\"type\":\"Type 2\"}]," +
             "\"cessations\":[{\"change\":\"Cessation 1\"},{\"change\":\"Cessation 2\"}]}";
     
     @Test
@@ -75,8 +75,8 @@ class UpdateSubmissionTest {
             new Change(){{ setChangeName("Change 1"); }},
             new Change(){{ setChangeName("Change 2");}}));
         updateSubmission.setAdditions(Arrays.asList(
-            new Addition(){{ setChangeName("Addition 1"); setKind("Kind 1"); }},
-            new Addition(){{ setChangeName("Addition 2"); setKind("Kind 2"); }}));
+            new Addition(){{ setChangeName("Addition 1"); setType("Type 1"); }},
+            new Addition(){{ setChangeName("Addition 2"); setType("Type 2"); }}));
         updateSubmission.setCessations(Arrays.asList(
             new Cessation(){{ setChangeName("Cessation 1"); }},
             new Cessation(){{ setChangeName("Cessation 2");}}));

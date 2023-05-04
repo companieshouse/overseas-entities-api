@@ -2,9 +2,9 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.additions.Cessation;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.cessations.Addition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 
 import java.util.List;
 
