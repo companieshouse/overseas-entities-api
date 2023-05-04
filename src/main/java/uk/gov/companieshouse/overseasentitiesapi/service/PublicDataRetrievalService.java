@@ -1,10 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
-import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
 import uk.gov.companieshouse.api.model.psc.PscsApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
@@ -53,7 +52,7 @@ public class PublicDataRetrievalService {
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
-        ApiLogger.info("Retrieving Company Profile for Company Number ", logMap);
+        ApiLogger.info(String.format("Retrieving Company Profile for Company Number %s", companyNumber), logMap);
 
         try {
             return apiClientService
@@ -63,8 +62,7 @@ public class PublicDataRetrievalService {
                     .execute()
                     .getData();
         } catch (URIValidationException | IOException e) {
-            var message = "Error Retrieving Company Profile data for " + companyNumber;
-            ApiLogger.error(message, e, logMap);
+            ApiLogger.error(String.format("Error Retrieving  Company Profile data for %s", companyNumber), e, logMap);
             throw new ServiceException(e.getMessage(), e);
         }
     }
@@ -73,30 +71,25 @@ public class PublicDataRetrievalService {
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
-        ApiLogger.debug("Retrieving Officers data for Company Number ", logMap);
+        ApiLogger.info(String.format("Retrieving Officers data for Company Number %s", companyNumber), logMap);
 
         try {
-            ApiResponse<OfficersApi> officersApiResponse = apiClientService
+            return apiClientService
                     .getOauthAuthenticatedClient(passThroughTokenHeader)
                     .officers()
                     .list("/company/" + companyNumber + "/officers")
-                    .execute();
-
-            var officersData = officersApiResponse.getData();
-
-            if (officersApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                ApiLogger.info("No Officer for Company Number ", logMap);
-            } else {
-                for (CompanyOfficerApi officer : officersData.getItems()) {
-                    logMap.put(OFFICER_NAME, officer.getName());
-                    ApiLogger.debug("Retrieved Officers data for Officer name ", logMap);
-                }
+                    .execute()
+                    .getData();
+        } catch (ApiErrorResponseException e) {
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info(String.format("No Officers data found for Company Number %s", companyNumber), logMap);
+                var officersApi = new OfficersApi();
+                officersApi.setTotalResults(0);
+                return officersApi;
             }
-
-            return officersData;
+            throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException | IOException e) {
-            var message = "Error Retrieving Officers data for " + companyNumber;
-            ApiLogger.error(message, e, logMap);
+            ApiLogger.error(String.format("Error Retrieving Officers data for %s", companyNumber), e, logMap);
             throw new ServiceException(e.getMessage(), e);
         }
     }
@@ -105,28 +98,25 @@ public class PublicDataRetrievalService {
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
-        ApiLogger.debug("Retrieving PSCs data for Company Number", logMap);
+        ApiLogger.info(String.format("Retrieving PSCs data for Company Number %s", companyNumber), logMap);
 
         try {
-            ApiResponse<PscsApi> pscsApiResponse = apiClientService
+            return apiClientService
                     .getOauthAuthenticatedClient(passthroughTokenHeader)
                     .pscs()
                     .list("/company/" + companyNumber + "/persons-with-significant-control")
-                    .execute();
-
-            PscsApi pscsData = pscsApiResponse.getData();
-
-            if (pscsApiResponse.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                ApiLogger.info("No PSCs for Company Number ", logMap);
-            } else {
-                logMap.put(PSCS_NAME, pscsData.getItems().size());
-                ApiLogger.debug("Retrieved PSCs data with total of pscs: ", logMap);
+                    .execute()
+                    .getData();
+        } catch (ApiErrorResponseException e) {
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info(String.format("No PSCs Data found for Company Number %s", companyNumber), logMap);
+                var pscsApi = new PscsApi();
+                pscsApi.setTotalResults(0L);
+                return pscsApi;
             }
-
-            return pscsData;
+            throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException | IOException e) {
-            var message = "Error Retrieving PSCs Data for " + companyNumber;
-            ApiLogger.error(message, e, logMap);
+            ApiLogger.error(String.format("Error Retrieving PSCs Data for %s", companyNumber), e, logMap);
             throw new ServiceException(e.getMessage(), e);
         }
     }

@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +40,7 @@ class PublicDataRetrievalServiceTest {
     private static final String COMPANY_REFERENCE = "12345234";
 
     private static final String PASS_THROUGH_HEADER = "432342353255";
+    private static final String ERROR_MESSAGE = "ERROR";
 
     @InjectMocks
     private PublicDataRetrievalService publicDataRetrievalService;
@@ -180,7 +183,7 @@ class PublicDataRetrievalServiceTest {
 
     @Test
     void testServiceExceptionThrownWhenInitialisePublicDataForCompanyProfileDataThrowsURIValidationException() throws IOException, URIValidationException {
-        when(companyGet.execute()).thenThrow(new URIValidationException("ERROR"));
+        when(companyGet.execute()).thenThrow(new URIValidationException(ERROR_MESSAGE));
 
         assertThrows(ServiceException.class, () -> {
             publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
@@ -189,11 +192,52 @@ class PublicDataRetrievalServiceTest {
 
     @Test
     void testServiceExceptionThrownWhenInitialisePublicDataForCompanyProfileDataThrowsIOException() throws IOException, URIValidationException {
-        when(companyGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+        when(companyGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException(ERROR_MESSAGE)));
 
         assertThrows(ServiceException.class, () -> {
             publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
         });
+    }
+
+    @Test
+    void testInitialisePublicDataReturnsNoOfficersData() throws IOException, URIValidationException, ServiceException {
+        var companyProfileApi = new CompanyProfileApi();
+
+        when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
+        when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
+
+        when(apiClient.officers()).thenReturn(officers);
+        when(officers.list(Mockito.anyString())).thenReturn(officersList);
+
+        when(officersList.execute()).thenThrow(ApiErrorResponseException.fromHttpResponseException(
+                new HttpResponseException.Builder(404, "not found", new HttpHeaders()).setMessage(ERROR_MESSAGE).build()));
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenReturn(apiGetResponsePscs);
+
+        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
+    }
+
+    @Test
+    void testInitialisePublicDataReturnsNoPSCsData() throws IOException, URIValidationException, ServiceException {
+        var companyProfileApi = new CompanyProfileApi();
+
+        when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
+        when(apiGetResponseCompanyProfile.getData()).thenReturn(companyProfileApi);
+
+        when(apiClient.officers()).thenReturn(officers);
+        when(officers.list(Mockito.anyString())).thenReturn(officersList);
+        when(officersList.execute()).thenReturn(apiGetResponseOfficers);
+
+        when(apiClient.pscs()).thenReturn(pscs);
+        when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
+        when(pscsList.execute()).thenThrow(ApiErrorResponseException.fromHttpResponseException(
+                new HttpResponseException.Builder(404, "not found", new HttpHeaders()).setMessage(ERROR_MESSAGE).build()));
+
+        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
