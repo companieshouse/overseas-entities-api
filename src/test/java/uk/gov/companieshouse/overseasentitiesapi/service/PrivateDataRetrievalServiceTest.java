@@ -5,6 +5,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpResponseException.Builder;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -81,6 +84,9 @@ class PrivateDataRetrievalServiceTest {
 
   @Mock
   private PrivateManagingOfficerDataGet privateManagingOfficerDataGet;
+
+  private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
+      new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
 
   private final String jsonBeneficialOwnerString = "["
           + "{"
@@ -532,6 +538,54 @@ class PrivateDataRetrievalServiceTest {
       assertNotNull(privateDataRetrievalService.getBeneficialOwnerData());
       assertNotNull(privateDataRetrievalService.getOverseasEntityData());
       assertNotNull(privateDataRetrievalService.getManagingOfficerData());
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsApiErrorResponseException()
+        throws IOException, URIValidationException, ServiceException {
+      var objectMapper = new ObjectMapper();
+
+      var overseasEntityApi = new OverseasEntityDataApi();
+
+      //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
+      var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
+
+      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
+      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
+
+      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
+      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
+
+      when(privateBeneficialOwnerGet.execute()).thenThrow(FourHundredAndFourException);
+
+      privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
+
+      assertEquals(privateDataRetrievalService.getBeneficialOwnerData(), new PrivateBoDataListApi(Collections.emptyList()));
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenGetManagingOfficerPrivateDataThrowsApiErrorResponseException()
+        throws IOException, URIValidationException, ServiceException {
+      var objectMapper = new ObjectMapper();
+
+      var overseasEntityApi = new OverseasEntityDataApi();
+
+      //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
+      var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
+
+      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
+      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
+
+      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
+      when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
+
+      when(privateManagingOfficerDataGet.execute()).thenThrow(FourHundredAndFourException);
+
+      privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
+
+      assertEquals(privateDataRetrievalService.getManagingOfficerData(), new ManagingOfficerListDataApi(Collections.emptyList()));
     }
   }
 }
