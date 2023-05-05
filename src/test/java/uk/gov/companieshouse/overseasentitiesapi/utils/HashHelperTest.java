@@ -9,8 +9,7 @@ class HashHelperTest {
 
     @Test
     void hashTest() throws NoSuchAlgorithmException {
-        HashHelper hashHelper = new HashHelper();
-        hashHelper.setSalt("foryoureyesonly");
+        HashHelper hashHelper = new HashHelper("foryoureyesonly");
         String hashed = hashHelper.encode("testing123");
         assertEquals("T-wBcLrkMcrUIMEpL6w_96pjUdw", hashed);
     }
