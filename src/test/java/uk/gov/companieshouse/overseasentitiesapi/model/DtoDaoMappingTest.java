@@ -232,6 +232,7 @@ class DtoDaoMappingTest {
 
         UpdateDto updateDto = new UpdateDto();
         updateDto.setDateOfCreation(LocalDate.of(2020,1,1));
+        updateDto.setFilingDate(LocalDate.of(2023,1,2));
         updateDto.setBoMoDataFetched(false);
         updateDto.setRegistrableBeneficialOwner(false);
         overseasEntitySubmission.setUpdate(updateDto);
@@ -422,6 +423,7 @@ class DtoDaoMappingTest {
 
     private void assertUpdateIsEqual(UpdateDto updateDto, UpdateDao updateDao) {
         assertEquals(updateDto.getDateOfCreation(), updateDao.getDateOfCreation());
+        assertEquals(updateDto.getFilingDate(), updateDao.getFilingDate());
         assertEquals(updateDto.isBoMoDataFetched(), updateDao.isBoMoDataFetched());
         assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
     }
