@@ -4,6 +4,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsVa
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 import java.time.LocalDate;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -11,6 +12,7 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+@Component
 public class UpdateValidator {
 
     public Errors validate(UpdateDto updateDto, Errors errors, String loggingContext) {
