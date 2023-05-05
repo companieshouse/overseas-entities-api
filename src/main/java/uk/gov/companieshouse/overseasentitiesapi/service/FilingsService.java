@@ -68,7 +68,7 @@ public class FilingsService {
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
 
-  @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+  @Value("${PUBLIC_API_IDENTITY_HASH_SALT:}")
   private String salt;
   
   private final OverseasEntitiesService overseasEntitiesService;
