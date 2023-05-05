@@ -43,6 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @Service
 public class FilingsService {
