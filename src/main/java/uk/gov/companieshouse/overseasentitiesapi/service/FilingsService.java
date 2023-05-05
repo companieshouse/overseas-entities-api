@@ -43,7 +43,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @Service
 public class FilingsService {
@@ -70,7 +70,7 @@ public class FilingsService {
 
   @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
   private String salt;
-  
+
   private final OverseasEntitiesService overseasEntitiesService;
   private final ApiClientService apiClientService;
   private final Supplier<LocalDate> dateNowSupplier;
@@ -124,10 +124,11 @@ public class FilingsService {
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
     if (submissionDto.isForUpdate()) {
-      HashHelper hashHelper = new HashHelper(salt);
       publicDataRetrievalService.initialisePublicData(
           submissionDto.getEntityNumber(), passThroughTokenHeader);
       privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
+
+      var dataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
     }
 
     filing.setData(userSubmission);
