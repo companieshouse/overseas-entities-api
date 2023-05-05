@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
@@ -69,6 +70,9 @@ public class FilingsService {
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
 
+  @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+  private String salt;
+  
   private final OverseasEntitiesService overseasEntitiesService;
   private final ApiClientService apiClientService;
   private final Supplier<LocalDate> dateNowSupplier;
@@ -122,6 +126,7 @@ public class FilingsService {
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
     if (submissionDto.isForUpdate()) {
+      HashHelper hashHelper = new HashHelper(salt);
       publicDataRetrievalService.initialisePublicData(
           submissionDto.getEntityNumber(), passThroughTokenHeader);
       privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
