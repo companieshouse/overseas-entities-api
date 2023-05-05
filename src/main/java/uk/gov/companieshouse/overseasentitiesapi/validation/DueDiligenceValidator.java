@@ -30,6 +30,11 @@ public class DueDiligenceValidator {
 
     public Errors validate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
         validateIdentityDate(dueDiligenceDto.getIdentityDate(), errors, loggingContext);
+        validateWithoutIdentityDate(dueDiligenceDto, errors, loggingContext);
+        return errors;
+    }
+
+    public Errors validateWithoutIdentityDate(DueDiligenceDto dueDiligenceDto, Errors errors, String loggingContext) {
         validateName(dueDiligenceDto.getName(), errors, loggingContext);
         validateAddress(dueDiligenceDto.getAddress(), errors, loggingContext);
         validateEmail(dueDiligenceDto.getEmail(), errors, loggingContext);
