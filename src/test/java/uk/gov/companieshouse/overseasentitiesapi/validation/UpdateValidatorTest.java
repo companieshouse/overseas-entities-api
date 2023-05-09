@@ -19,7 +19,7 @@ import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateValidatorTest {
+class UpdateValidatorTest {
 
     private static final String LOGGING_CONTEXT = "12345";
 
