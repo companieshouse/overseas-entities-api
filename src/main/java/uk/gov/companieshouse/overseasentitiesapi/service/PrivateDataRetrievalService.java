@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
@@ -51,10 +54,14 @@ public class PrivateDataRetrievalService {
             managingOfficerDataList.getManagingOfficerData().get(0).getManagingOfficerId());
       }
 
-      ApiLogger.debug("Retrieving Managing Officer data for Company Number ", logMap);
       return managingOfficerDataList;
-
-    } catch (URIValidationException | IOException e) {
+    } catch (ApiErrorResponseException e) {
+      if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+        ApiLogger.info("No Managing Officers data found for Company Number "+companyNumber, logMap);
+        return new ManagingOfficerListDataApi(Collections.emptyList());
+      }
+      throw new ServiceException(e.getStatusMessage(), e);
+    } catch (URIValidationException e) {
       var message = "Error Retrieving Managing Officer data for " + companyNumber;
       ApiLogger.error(message, e, logMap);
       throw new ServiceException(e.getMessage(), e);
@@ -63,14 +70,15 @@ public class PrivateDataRetrievalService {
 
   private OverseasEntityDataApi getOverseasEntityData(String companyNumber)
       throws ServiceException {
+    var logMap = new HashMap<String, Object>();
     try {
-      OverseasEntityDataApi overseasEntityDataApi = apiClientService
+      var overseasEntityDataApi = apiClientService
           .getInternalApiClient()
           .privateOverseasEntityDataHandler()
           .getOverseasEntityData(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/entity-data")
           .execute()
           .getData();
-      var logMap = new HashMap<String, Object>();
+
 
       logMap.put(COMPANY_NUMBER, companyNumber);
       ApiLogger.info("Retrieving overseas entity data for company number ",  logMap);
@@ -78,7 +86,7 @@ public class PrivateDataRetrievalService {
       return overseasEntityDataApi;
     } catch (URIValidationException | IOException e) {
       var message = "Error Retrieving overseas entity data for " + companyNumber;
-      ApiLogger.errorContext(message, e);
+      ApiLogger.error(message, e, logMap);
       throw new ServiceException(e.getMessage(), e);
     }
   }
@@ -103,13 +111,16 @@ public class PrivateDataRetrievalService {
         ApiLogger
             .info(String.format("Retrieved %d Beneficial Owners for Company Number %s",
                 numberOfBOs, companyNumber));
-      } else {
-        ApiLogger.info("No Beneficial Owners found for Company Number " + companyNumber);
       }
 
       return beneficialOwnerDataList;
-
-    } catch (URIValidationException | IOException e) {
+    } catch (ApiErrorResponseException e) {
+      if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+        ApiLogger.info("No Beneficial Owners found for Company Number "+companyNumber, logMap);
+        return new PrivateBoDataListApi(Collections.emptyList());
+      }
+      throw new ServiceException(e.getStatusMessage(), e);
+    } catch (URIValidationException e) {
       var message = "Error Retrieving Beneficial Owner data for " + companyNumber;
       ApiLogger.errorContext(message, e);
       throw new ServiceException(e.getMessage(), e);
