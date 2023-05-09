@@ -5,9 +5,12 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao.SCHEMA_VERSION_FIELD;
+
 /**
  * A version 2.0 document has the entity name in an 'entity_name' field at the top level of the submission model and
- * not in any block. Transformation requires this field to be moved to a new, top-level 'entity_name' block.
+ * not in any block. Transformation requires this field to be moved to a new, top-level 'entity_name' block and setting
+ * the correct version number on the document.
  */
 @Component
 public class Version2DocumentTransformer implements DocumentTransformer {
@@ -23,10 +26,13 @@ public class Version2DocumentTransformer implements DocumentTransformer {
     @Override
     public void transform(Document submissionDocument) {
         ApiLogger.info("Transforming a version 2.0 document...");
+
         String entityName = (String) submissionDocument.get(ENTITY_NAME_FIELD_AND_BLOCK_NAME);
         submissionDocument.remove(ENTITY_NAME_FIELD_AND_BLOCK_NAME);
         var entityNameDocument = new Document();
         entityNameDocument.put(NEW_ENTITY_NAME_FIELD_NAME, entityName);
         submissionDocument.put(ENTITY_NAME_FIELD_AND_BLOCK_NAME, entityNameDocument);
+
+        submissionDocument.put(SCHEMA_VERSION_FIELD, SchemaVersion.VERSION_2_0.getVersion());
     }
 }

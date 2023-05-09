@@ -1,8 +1,7 @@
-package uk.gov.companieshouse.overseasentitiesapi.model;
+package uk.gov.companieshouse.overseasentitiesapi.converter;
 
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.overseasentitiesapi.converter.Version2DocumentTransformer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,5 +24,7 @@ class Version2DocumentTransformerTest {
 
         assertNotNull(nameDocument);
         assertEquals(ENTITY_NAME, nameDocument.get("name"));
+
+        assertEquals("2.0", submissionDocument.get("schema_version"));
     }
 }
