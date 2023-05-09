@@ -520,6 +520,26 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testPartialUpdateValidationNoUpdate() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111129");
+        overseasEntitySubmissionDto.setUpdate(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialUpdateValidationNoFilingDate() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111129");
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testFullUpdateValidationWithoutTrusts() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);

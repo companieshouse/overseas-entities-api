@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -71,8 +74,10 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         // Method to be added to as Update journey developed
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         // Change to Statement Validation once BO/MO Statements are complete
         // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
     }
 
@@ -139,7 +144,10 @@ public class OverseasEntitySubmissionDtoValidator {
         // Temporarily disabling BO/MO validation till it is implemented in Update Journey
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
+        if (overseasEntitySubmissionDto.getUpdate() != null) {
+            updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
+                    loggingContext);
+        }
 
         return errors;
     }

@@ -23,7 +23,7 @@ public class UpdateValidator {
     }
 
     public Errors validateFull(UpdateDto updateDto, Errors errors, String loggingContext) {
-        if (updateDto.getFilingDate() == null) {
+        if (updateDto == null || updateDto.getFilingDate() == null) {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.UPDATE_FIELD, UpdateDto.FILING_DATE);
             String errorMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
@@ -33,6 +33,7 @@ public class UpdateValidator {
         }
         return errors;
     }
+
     private boolean validateFilingDate(LocalDate filingDate, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.UPDATE_FIELD, UpdateDto.FILING_DATE);
         return DateValidators.isDateInPast(filingDate, qualifiedFieldName, errors, loggingContext);
