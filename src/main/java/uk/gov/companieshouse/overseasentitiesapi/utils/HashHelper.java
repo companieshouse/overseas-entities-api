@@ -14,7 +14,11 @@ public class HashHelper {
     }
 
     public String encode(String plain) throws NoSuchAlgorithmException {
-        return base64Encode(sha1Digest(plain)).replace("=", "");
+        return stripEquals(base64Encode(sha1Digest(plain)));
+    }
+
+    String stripEquals(String str) {
+        return str.replace("=", "");
     }
 
     private String base64Encode(final byte[] bytes) {
