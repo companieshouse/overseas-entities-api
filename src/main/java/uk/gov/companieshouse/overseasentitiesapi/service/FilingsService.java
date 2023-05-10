@@ -66,7 +66,7 @@ public class FilingsService {
 
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
-  
+
   private final OverseasEntitiesService overseasEntitiesService;
   private final ApiClientService apiClientService;
   private final Supplier<LocalDate> dateNowSupplier;
