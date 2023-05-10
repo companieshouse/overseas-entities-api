@@ -19,6 +19,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -124,7 +125,13 @@ public class FilingsService {
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
     if (submissionDto.isForUpdate()) {
-      HashHelper hashHelper = new HashHelper(salt);
+      var hashHelper = new HashHelper(salt);
+      try {
+        String digest = hashHelper.encode("1234567890");
+        ApiLogger.info("Digest " + digest);
+      } catch (NoSuchAlgorithmException exn) {
+        ApiLogger.error("No such algorithm", exn, logMap);
+      }
       publicDataRetrievalService.initialisePublicData(
           submissionDto.getEntityNumber(), passThroughTokenHeader);
       privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
