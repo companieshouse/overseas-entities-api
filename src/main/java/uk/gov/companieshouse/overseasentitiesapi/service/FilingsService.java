@@ -125,12 +125,13 @@ public class FilingsService {
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
 
     if (submissionDto.isForUpdate()) {
+      // The hash helper will be used to collate the original registration data / last update with the update submission.
       var hashHelper = new HashHelper(salt);
       try {
         String digest = hashHelper.encode("1234567890");
-        ApiLogger.info("Digest " + digest);
+        ApiLogger.infoContext(requestId, "Digest " + digest);
       } catch (NoSuchAlgorithmException exn) {
-        ApiLogger.error("No such algorithm", exn, logMap);
+        ApiLogger.errorContext(requestId, "No such algorithm", exn, logMap);
       }
       publicDataRetrievalService.initialisePublicData(
           submissionDto.getEntityNumber(), passThroughTokenHeader);
