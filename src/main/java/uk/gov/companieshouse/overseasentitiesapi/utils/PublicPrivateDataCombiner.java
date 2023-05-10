@@ -55,7 +55,7 @@ public class PublicPrivateDataCombiner {
     var privateBOs = privateDataRetrievalService.getBeneficialOwnerData();
     var publicPSCs = publicDataRetrievalService.getPscs();
 
-    for (var privateBO : privateBOs) {
+    for (var privateBO : privateBOs.getBoPrivateData()) {
       putInPairMap(combineBO, getHashedId(privateBO.getPscId()), privateBO, Position.RIGHT);
     }
 
@@ -86,7 +86,7 @@ public class PublicPrivateDataCombiner {
     var privateMOs = privateDataRetrievalService.getManagingOfficerData();
     var publicOfficers = publicDataRetrievalService.getOfficers();
 
-    for (var privateMO : privateMOs) {
+    for (var privateMO : privateMOs.getManagingOfficerData()) {
       putInPairMap(combineMO, getHashedId(privateMO.getManagingOfficerId()), privateMO,
           Position.RIGHT);
     }
