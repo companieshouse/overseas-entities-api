@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -27,6 +29,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
     private final TrustCorporateValidator trustCorporateValidator;
 
+    private final UpdateValidator updateValidator;
+
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
@@ -42,7 +46,8 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 TrustDetailsValidator trustDetailsValidator,
                                                 TrustIndividualValidator trustIndividualValidator,
                                                 TrustCorporateValidator trustCorporateValidator,
-                                                HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator) {
+                                                HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator,
+                                                UpdateValidator updateValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
@@ -52,6 +57,7 @@ public class OverseasEntitySubmissionDtoValidator {
         this.trustIndividualValidator = trustIndividualValidator;
         this.trustCorporateValidator = trustCorporateValidator;
         this.historicalBeneficialOwnerValidator = historicalBeneficialOwnerValidator;
+        this.updateValidator = updateValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -67,9 +73,11 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         // Method to be added to as Update journey developed
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
         // Change to Statement Validation once BO/MO Statements are complete
         // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
+        updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -134,6 +142,11 @@ public class OverseasEntitySubmissionDtoValidator {
         }
         // Temporarily disabling BO/MO validation till it is implemented in Update Journey
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        if (overseasEntitySubmissionDto.getUpdate() != null) {
+            updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
+                    loggingContext);
+        }
 
         return errors;
     }

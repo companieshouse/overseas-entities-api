@@ -8,6 +8,7 @@ import java.util.List;
 public class UpdateDto {
 
     public static final String DATE_OF_CREATION = "date_of_creation";
+    public static final String FILING_DATE= "filing_date";
     public static final String BO_MO_DATA_FETCHED = "bo_mo_data_fetched";
     public static final String REGISTRABLE_BENEFICIAL_OWNER = "registrable_beneficial_owner";
 
@@ -23,6 +24,9 @@ public class UpdateDto {
 
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
+
+    @JsonProperty(FILING_DATE)
+    private LocalDate filingDate;
 
     @JsonProperty(BO_MO_DATA_FETCHED)
     private boolean boMoDataFetched;
@@ -52,6 +56,14 @@ public class UpdateDto {
 
     public void setDateOfCreation(LocalDate dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
+    }
+
+    public LocalDate getFilingDate() {
+        return filingDate;
+    }
+
+    public void setFilingDate(LocalDate filingDate) {
+        this.filingDate = filingDate;
     }
 
     public boolean isBoMoDataFetched() {
