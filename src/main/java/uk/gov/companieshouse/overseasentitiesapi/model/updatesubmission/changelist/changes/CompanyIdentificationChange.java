@@ -23,25 +23,31 @@ public class CompanyIdentificationChange extends Change {
     @JsonProperty("proposedRegisterLocation")
     private String proposedRegisterLocation;
 
-    @JsonProperty("companyIdentification")
-    private String companyIdentification;
+    @JsonProperty("placeRegistered")
+    private String placeRegistered;
 
-    @JsonProperty("proposedCompanyIdentification")
-    private String proposedCompanyIdentification;
+    @JsonProperty("proposedPlaceRegistered")
+    private String proposedPlaceRegistered;
 
-    public CompanyIdentificationChange(String legalForm, String proposedLegalForm,
-                                       String governingLaw, String proposedGoverningLaw,
-                                       String registerLocation, String proposedRegisterLocation,
-                                       String companyIdentification, String proposedCompanyIdentification){
+    @JsonProperty("registrationNumber")
+    private String registrationNumber;
+
+    @JsonProperty("proposedRegistrationNumber")
+    private String proposedRegistrationNumber;
+
+    public CompanyIdentificationChange(CompanyIdentification companyIdentification,
+                                       CompanyIdentification updatedCompanyIdentification){
         super.setChangeName(CHANGE_NAME);
-        this.legalForm = legalForm;
-        this.proposedLegalForm = proposedLegalForm;
-        this.governingLaw = governingLaw;
-        this.proposedGoverningLaw = proposedGoverningLaw;
-        this.registerLocation = registerLocation;
-        this.proposedRegisterLocation = proposedRegisterLocation;
-        this.companyIdentification = companyIdentification;
-        this.proposedCompanyIdentification = proposedCompanyIdentification;
+        this.legalForm = companyIdentification.getLegalForm();
+        this.proposedLegalForm = updatedCompanyIdentification.getLegalForm();
+        this.governingLaw = companyIdentification.getGoverningLaw();
+        this.proposedGoverningLaw = updatedCompanyIdentification.getGoverningLaw();
+        this.registerLocation = companyIdentification.getRegisterLocation();
+        this.proposedRegisterLocation = updatedCompanyIdentification.getRegisterLocation();
+        this.placeRegistered = companyIdentification.getPlaceRegistered();
+        this.proposedPlaceRegistered = updatedCompanyIdentification.getPlaceRegistered();
+        this.registrationNumber = companyIdentification.getRegistrationNumber();
+        this.proposedRegistrationNumber = updatedCompanyIdentification.getRegistrationNumber();
     }
 
     public String getLegalForm() {
@@ -92,19 +98,36 @@ public class CompanyIdentificationChange extends Change {
         this.proposedRegisterLocation = proposedRegisterLocation;
     }
 
-    public String getCompanyIdentification() {
-        return companyIdentification;
+    public String getPlaceRegistered() {
+        return placeRegistered;
     }
 
-    public void setCompanyIdentification(String companyIdentification) {
-        this.companyIdentification = companyIdentification;
+    public void setPlaceRegistered(String placeRegistered) {
+        this.placeRegistered = placeRegistered;
     }
 
-    public String getProposedCompanyIdentification() {
-        return proposedCompanyIdentification;
+    public String getProposedPlaceRegistered() {
+        return proposedPlaceRegistered;
     }
 
-    public void setProposedCompanyIdentification(String proposedCompanyIdentification) {
-        this.proposedCompanyIdentification = proposedCompanyIdentification;
+    public void setProposedPlaceRegistered(String proposedPlaceRegistered) {
+        this.proposedPlaceRegistered = proposedPlaceRegistered;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public String getProposedRegistrationNumber() {
+        return proposedRegistrationNumber;
+    }
+
+    public void setProposedRegistrationNumber(String proposedRegistrationNumber) {
+        this.proposedRegistrationNumber = proposedRegistrationNumber;
     }
 }
+

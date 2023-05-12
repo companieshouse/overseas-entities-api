@@ -28,21 +28,21 @@ public class OverseasEntityChangeServiceTest {
         overseasEntityChangeService = new OverseasEntityChangeService(overseasEntityChangeValidator);
     }
 
-//    @Test
-//    void testCollateOverseasEntityChangesOnlyEntityNameChangeReturnsChangeList() {
-//        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = new ImmutablePair<>
-//                (new CompanyProfileApi() {{
-//                    setCompanyName("Existing Name");
-//                }},
-//                        new OverseasEntityDataApi());
-//        OverseasEntitySubmissionDto updateSubmission =
-//                new OverseasEntitySubmissionDto(){{ setEntityName(new EntityNameDto(){{setName("New name");}}); }};
-//        when(overseasEntityChangeValidator.verifyEntityNameChange(existingRegistration.getLeft().getCompanyName(), updateSubmission.getEntityName().getName())).thenReturn(new EntityNameChange("Existing Name", "New name"));
-//        when(overseasEntityChangeValidator.verifyPrincipalAddressChange(any(), any())).thenReturn(null);
-////        when(overseasEntityChangeValidator.verifyCorrespondenceAddressChange(any(), any())).thenReturn(null);
-////        when(overseasEntityChangeValidator.verifyCompanyIdentificationChange(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(null);
-////        when(overseasEntityChangeValidator.verifyEntityEmailAddressChange(any(), any())).thenReturn(null);
-//
-//        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
-//    }
+    @Test
+    void testCollateOverseasEntityChangesOnlyEntityNameChangeReturnsChangeList() {
+        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = new ImmutablePair<>
+                (new CompanyProfileApi() {{
+                    setCompanyName("Existing Name");
+                }},
+                        new OverseasEntityDataApi());
+        OverseasEntitySubmissionDto updateSubmission =
+                new OverseasEntitySubmissionDto(){{ setEntityName(new EntityNameDto(){{setName("New name");}}); }};
+        when(overseasEntityChangeValidator.verifyEntityNameChange(existingRegistration.getLeft().getCompanyName(), updateSubmission.getEntityName().getName())).thenReturn(new EntityNameChange("Existing Name", "New name"));
+        when(overseasEntityChangeValidator.verifyPrincipalAddressChange(any(), any())).thenReturn(null);
+//        when(overseasEntityChangeValidator.verifyCorrespondenceAddressChange(any(), any())).thenReturn(null);
+//        when(overseasEntityChangeValidator.verifyCompanyIdentificationChange(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(null);
+//        when(overseasEntityChangeValidator.verifyEntityEmailAddressChange(any(), any())).thenReturn(null);
+
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+    }
 }

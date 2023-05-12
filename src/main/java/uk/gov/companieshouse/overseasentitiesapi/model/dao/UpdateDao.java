@@ -10,6 +10,10 @@ public class UpdateDao {
     @Field("date_of_creation")
     private LocalDate dateOfCreation;
 
+
+    @Field("filing_date")
+    private LocalDate filingDate;
+
     @Field("bo_mo_data_fetched")
     private boolean boMoDataFetched;
 
@@ -37,6 +41,14 @@ public class UpdateDao {
 
     public void setDateOfCreation(LocalDate dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
+    }
+
+    public LocalDate getFilingDate() {
+        return filingDate;
+    }
+
+    public void setFilingDate(LocalDate filingDate) {
+        this.filingDate = filingDate;
     }
 
     public boolean isBoMoDataFetched() {

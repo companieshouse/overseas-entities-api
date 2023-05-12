@@ -7,11 +7,13 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class OverseasEntityChangeService {
@@ -24,7 +26,7 @@ public class OverseasEntityChangeService {
 
     public List<Change> collateOverseasEntityChanges(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
-            OverseasEntitySubmissionDto updateSubmission){
+            OverseasEntitySubmissionDto updateSubmission) {
         List<Change> changes = new ArrayList<>();
 
         changes.add(overseasEntityChangeValidator.verifyEntityNameChange(
@@ -36,15 +38,46 @@ public class OverseasEntityChangeService {
         changes.add(overseasEntityChangeValidator.verifyCorrespondenceAddressChange(
                 existingRegistration.getLeft().getRegisteredOfficeAddress(),
                 updateSubmission.getEntity().getServiceAddress()));
-//        changes.add(overseasEntityChangeValidator.verifyCompanyIdentificationChange(
-//                existingRegistration.getLeft().getForeignCompanyDetails().getLegalForm(),
-//                existingRegistration.getLeft().getForeignCompanyDetails().getGovernedBy(),
-//                existingRegistration.getLeft().,
-//                existingRegistration.getLeft().,
-//                updateSubmission.getEntity().getLegalForm(),
-//                updateSubmission.getEntity().getLawGoverned(),
-//                updateSubmission.getEntity().get ,
-//                ""));
+        changes.add(overseasEntityChangeValidator.verifyCompanyIdentificationChange(
+                new CompanyIdentification(
+                        Optional.ofNullable(existingRegistration.getLeft())
+                                .map(left -> left.getForeignCompanyDetails())
+                                .map(companyDetails -> companyDetails.getLegalForm())
+                                .orElse(null),
+                        Optional.ofNullable(existingRegistration.getLeft())
+                                .map(left -> left.getForeignCompanyDetails())
+                                .map(companyDetails -> companyDetails.getGovernedBy())
+                                .orElse(null),
+                        Optional.ofNullable(existingRegistration.getLeft())
+                                .map(left -> left.getForeignCompanyDetails())
+                                .map(companyDetails -> companyDetails.getOriginatingRegistry())
+                                .map(originatingRegistry -> originatingRegistry.getCountry())
+                                .orElse(null),
+                        Optional.ofNullable(existingRegistration.getLeft())
+                                .map(left -> left.getForeignCompanyDetails())
+                                .map(companyDetails -> companyDetails.getOriginatingRegistry())
+                                .map(originatingRegistry -> originatingRegistry.getName())
+                                .orElse(null),
+                        Optional.ofNullable(existingRegistration.getLeft())
+                                .map(left -> left.getForeignCompanyDetails())
+                                .map(companyDetails -> companyDetails.getRegistrationNumber())
+                                .orElse(null)),
+                new CompanyIdentification(
+                        Optional.ofNullable(updateSubmission.getEntity())
+                                .map(entity -> entity.getLegalForm())
+                                .orElse(null),
+                        Optional.ofNullable(updateSubmission.getEntity())
+                                .map(entity -> entity.getLawGoverned())
+                                .orElse(null),
+                        Optional.ofNullable(updateSubmission.getEntity())
+                                .map(entity -> entity.getIncorporationCountry())
+                                .orElse(null),
+                        Optional.ofNullable(updateSubmission.getEntity())
+                                .map(entity -> entity.getPublicRegisterName())
+                                .orElse(null),
+                        Optional.ofNullable(updateSubmission.getEntity())
+                                .map(entity -> entity.getRegistrationNumber())
+                                .orElse(null))));
         changes.add(overseasEntityChangeValidator.verifyEntityEmailAddressChange(
                 existingRegistration.getRight().getEmail(),
                 updateSubmission.getEntity().getEmail()));

@@ -20,27 +20,18 @@ public class OverseasEntityChangeValidator {
         return validateSameAddress(existing, updated) ? null : new CorrespondenceAddressChange(existing, updated);
     }
 
-    public CompanyIdentificationChange verifyCompanyIdentificationChange(String existingLegalForm,
-                                                                         String existingGoverningLaw,
-                                                                         String existingRegisterLocation,
-                                                                         String existingCompanyIdentification,
-                                                                         String updatedLegalForm,
-                                                                         String updatedGoverningLaw,
-                                                                         String updatedRegisterLocation,
-                                                                         String updatedCompanyIdentification) {
-        return existingLegalForm.equals(updatedLegalForm) &&
-                existingGoverningLaw.equals(updatedGoverningLaw) &&
-                existingRegisterLocation.equals(updatedRegisterLocation) &&
-                existingCompanyIdentification.equals(updatedCompanyIdentification)
-                ? null : new CompanyIdentificationChange(
-                    existingLegalForm, updatedLegalForm,
-                    existingGoverningLaw, updatedGoverningLaw,
-                    existingRegisterLocation, updatedRegisterLocation,
-                    existingCompanyIdentification, updatedCompanyIdentification);
+    public CompanyIdentificationChange verifyCompanyIdentificationChange(CompanyIdentification existing,
+                                                                         CompanyIdentification updated) {
+        return StringUtils.equals(existing.getLegalForm(), updated.getLegalForm()) &&
+                StringUtils.equals(existing.getGoverningLaw(), updated.getGoverningLaw()) &&
+                StringUtils.equals(existing.getRegisterLocation(), updated.getRegisterLocation()) &&
+                StringUtils.equals(existing.getPlaceRegistered(), updated.getPlaceRegistered()) &&
+                StringUtils.equals(existing.getRegistrationNumber(), updated.getRegistrationNumber())
+                ? null : new CompanyIdentificationChange(existing, updated);
     }
 
     public EntityEmailAddressChange verifyEntityEmailAddressChange(String existing, String updated) {
-        return existing.equals(updated) ? null : new EntityEmailAddressChange(existing, updated);
+        return StringUtils.equals(existing, updated) ? null : new EntityEmailAddressChange(existing, updated);
     }
 
     private boolean validateSameAddress(RegisteredOfficeAddressApi existing, AddressDto updated) {
