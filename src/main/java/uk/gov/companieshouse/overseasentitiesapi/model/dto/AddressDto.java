@@ -139,25 +139,4 @@ public class AddressDto {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final AddressDto addressDto = (AddressDto) o;
-        return Objects.equals(line1, addressDto.line1) &&
-                Objects.equals(line2, addressDto.line2) &&
-                Objects.equals(careOf, addressDto.careOf) &&
-                Objects.equals(country, addressDto.country) &&
-                Objects.equals(locality, addressDto.locality) &&
-                Objects.equals(poBox, addressDto.poBox) &&
-                Objects.equals(postcode, addressDto.postcode) &&
-                Objects.equals(propertyNameNumber, addressDto.propertyNameNumber) &&
-                Objects.equals(county, addressDto.county) &&
-                Objects.equals(town, addressDto.town);
-    }
 }
