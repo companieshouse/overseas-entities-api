@@ -8,22 +8,22 @@ public class CorrespondenceAddressChange extends Change {
     private static final String CHANGE_NAME = "changeOfServiceAddress";
 
     @JsonProperty("serviceAddress")
-    private RegisteredOfficeAddressApi serviceAddress;
+    private AddressDto serviceAddress;
 
     @JsonProperty("proposedServiceAddress")
     private AddressDto proposedServiceAddress;
 
-    public CorrespondenceAddressChange(RegisteredOfficeAddressApi serviceAddress, AddressDto proposedServiceAddress){
+    public CorrespondenceAddressChange(AddressDto serviceAddress, AddressDto proposedServiceAddress){
         super.setChangeName(CHANGE_NAME);
         this.serviceAddress = serviceAddress;
         this.proposedServiceAddress = proposedServiceAddress;
     }
 
-    public RegisteredOfficeAddressApi getServiceAddress() {
+    public AddressDto getServiceAddress() {
         return serviceAddress;
     }
 
-    public void setServiceAddress(RegisteredOfficeAddressApi serviceAddress) {
+    public void setServiceAddress(AddressDto serviceAddress) {
         this.serviceAddress = serviceAddress;
     }
 

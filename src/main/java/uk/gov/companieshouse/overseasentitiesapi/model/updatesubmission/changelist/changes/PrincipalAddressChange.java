@@ -8,22 +8,22 @@ public class PrincipalAddressChange extends Change {
     private static final String CHANGE_NAME = "changeOfRoa";
 
     @JsonProperty("registeredOfficeAddress")
-    private RegisteredOfficeAddressApi registeredOfficeAddress;
+    private AddressDto registeredOfficeAddress;
 
     @JsonProperty("proposedRegisteredOfficeAddress")
     private AddressDto proposedRegisteredOfficeAddress;
 
-    public PrincipalAddressChange(RegisteredOfficeAddressApi registeredOfficeAddress, AddressDto proposedRegisteredOfficeAddress){
+    public PrincipalAddressChange(AddressDto registeredOfficeAddress, AddressDto proposedRegisteredOfficeAddress){
         super.setChangeName(CHANGE_NAME);
         this.registeredOfficeAddress = registeredOfficeAddress;
         this.proposedRegisteredOfficeAddress = proposedRegisteredOfficeAddress;
     }
 
-    public RegisteredOfficeAddressApi getRegisteredOfficeAddress() {
+    public AddressDto getRegisteredOfficeAddress() {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(RegisteredOfficeAddressApi registeredOfficeAddress) {
+    public void setRegisteredOfficeAddress(AddressDto registeredOfficeAddress) {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 

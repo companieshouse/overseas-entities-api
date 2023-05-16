@@ -12,37 +12,40 @@ public class OverseasEntityChangeValidator {
         return StringUtils.equals(existing, updated) ? null : new EntityNameChange(existing, updated);
     }
 
-    public PrincipalAddressChange verifyPrincipalAddressChange(RegisteredOfficeAddressApi existing, AddressDto updated) {
-        return validateSameAddress(existing, updated) ? null : new PrincipalAddressChange(existing, updated);
+    public PrincipalAddressChange verifyPrincipalAddressChange(
+            RegisteredOfficeAddressApi existing, AddressDto updated) {
+        var existingAddressDto = convertToAddressDto(existing);
+        return existingAddressDto.equals(updated) ? null : new PrincipalAddressChange(existingAddressDto, updated);
     }
 
-    public CorrespondenceAddressChange verifyCorrespondenceAddressChange(RegisteredOfficeAddressApi existing, AddressDto updated) {
-        return validateSameAddress(existing, updated) ? null : new CorrespondenceAddressChange(existing, updated);
+    public CorrespondenceAddressChange verifyCorrespondenceAddressChange(
+            RegisteredOfficeAddressApi existing, AddressDto updated) {
+        var existingAddressDto = convertToAddressDto(existing);
+        return existingAddressDto.equals(updated) ? null : new CorrespondenceAddressChange(existingAddressDto, updated);
     }
 
-    public CompanyIdentificationChange verifyCompanyIdentificationChange(CompanyIdentification existing,
-                                                                         CompanyIdentification updated) {
-        return StringUtils.equals(existing.getLegalForm(), updated.getLegalForm()) &&
-                StringUtils.equals(existing.getGoverningLaw(), updated.getGoverningLaw()) &&
-                StringUtils.equals(existing.getRegisterLocation(), updated.getRegisterLocation()) &&
-                StringUtils.equals(existing.getPlaceRegistered(), updated.getPlaceRegistered()) &&
-                StringUtils.equals(existing.getRegistrationNumber(), updated.getRegistrationNumber())
-                ? null : new CompanyIdentificationChange(existing, updated);
+    public CompanyIdentificationChange verifyCompanyIdentificationChange(
+            CompanyIdentification existing, CompanyIdentification updated) {
+        return existing.equals(updated) ? null : new CompanyIdentificationChange(existing, updated);
     }
 
     public EntityEmailAddressChange verifyEntityEmailAddressChange(String existing, String updated) {
         return StringUtils.equals(existing, updated) ? null : new EntityEmailAddressChange(existing, updated);
     }
 
-    private boolean validateSameAddress(RegisteredOfficeAddressApi existing, AddressDto updated) {
-        return StringUtils.equals(existing.getPremises(), updated.getPropertyNameNumber())
-                && StringUtils.equals(existing.getAddressLine1(), updated.getLine1())
-                && StringUtils.equals(existing.getAddressLine2(), updated.getLine2())
-                && StringUtils.equals(existing.getLocality(), updated.getTown())
-                && StringUtils.equals(existing.getRegion(), updated.getCounty())
-                && StringUtils.equals(existing.getCountry(), updated.getCountry())
-                && StringUtils.equals(existing.getPostalCode(), updated.getPostcode())
-                && StringUtils.equals(existing.getPoBox(), updated.getPoBox())
-                && StringUtils.equals(existing.getCareOf(), updated.getCareOf());
+    private AddressDto convertToAddressDto(RegisteredOfficeAddressApi existing) {
+        var addressDto = new AddressDto();
+
+        addressDto.setPropertyNameNumber(existing.getPremises());
+        addressDto.setLine1(existing.getAddressLine1());
+        addressDto.setLine2(existing.getAddressLine2());
+        addressDto.setTown(existing.getLocality());
+        addressDto.setCounty(existing.getRegion());
+        addressDto.setCountry(existing.getCountry());
+        addressDto.setPostcode(existing.getPostalCode());
+        addressDto.setPoBox(existing.getPoBox());
+        addressDto.setCareOf(existing.getCareOf());
+
+        return addressDto;
     }
 }

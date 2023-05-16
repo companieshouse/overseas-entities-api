@@ -66,7 +66,11 @@ public class CompanyIdentification {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompanyIdentification that = (CompanyIdentification) o;
-        return Objects.equals(legalForm, that.legalForm) && Objects.equals(governingLaw, that.governingLaw) && Objects.equals(registerLocation, that.registerLocation) && Objects.equals(placeRegistered, that.placeRegistered) && Objects.equals(registrationNumber, that.registrationNumber);
+        return Objects.equals(legalForm, that.legalForm)
+                && Objects.equals(governingLaw, that.governingLaw)
+                && Objects.equals(registerLocation, that.registerLocation)
+                && Objects.equals(placeRegistered, that.placeRegistered)
+                && Objects.equals(registrationNumber, that.registrationNumber);
     }
 
     @Override

@@ -15,6 +15,9 @@ public class UpdateSubmission {
     @JsonProperty("userSubmission")
     private OverseasEntitySubmissionDto userSubmission;
 
+    @JsonProperty("entityNumber")
+    private String entityNumber;
+
     @JsonProperty("dueDiligence")
     private DueDiligence dueDiligence;
 
@@ -56,6 +59,14 @@ public class UpdateSubmission {
 
     public void setUserSubmission(OverseasEntitySubmissionDto userSubmission) {
         this.userSubmission = userSubmission;
+    }
+
+    public String getEntityNumber() {
+        return entityNumber;
+    }
+
+    public void setEntityNumber(String entityNumber) {
+        this.entityNumber = entityNumber;
     }
 
     public DueDiligence getDueDiligence() {
