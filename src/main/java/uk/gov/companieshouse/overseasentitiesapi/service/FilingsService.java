@@ -42,6 +42,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.service.update.PopulateUpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -136,8 +138,9 @@ public class FilingsService {
       publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
       publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
 
-      ApiLogger.infoContext("PublicPrivateDataCombiner",
-          publicPrivateDataCombiner.logCollatedData());
+      ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
+
+      UpdateSubmission updateSubmission = new PopulateUpdateSubmission(submissionDto, new UpdateSubmission()).populate();
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
