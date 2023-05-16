@@ -42,6 +42,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.service.update.PopulateUpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -124,6 +126,9 @@ public class FilingsService {
       publicDataRetrievalService.initialisePublicData(
           submissionDto.getEntityNumber(), passThroughTokenHeader);
       privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
+      // TBA
+      UpdateSubmission updateSubmission = new PopulateUpdateSubmission(
+              submissionDto, new UpdateSubmission()).populate();
     }
 
     filing.setData(userSubmission);
