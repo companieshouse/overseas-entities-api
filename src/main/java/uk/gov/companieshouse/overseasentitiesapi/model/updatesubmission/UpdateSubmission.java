@@ -6,6 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateSubmission {
@@ -44,6 +45,12 @@ public class UpdateSubmission {
 
     @JsonProperty("cessations")
     private List<Cessation> cessations;
+
+    public UpdateSubmission() {
+        this.changes = new ArrayList<>();
+        this.additions = new ArrayList<>();
+        this.cessations = new ArrayList<>();
+    }
 
     public String getType() {
         return type;
