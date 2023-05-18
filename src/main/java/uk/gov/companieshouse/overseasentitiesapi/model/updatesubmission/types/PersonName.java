@@ -1,7 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PersonName {
+    @JsonProperty("forename")
     private String forename;
+    @JsonProperty("surname")
     private String surname;
 
     public PersonName(String forename, String surname){
