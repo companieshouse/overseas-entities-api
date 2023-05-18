@@ -28,4 +28,9 @@ public enum BeneficialOwnersStatementType {
        }
        return null;
    }
+
+   /* getValue() returns the selected value (for e.g. in Update Submission) from this enum list */
+   public String getValue() {
+       return this.beneficialOwnersStatement.toLowerCase();
+   }
 }
