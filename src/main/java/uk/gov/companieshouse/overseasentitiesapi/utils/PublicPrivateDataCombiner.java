@@ -20,6 +20,10 @@ public class PublicPrivateDataCombiner {
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final HashHelper hashHelper;
 
+  private Pair<CompanyProfileApi, OverseasEntityDataApi> combinedOEs;
+  private Map<String, Pair<PscApi, PrivateBoDataApi>> combinedBOs;
+  private Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedMOs;
+  
   public PublicPrivateDataCombiner(final PublicDataRetrievalService publicDataRetrievalService,
       final PrivateDataRetrievalService privateDataRetrievalService, final String salt) {
     this.privateDataRetrievalService = privateDataRetrievalService;
@@ -35,10 +39,12 @@ public class PublicPrivateDataCombiner {
    * @return Pair of the public data on the right and private data on the left
    */
   public Pair<CompanyProfileApi, OverseasEntityDataApi> buildMergedOverseasEntityDataPair() {
-    var privateOE = privateDataRetrievalService.getOverseasEntityData();
     var publicOE = publicDataRetrievalService.getCompanyProfile();
+    var privateOE = privateDataRetrievalService.getOverseasEntityData();
 
-    return Pair.of(publicOE, privateOE);
+    this.combinedOEs = Pair.of(publicOE, privateOE);
+
+    return this.combinedOEs;
   }
 
   /**
@@ -52,7 +58,7 @@ public class PublicPrivateDataCombiner {
   public Map<String, Pair<PscApi, PrivateBoDataApi>> buildMergedBeneficialOwnerDataMap()
       throws ServiceException {
 
-    var combineBO = new HashMap<String, Pair<PscApi, PrivateBoDataApi>>();
+    this.combinedBOs = new HashMap<>();
 
     var privateBOs = privateDataRetrievalService.getBeneficialOwnerData();
     var publicPSCs = publicDataRetrievalService.getPscs();
@@ -66,7 +72,7 @@ public class PublicPrivateDataCombiner {
         throw new ServiceException("Error hashing PSC ID", e);
       }
 
-      var pairFromMap = combineBO.get(hashedId);
+      var pairFromMap = combinedBOs.get(hashedId);
       Pair<PscApi, PrivateBoDataApi> pairToPutInMap;
 
       if (pairFromMap != null) {
@@ -74,7 +80,7 @@ public class PublicPrivateDataCombiner {
       } else {
         pairToPutInMap = Pair.of(null, privateBO);
       }
-      combineBO.put(hashedId, pairToPutInMap);
+      combinedBOs.put(hashedId, pairToPutInMap);
     }
 
     for (PscApi publicPSC : publicPSCs.getItems()) {
@@ -84,7 +90,7 @@ public class PublicPrivateDataCombiner {
           .split("/");
       String hashedId = linkAsArray[linkAsArray.length - 1];
 
-      var pairFromMap = combineBO.get(hashedId);
+      var pairFromMap = combinedBOs.get(hashedId);
       Pair<PscApi, PrivateBoDataApi> pairToGoInMap;
 
       if (pairFromMap != null) {
@@ -92,10 +98,10 @@ public class PublicPrivateDataCombiner {
       } else {
         pairToGoInMap = Pair.of(publicPSC, null);
       }
-      combineBO.put(hashedId, pairToGoInMap);
+      combinedBOs.put(hashedId, pairToGoInMap);
     }
 
-    return combineBO;
+    return combinedBOs;
   }
 
   /**
@@ -108,7 +114,7 @@ public class PublicPrivateDataCombiner {
    */
   public Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> buildMergedManagingOfficerDataMap()
       throws ServiceException {
-    var combineMO = new HashMap<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>>();
+    this.combinedMOs = new HashMap<>();
 
     var privateMOs = privateDataRetrievalService.getManagingOfficerData();
     var publicOfficers = publicDataRetrievalService.getOfficers();
@@ -121,7 +127,7 @@ public class PublicPrivateDataCombiner {
         throw new ServiceException("Error hashing Managing Officer ID", e);
       }
 
-      var pairFromMap = combineMO.get(hashedId);
+      var pairFromMap = combinedMOs.get(hashedId);
       Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
 
       if (pairFromMap != null) {
@@ -130,25 +136,125 @@ public class PublicPrivateDataCombiner {
         pairToPutInMap = Pair.of(null, privateMO);
       }
 
-      combineMO.put(hashedId, pairToPutInMap);
+      combinedMOs.put(hashedId, pairToPutInMap);
     }
 
     for (CompanyOfficerApi publicOfficer : publicOfficers.getItems()) {
       String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
       String hashedId = linkAsArray[linkAsArray.length - 1];
 
-      var pairFromMap = combineMO.get(hashedId);
+      var pairFromMap = combinedMOs.get(hashedId);
       Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
       
       if (pairFromMap != null) {
-        var pair = combineMO.get(hashedId);
+        var pair = combinedMOs.get(hashedId);
         pairToPutInMap = Pair.of(publicOfficer, pair.getRight());
       } else {
         pairToPutInMap = Pair.of(publicOfficer, null);
       }
-      combineMO.put(hashedId, pairToPutInMap);
+      combinedMOs.put(hashedId, pairToPutInMap);
     }
 
-    return combineMO;
+    return combinedMOs;
   }
+
+
+  private void createMoLog(StringBuilder result){
+    result.append("\"Managing Officer Data\": [");
+    var first = true;
+
+    for (var officer : this.combinedMOs.entrySet()) {
+      if (first) {
+        first = false;
+      } else {
+        result.append(", ");
+      }
+
+      var publicOfficer = officer.getValue().getLeft();
+      String publicMoId;
+
+      if(publicOfficer != null) {
+        String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
+        publicMoId = linkAsArray[linkAsArray.length - 1];
+      }else{
+        publicMoId = "null";
+      }
+
+      result.append("{");
+      result.append("\"Public Hashed ID\": \"" + publicMoId + "\", ");
+
+      var privateOfficer = officer.getValue().getRight();
+      String privateMoId;
+      if(privateOfficer != null) {
+        privateMoId = privateOfficer.getManagingOfficerId();
+      }else{
+        privateMoId = "null";
+      }
+
+      result.append(
+          "\"Private ID\": \"" + privateMoId + "\"");
+      result.append("}");
+    }
+    result.append("],");
+  }
+
+  private void createBoLog(StringBuilder result){
+    result.append("\"Beneficial Owner Data\": [");
+    var first = true;
+    for (var owner : this.combinedBOs.entrySet()) {
+      if (first) {
+        first = false;
+      } else {
+        result.append(", ");
+      }
+
+      var publicBo = owner.getValue().getLeft();
+      String publicBoId;
+
+      if(publicBo != null) {
+        String[] linkAsArray = publicBo.getLinks().getSelf().split("/");
+        publicBoId = linkAsArray[linkAsArray.length - 1];
+      }else{
+        publicBoId = "null";
+      }
+
+      var privateBo = owner.getValue().getRight();
+      String privateBoId;
+
+      if(privateBo != null) {
+        privateBoId = privateBo.getPscId();
+      }else{
+        privateBoId = "null";
+      }
+
+      result.append("{");
+      result.append("\"Public Hashed ID\": \"" + publicBoId + "\", ");
+      result.append("\"Private ID\": \"" + privateBoId + "\"");
+      result.append("}");
+    }
+    result.append("],");
+  }
+
+  private void createOELog(StringBuilder result){
+    result.append("\"Overseas Entity Data\": {");
+    if(this.combinedOEs != null && this.combinedOEs.getLeft() != null && this.combinedOEs.getRight() != null) {
+      result.append("\"Public Entity Number\": \"" + this.combinedOEs.getLeft().getCompanyNumber() + "\", ");
+      result.append("\"Private Email\": \"" + this.combinedOEs.getRight().getEmail() + "\"");
+    }
+    result.append("}");
+  }
+
+
+  public String logCollatedData() {
+    var result = new StringBuilder("{");
+
+    createMoLog(result);
+    createBoLog(result);
+    createOELog(result);
+
+    result.append("}");
+
+    return result.toString();
+  }
+
 }
