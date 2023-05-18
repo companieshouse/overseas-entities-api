@@ -9,13 +9,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 @Component
-public class OverseasEntityChangeValidator {
-    public EntityNameChange verifyEntityNameChange(String existing, String updated) {
+public class OverseasEntityChangeComparator {
+    public EntityNameChange compareEntityName(String existing, String updated) {
         return StringUtils.equals(existing, updated) || updated == null ?
                 null : new EntityNameChange(existing, updated);
     }
 
-    public PrincipalAddressChange verifyPrincipalAddressChange(
+    public PrincipalAddressChange comparePrincipalAddress(
             RegisteredOfficeAddressApi existing, AddressDto updated) {
         if (updated == null) {
             return null;
@@ -28,7 +28,7 @@ public class OverseasEntityChangeValidator {
                 null : new PrincipalAddressChange(existingAddress, updatedAddress);
     }
 
-    public CorrespondenceAddressChange verifyCorrespondenceAddressChange(
+    public CorrespondenceAddressChange compareCorrespondenceAddress(
             RegisteredOfficeAddressApi existing, AddressDto updated) {
         if (updated == null) {
             return null;
@@ -41,12 +41,12 @@ public class OverseasEntityChangeValidator {
                 null : new CorrespondenceAddressChange(existingAddress, updatedAddress);
     }
 
-    public CompanyIdentificationChange verifyCompanyIdentificationChange(
+    public CompanyIdentificationChange compareCompanyIdentification(
             CompanyIdentification existing, CompanyIdentification updated) {
         return existing.equals(updated) || updated == null ? null : new CompanyIdentificationChange(existing, updated);
     }
 
-    public EntityEmailAddressChange verifyEntityEmailAddressChange(String existing, String updated) {
+    public EntityEmailAddressChange compareEntityEmailAddress(String existing, String updated) {
         return StringUtils.equals(existing, updated) || updated == null ?
                 null : new EntityEmailAddressChange(existing, updated);
     }

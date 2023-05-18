@@ -14,7 +14,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +22,11 @@ import java.util.Optional;
 
 @Service
 public class OverseasEntityChangeService {
-    private final OverseasEntityChangeValidator overseasEntityChangeValidator;
+    private final OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     @Autowired
-    public OverseasEntityChangeService(OverseasEntityChangeValidator overseasEntityChangeValidator) {
-        this.overseasEntityChangeValidator = overseasEntityChangeValidator;
+    public OverseasEntityChangeService(OverseasEntityChangeComparator overseasEntityChangeComparator) {
+        this.overseasEntityChangeComparator = overseasEntityChangeComparator;
     }
 
     public List<Change> collateOverseasEntityChanges(
@@ -54,7 +54,7 @@ public class OverseasEntityChangeService {
     private EntityNameChange retrieveEntityNameChange(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
-        return overseasEntityChangeValidator.verifyEntityNameChange(
+        return overseasEntityChangeComparator.compareEntityName(
                 Optional.ofNullable(existingRegistration.getLeft())
                         .map(CompanyProfileApi::getCompanyName)
                         .orElse(null),
@@ -86,13 +86,13 @@ public class OverseasEntityChangeService {
                     .map(EntityDto::getPrincipalAddress)
                     .orElse(null);
         }
-        return overseasEntityChangeValidator.verifyPrincipalAddressChange(existingPrincipalAddress, updatedAddress);
+        return overseasEntityChangeComparator.comparePrincipalAddress(existingPrincipalAddress, updatedAddress);
     }
 
     private CorrespondenceAddressChange retrieveCorrespondenceAddressChange(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
-        return overseasEntityChangeValidator.verifyCorrespondenceAddressChange(
+        return overseasEntityChangeComparator.compareCorrespondenceAddress(
                 Optional.ofNullable(existingRegistration.getLeft())
                         .map(CompanyProfileApi::getServiceAddress)
                         .orElse(null),
@@ -105,7 +105,7 @@ public class OverseasEntityChangeService {
     private CompanyIdentificationChange retrieveCompanyIdentificationChange(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
-        return overseasEntityChangeValidator.verifyCompanyIdentificationChange(
+        return overseasEntityChangeComparator.compareCompanyIdentification(
                 getCompanyIdentificationFromExistingRegistration(existingRegistration),
                 getCompanyIdentificationFromUpdateSubmission(updateSubmission));
     }
@@ -113,7 +113,7 @@ public class OverseasEntityChangeService {
     private EntityEmailAddressChange retrieveEmailAddressChange(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
-        return overseasEntityChangeValidator.verifyEntityEmailAddressChange(
+        return overseasEntityChangeComparator.compareEntityEmailAddress(
                 Optional.ofNullable(existingRegistration.getRight())
                         .map(OverseasEntityDataApi::getEmail)
                         .orElse(null),

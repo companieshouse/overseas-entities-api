@@ -132,25 +132,20 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
-      //Call a method to populate UpdateSubmission
-      var updateSubmission = new UpdateSubmission();
-      var overseasEntityCombinedData = new PublicPrivateDataCombiner(
-              publicDataRetrievalService, privateDataRetrievalService,
-              System.getenv("PUBLIC_API_IDENTITY_HASH_SALT"));
-
-      updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
-              overseasEntityCombinedData.buildMergedOverseasEntityDataPair(), submissionDto));
+      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
+              publicDataRetrievalService, privateDataRetrievalService, salt);
 
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
-      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
-          publicDataRetrievalService, privateDataRetrievalService, salt);
 
-      publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+      var updateSubmission = new UpdateSubmission();
+
+      updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
+              publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(), submissionDto));
+
       publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
       publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
 
-      ApiLogger.infoContext("PublicPrivateDataCombiner",
-          publicPrivateDataCombiner.logCollatedData());
+      ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);

@@ -9,20 +9,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OverseasEntityChangeValidatorTest {
+class OverseasEntityChangeComparatorTest {
     private final String CHANGE_ENTITY_NAME = "changeOfEntityName";
     private final String CHANGE_PRINCIPAL_ADDRESS = "changeOfRoa";
     private final String CHANGE_CORRESPONDENCE_ADDRESS = "changeOfServiceAddress";
     private final String CHANGE_COMPANY_IDENTIFICATION = "changeOfCompanyIdentification";
     private final String CHANGE_ENTITY_EMAIL_ADDRESS = "entityEmailAddress";
     private final String TEST_EXISTING_VALUE = "TEST";
-    private OverseasEntityChangeValidator overseasEntityChangeValidator = new OverseasEntityChangeValidator();
+    private OverseasEntityChangeComparator overseasEntityChangeComparator = new OverseasEntityChangeComparator();
 
     @Test
-    void testVerifyEntityNameChangeDifferentValueReturnsObject() {
+    void testCompareEntityNameChangeDifferentValueReturnsObject() {
         var updated = "New name";
 
-        var result = overseasEntityChangeValidator.verifyEntityNameChange(TEST_EXISTING_VALUE, updated);
+        var result = overseasEntityChangeComparator.compareEntityName(TEST_EXISTING_VALUE, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_ENTITY_NAME, result.getChangeName());
@@ -30,27 +30,27 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyEntityNameChangeSameValueReturnsNull() {
-        var result = overseasEntityChangeValidator.verifyEntityNameChange(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
+    void testCompareEntityNameChangeSameValueReturnsNull() {
+        var result = overseasEntityChangeComparator.compareEntityName(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyEntityNameChangeNullUpdateValueReturnsNull() {
-        var result = overseasEntityChangeValidator.verifyEntityNameChange(TEST_EXISTING_VALUE, null);
+    void testCompareEntityNameChangeNullUpdateValueReturnsNull() {
+        var result = overseasEntityChangeComparator.compareEntityName(TEST_EXISTING_VALUE, null);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyPrincipalAddressChangeDifferentValueReturnsObject() {
+    void testComparePrincipalAddressChangeDifferentValueReturnsObject() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
         existing.setCountry("Ireland");
         updated.setCountry("England");
 
-        var result = overseasEntityChangeValidator.verifyPrincipalAddressChange(existing, updated);
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_PRINCIPAL_ADDRESS, result.getChangeName());
@@ -58,34 +58,34 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyPrincipalAddressChangeSameValueReturnsNull() {
+    void testComparePrincipalAddressChangeSameValueReturnsNull() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
         existing.setCountry("Ireland");
         updated.setCountry("Ireland");
 
-        var result = overseasEntityChangeValidator.verifyPrincipalAddressChange(existing, updated);
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyPrincipalAddressChangeNullUpdateValueReturnsNull() {
+    void testComparePrincipalAddressChangeNullUpdateValueReturnsNull() {
         var existing = new RegisteredOfficeAddressApi();
         existing.setCountry("Ireland");
-        var result = overseasEntityChangeValidator.verifyPrincipalAddressChange(existing, null);
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, null);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyCorrespondenceAddressChangeDifferentValueReturnsObject() {
+    void testCompareCorrespondenceAddressChangeDifferentValueReturnsObject() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
         existing.setCountry("Ireland");
         updated.setCountry("England");
 
-        var result = overseasEntityChangeValidator.verifyCorrespondenceAddressChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_CORRESPONDENCE_ADDRESS, result.getChangeName());
@@ -93,35 +93,35 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCorrespondenceAddressChangeSameValueReturnsNull() {
+    void testCompareCorrespondenceAddressChangeSameValueReturnsNull() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
         existing.setCountry("Ireland");
         updated.setCountry("Ireland");
 
-        var result = overseasEntityChangeValidator.verifyCorrespondenceAddressChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyCorrespondenceAddressChangeNullUpdateValueReturnsNull() {
+    void testCompareCorrespondenceAddressChangeNullUpdateValueReturnsNull() {
         var existing = new RegisteredOfficeAddressApi();
         existing.setCountry("Ireland");
-        var result = overseasEntityChangeValidator.verifyCorrespondenceAddressChange(existing, null);
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, null);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeDifferentLegalFormReturnsObject() {
+    void testCompareCompanyIdentificationChangeDifferentLegalFormReturnsObject() {
         var updatedLegalForm = "New legal form";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(updatedLegalForm, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
@@ -133,14 +133,14 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeDifferentGoverningLawReturnsObject() {
+    void testCompareCompanyIdentificationChangeDifferentGoverningLawReturnsObject() {
         var updatedGoverningLaw = "New governing law";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, updatedGoverningLaw, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
@@ -152,14 +152,14 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeDifferentRegisterLocationReturnsObject() {
+    void testCompareCompanyIdentificationChangeDifferentRegisterLocationReturnsObject() {
         var updatedRegisterLocation = "New register location";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, updatedRegisterLocation,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
@@ -171,14 +171,14 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeDifferentPlaceRegisteredReturnsObject() {
+    void testCompareCompanyIdentificationChangeDifferentPlaceRegisteredReturnsObject() {
         var updatedPlaceRegistered = "New place registered";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 updatedPlaceRegistered, TEST_EXISTING_VALUE);
 
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
@@ -190,14 +190,14 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeDifferentRegistrationNumberReturnsObject() {
+    void testCompareCompanyIdentificationChangeDifferentRegistrationNumberReturnsObject() {
         var updatedRegistrationNumber = "New registration number";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, updatedRegistrationNumber);
 
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
@@ -209,30 +209,30 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeAllSameValueReturnsNull() {
+    void testCompareCompanyIdentificationChangeAllSameValueReturnsNull() {
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, updated);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyCompanyIdentificationChangeNullUpdateValueReturnsNull() {
+    void testCompareCompanyIdentificationChangeNullUpdateValueReturnsNull() {
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
-        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, null);
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, null);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyEntityEmailAddressChangeDifferentValueReturnsObject() {
+    void testCompareEntityEmailAddressChangeDifferentValueReturnsObject() {
         var updatedEmailAddress = "new-email@test.com";
 
-        var result = overseasEntityChangeValidator.verifyEntityEmailAddressChange(
+        var result = overseasEntityChangeComparator.compareEntityEmailAddress(
                 TEST_EXISTING_VALUE, updatedEmailAddress);
 
         assertNotNull(result);
@@ -241,16 +241,16 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
-    void testVerifyEntityEmailAddressChangeSameValueReturnsNull() {
-        var result = overseasEntityChangeValidator.verifyEntityEmailAddressChange(
+    void testCompareEntityEmailAddressChangeSameValueReturnsNull() {
+        var result = overseasEntityChangeComparator.compareEntityEmailAddress(
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
         assertNull(result);
     }
 
     @Test
-    void testVerifyEntityEmailAddressChangeNullUpdateValueReturnsNull() {
-        var result = overseasEntityChangeValidator.verifyEntityEmailAddressChange(TEST_EXISTING_VALUE, null);
+    void testCompareEntityEmailAddressChangeNullUpdateValueReturnsNull() {
+        var result = overseasEntityChangeComparator.compareEntityEmailAddress(TEST_EXISTING_VALUE, null);
 
         assertNull(result);
     }

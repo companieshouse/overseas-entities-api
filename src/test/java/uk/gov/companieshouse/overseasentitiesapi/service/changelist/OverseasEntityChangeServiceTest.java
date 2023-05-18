@@ -9,7 +9,7 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
+import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,14 +17,14 @@ import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEn
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntityChangeServiceTest {
-    OverseasEntityChangeValidator overseasEntityChangeValidator;
+    OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     OverseasEntityChangeService overseasEntityChangeService;
 
     @BeforeEach
     void init() {
-        overseasEntityChangeValidator = new OverseasEntityChangeValidator();
-        overseasEntityChangeService = new OverseasEntityChangeService(overseasEntityChangeValidator);
+        overseasEntityChangeComparator = new OverseasEntityChangeComparator();
+        overseasEntityChangeService = new OverseasEntityChangeService(overseasEntityChangeComparator);
     }
 
     @Test
