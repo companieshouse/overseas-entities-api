@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
