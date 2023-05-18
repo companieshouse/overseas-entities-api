@@ -70,6 +70,9 @@ public class FilingsService {
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
 
+  @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+  private String salt;
+
   private final OverseasEntitiesService overseasEntitiesService;
   private final ApiClientService apiClientService;
   private final Supplier<LocalDate> dateNowSupplier;
@@ -139,6 +142,15 @@ public class FilingsService {
               overseasEntityCombinedData.buildMergedOverseasEntityDataPair(), submissionDto));
 
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
+      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
+          publicDataRetrievalService, privateDataRetrievalService, salt);
+
+      publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+      publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+      publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+      ApiLogger.infoContext("PublicPrivateDataCombiner",
+          publicPrivateDataCombiner.logCollatedData());
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
