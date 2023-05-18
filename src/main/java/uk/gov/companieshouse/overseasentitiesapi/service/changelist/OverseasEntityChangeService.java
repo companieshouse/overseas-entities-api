@@ -13,7 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils.Address;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
 
 import java.util.ArrayList;
@@ -168,6 +168,6 @@ public class OverseasEntityChangeService {
                         .orElse(null),
                 Optional.ofNullable(updateSubmission.getEntity())
                         .map(EntityDto::getRegistrationNumber)
-                        .orElse(null)));
+                        .orElse(null));
     }
 }

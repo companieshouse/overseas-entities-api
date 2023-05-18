@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils.Address;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 public class PrincipalAddressChange extends Change {
     private static final String CHANGE_NAME = "changeOfRoa";

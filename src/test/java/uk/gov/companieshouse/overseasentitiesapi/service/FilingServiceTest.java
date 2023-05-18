@@ -73,6 +73,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
@@ -126,6 +127,9 @@ class FilingServiceTest {
     @Mock
     private PrivateDataRetrievalService privateDataRetrievalService;
 
+    @Mock
+    private OverseasEntityChangeService overseasEntityChangeService;
+
     private Transaction transaction;
 
     @BeforeEach
@@ -176,6 +180,8 @@ class FilingServiceTest {
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
+        verify(privateDataRetrievalService, times(0)).initialisePrivateData(Mockito.anyString());
+        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
 
 
         verify(localDateSupplier, times(1)).get();

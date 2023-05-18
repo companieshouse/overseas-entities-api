@@ -3,8 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CompanyIdentification;
-import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

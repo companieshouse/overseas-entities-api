@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
 import java.util.Objects;
 

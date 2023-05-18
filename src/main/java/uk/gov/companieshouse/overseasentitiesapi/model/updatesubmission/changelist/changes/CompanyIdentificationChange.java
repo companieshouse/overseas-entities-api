@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 public class CompanyIdentificationChange extends Change {
     private static final String CHANGE_NAME = "changeOfCompanyIdentification";

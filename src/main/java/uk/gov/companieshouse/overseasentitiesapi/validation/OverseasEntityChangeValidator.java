@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils.Address;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 @Component
 public class OverseasEntityChangeValidator {

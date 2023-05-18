@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OverseasEntityChangeServiceTest {
+class OverseasEntityChangeServiceTest {
     OverseasEntityChangeValidator overseasEntityChangeValidator;
 
     OverseasEntityChangeService overseasEntityChangeService;
@@ -53,8 +53,28 @@ public class OverseasEntityChangeServiceTest {
     }
 
     @Test
-    void testCollateOverseasEntityChangesNullInputReturnsEmptyChangeList() {
+    void testCollateOverseasEntityChangesBothInputsNullReturnsEmptyChangeList() {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
+        OverseasEntitySubmissionDto updateSubmission = null;
+
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testCollateOverseasEntityChangesExistingRegistrationInputNullReturnsEmptyChangeList() {
+        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
+        OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
+
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testCollateOverseasEntityChangesUpdateSubmissionInputNullReturnsEmptyChangeList() {
+        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = null;
 
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);

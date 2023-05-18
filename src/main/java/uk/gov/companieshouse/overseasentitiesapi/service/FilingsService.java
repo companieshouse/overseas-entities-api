@@ -42,7 +42,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @Service
 public class FilingsService {
@@ -73,6 +76,7 @@ public class FilingsService {
   private final ObjectMapper objectMapper;
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
+  private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
   public FilingsService(
@@ -81,13 +85,15 @@ public class FilingsService {
           Supplier<LocalDate> dateNowSupplier,
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
-          PublicDataRetrievalService publicDataRetrievalService) {
+          PublicDataRetrievalService publicDataRetrievalService,
+          OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -124,6 +130,14 @@ public class FilingsService {
     if (submissionDto.isForUpdate()) {
       getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
       //Call a method to populate UpdateSubmission
+      var updateSubmission = new UpdateSubmission();
+      var overseasEntityCombinedData = new PublicPrivateDataCombiner(
+              publicDataRetrievalService, privateDataRetrievalService,
+              System.getenv("PUBLIC_API_IDENTITY_HASH_SALT"));
+
+      updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
+              overseasEntityCombinedData.buildMergedOverseasEntityDataPair(), submissionDto));
+
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);

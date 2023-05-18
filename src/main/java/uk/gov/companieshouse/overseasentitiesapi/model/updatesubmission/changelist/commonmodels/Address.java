@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils;
+package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -125,7 +125,7 @@ public class Address {
             return false;
         }
 
-        Address address = (Address) o;
+        var address = (Address) o;
         return Objects.equals(careOf, address.careOf)
                 && Objects.equals(poBox, address.poBox)
                 && Objects.equals(careOfCompany, address.careOfCompany)
