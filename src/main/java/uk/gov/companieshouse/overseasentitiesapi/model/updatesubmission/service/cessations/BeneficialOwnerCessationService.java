@@ -31,8 +31,8 @@ public class BeneficialOwnerCessationService {
   private List<IndividualBeneficialOwnerCessation> returnIndividualBeneficialOwners() {
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
     return returned.stream()
-        .filter((a) -> (a.getCeasedDate() != null))
-        .filter((a) -> (a.getChipsReference() != null))
+        .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getCeasedDate() != null))
+        .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getChipsReference() != null))
         .map(this::returnIndividualBeneficialOwnerCessation)
         .collect(Collectors.toList());
   }
@@ -40,8 +40,8 @@ public class BeneficialOwnerCessationService {
   private List<LegalPersonBeneficialOwnerCessation> returnLegalPersonBeneficialOwners() {
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
     return returned.stream()
-            .filter((a) -> (a.getCeasedDate() != null))
-            .filter((a) -> (a.getChipsReference() != null))
+            .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getCeasedDate() != null))
+            .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getChipsReference() != null))
             .map(this::returnLegalPersonBeneficialOwnerCessation)
             .collect(Collectors.toList());
   }
@@ -50,15 +50,14 @@ public class BeneficialOwnerCessationService {
       returnCorporateEntityBeneficialOwnerCessations() {
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
     return returned.stream()
-            .filter((a) -> (a.getCeasedDate() != null))
-            .filter((a) -> (a.getChipsReference() != null))
+            .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getCeasedDate() != null))
+            .filter(beneficialOwnerCessation -> (beneficialOwnerCessation.getChipsReference() != null))
             .map(this::returnCorporateEntityBeneficialOwnerCessation)
             .collect(Collectors.toList());
   }
 
   public IndividualBeneficialOwnerCessation returnIndividualBeneficialOwnerCessation(
       BeneficialOwnerIndividualDto bo) {
-        
     return new IndividualBeneficialOwnerCessation(
             bo.getChipsReference(),
             bo.getCeasedDate(),
