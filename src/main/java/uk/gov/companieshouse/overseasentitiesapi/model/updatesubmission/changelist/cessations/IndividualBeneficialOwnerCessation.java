@@ -12,11 +12,11 @@ public class IndividualBeneficialOwnerCessation extends BeneficialOwnerCessation
     private PersonName personName;
 
     @JsonProperty("birthDate")
-    private String birthDate;
+    private LocalDate birthDate;
 
     public IndividualBeneficialOwnerCessation(String appointmentId,
             LocalDate actionDate,
-            String birthDate,
+            LocalDate birthDate,
             PersonName personName) {
         super(appointmentId, actionDate);
         this.birthDate = birthDate;
@@ -32,11 +32,11 @@ public class IndividualBeneficialOwnerCessation extends BeneficialOwnerCessation
         this.personName = personName;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
