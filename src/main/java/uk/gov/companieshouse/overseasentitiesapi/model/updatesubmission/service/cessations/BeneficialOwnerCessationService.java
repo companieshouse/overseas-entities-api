@@ -29,7 +29,6 @@ public class BeneficialOwnerCessationService {
   }
 
   private List<IndividualBeneficialOwnerCessation> returnIndividualBeneficialOwners() {
-    List<IndividualBeneficialOwnerCessation> cessations = new ArrayList<>();
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
     return returned.stream()
         .filter((a) -> (a.getCeasedDate() != null))
@@ -39,7 +38,6 @@ public class BeneficialOwnerCessationService {
   }
 
   private List<LegalPersonBeneficialOwnerCessation> returnLegalPersonBeneficialOwners() {
-    List<LegalPersonBeneficialOwnerCessation> cessations = new ArrayList<>();
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
     return returned.stream()
             .filter((a) -> (a.getCeasedDate() != null))
@@ -50,7 +48,6 @@ public class BeneficialOwnerCessationService {
 
   private List<CorporateEntityBeneficialOwnerCessation>
       returnCorporateEntityBeneficialOwnerCessations() {
-    List<CorporateEntityBeneficialOwnerCessation> cessations = new ArrayList<>();
     var returned = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
     return returned.stream()
             .filter((a) -> (a.getCeasedDate() != null))
@@ -61,28 +58,23 @@ public class BeneficialOwnerCessationService {
 
   public IndividualBeneficialOwnerCessation returnIndividualBeneficialOwnerCessation(
       BeneficialOwnerIndividualDto bo) {
-    IndividualBeneficialOwnerCessation individualBeneficialOwnerCessation =
-        new IndividualBeneficialOwnerCessation(
+        
+    return new IndividualBeneficialOwnerCessation(
             bo.getChipsReference(),
             bo.getCeasedDate(),
             bo.getDateOfBirth(),
             new PersonName(bo.getFirstName(), bo.getLastName()));
-    return individualBeneficialOwnerCessation;
   }
 
   public CorporateEntityBeneficialOwnerCessation returnCorporateEntityBeneficialOwnerCessation(
       BeneficialOwnerCorporateDto bo) {
-    CorporateEntityBeneficialOwnerCessation corporateEntityBeneficialOwnerCessation =
-        new CorporateEntityBeneficialOwnerCessation(
+    return new CorporateEntityBeneficialOwnerCessation(
             bo.getChipsReference(), bo.getCeasedDate(), bo.getName());
-    return corporateEntityBeneficialOwnerCessation;
   }
 
   public LegalPersonBeneficialOwnerCessation returnLegalPersonBeneficialOwnerCessation(
       BeneficialOwnerGovernmentOrPublicAuthorityDto bo) {
-    LegalPersonBeneficialOwnerCessation legalPersonBeneficialOwnerCessation =
-        new LegalPersonBeneficialOwnerCessation(
+    return new LegalPersonBeneficialOwnerCessation(
             bo.getChipsReference(), bo.getCeasedDate(), bo.getName());
-    return legalPersonBeneficialOwnerCessation;
   }
 }
