@@ -3,8 +3,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Objects;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class AddressDto {
@@ -138,34 +136,5 @@ public class AddressDto {
 
     public void setPostcode(String postcode) {
         this.postcode = postcode;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        AddressDto that = (AddressDto) o;
-
-        return Objects.equals(propertyNameNumber, that.propertyNameNumber)
-                && Objects.equals(line1, that.line1)
-                && Objects.equals(line2, that.line2)
-                && Objects.equals(town, that.town)
-                && Objects.equals(county, that.county)
-                && Objects.equals(locality, that.locality)
-                && Objects.equals(country, that.country)
-                && Objects.equals(poBox, that.poBox)
-                && Objects.equals(careOf, that.careOf)
-                && Objects.equals(postcode, that.postcode);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(propertyNameNumber, line1, line2, town, county, locality, country, poBox, careOf, postcode);
     }
 }

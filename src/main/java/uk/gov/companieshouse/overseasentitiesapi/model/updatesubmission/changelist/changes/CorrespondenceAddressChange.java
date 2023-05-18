@@ -1,37 +1,36 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils.Address;
 
 public class CorrespondenceAddressChange extends Change {
     private static final String CHANGE_NAME = "changeOfServiceAddress";
 
     @JsonProperty("serviceAddress")
-    private AddressDto serviceAddress;
+    private Address serviceAddress;
 
     @JsonProperty("proposedServiceAddress")
-    private AddressDto proposedServiceAddress;
+    private Address proposedServiceAddress;
 
-    public CorrespondenceAddressChange(AddressDto serviceAddress, AddressDto proposedServiceAddress){
+    public CorrespondenceAddressChange(Address serviceAddress, Address proposedServiceAddress){
         super.setChangeName(CHANGE_NAME);
         this.serviceAddress = serviceAddress;
         this.proposedServiceAddress = proposedServiceAddress;
     }
 
-    public AddressDto getServiceAddress() {
+    public Address getServiceAddress() {
         return serviceAddress;
     }
 
-    public void setServiceAddress(AddressDto serviceAddress) {
+    public void setServiceAddress(Address serviceAddress) {
         this.serviceAddress = serviceAddress;
     }
 
-    public AddressDto getProposedServiceAddress() {
+    public Address getProposedServiceAddress() {
         return proposedServiceAddress;
     }
 
-    public void setProposedServiceAddress(AddressDto proposedServiceAddress) {
+    public void setProposedServiceAddress(Address proposedServiceAddress) {
         this.proposedServiceAddress = proposedServiceAddress;
     }
 }

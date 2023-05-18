@@ -38,6 +38,13 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
+    void testVerifyEntityNameChangeNullUpdateValueReturnsNull() {
+        var result = overseasEntityChangeValidator.verifyEntityNameChange(TEST_EXISTING_VALUE, null);
+
+        assertNull(result);
+    }
+
+    @Test
     void testVerifyPrincipalAddressChangeDifferentValueReturnsObject() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
@@ -64,6 +71,15 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
+    void testVerifyPrincipalAddressChangeNullUpdateValueReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        existing.setCountry("Ireland");
+        var result = overseasEntityChangeValidator.verifyPrincipalAddressChange(existing, null);
+
+        assertNull(result);
+    }
+
+    @Test
     void testVerifyCorrespondenceAddressChangeDifferentValueReturnsObject() {
         var existing = new RegisteredOfficeAddressApi();
         var updated = new AddressDto();
@@ -85,6 +101,15 @@ class OverseasEntityChangeValidatorTest {
         updated.setCountry("Ireland");
 
         var result = overseasEntityChangeValidator.verifyCorrespondenceAddressChange(existing, updated);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testVerifyCorrespondenceAddressChangeNullUpdateValueReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        existing.setCountry("Ireland");
+        var result = overseasEntityChangeValidator.verifyCorrespondenceAddressChange(existing, null);
 
         assertNull(result);
     }
@@ -196,6 +221,15 @@ class OverseasEntityChangeValidatorTest {
     }
 
     @Test
+    void testVerifyCompanyIdentificationChangeNullUpdateValueReturnsNull() {
+        var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
+                TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
+        var result = overseasEntityChangeValidator.verifyCompanyIdentificationChange(existing, null);
+
+        assertNull(result);
+    }
+
+    @Test
     void testVerifyEntityEmailAddressChangeDifferentValueReturnsObject() {
         var updatedEmailAddress = "new-email@test.com";
 
@@ -211,6 +245,13 @@ class OverseasEntityChangeValidatorTest {
     void testVerifyEntityEmailAddressChangeSameValueReturnsNull() {
         var result = overseasEntityChangeValidator.verifyEntityEmailAddressChange(
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testVerifyEntityEmailAddressChangeNullUpdateValueReturnsNull() {
+        var result = overseasEntityChangeValidator.verifyEntityEmailAddressChange(TEST_EXISTING_VALUE, null);
 
         assertNull(result);
     }

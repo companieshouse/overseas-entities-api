@@ -13,6 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.utils.Address;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeValidator;
 
 import java.util.ArrayList;
@@ -105,46 +106,8 @@ public class OverseasEntityChangeService {
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
         return overseasEntityChangeValidator.verifyCompanyIdentificationChange(
-                new CompanyIdentification(
-                        Optional.ofNullable(existingRegistration.getLeft())
-                                .map(CompanyProfileApi::getForeignCompanyDetails)
-                                .map(ForeignCompanyDetailsApi::getLegalForm)
-                                .orElse(null),
-                        Optional.ofNullable(existingRegistration.getLeft())
-                                .map(CompanyProfileApi::getForeignCompanyDetails)
-                                .map(ForeignCompanyDetailsApi::getGovernedBy)
-                                .orElse(null),
-                        Optional.ofNullable(existingRegistration.getLeft())
-                                .map(CompanyProfileApi::getForeignCompanyDetails)
-                                .map(ForeignCompanyDetailsApi::getOriginatingRegistry)
-                                .map(OriginatingRegistryApi::getCountry)
-                                .orElse(null),
-                        Optional.ofNullable(existingRegistration.getLeft())
-                                .map(CompanyProfileApi::getForeignCompanyDetails)
-                                .map(ForeignCompanyDetailsApi::getOriginatingRegistry)
-                                .map(OriginatingRegistryApi::getName)
-                                .orElse(null),
-                        Optional.ofNullable(existingRegistration.getLeft())
-                                .map(CompanyProfileApi::getForeignCompanyDetails)
-                                .map(ForeignCompanyDetailsApi::getRegistrationNumber)
-                                .orElse(null)),
-                new CompanyIdentification(
-                        Optional.ofNullable(updateSubmission)
-                                .map(OverseasEntitySubmissionDto::getEntity)
-                                .map(EntityDto::getLegalForm)
-                                .orElse(null),
-                        Optional.ofNullable(updateSubmission.getEntity())
-                                .map(EntityDto::getLawGoverned)
-                                .orElse(null),
-                        Optional.ofNullable(updateSubmission.getEntity())
-                                .map(EntityDto::getIncorporationCountry)
-                                .orElse(null),
-                        Optional.ofNullable(updateSubmission.getEntity())
-                                .map(EntityDto::getPublicRegisterName)
-                                .orElse(null),
-                        Optional.ofNullable(updateSubmission.getEntity())
-                                .map(EntityDto::getRegistrationNumber)
-                                .orElse(null)));
+                getCompanyIdentificationFromExistingRegistration(existingRegistration),
+                getCompanyIdentificationFromUpdateSubmission(updateSubmission));
     }
 
     private EntityEmailAddressChange retrieveEmailAddressChange(
@@ -158,5 +121,53 @@ public class OverseasEntityChangeService {
                         .map(OverseasEntitySubmissionDto::getEntity)
                         .map(EntityDto::getEmail)
                         .orElse(null));
+    }
+
+    private CompanyIdentification getCompanyIdentificationFromExistingRegistration(
+            Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration) {
+        return new CompanyIdentification(
+                Optional.ofNullable(existingRegistration.getLeft())
+                        .map(CompanyProfileApi::getForeignCompanyDetails)
+                        .map(ForeignCompanyDetailsApi::getLegalForm)
+                        .orElse(null),
+                Optional.ofNullable(existingRegistration.getLeft())
+                        .map(CompanyProfileApi::getForeignCompanyDetails)
+                        .map(ForeignCompanyDetailsApi::getGovernedBy)
+                        .orElse(null),
+                Optional.ofNullable(existingRegistration.getLeft())
+                        .map(CompanyProfileApi::getForeignCompanyDetails)
+                        .map(ForeignCompanyDetailsApi::getOriginatingRegistry)
+                        .map(OriginatingRegistryApi::getCountry)
+                        .orElse(null),
+                Optional.ofNullable(existingRegistration.getLeft())
+                        .map(CompanyProfileApi::getForeignCompanyDetails)
+                        .map(ForeignCompanyDetailsApi::getOriginatingRegistry)
+                        .map(OriginatingRegistryApi::getName)
+                        .orElse(null),
+                Optional.ofNullable(existingRegistration.getLeft())
+                        .map(CompanyProfileApi::getForeignCompanyDetails)
+                        .map(ForeignCompanyDetailsApi::getRegistrationNumber)
+                        .orElse(null));
+    }
+
+    private CompanyIdentification getCompanyIdentificationFromUpdateSubmission(
+            OverseasEntitySubmissionDto updateSubmission) {
+        return new CompanyIdentification(
+                Optional.ofNullable(updateSubmission)
+                        .map(OverseasEntitySubmissionDto::getEntity)
+                        .map(EntityDto::getLegalForm)
+                        .orElse(null),
+                Optional.ofNullable(updateSubmission.getEntity())
+                        .map(EntityDto::getLawGoverned)
+                        .orElse(null),
+                Optional.ofNullable(updateSubmission.getEntity())
+                        .map(EntityDto::getIncorporationCountry)
+                        .orElse(null),
+                Optional.ofNullable(updateSubmission.getEntity())
+                        .map(EntityDto::getPublicRegisterName)
+                        .orElse(null),
+                Optional.ofNullable(updateSubmission.getEntity())
+                        .map(EntityDto::getRegistrationNumber)
+                        .orElse(null)));
     }
 }
