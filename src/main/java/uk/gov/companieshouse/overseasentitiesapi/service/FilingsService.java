@@ -132,19 +132,8 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
-      //Call a method to populate UpdateSubmission
+      setUpdateSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
-      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
-          publicDataRetrievalService, privateDataRetrievalService, salt);
-
-      publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
-      publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
-      publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
-
-      ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
-
-      var updateSubmission = new UpdateSubmission();
-      updateSubmission.setCessations(new BeneficialOwnerCessationService(submissionDto).beneficialOwnerCessations());
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
@@ -164,6 +153,22 @@ public class FilingsService {
   private void getPublicAndPrivateData(String entityNumber, String passThroughTokenHeader) throws ServiceException {
     publicDataRetrievalService.initialisePublicData(entityNumber, passThroughTokenHeader);
     privateDataRetrievalService.initialisePrivateData(entityNumber);
+  }
+
+  private void setUpdateSubmissionData(Map<String, Object> data,
+                                       OverseasEntitySubmissionDto submissionDto,
+                                       Map<String, Object> logMap) throws ServiceException {
+
+    var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
+    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+    var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
+
+    var updateSubmission = new UpdateSubmission();
+    updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData));
+
+    ApiLogger.debug("Update data has been set on filing", logMap);
   }
 
   private void setSubmissionData(

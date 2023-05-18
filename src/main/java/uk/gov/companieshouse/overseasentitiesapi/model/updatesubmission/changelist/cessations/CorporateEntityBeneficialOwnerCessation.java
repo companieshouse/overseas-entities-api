@@ -14,7 +14,7 @@ public class CorporateEntityBeneficialOwnerCessation extends BeneficialOwnerCess
             String corporateName) {
         super(appointmentId, actionDate);
         this.corporateName = corporateName;
-        setAppointmentType("5008");
+        setAppointmentType("OE OLE BO");
     }
 
     public String getCorporateName() {

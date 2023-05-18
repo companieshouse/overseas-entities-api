@@ -31,10 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpResponseException;
-import java.util.Collections;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +56,6 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
-import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
 import uk.gov.companieshouse.api.model.payment.PaymentApi;
 import uk.gov.companieshouse.api.model.psc.PscApi;
@@ -88,14 +83,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.service.cessations.BeneficialOwnerCessationService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,22 +92,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_STATEMENT;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
@@ -173,6 +147,9 @@ class FilingServiceTest {
     private PrivateDataRetrievalService privateDataRetrievalService;
 
     @Mock
+    private BeneficialOwnerCessationService beneficialOwnerCessationService;
+
+    @Mock
     private PublicPrivateDataCombiner publicPrivateDataCombiner;
 
     private Transaction transaction;
@@ -213,25 +190,25 @@ class FilingServiceTest {
 
     void initGetPublicPrivateDataCombinerMocks() throws JsonProcessingException {
         publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService,
-            privateDataRetrievalService,
-            "test_salt");
+                privateDataRetrievalService,
+                "test_salt");
 
         String pscJsonString = "{" +
-            "\"links\": {" +
-            "\"self\": \"/company/03681242/persons-with-significant-control/individual/7HGCOOm_5F9YAxMTt5UBo8xVsYY\""
-            +
-            "}" +
-            "}";
+                "\"links\": {" +
+                "\"self\": \"/company/03681242/persons-with-significant-control/individual/7HGCOOm_5F9YAxMTt5UBo8xVsYY\""
+                +
+                "}" +
+                "}";
 
         String officersApiString = "{" +
-            "\"items\": [" +
-            "{" +
-            "\"links\": {" +
-            "\"self\": \"/company/01913593/appointments/7HGCOOm_5F9YAxMTt5UBo8xVsYY\"" +
-            "}" +
-            "}" +
-            "]" +
-            "}";
+                "\"items\": [" +
+                "{" +
+                "\"links\": {" +
+                "\"self\": \"/company/01913593/appointments/7HGCOOm_5F9YAxMTt5UBo8xVsYY\"" +
+                "}" +
+                "}" +
+                "]" +
+                "}";
 
         CompanyProfileApi publicOE = new CompanyProfileApi();
         publicOE.setCompanyName("Test Public Company");
@@ -258,12 +235,12 @@ class FilingServiceTest {
 
         // Configure mock behavior
         when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
-            new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
+                new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
         when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
 
         // Configure mock behavior
         when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
-            new PrivateBoDataListApi(List.of(privateBoDataApi)));
+                new PrivateBoDataListApi(List.of(privateBoDataApi)));
         when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
     }
 
@@ -697,7 +674,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
-                when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
 
@@ -960,8 +937,8 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-       ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
-       assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
+        ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+        assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
     }
 
     @Test
@@ -987,7 +964,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1057,7 +1034,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
             throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1204,7 +1181,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
             throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1291,6 +1268,7 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+//        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(overseasEntitySubmissionDto);
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {

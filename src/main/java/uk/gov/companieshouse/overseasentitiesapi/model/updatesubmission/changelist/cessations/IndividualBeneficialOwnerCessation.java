@@ -14,17 +14,18 @@ public class IndividualBeneficialOwnerCessation extends BeneficialOwnerCessation
     @JsonProperty("birthDate")
     private LocalDate birthDate;
 
-    public IndividualBeneficialOwnerCessation(String appointmentId,
+    public IndividualBeneficialOwnerCessation(
+            String appointmentId,
             LocalDate actionDate,
             LocalDate birthDate,
             PersonName personName) {
         super(appointmentId, actionDate);
         this.birthDate = birthDate;
         this.personName = personName;
-        setAppointmentType("5007");
+        setAppointmentType("OE INDIVIDUAL BO");
     }
 
-    public Object getPersonName() {
+    public PersonName getPersonName() {
         return personName;
     }
 

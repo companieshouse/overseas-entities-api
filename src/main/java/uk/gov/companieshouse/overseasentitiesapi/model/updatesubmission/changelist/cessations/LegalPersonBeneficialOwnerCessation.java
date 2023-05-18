@@ -14,7 +14,7 @@ public class LegalPersonBeneficialOwnerCessation extends BeneficialOwnerCessatio
             String corporateSoleName) {
         super(appointmentId, actionDate);
         this.corporateSoleName = corporateSoleName;
-        setAppointmentType("5009");
+        setAppointmentType("OE GPA BO");
     }
 
     public String getCorporateSoleName() {
