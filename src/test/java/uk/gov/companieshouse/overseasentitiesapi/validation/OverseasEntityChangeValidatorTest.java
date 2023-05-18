@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OverseasEntityChangeValidatorTest {
+class OverseasEntityChangeValidatorTest {
     private final String CHANGE_ENTITY_NAME = "changeOfEntityName";
     private final String CHANGE_PRINCIPAL_ADDRESS = "changeOfRoa";
     private final String CHANGE_CORRESPONDENCE_ADDRESS = "changeOfServiceAddress";
