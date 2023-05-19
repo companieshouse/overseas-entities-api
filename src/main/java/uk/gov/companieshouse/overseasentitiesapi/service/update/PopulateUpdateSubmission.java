@@ -36,7 +36,6 @@ public class PopulateUpdateSubmission {
     updateSubmission.setAnyBOsOrMOsAddedOrCeased(
         this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
     // AC contact details is covered in --> overseasEntitySubmissionDto.getPresenter().getEmail();
-
     // TBD: NoChangesInFilingPeriodStatement will be done in
     // https://companieshouse.atlassian.net/browse/UAR-461//
     // TBD updateSubmission.setNoChangesInFilingPeriodStatement(); //
@@ -94,6 +93,4 @@ public class PopulateUpdateSubmission {
       OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
     this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
   }
-
-
 }
