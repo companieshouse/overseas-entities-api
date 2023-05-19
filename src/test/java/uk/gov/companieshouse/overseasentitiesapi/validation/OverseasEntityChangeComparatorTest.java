@@ -73,7 +73,27 @@ class OverseasEntityChangeComparatorTest {
     void testComparePrincipalAddressChangeNullUpdateValueReturnsNull() {
         var existing = new RegisteredOfficeAddressApi();
         existing.setCountry("Ireland");
+
         var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, null);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testComparePrincipalAddressChangeNullExistingValueReturnsObject() {
+        var updated = new AddressDto();
+        updated.setCountry("Ireland");
+
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(null, updated);
+
+        assertNotNull(result);
+        assertEquals(CHANGE_PRINCIPAL_ADDRESS, result.getChangeName());
+        assertEquals("Ireland", result.getProposedRegisteredOfficeAddress().getCountry());
+    }
+
+    @Test
+    void testComparePrincipalAddressChangeBothInputsNullReturnsNull() {
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(null, null);
 
         assertNull(result);
     }
@@ -109,6 +129,25 @@ class OverseasEntityChangeComparatorTest {
         var existing = new RegisteredOfficeAddressApi();
         existing.setCountry("Ireland");
         var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, null);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeNullExistingValueReturnsObject() {
+        var updated = new AddressDto();
+        updated.setCountry("Ireland");
+
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(null, updated);
+
+        assertNotNull(result);
+        assertEquals(CHANGE_CORRESPONDENCE_ADDRESS, result.getChangeName());
+        assertEquals("Ireland", result.getProposedServiceAddress().getCountry());
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeBothInputsNullReturnsNull() {
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(null, null);
 
         assertNull(result);
     }

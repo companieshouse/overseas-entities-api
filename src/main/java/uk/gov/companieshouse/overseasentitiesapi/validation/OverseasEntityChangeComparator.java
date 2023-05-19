@@ -24,7 +24,7 @@ public class OverseasEntityChangeComparator {
         var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
         var updatedAddress = convertAddressDtoToAddressModel(updated);
 
-        return existingAddress == null && existingAddress.equals(updatedAddress) ?
+        return updatedAddress.equals(existingAddress) ?
                 null : new PrincipalAddressChange(existingAddress, updatedAddress);
     }
 
@@ -34,10 +34,10 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = convertRegisteredOfficeAddressApiToAddressModel(existing);
+        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
         var updatedAddress = convertAddressDtoToAddressModel(updated);
 
-        return existingAddress.equals(updatedAddress) ?
+        return updatedAddress.equals(existingAddress) ?
                 null : new CorrespondenceAddressChange(existingAddress, updatedAddress);
     }
 
