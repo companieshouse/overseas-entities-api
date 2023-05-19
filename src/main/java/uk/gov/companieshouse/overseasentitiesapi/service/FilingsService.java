@@ -135,15 +135,16 @@ public class FilingsService {
       var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
               publicDataRetrievalService, privateDataRetrievalService, salt);
 
-      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
-
       var updateSubmission = new UpdateSubmission();
 
+      updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
       updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
               publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(), submissionDto));
 
       publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
       publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
 
       ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
     } else {

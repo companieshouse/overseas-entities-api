@@ -21,10 +21,10 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = convertRegisteredOfficeAddressApiToAddressModel(existing);
+        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
         var updatedAddress = convertAddressDtoToAddressModel(updated);
 
-        return existingAddress.equals(updatedAddress) ?
+        return existingAddress == null && existingAddress.equals(updatedAddress) ?
                 null : new PrincipalAddressChange(existingAddress, updatedAddress);
     }
 
