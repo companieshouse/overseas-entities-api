@@ -73,8 +73,7 @@ class PopulateUpdateSubmissionTest {
   private final List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList =
       new ArrayList<>();
   private final List<TrustDataDto> trustDataDtoList = new ArrayList<>();
-  // @Mock
-  // private UpdateValidator updateValidator;
+
   String output = "";
   @InjectMocks private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
   @Mock private EntityNameValidator entityNameValidator;
