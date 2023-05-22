@@ -23,16 +23,19 @@ public enum BeneficialOwnersStatementType {
   @JsonCreator
   public static BeneficialOwnersStatementType findByBeneficialOwnersStatementTypeString(
       String beneficialOwnersStatement) {
-    for (BeneficialOwnersStatementType type : values()) {
-      if (type.beneficialOwnersStatement.equalsIgnoreCase(beneficialOwnersStatement)) {
-        return type;
+    for (BeneficialOwnersStatementType beneficialOwner : values()) {
+      if (beneficialOwner.beneficialOwnersStatement.equalsIgnoreCase(beneficialOwnersStatement)) {
+        return beneficialOwner;
       }
     }
     return null;
   }
 
-  /* getValue() returns the selected value (for e.g. in Update Submission) from this enum list */
+  /**
+   *   getValue() returns the selected value (for e.g. in Update Submission) from this enum list
+   * @return selected value of beneficialOwnersStatement
+   */
   public String getValue() {
-    return this.beneficialOwnersStatement.toLowerCase();
+    return this.beneficialOwnersStatement;
   }
 }

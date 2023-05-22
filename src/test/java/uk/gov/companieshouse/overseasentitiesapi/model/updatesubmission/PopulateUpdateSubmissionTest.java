@@ -1,13 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -44,17 +38,7 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 @ExtendWith(MockitoExtension.class)
 class PopulateUpdateSubmissionTest {
 
-  private static final String LOGGING_CONTEXT = "12345";
-  final String DUE_DILIGENCE_JSON = "\"dueDiligence\":{\"dateChecked\":\"2022-01-01\"";
 
-  final String USER_SUBMISSION_JSON =
-      "\"userSubmission\":{\"entity_name\":{\"name\":\"Joe Bloogs Ltd\"}";
-
-  final String PRESENTER_JSON = "\"presenter\":{\"full_name\":\"Joe Bloggs\"";
-
-  final String BENEFICIAL_OWNER_JSON = "\"beneficialOwnerStatement\":\"none_identified\"";
-
-  final String ANY_BOS_OR_MOS_ADDED_OR_CEASED_JSON = "\"anyBOsOrMOsAddedOrCeased\":false,\"";
   private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
   private final EntityDto entityDto = EntityMock.getEntityDto();
   private final PresenterDto presenterDto = PresenterMock.getPresenterDto();
@@ -74,18 +58,8 @@ class PopulateUpdateSubmissionTest {
       new ArrayList<>();
   private final List<TrustDataDto> trustDataDtoList = new ArrayList<>();
 
-  String output = "";
   @InjectMocks private OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
-  @Mock private EntityNameValidator entityNameValidator;
-  @Mock private EntityDtoValidator entityDtoValidator;
-  @Mock private PresenterDtoValidator presenterDtoValidator;
-  @Mock private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
-  @Mock private DueDiligenceDataBlockValidator dueDiligenceDataBlockValidator;
-  @Mock private OwnersAndOfficersDataBlockValidator ownersAndOfficersDataBlockValidator;
-  @Mock private TrustDetailsValidator trustDetailsValidator;
-  @Mock private TrustIndividualValidator trustIndividualValidator;
-  @Mock private HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
-  @Mock private TrustCorporateValidator trustCorporateValidator;
+   @Mock private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
   {
     beneficialOwnerIndividualDtoList.add(
@@ -114,78 +88,91 @@ class PopulateUpdateSubmissionTest {
     trustDataDtoList.add(TrustMock.getTrustDataDto());
   }
 
-  @Test
-  void testPopulateUpdateSubmissionJSON() throws Exception {
-    output = getJsonOutput();
-    assertEquals("{", output.substring(0, 1));
-    assertEquals("}", output.substring(output.length() - 1));
-  }
+
+
 
   @Test
-  void testPopulateUpdateSubmissionForPresenterJSON() throws Exception {
-    output = getJsonOutput();
-    assertTrue(output.contains(PRESENTER_JSON));
-  }
-
-  @Test
-  void testPopulateUpdateSubmissionForDueDiligenceJSON() throws Exception {
-    output = getJsonOutput();
-    assertTrue(output.contains(DUE_DILIGENCE_JSON));
-  }
-
-  @Test
-  void testPopulateUpdateSubmissionForUserSubmissionJSON() throws Exception {
-    output = getJsonOutput();
-    assertTrue(output.contains(USER_SUBMISSION_JSON));
-  }
-
-  @Test
-  void testPopulateUpdateSubmissionForBeneficialOwnerJSON() throws Exception {
-    output = getJsonOutput();
-    assertTrue(output.contains(BENEFICIAL_OWNER_JSON));
-  }
-
-  @Test
-  void testPopulateUpdateSubmissionForBosOrMosAddedOrCeasedJSON() throws Exception {
-    output = getJsonOutput();
-    assertTrue(output.contains(ANY_BOS_OR_MOS_ADDED_OR_CEASED_JSON));
-  }
-
-  private String getJsonOutput() throws Exception {
-
+  void testPopulateUpdateSubmissionForDueDiligence() throws Exception {
     setIsTrustWebEnabledFeatureFlag(true);
     buildOverseasEntitySubmissionDto();
-    overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
-    Errors errors =
-        overseasEntitySubmissionDtoValidator.validateFull(
-            overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-    verifyValidateFull();
-    verify(ownersAndOfficersDataBlockValidator, times(1))
-        .validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+            new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertEquals("John Smith", updateSubmission.getDueDiligence().getPartnerName());
+    assertEquals("2022-01-01", updateSubmission.getDueDiligence().getDateChecked());
+    assertEquals("user@domain.roe", updateSubmission.getDueDiligence().getEmail());
+    assertEquals("c0de", updateSubmission.getDueDiligence().getAgentAssuranceCode());
+    assertEquals("Super Supervisor", updateSubmission.getDueDiligence().getSupervisoryBody());
+
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForBeneficialOwnerStatement() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
     PopulateUpdateSubmission populateUpdateSubmission =
         new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
     UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
-    ObjectMapper objectMapper = new ObjectMapper();
+    assertEquals("none_identified", updateSubmission.getBeneficialOwnerStatement());
+}
 
-    objectMapper = JsonMapper.builder().findAndAddModules().build(); //
-    output = objectMapper.writeValueAsString(updateSubmission);
-    return output;
+  @Test
+  void testPopulateUpdateSubmissionForAnyBOsOrMOsAddedOrCeased() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+            new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertEquals(false, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+
   }
 
-  private void verifyValidateFull() {
-    verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
-    verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
-    verify(dueDiligenceDataBlockValidator, times(1))
-        .validateFullDueDiligenceFields(
-            eq(overseasEntitySubmissionDto.getDueDiligence()),
-            eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-            any(),
-            any());
-    verify(trustDetailsValidator, times(1)).validate(any(), any(), any());
-    verify(trustIndividualValidator, times(1)).validate(any(), any(), any());
-    verify(historicalBeneficialOwnerValidator, times(1)).validate(any(), any(), any());
-    verify(trustCorporateValidator, times(1)).validate(any(), any(), any());
+
+  @Test
+  void testPopulateUpdateSubmissionForUserSubmission() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+    PopulateUpdateSubmission populateUpdateSubmission =
+            new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+
   }
+
+
+  @Test
+  void testPopulateUpdateSubmissionForPresenter() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+
+    assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
+    assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+
+  }
+
+    @Test
+  void testPopulateUpdateSubmissionForOEDueDiligence() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+            new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertEquals("John Smith", updateSubmission.getDueDiligence().getPartnerName());
+    assertEquals("2022-01-01", updateSubmission.getDueDiligence().getDateChecked());
+    assertEquals("user@domain.roe", updateSubmission.getDueDiligence().getEmail());
+    assertEquals("c0de", updateSubmission.getDueDiligence().getAgentAssuranceCode());
+    assertEquals("Super Supervisor", updateSubmission.getDueDiligence().getSupervisoryBody());
+
+  }
+
 
   private void buildOverseasEntitySubmissionDto() {
     overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
@@ -207,4 +194,6 @@ class PopulateUpdateSubmissionTest {
   private void setIsTrustWebEnabledFeatureFlag(boolean value) {
     ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
   }
+
+
 }

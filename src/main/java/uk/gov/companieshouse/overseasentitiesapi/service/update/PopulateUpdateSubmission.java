@@ -1,17 +1,19 @@
 package uk.gov.companieshouse.overseasentitiesapi.service.update;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.Presenter;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 
+
 /**
  * This is a helper class for FilingsService when the filing is an update. The purpose of this class
  * is to populate change submission values into UpdateSubmission.java with the ultimate gaol to
  * produce a json output of change submissions. It uses OESubmissionDTO and UpdateDTO values to
- * populate JSON template.
+ * populate UpdateSubmission model.
  */
 public class PopulateUpdateSubmission {
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -23,10 +25,11 @@ public class PopulateUpdateSubmission {
     this.updateSubmission = updateSubmission;
   }
 
-  /* method populates values into UpdateSubmission for JSON output */
+  /**
+   *  method populates values into UpdateSubmission for JSON output
+   */
   public UpdateSubmission populate() {
-    // updateSubmission.type(); Type is already set in UserSubmission, has a default value of
-    // "OE02";
+
     updateSubmission.setUserSubmission(this.overseasEntitySubmissionDto);
     populateDueDiligence(this.overseasEntitySubmissionDto, updateSubmission);
     populatePresenter(this.overseasEntitySubmissionDto, this.updateSubmission);
@@ -35,10 +38,11 @@ public class PopulateUpdateSubmission {
 
     updateSubmission.setAnyBOsOrMOsAddedOrCeased(
         this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
-    // AC contact details is covered in --> overseasEntitySubmissionDto.getPresenter().getEmail();
-    // TBD: NoChangesInFilingPeriodStatement will be done in
-    // https://companieshouse.atlassian.net/browse/UAR-461//
-    // TBD updateSubmission.setNoChangesInFilingPeriodStatement(); //
+    /** AC contact details is covered in --> overseasEntitySubmissionDto.getPresenter().getEmail();
+    * // TBD: NoChangesInFilingPeriodStatement will be done in
+    * // https://companieshouse.atlassian.net/browse/UAR-461//
+    * // TBD updateSubmission.setNoChangesInFilingPeriodStatement();
+    */
 
     return updateSubmission;
   }
@@ -46,19 +50,63 @@ public class PopulateUpdateSubmission {
   public void populateDueDiligence(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
     DueDiligenceDto dueDiligenceDto =
-        overseasEntitySubmissionDto.getDueDiligence(); // TBD .. which DueDiligence to use??//
-    DueDiligence dueDiligence = new DueDiligence();
-    dueDiligence.setDueDiligenceCorrespondenceAddress(dueDiligenceDto.getAddress());
-    dueDiligence.setAgentName(dueDiligenceDto.getName());
-    dueDiligence.setEmail(dueDiligenceDto.getEmail());
-    dueDiligence.setDateChecked(
-        dueDiligenceDto.getIdentityDate().toString()); // TBD .. check date format//
-    dueDiligence.setPartnerName(dueDiligenceDto.getPartnerName());
-    dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
-    dueDiligence.setSupervisoryBody(dueDiligenceDto.getSupervisoryName());
-    dueDiligence.setAmlRegistrationNumber(dueDiligenceDto.getAmlNumber());
-    updateSubmission.setDueDiligence(dueDiligence);
+        overseasEntitySubmissionDto.getDueDiligence();
+    OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+
+    DueDiligence submissionDueDiligence = new DueDiligence();
+
+    submissionDueDiligence  = (overseasEntitySubmissionDto.getDueDiligence() != null) ? populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto ) :
+             populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
+
+    updateSubmission.setDueDiligence(submissionDueDiligence);
+
+
   }
+
+
+
+  public DueDiligence populateByDueDiligenceDto(DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
+
+    dueDiligence.setDateChecked(
+            dueDiligenceDto.getIdentityDate().toString());
+    dueDiligence.setAgentName(dueDiligenceDto.getName());
+    dueDiligence.setDueDiligenceCorrespondenceAddress(dueDiligenceDto.getAddress());
+    dueDiligence.setSupervisoryBody(dueDiligenceDto.getSupervisoryName());
+    dueDiligence.setPartnerName(dueDiligenceDto.getPartnerName());
+    dueDiligence.setEmail(dueDiligenceDto.getEmail());
+
+
+    /**
+     * agent_code/digligence are specific to DueDiligenceDto
+     */
+    dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
+   /**
+   * TBC DILIGENCE_FIELD no corresponding digligence in UpdateSubmission
+    * dueDiligence.(dueDiligenceDto.getDiligence());
+    */
+    return dueDiligence;
+
+  }
+
+  public DueDiligence populateByOEDueDiligenceDto(DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
+
+    dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
+    dueDiligence.setAgentName(overseasEntityDueDiligenceDto.getName());
+    dueDiligence.setDueDiligenceCorrespondenceAddress(overseasEntityDueDiligenceDto.getAddress());
+    dueDiligence.setSupervisoryBody(overseasEntityDueDiligenceDto.getSupervisoryName());
+    dueDiligence.setPartnerName(overseasEntityDueDiligenceDto.getPartnerName());
+    dueDiligence.setEmail(overseasEntityDueDiligenceDto.getEmail());
+
+    /**
+     * aml_number/getAmlNumber is specific to OverseasEntityDueDiligenceDto
+     */
+    dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
+
+
+    return dueDiligence;
+  }
+
+
 
   public void populateFilingForDate(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
@@ -73,8 +121,10 @@ public class PopulateUpdateSubmission {
   public void populatePresenter(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
     Presenter presenter = new Presenter();
-    presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
-    presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
+    if (overseasEntitySubmissionDto.getPresenter() != null) {
+      presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
+      presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
+    }
     updateSubmission.setPresenter(presenter);
   }
 
