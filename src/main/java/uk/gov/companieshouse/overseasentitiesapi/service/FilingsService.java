@@ -13,6 +13,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
@@ -26,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +42,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -68,48 +70,54 @@ public class FilingsService {
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
 
+  @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+  private String salt;
+
   private final OverseasEntitiesService overseasEntitiesService;
   private final ApiClientService apiClientService;
   private final Supplier<LocalDate> dateNowSupplier;
   private final ObjectMapper objectMapper;
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
+  private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
   public FilingsService(
-      OverseasEntitiesService overseasEntitiesService,
-      ApiClientService apiClientService,
-      Supplier<LocalDate> dateNowSupplier,
-      ObjectMapper objectMapper,
-      PrivateDataRetrievalService privateDataRetrievalService,
-      PublicDataRetrievalService publicDataRetrievalService) {
+          OverseasEntitiesService overseasEntitiesService,
+          ApiClientService apiClientService,
+          Supplier<LocalDate> dateNowSupplier,
+          ObjectMapper objectMapper,
+          PrivateDataRetrievalService privateDataRetrievalService,
+          PublicDataRetrievalService publicDataRetrievalService,
+          OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
-      String requestId,
-      String overseasEntityId,
-      Transaction transaction,
-      String passThroughTokenHeader)
-      throws SubmissionNotFoundException, ServiceException {
+          String requestId,
+          String overseasEntityId,
+          Transaction transaction,
+          String passThroughTokenHeader)
+          throws SubmissionNotFoundException, ServiceException {
     var filing = new FilingApi();
-    filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
     setFilingApiData(filing, requestId, overseasEntityId, transaction, passThroughTokenHeader);
     return filing;
   }
 
   private void setFilingApiData(
-      FilingApi filing,
-      String requestId,
-      String overseasEntityId,
-      Transaction transaction,
-      String passThroughTokenHeader)
-      throws SubmissionNotFoundException, ServiceException {
+          FilingApi filing,
+          String requestId,
+          String overseasEntityId,
+          Transaction transaction,
+          String passThroughTokenHeader)
+          throws SubmissionNotFoundException, ServiceException {
+
     var logMap = new HashMap<String, Object>();
     logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
     logMap.put(TRANSACTION_ID_KEY, transaction.getId());
@@ -117,88 +125,95 @@ public class FilingsService {
     Map<String, Object> userSubmission = new HashMap<>();
 
     OverseasEntitySubmissionDto submissionDto =
-        setSubmissionData(userSubmission, overseasEntityId, logMap);
-    setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
+            overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)
+                    .orElseThrow(() -> new SubmissionNotFoundException(
+                            String.format("Empty submission returned when generating filing for %s", overseasEntityId)
+                    ));
 
     if (submissionDto.isForUpdate()) {
-      publicDataRetrievalService.initialisePublicData(
-          submissionDto.getEntityNumber(), passThroughTokenHeader);
-      privateDataRetrievalService.initialisePrivateData(submissionDto.getEntityNumber());
+      getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
+      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
+              publicDataRetrievalService, privateDataRetrievalService, salt);
+
+      var updateSubmission = new UpdateSubmission();
+
+      updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
+      updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
+              publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(), submissionDto));
+
+      publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+      publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
+
+      ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
+    } else {
+      setSubmissionData(userSubmission, submissionDto, logMap);
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
     }
 
-    filing.setData(userSubmission);
     if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
       filing.setCost(updateCostAmount);
     } else {
       filing.setCost(registerCostAmount);
     }
 
+    filing.setData(userSubmission);
+    setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
     setDescriptionFields(filing, submissionDto.isForUpdate());
   }
 
-  private OverseasEntitySubmissionDto setSubmissionData(
-      Map<String, Object> data, String overseasEntityId, Map<String, Object> logMap)
-      throws SubmissionNotFoundException, ServiceException {
-    Optional<OverseasEntitySubmissionDto> submissionOpt =
-        overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+  private void getPublicAndPrivateData(String entityNumber, String passThroughTokenHeader) throws ServiceException {
+    publicDataRetrievalService.initialisePublicData(entityNumber, passThroughTokenHeader);
+    privateDataRetrievalService.initialisePrivateData(entityNumber);
+  }
 
-    OverseasEntitySubmissionDto submissionDto =
-        submissionOpt.orElseThrow(
-            () ->
-                new SubmissionNotFoundException(
-                    String.format(
-                        "Empty submission returned when generating filing for %s",
-                        overseasEntityId)));
+  private void setSubmissionData(
+          Map<String, Object> data, OverseasEntitySubmissionDto submissionDto, Map<String, Object> logMap)
+          throws ServiceException {
 
     if (Objects.isNull(submissionDto.getEntityName())) {
       data.put(ENTITY_NAME_FIELD, null);
     } else {
       data.put(ENTITY_NAME_FIELD, submissionDto.getEntityName().getName());
     }
+
     data.put(PRESENTER_FIELD, submissionDto.getPresenter());
     data.put(ENTITY_FIELD, submissionDto.getEntity());
     data.put(DUE_DILIGENCE_FIELD, submissionDto.getDueDiligence());
     data.put(OVERSEAS_ENTITY_DUE_DILIGENCE, submissionDto.getOverseasEntityDueDiligence());
-    data.put(
-        BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
-        getBeneficialOwnersIndividualSubmissionData(submissionDto));
-    data.put(
-        BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
-        submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
-    data.put(
-        BENEFICIAL_OWNERS_CORPORATE_FIELD,
-        getBeneficialOwnersCorporateSubmissionData(submissionDto));
+    data.put(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, getBeneficialOwnersIndividualSubmissionData(submissionDto));
+    data.put(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, submissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
+    data.put(BENEFICIAL_OWNERS_CORPORATE_FIELD, getBeneficialOwnersCorporateSubmissionData(submissionDto));
     data.put(MANAGING_OFFICERS_INDIVIDUAL_FIELD, submissionDto.getManagingOfficersIndividual());
     data.put(MANAGING_OFFICERS_CORPORATE_FIELD, submissionDto.getManagingOfficersCorporate());
     data.put(BENEFICIAL_OWNERS_STATEMENT, submissionDto.getBeneficialOwnersStatement());
+
     if (isTrustsSubmissionThroughWebEnabled) {
       data.put(TRUST_DATA, submissionDto.getTrusts());
     }
-    ApiLogger.debug("Submission data has been set on filing", logMap);
 
-    return submissionDto;
+    ApiLogger.debug("Submission data has been set on filing", logMap);
   }
 
   private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(
-      OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+          OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+
     List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualSubmissionData = new ArrayList<>();
 
     if (Objects.isNull(submissionDto.getBeneficialOwnersIndividual())) {
       return beneficialOwnersIndividualSubmissionData;
     }
 
-    for (BeneficialOwnerIndividualDto beneficialOwner :
-        submissionDto.getBeneficialOwnersIndividual()) {
-
+    for (BeneficialOwnerIndividualDto beneficialOwner : submissionDto.getBeneficialOwnersIndividual()) {
       if (!isTrustsSubmissionThroughWebEnabled) {
         String noTrustsMessage =
-            "No trusts exist for this filing but a trust id is provided for BO Individual "
-                + beneficialOwner.getFirstName()
-                + " "
-                + beneficialOwner.getLastName();
+                "No trusts exist for this filing but a trust id is provided for BO Individual "
+                        + beneficialOwner.getFirstName()
+                        + " "
+                        + beneficialOwner.getLastName();
 
-        List<TrustDataDto> trustData =
-            getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
+        List<TrustDataDto> trustData = getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
         beneficialOwner.setTrustData(convertTrustDataToString(trustData));
       }
       beneficialOwnersIndividualSubmissionData.add(beneficialOwner);
@@ -208,7 +223,8 @@ public class FilingsService {
   }
 
   private List<BeneficialOwnerCorporateDto> getBeneficialOwnersCorporateSubmissionData(
-      OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+          OverseasEntitySubmissionDto submissionDto) throws ServiceException {
+
     List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateSubmissionData = new ArrayList<>();
 
     if (Objects.isNull(submissionDto.getBeneficialOwnersCorporate())) {
@@ -216,14 +232,14 @@ public class FilingsService {
     }
 
     for (BeneficialOwnerCorporateDto beneficialOwner :
-        submissionDto.getBeneficialOwnersCorporate()) {
+            submissionDto.getBeneficialOwnersCorporate()) {
       if (!isTrustsSubmissionThroughWebEnabled) {
         String noTrustsMessage =
-            "No trusts exist for this filing but a trust id is provided for BO Corporate "
-                + beneficialOwner.getPublicRegisterName();
+                "No trusts exist for this filing but a trust id is provided for BO Corporate "
+                        + beneficialOwner.getPublicRegisterName();
 
         List<TrustDataDto> trustData =
-            getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
+                getTrustData(submissionDto, beneficialOwner.getTrustIds(), noTrustsMessage);
         beneficialOwner.setTrustData(convertTrustDataToString(trustData));
       }
       beneficialOwnersCorporateSubmissionData.add(beneficialOwner);
@@ -233,10 +249,10 @@ public class FilingsService {
   }
 
   private List<TrustDataDto> getTrustData(
-      OverseasEntitySubmissionDto submissionDto,
-      List<String> trustIds,
-      String noTrustsExceptionMessage)
-      throws ServiceException {
+          OverseasEntitySubmissionDto submissionDto,
+          List<String> trustIds,
+          String noTrustsExceptionMessage)
+          throws ServiceException {
     List<TrustDataDto> trustsDataForBO = new ArrayList<>();
     // Loop through each trustId(s) and lookup the information for that trust
     if (Objects.isNull(trustIds)) {
@@ -271,7 +287,7 @@ public class FilingsService {
   }
 
   private String convertTrustDataToString(List<TrustDataDto> trustsDataForBO)
-      throws ServiceException {
+          throws ServiceException {
     String trustData = "";
     if (!trustsDataForBO.isEmpty()) {
       // Convert trust data to JSON string if it exists on transaction else it's to an empty string
@@ -285,11 +301,11 @@ public class FilingsService {
   }
 
   private void setPaymentData(
-      Map<String, Object> data,
-      Transaction transaction,
-      String passthroughTokenHeader,
-      Map<String, Object> logMap)
-      throws ServiceException {
+          Map<String, Object> data,
+          Transaction transaction,
+          String passthroughTokenHeader,
+          Map<String, Object> logMap)
+          throws ServiceException {
     var paymentLink = transaction.getLinks().getPayment();
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
     var payment = getPayment(paymentReference, passthroughTokenHeader);
@@ -300,28 +316,28 @@ public class FilingsService {
   }
 
   private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
-      throws ServiceException {
+          throws ServiceException {
     try {
       return apiClientService
-          .getOauthAuthenticatedClient(passthroughTokenHeader)
-          .payment()
-          .get("/payments/" + paymentReference)
-          .execute()
-          .getData();
+              .getOauthAuthenticatedClient(passthroughTokenHeader)
+              .payment()
+              .get("/payments/" + paymentReference)
+              .execute()
+              .getData();
     } catch (URIValidationException | IOException e) {
       throw new ServiceException(e.getMessage(), e);
     }
   }
 
   private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
-      throws ServiceException {
+          throws ServiceException {
     try {
       var transactionPaymentInfo =
-          apiClientService
-              .getOauthAuthenticatedClient(passthroughTokenHeader)
-              .transactions()
-              .getPayment(uri)
-              .execute();
+              apiClientService
+                      .getOauthAuthenticatedClient(passthroughTokenHeader)
+                      .transactions()
+                      .getPayment(uri)
+                      .execute();
 
       return transactionPaymentInfo.getData().getPaymentReference();
     } catch (URIValidationException | IOException e) {
