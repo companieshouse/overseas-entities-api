@@ -38,11 +38,7 @@ public class PopulateUpdateSubmission {
 
     updateSubmission.setAnyBOsOrMOsAddedOrCeased(
         this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
-    /** AC contact details is covered in --> overseasEntitySubmissionDto.getPresenter().getEmail();
-    * // TBD: NoChangesInFilingPeriodStatement will be done in
-    * // https://companieshouse.atlassian.net/browse/UAR-461//
-    * // TBD updateSubmission.setNoChangesInFilingPeriodStatement();
-    */
+
 
     return updateSubmission;
   }
@@ -74,16 +70,8 @@ public class PopulateUpdateSubmission {
     dueDiligence.setSupervisoryBody(dueDiligenceDto.getSupervisoryName());
     dueDiligence.setPartnerName(dueDiligenceDto.getPartnerName());
     dueDiligence.setEmail(dueDiligenceDto.getEmail());
-
-
-    /**
-     * agent_code/digligence are specific to DueDiligenceDto
-     */
     dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
-   /**
-   * TBC DILIGENCE_FIELD no corresponding digligence in UpdateSubmission
-    * dueDiligence.(dueDiligenceDto.getDiligence());
-    */
+
     return dueDiligence;
 
   }
@@ -135,9 +123,7 @@ public class PopulateUpdateSubmission {
     return populate();
   }
 
-  public OverseasEntitySubmissionDto getOverseasEntitySubmissionDto() {
-    return overseasEntitySubmissionDto;
-  }
+
 
   public void setOverseasEntitySubmissionDto(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
