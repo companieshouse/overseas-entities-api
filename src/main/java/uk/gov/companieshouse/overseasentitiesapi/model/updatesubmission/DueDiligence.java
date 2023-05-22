@@ -28,6 +28,10 @@ public class DueDiligence {
     @JsonProperty("partnerName")
     private String partnerName;
 
+    @JsonProperty("diligence")
+    private String diligence;
+
+
     public String getDateChecked() {
         return dateChecked;
     }
@@ -91,4 +95,14 @@ public class DueDiligence {
     public void setPartnerName(String partnerName) {
         this.partnerName = partnerName;
     }
+
+    public String getDiligence() {
+        return diligence;
+    }
+
+    public void setDiligence(String diligence) {
+        this.diligence = diligence;
+    }
+
+
 }

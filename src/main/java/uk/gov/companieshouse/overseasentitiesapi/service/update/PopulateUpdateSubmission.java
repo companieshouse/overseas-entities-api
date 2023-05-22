@@ -8,7 +8,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingFo
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.Presenter;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 
-
 /**
  * This is a helper class for FilingsService when the filing is an update. The purpose of this class
  * is to populate change submission values into UpdateSubmission.java with the ultimate gaol to
@@ -25,9 +24,7 @@ public class PopulateUpdateSubmission {
     this.updateSubmission = updateSubmission;
   }
 
-  /**
-   *  method populates values into UpdateSubmission for JSON output
-   */
+  /** method populates values into UpdateSubmission for JSON output */
   public UpdateSubmission populate() {
 
     updateSubmission.setUserSubmission(this.overseasEntitySubmissionDto);
@@ -39,44 +36,40 @@ public class PopulateUpdateSubmission {
     updateSubmission.setAnyBOsOrMOsAddedOrCeased(
         this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
 
-
     return updateSubmission;
   }
 
   public void populateDueDiligence(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-    DueDiligenceDto dueDiligenceDto =
-        overseasEntitySubmissionDto.getDueDiligence();
-    OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-
+    DueDiligenceDto dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+    OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto =
+        overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
     DueDiligence submissionDueDiligence = new DueDiligence();
-
-    submissionDueDiligence  = (overseasEntitySubmissionDto.getDueDiligence() != null) ? populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto ) :
-             populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
-
+    submissionDueDiligence =
+        (overseasEntitySubmissionDto.getDueDiligence() != null)
+            ? populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto)
+            : populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
     updateSubmission.setDueDiligence(submissionDueDiligence);
-
 
   }
 
+  public DueDiligence populateByDueDiligenceDto(
+      DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
 
-
-  public DueDiligence populateByDueDiligenceDto(DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
-
-    dueDiligence.setDateChecked(
-            dueDiligenceDto.getIdentityDate().toString());
+    dueDiligence.setDateChecked(dueDiligenceDto.getIdentityDate().toString());
     dueDiligence.setAgentName(dueDiligenceDto.getName());
     dueDiligence.setDueDiligenceCorrespondenceAddress(dueDiligenceDto.getAddress());
     dueDiligence.setSupervisoryBody(dueDiligenceDto.getSupervisoryName());
     dueDiligence.setPartnerName(dueDiligenceDto.getPartnerName());
     dueDiligence.setEmail(dueDiligenceDto.getEmail());
     dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
+    dueDiligence.setDiligence(dueDiligenceDto.getDiligence());
 
     return dueDiligence;
-
   }
 
-  public DueDiligence populateByOEDueDiligenceDto(DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
+  public DueDiligence populateByOEDueDiligenceDto(
+      DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
 
     dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
     dueDiligence.setAgentName(overseasEntityDueDiligenceDto.getName());
@@ -84,17 +77,10 @@ public class PopulateUpdateSubmission {
     dueDiligence.setSupervisoryBody(overseasEntityDueDiligenceDto.getSupervisoryName());
     dueDiligence.setPartnerName(overseasEntityDueDiligenceDto.getPartnerName());
     dueDiligence.setEmail(overseasEntityDueDiligenceDto.getEmail());
-
-    /**
-     * aml_number/getAmlNumber is specific to OverseasEntityDueDiligenceDto
-     */
     dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
-
 
     return dueDiligence;
   }
-
-
 
   public void populateFilingForDate(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
@@ -122,8 +108,6 @@ public class PopulateUpdateSubmission {
     this.updateSubmission = updateSubmission;
     return populate();
   }
-
-
 
   public void setOverseasEntitySubmissionDto(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
