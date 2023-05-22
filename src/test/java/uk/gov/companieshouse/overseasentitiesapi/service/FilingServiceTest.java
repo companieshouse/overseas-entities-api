@@ -20,7 +20,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.MANAGING_OFFICERS_INDIVIDUAL_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpHeaders;
@@ -118,7 +117,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
+
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
@@ -174,6 +175,9 @@ class FilingServiceTest {
 
     @Mock
     private PublicPrivateDataCombiner publicPrivateDataCombiner;
+
+    @Mock
+    private OverseasEntityChangeService overseasEntityChangeService;
 
     private Transaction transaction;
 
@@ -281,6 +285,8 @@ class FilingServiceTest {
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
+        verify(privateDataRetrievalService, times(0)).initialisePrivateData(Mockito.anyString());
+        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
 
 
         verify(localDateSupplier, times(1)).get();
@@ -319,12 +325,14 @@ class FilingServiceTest {
 //        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
 //        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
 //        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+//        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.anyString());
 //
 //        verify(localDateSupplier, times(1)).get();
 //        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
 //        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
 //        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 //        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+//        assertEquals("OE111229", filing.getData().get("entity_number"));
 //        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
 //        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
 //        assertEquals("user@domain.roe", presenterInFiling.getEmail());

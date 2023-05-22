@@ -42,6 +42,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -77,6 +79,7 @@ public class FilingsService {
   private final ObjectMapper objectMapper;
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
+  private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
   public FilingsService(
@@ -85,13 +88,15 @@ public class FilingsService {
           Supplier<LocalDate> dateNowSupplier,
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
-          PublicDataRetrievalService publicDataRetrievalService) {
+          PublicDataRetrievalService publicDataRetrievalService,
+          OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -127,17 +132,21 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
-      //Call a method to populate UpdateSubmission
-      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
       var publicPrivateDataCombiner = new PublicPrivateDataCombiner(
-          publicDataRetrievalService, privateDataRetrievalService, salt);
+              publicDataRetrievalService, privateDataRetrievalService, salt);
 
-      publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+      var updateSubmission = new UpdateSubmission();
+
+      updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
+      updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(
+              publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(), submissionDto));
+
       publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
       publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
 
-      ApiLogger.infoContext("PublicPrivateDataCombiner",
-          publicPrivateDataCombiner.logCollatedData());
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
+
+      ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
