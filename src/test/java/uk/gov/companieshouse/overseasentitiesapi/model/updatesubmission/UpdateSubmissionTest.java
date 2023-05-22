@@ -21,6 +21,7 @@ class UpdateSubmissionTest {
                 "\"beneficial_owners_individual\":null,\"beneficial_owners_corporate\":null," +
                 "\"beneficial_owners_government_or_public_authority\":null,\"managing_officers_individual\":null," +
                 "\"managing_officers_corporate\":null,\"update\":null,\"links\":null}," +
+            "\"entityNumber\":\"OE123456\"," +
             "\"dueDiligence\":{\"dateChecked\":\"01-01-2001\",\"agentName\":\"Agent name\"," +
                 "\"dueDiligenceCorrespondenceAddress\":{\"line_1\":\"Line 1\"}," +
                 "\"agentAssuranceCode\":\"Agent assurance code\",\"amlRegistrationNumber\":\"Aml number\"," +
@@ -50,6 +51,7 @@ class UpdateSubmissionTest {
         updateSubmission.setUserSubmission(new OverseasEntitySubmissionDto(){{
             setEntityNumber("OE123456");
         }});
+        updateSubmission.setEntityNumber("OE123456");
         updateSubmission.setFilingForDate(new FilingForDate(){{
             setDay("01");
             setMonth("01");

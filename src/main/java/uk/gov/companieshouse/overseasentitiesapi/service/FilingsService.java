@@ -44,6 +44,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.service.cessations.BeneficialOwnerCessationService;
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -80,6 +81,7 @@ public class FilingsService {
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
+  private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
   public FilingsService(
@@ -89,7 +91,8 @@ public class FilingsService {
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
-          BeneficialOwnerCessationService beneficialOwnerCessationService) {
+          BeneficialOwnerCessationService beneficialOwnerCessationService,
+          OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
@@ -97,6 +100,7 @@ public class FilingsService {
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
+    this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -160,13 +164,16 @@ public class FilingsService {
                                        Map<String, Object> logMap) throws ServiceException {
 
     var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
-    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+    var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
     var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
     publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
     var updateSubmission = new UpdateSubmission();
+
     updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData));
+    updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
+    updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
 
     ApiLogger.debug("Update data has been set on filing", logMap);
   }

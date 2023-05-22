@@ -94,6 +94,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
+
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
 
@@ -152,6 +154,9 @@ class FilingServiceTest {
     @Mock
     private PublicPrivateDataCombiner publicPrivateDataCombiner;
 
+    @Mock
+    private OverseasEntityChangeService overseasEntityChangeService;
+
     private Transaction transaction;
 
     @BeforeEach
@@ -190,25 +195,25 @@ class FilingServiceTest {
 
     void initGetPublicPrivateDataCombinerMocks() throws JsonProcessingException {
         publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService,
-                privateDataRetrievalService,
-                "test_salt");
+            privateDataRetrievalService,
+            "test_salt");
 
         String pscJsonString = "{" +
-                "\"links\": {" +
-                "\"self\": \"/company/03681242/persons-with-significant-control/individual/7HGCOOm_5F9YAxMTt5UBo8xVsYY\""
-                +
-                "}" +
-                "}";
+            "\"links\": {" +
+            "\"self\": \"/company/03681242/persons-with-significant-control/individual/7HGCOOm_5F9YAxMTt5UBo8xVsYY\""
+            +
+            "}" +
+            "}";
 
         String officersApiString = "{" +
-                "\"items\": [" +
-                "{" +
-                "\"links\": {" +
-                "\"self\": \"/company/01913593/appointments/7HGCOOm_5F9YAxMTt5UBo8xVsYY\"" +
-                "}" +
-                "}" +
-                "]" +
-                "}";
+            "\"items\": [" +
+            "{" +
+            "\"links\": {" +
+            "\"self\": \"/company/01913593/appointments/7HGCOOm_5F9YAxMTt5UBo8xVsYY\"" +
+            "}" +
+            "}" +
+            "]" +
+            "}";
 
         CompanyProfileApi publicOE = new CompanyProfileApi();
         publicOE.setCompanyName("Test Public Company");
@@ -235,12 +240,12 @@ class FilingServiceTest {
 
         // Configure mock behavior
         when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
-                new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
+            new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
         when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
 
         // Configure mock behavior
         when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
-                new PrivateBoDataListApi(List.of(privateBoDataApi)));
+            new PrivateBoDataListApi(List.of(privateBoDataApi)));
         when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
     }
 
@@ -258,6 +263,8 @@ class FilingServiceTest {
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
+        verify(privateDataRetrievalService, times(0)).initialisePrivateData(Mockito.anyString());
+        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
 
 
         verify(localDateSupplier, times(1)).get();
@@ -296,12 +303,14 @@ class FilingServiceTest {
 //        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
 //        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
 //        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+//        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.anyString());
 //
 //        verify(localDateSupplier, times(1)).get();
 //        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
 //        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
 //        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 //        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
+//        assertEquals("OE111229", filing.getData().get("entity_number"));
 //        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
 //        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
 //        assertEquals("user@domain.roe", presenterInFiling.getEmail());
@@ -964,7 +973,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-
+        
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
