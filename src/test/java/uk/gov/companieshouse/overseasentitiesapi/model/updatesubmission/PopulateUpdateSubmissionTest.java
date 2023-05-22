@@ -196,4 +196,11 @@ class PopulateUpdateSubmissionTest {
   }
 
 
+  @Test
+  void testBeneficialOwnersStatementTypeGetValue() throws Exception {
+    var enumBeneficialOwnersStatementType =  BeneficialOwnersStatementType.findByBeneficialOwnersStatementTypeString("none_identified");
+    assertEquals("none_identified", enumBeneficialOwnersStatementType.getValue());
+  }
+
+
 }
