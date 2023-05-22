@@ -22,6 +22,8 @@ public class UpdateDto {
 
     public static final String REVIEW_MANAGING_OFFICERS_CORPORATE_FIELD = "review_managing_officers_corporate";
 
+    public static final String NO_CHANGE_SCENARIO = "no_change";
+
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
 
@@ -34,6 +36,8 @@ public class UpdateDto {
     @JsonProperty(REGISTRABLE_BENEFICIAL_OWNER)
     private boolean registrableBeneficialOwner;
 
+    @JsonProperty(NO_CHANGE_SCENARIO)
+    private boolean noChange;
 
     @JsonProperty(REVIEW_BENEFICIAL_OWNERS_INDIVIDUAL_FIELD)
     private List<BeneficialOwnerIndividualDto> reviewBeneficialOwnersIndividual;
@@ -81,6 +85,10 @@ public class UpdateDto {
     public void setRegistrableBeneficialOwner(boolean registrableBeneficialOwner) {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
+
+    public boolean isNoChange() { return noChange; }
+
+    public void setNoChange(boolean noChange) { this.noChange = noChange; }
 
     public List<BeneficialOwnerIndividualDto> getReviewBeneficialOwnersIndividual() {
         return reviewBeneficialOwnersIndividual;

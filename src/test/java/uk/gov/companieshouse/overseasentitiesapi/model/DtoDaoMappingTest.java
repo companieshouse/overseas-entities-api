@@ -426,6 +426,7 @@ class DtoDaoMappingTest {
         assertEquals(updateDto.getFilingDate(), updateDao.getFilingDate());
         assertEquals(updateDto.isBoMoDataFetched(), updateDao.isBoMoDataFetched());
         assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
+        assertEquals(updateDto.isNoChange(), updateDao.isNoChange());
     }
 
     private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {
