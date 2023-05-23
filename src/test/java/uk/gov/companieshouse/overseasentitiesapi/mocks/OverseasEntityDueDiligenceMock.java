@@ -15,6 +15,8 @@ public class OverseasEntityDueDiligenceMock {
     public static final String AML_NUMBER = "abc123";
     public static final String PARTNER_NAME = "John Smith";
 
+
+
     public static OverseasEntityDueDiligenceDao getOverseasEntityDueDiligenceDao() {
         OverseasEntityDueDiligenceDao overseasEntityDueDiligenceDao = new OverseasEntityDueDiligenceDao();
         overseasEntityDueDiligenceDao.setIdentityDate(IDENTITY_DATE);
@@ -24,6 +26,7 @@ public class OverseasEntityDueDiligenceMock {
         overseasEntityDueDiligenceDao.setSupervisoryName(SUPERVISOR_NAME);
         overseasEntityDueDiligenceDao.setAmlNumber(AML_NUMBER);
         overseasEntityDueDiligenceDao.setPartnerName(PARTNER_NAME);
+
         return overseasEntityDueDiligenceDao;
     }
 
@@ -36,6 +39,8 @@ public class OverseasEntityDueDiligenceMock {
         overseasEntityDueDiligenceDto.setSupervisoryName(SUPERVISOR_NAME);
         overseasEntityDueDiligenceDto.setAmlNumber(AML_NUMBER);
         overseasEntityDueDiligenceDto.setPartnerName(PARTNER_NAME);
+       // overseasEntityDueDiligenceDto.setAgentCode("c0de");
+
         return overseasEntityDueDiligenceDto;
     }
 }

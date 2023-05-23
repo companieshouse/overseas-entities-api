@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,26 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.update.PopulateUpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.validation.*;
@@ -44,6 +26,10 @@ class PopulateUpdateSubmissionTest {
   private final BeneficialOwnersStatementType beneficialOwnersStatement =
       BeneficialOwnersStatementType.NONE_IDENTIFIED;
   private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
+
+  private final OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto =
+      OverseasEntityDueDiligenceMock.getOverseasEntityDueDiligenceDto();
+
   private final UpdateDto updateDto = UpdateMock.getUpdateDto();
   private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList =
       new ArrayList<>();
@@ -85,6 +71,93 @@ class PopulateUpdateSubmissionTest {
 
   {
     trustDataDtoList.add(TrustMock.getTrustDataDto());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForPopulatePresenter() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    populateUpdateSubmission.populatePresenter(this.overseasEntitySubmissionDto, updateSubmission);
+
+    assertNotNull(overseasEntitySubmissionDto.getPresenter());
+    assertEquals("user@domain.roe", overseasEntitySubmissionDto.getPresenter().getEmail());
+    assertEquals("Joe Bloggs", overseasEntitySubmissionDto.getPresenter().getFullName());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForPopulateFilingForDate() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    populateUpdateSubmission.populateFilingForDate(
+        this.overseasEntitySubmissionDto, updateSubmission);
+
+    assertEquals("23", updateSubmission.getFilingForDate().getDay());
+    assertEquals("MAY", updateSubmission.getFilingForDate().getMonth());
+    assertEquals("2023", updateSubmission.getFilingForDate().getYear());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForPopulateByOEDueDiligenceDto() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    var dueDiligence =
+        populateUpdateSubmission.populateByOEDueDiligenceDto(
+            new DueDiligence(), this.overseasEntitySubmissionDto.getOverseasEntityDueDiligence());
+    assertEquals("John Smith", dueDiligence.getPartnerName());
+    assertEquals("2022-01-01", dueDiligence.getDateChecked());
+    assertEquals("user@domain.roe", dueDiligence.getEmail());
+    assertEquals("ABC Checking Ltd", dueDiligence.getAgentName());
+    assertEquals("Super Supervisor", dueDiligence.getSupervisoryBody());
+    assertNull(dueDiligence.getDiligence());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForPopulateByDueDiligenceDto() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    var dueDiligence =
+        populateUpdateSubmission.populateByDueDiligenceDto(
+            new DueDiligence(), this.dueDiligenceDto);
+    assertEquals("John Smith", dueDiligence.getPartnerName());
+    assertEquals("2022-01-01", dueDiligence.getDateChecked());
+    assertEquals("user@domain.roe", dueDiligence.getEmail());
+    assertEquals("c0de", dueDiligence.getAgentAssuranceCode());
+    assertEquals("Super Supervisor", dueDiligence.getSupervisoryBody());
+    assertEquals("agree", dueDiligence.getDiligence());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForPopulate() throws Exception {
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+
+    assertNotNull(updateSubmission);
+    assertNotNull(updateSubmission.getUserSubmission());
+    assertNotNull(updateSubmission.getDueDiligence());
+    assertNotNull(updateSubmission.getBeneficialOwnerStatement());
+    assertNotNull(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+    assertNotNull(updateSubmission.getPresenter());
+    assertNotNull(updateSubmission.getFilingForDate());
   }
 
   @Test
@@ -156,6 +229,7 @@ class PopulateUpdateSubmissionTest {
     PopulateUpdateSubmission populateUpdateSubmission =
         new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
     UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertNotNull(updateSubmission.getPresenter());
     assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
     assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
   }
@@ -213,6 +287,7 @@ class PopulateUpdateSubmissionTest {
     overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(
         beneficialOwnerGovernmentOrPublicAuthorityDtoList);
     overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+    overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
     overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
     overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
     overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
