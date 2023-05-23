@@ -12,6 +12,18 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_TYPE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.NO_CHANGES_IN_FILING_PERIOD_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ANY_BOS_ADDED_CEASED_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.BENEFICIAL_OWNERS_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ADDITIONS_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
@@ -144,6 +156,7 @@ public class FilingsService {
       publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
       publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
 
+      setUpdateSubmissionData(userSubmission, updateSubmission, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
 
       ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
@@ -194,6 +207,24 @@ public class FilingsService {
     }
 
     ApiLogger.debug("Submission data has been set on filing", logMap);
+  }
+
+  private void setUpdateSubmissionData(
+          Map<String, Object> data, UpdateSubmission updateSubmission, Map<String, Object> logMap) {
+    data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
+    data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
+    data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
+    data.put(UPDATE_DUE_DILIGENCE_FIELD, updateSubmission.getDueDiligence());
+    data.put(UPDATE_PRESENTER_FIELD, updateSubmission.getPresenter());
+    data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
+    data.put(NO_CHANGES_IN_FILING_PERIOD_FIELD, updateSubmission.getNoChangesInFilingPeriodStatement());
+    data.put(ANY_BOS_ADDED_CEASED_FIELD, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+    data.put(BENEFICIAL_OWNERS_FIELD, updateSubmission.getBeneficialOwnerStatement());
+    data.put(CHANGES_FIELD, updateSubmission.getChanges());
+    data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
+    data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+
+    ApiLogger.debug("Update submission data has been set on filing", logMap);
   }
 
   private List<BeneficialOwnerIndividualDto> getBeneficialOwnersIndividualSubmissionData(
