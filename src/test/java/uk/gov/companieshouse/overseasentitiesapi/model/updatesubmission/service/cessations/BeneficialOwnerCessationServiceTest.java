@@ -1,13 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.service.cessations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +19,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualBeneficialOwnerCessation;
+import uk.gov.companieshouse.overseasentitiesapi.service.BeneficialOwnerCessationService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 class BeneficialOwnerCessationServiceTest {
 
@@ -29,7 +28,13 @@ class BeneficialOwnerCessationServiceTest {
 
   @Mock private Map<String, Pair<PscApi, PrivateBoDataApi>> combinedBoData;
 
+  public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
+
   private BeneficialOwnerCessationService beneficialOwnerCessationService;
+  public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Beneficial Owner ID was found in Private Data";
+  public static final String SERVICE = "BeneficialOwnerCessationService";
+  @Mock
+  private ApiLogger logger;
 
   @BeforeEach
   public void setUp() {
@@ -86,8 +91,10 @@ class BeneficialOwnerCessationServiceTest {
     when(combinedBoData.get(hashedId2)).thenReturn(new ImmutablePair<>(null, privateBoData2));
     when(combinedBoData.get(hashedId3)).thenReturn(new ImmutablePair<>(null, privateBoData3));
 
+    Map<String, Object> logMap = new HashMap<>();
+
     List<Cessation> cessations =
-        beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData);
+        beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
 
     assertEquals(3, cessations.size()); // Assuming only one beneficial owner satisfies the filter criteria
 
@@ -100,7 +107,97 @@ class BeneficialOwnerCessationServiceTest {
   }
 
   @Test
-  void testBeneficialOwnerCessations_IllegalArgumentException() {
+  void testBeneficialOwnerCessationsNoData() {
+    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+            .thenReturn(Collections.emptyList());
+    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+            .thenReturn(Collections.emptyList());
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+            .thenReturn(Collections.emptyList());
+
+    Map<String, Object> logMap = new HashMap<>();
+
+    List<Cessation> cessations = beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
+
+    assertEquals(0, cessations.size());
+  }
+
+  @Test
+  void testGetBeneficialOwnersFiltersOutCeasedDateNull() {
+    List<BeneficialOwnerIndividualDto> individualBeneficialOwners = new ArrayList<>();
+    List<BeneficialOwnerCorporateDto> corporateBeneficialOwners = new ArrayList<>();
+    List<BeneficialOwnerGovernmentOrPublicAuthorityDto> legalPersonBeneficialOwners = new ArrayList<>();
+
+    BeneficialOwnerIndividualDto individualBo2 = new BeneficialOwnerIndividualDto();
+    individualBo2.setCeasedDate(null);
+    individualBo2.setChipsReference("012");
+
+    BeneficialOwnerCorporateDto corporateBo2 = new BeneficialOwnerCorporateDto();
+    corporateBo2.setCeasedDate(null);
+    corporateBo2.setChipsReference("013");
+
+    BeneficialOwnerGovernmentOrPublicAuthorityDto legalPersonBo2 = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+    legalPersonBo2.setCeasedDate(null);
+    legalPersonBo2.setChipsReference("014");
+
+    individualBeneficialOwners.add(individualBo2);
+    corporateBeneficialOwners.add(corporateBo2);
+    legalPersonBeneficialOwners.add(legalPersonBo2);
+
+    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+            .thenReturn(individualBeneficialOwners);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+            .thenReturn(corporateBeneficialOwners);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+            .thenReturn(legalPersonBeneficialOwners);
+
+    BeneficialOwnerCessationService beneficialOwnerCessationService = new BeneficialOwnerCessationService();
+
+    List<Cessation> cessations = beneficialOwnerCessationService.beneficialOwnerCessations(
+            overseasEntitySubmissionDto, combinedBoData, new HashMap<>());
+
+    assertEquals(0, cessations.size());
+  }
+
+  @Test
+  void testGetBeneficialOwnersFiltersOutChipsReferenceNull() {
+    List<BeneficialOwnerIndividualDto> individualBeneficialOwners = new ArrayList<>();
+    List<BeneficialOwnerCorporateDto> corporateBeneficialOwners = new ArrayList<>();
+    List<BeneficialOwnerGovernmentOrPublicAuthorityDto> legalPersonBeneficialOwners = new ArrayList<>();
+
+    BeneficialOwnerIndividualDto individualBo2 = new BeneficialOwnerIndividualDto();
+    individualBo2.setCeasedDate(LocalDate.now());
+    individualBo2.setChipsReference(null);
+
+    BeneficialOwnerCorporateDto corporateBo2 = new BeneficialOwnerCorporateDto();
+    corporateBo2.setCeasedDate(LocalDate.now());
+    corporateBo2.setChipsReference(null);
+
+    BeneficialOwnerGovernmentOrPublicAuthorityDto legalPersonBo2 = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+    legalPersonBo2.setCeasedDate(LocalDate.now());
+    legalPersonBo2.setChipsReference(null);
+
+    individualBeneficialOwners.add(individualBo2);
+    corporateBeneficialOwners.add(corporateBo2);
+    legalPersonBeneficialOwners.add(legalPersonBo2);
+
+    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+            .thenReturn(individualBeneficialOwners);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+            .thenReturn(corporateBeneficialOwners);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+            .thenReturn(legalPersonBeneficialOwners);
+
+    BeneficialOwnerCessationService beneficialOwnerCessationService = new BeneficialOwnerCessationService();
+
+    List<Cessation> cessations = beneficialOwnerCessationService.beneficialOwnerCessations(
+            overseasEntitySubmissionDto, combinedBoData, new HashMap<>());
+
+    assertEquals(0, cessations.size());
+  }
+
+  @Test
+  void testBeneficialOwnerCessationsNoPairFound() {
     List<BeneficialOwnerIndividualDto> individualBeneficialOwners = new ArrayList<>();
     BeneficialOwnerIndividualDto individualBeneficialOwner = new BeneficialOwnerIndividualDto();
     individualBeneficialOwner.setFirstName("John");
@@ -112,34 +209,51 @@ class BeneficialOwnerCessationServiceTest {
 
     when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
             .thenReturn(individualBeneficialOwners);
-
-    List<BeneficialOwnerCorporateDto> corporateBeneficialOwners = new ArrayList<>();
-    BeneficialOwnerCorporateDto corporateBeneficialOwner = new BeneficialOwnerCorporateDto();
-    corporateBeneficialOwner.setName("ACME Corporation");
-    corporateBeneficialOwner.setCeasedDate(LocalDate.now());
-    corporateBeneficialOwner.setChipsReference("ZYX654");
-    corporateBeneficialOwners.add(corporateBeneficialOwner);
-
     when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
-            .thenReturn(corporateBeneficialOwners);
-
-    List<BeneficialOwnerGovernmentOrPublicAuthorityDto> legalPersonBeneficialOwners =
-            new ArrayList<>();
-    BeneficialOwnerGovernmentOrPublicAuthorityDto legalPersonBeneficialOwner =
-            new BeneficialOwnerGovernmentOrPublicAuthorityDto();
-    legalPersonBeneficialOwner.setName("Government Authority");
-    legalPersonBeneficialOwner.setCeasedDate(LocalDate.now());
-    legalPersonBeneficialOwner.setChipsReference("XYZ321");
-    legalPersonBeneficialOwners.add(legalPersonBeneficialOwner);
-
+            .thenReturn(Collections.emptyList());
     when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
-            .thenReturn(legalPersonBeneficialOwners);
+            .thenReturn(Collections.emptyList());
 
-    assertThrows(
-            IllegalArgumentException.class,
-            () -> beneficialOwnerCessationService.beneficialOwnerCessations(
-                    overseasEntitySubmissionDto, combinedBoData)
-    );
+    Map<String, Object> logMap = new HashMap<>();
+
+    List<Cessation> cessations =
+            beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
+
+    assertEquals(0, cessations.size());
   }
 
+  @Test
+  void testBeneficialOwnerCessationsNoIdFoundInPrivateData() {
+    List<BeneficialOwnerIndividualDto> individualBeneficialOwners = new ArrayList<>();
+    BeneficialOwnerIndividualDto individualBeneficialOwner = new BeneficialOwnerIndividualDto();
+    individualBeneficialOwner.setFirstName("John");
+    individualBeneficialOwner.setLastName("Doe");
+    individualBeneficialOwner.setDateOfBirth(LocalDate.of(1990, 5, 15));
+    individualBeneficialOwner.setCeasedDate(LocalDate.now());
+    individualBeneficialOwner.setChipsReference("XYZ987");
+    individualBeneficialOwners.add(individualBeneficialOwner);
+
+    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+            .thenReturn(individualBeneficialOwners);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+            .thenReturn(Collections.emptyList());
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+            .thenReturn(Collections.emptyList());
+
+    String hashedId = individualBeneficialOwner.getChipsReference();
+
+    PrivateBoDataApi privateBoData = new PrivateBoDataApi();
+    privateBoData.setPscId(null);
+
+    when(combinedBoData.get(hashedId)).thenReturn(new ImmutablePair<>(null, privateBoData));
+
+    Map<String, Object> logMap = new HashMap<>();
+
+    List<Cessation> cessations =
+            beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
+
+    assertEquals(0, cessations.size());
+  }
 }
+
+

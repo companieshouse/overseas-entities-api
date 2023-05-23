@@ -21,16 +21,18 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,18 +85,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.service.cessations.BeneficialOwnerCessationService;
-import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
 import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
@@ -111,6 +105,7 @@ class FilingServiceTest {
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
+    private static final List<Change> DUMMY_CHANGES = Arrays.asList(new EntityNameChange("Old name", "New name"));
 
     @InjectMocks
     private FilingsService filingsService;
@@ -285,44 +280,45 @@ class FilingServiceTest {
         checkManagingOfficers(filing);
     }
 
-    //TODO: This test cannot pass until the code to populate the data for Update flow is added.
-//    @Test
-//    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-//        initTransactionPaymentLinkMocks();
-//        initGetPaymentMocks();
-//        initGetPublicPrivateDataCombinerMocks();
-//        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
-//        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-//        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
-//        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
-//        overseasEntitySubmissionDto.setEntityNumber("OE111229");
-//        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
-//        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
-//        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-//
-//        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-//        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
-//        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
-//        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.anyString());
-//
-//        verify(localDateSupplier, times(1)).get();
-//        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
-//        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
-//        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
-//        assertEquals("Joe Bloggs Ltd", filing.getData().get("entity_name"));
-//        assertEquals("OE111229", filing.getData().get("entity_number"));
-//        final PresenterDto presenterInFiling = (PresenterDto)filing.getData().get("presenter");
-//        assertEquals("Joe Bloggs", presenterInFiling.getFullName());
-//        assertEquals("user@domain.roe", presenterInFiling.getEmail());
-//        final EntityDto entityInFiling = ((EntityDto) filing.getData().get("entity"));
-//        assertEquals("Eutopia", entityInFiling.getIncorporationCountry());
-//
-//        checkDueDiligence(filing);
-//        checkOverseasEntityDueDiligence(filing);
-//        checkTrustDataIsEmpty(filing);
-//        checkBeneficialOwners(filing);
-//        checkManagingOfficers(filing);
-//    }
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        initGetPublicPrivateDataCombinerMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
+        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
+
+        // TODO: Update 'null' fields and cessations/additions
+        assertEquals(null, filing.getData().get("beneficialOwnerStatement"));
+        assertEquals(null, filing.getData().get("presenter"));
+        assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals(null, filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertEquals(null, filing.getData().get("dueDiligence"));
+        assertEquals("OE02", filing.getData().get("type"));
+        assertEquals(null, filing.getData().get("filingForDate"));
+        assertEquals(null, filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals(null, filing.getData().get("userSubmission"));
+        assertEquals(1, ((List)filing.getData().get("changes")).size());
+        assertEquals(0, ((List)filing.getData().get("additions")).size());
+        assertEquals(0, ((List)filing.getData().get("cessations")).size());
+    }
 
     @Test
     void testFilingGenerationAllowedWhenEntityNameBlockIsNull() throws Exception {
@@ -1277,7 +1273,7 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
-//        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(overseasEntitySubmissionDto);
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {
