@@ -15,8 +15,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSu
  * populate UpdateSubmission model.
  */
 public class PopulateUpdateSubmission {
-  private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
-  private UpdateSubmission updateSubmission;
+  private final OverseasEntitySubmissionDto overseasEntitySubmissionDto;
+  private final UpdateSubmission updateSubmission;
 
   public PopulateUpdateSubmission(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
@@ -24,7 +24,7 @@ public class PopulateUpdateSubmission {
     this.updateSubmission = updateSubmission;
   }
 
-  /** method populates values into UpdateSubmission for JSON output */
+  /** Method populates values into UpdateSubmission for JSON output */
   public UpdateSubmission populate() {
 
     updateSubmission.setUserSubmission(this.overseasEntitySubmissionDto);
@@ -32,15 +32,16 @@ public class PopulateUpdateSubmission {
     populatePresenter(this.overseasEntitySubmissionDto, this.updateSubmission);
     updateSubmission.setBeneficialOwnerStatement(
         this.overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
-
     updateSubmission.setAnyBOsOrMOsAddedOrCeased(
         this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
+    populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
 
     return updateSubmission;
   }
 
   public void populateDueDiligence(
       OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+
     DueDiligenceDto dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
     OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto =
         overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
@@ -50,7 +51,6 @@ public class PopulateUpdateSubmission {
             ? populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto)
             : populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
     updateSubmission.setDueDiligence(submissionDueDiligence);
-
   }
 
   public DueDiligence populateByDueDiligenceDto(
@@ -100,17 +100,5 @@ public class PopulateUpdateSubmission {
       presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
     }
     updateSubmission.setPresenter(presenter);
-  }
-
-  public UpdateSubmission populate(
-      OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-    this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
-    this.updateSubmission = updateSubmission;
-    return populate();
-  }
-
-  public void setOverseasEntitySubmissionDto(
-      OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-    this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
   }
 }

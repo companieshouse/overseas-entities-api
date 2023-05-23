@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,22 +88,6 @@ class PopulateUpdateSubmissionTest {
   }
 
   @Test
-  void testPopulateUpdateSubmissionForDueDiligence() throws Exception {
-    setIsTrustWebEnabledFeatureFlag(true);
-    buildOverseasEntitySubmissionDto();
-
-    PopulateUpdateSubmission populateUpdateSubmission =
-        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
-    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
-    assertEquals("John Smith", updateSubmission.getDueDiligence().getPartnerName());
-    assertEquals("2022-01-01", updateSubmission.getDueDiligence().getDateChecked());
-    assertEquals("user@domain.roe", updateSubmission.getDueDiligence().getEmail());
-    assertEquals("c0de", updateSubmission.getDueDiligence().getAgentAssuranceCode());
-    assertEquals("Super Supervisor", updateSubmission.getDueDiligence().getSupervisoryBody());
-    assertEquals("agree", updateSubmission.getDueDiligence().getDiligence());
-  }
-
-  @Test
   void testPopulateUpdateSubmissionForBeneficialOwnerStatement() throws Exception {
     setIsTrustWebEnabledFeatureFlag(true);
     buildOverseasEntitySubmissionDto();
@@ -125,6 +110,20 @@ class PopulateUpdateSubmissionTest {
   }
 
   @Test
+  void testPopulateUpdateSubmissionForFilingForDate() throws Exception {
+
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    FilingForDate filingForDate = updateSubmission.getFilingForDate();
+    assertEquals("23", filingForDate.getDay());
+    assertEquals("MAY", filingForDate.getMonth());
+    assertEquals("2023", filingForDate.getYear());
+  }
+
+  @Test
   void testPopulateUpdateSubmissionForUserSubmission() throws Exception {
     setIsTrustWebEnabledFeatureFlag(true);
     buildOverseasEntitySubmissionDto();
@@ -132,19 +131,61 @@ class PopulateUpdateSubmissionTest {
         new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
     UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
     assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+    assertEquals(
+        overseasEntitySubmissionDto.getPresenter(),
+        updateSubmission.getUserSubmission().getPresenter());
+    assertEquals(
+        overseasEntitySubmissionDto.getUpdate(), updateSubmission.getUserSubmission().getUpdate());
+    assertEquals(
+        "user@domain.roe", updateSubmission.getUserSubmission().getDueDiligence().getEmail());
+    assertEquals(
+        "John Smith", updateSubmission.getUserSubmission().getDueDiligence().getPartnerName());
+    assertEquals(
+        "2022-01-01",
+        updateSubmission.getUserSubmission().getDueDiligence().getIdentityDate().toString());
+    assertEquals("c0de", updateSubmission.getUserSubmission().getDueDiligence().getAgentCode());
+    assertEquals(
+        "Super Supervisor",
+        updateSubmission.getUserSubmission().getDueDiligence().getSupervisoryName());
   }
 
   @Test
   void testPopulateUpdateSubmissionForPresenter() throws Exception {
     setIsTrustWebEnabledFeatureFlag(true);
     buildOverseasEntitySubmissionDto();
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
+    assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForNoChangesInFilingPeriodStatement() throws Exception {
+
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
+    PopulateUpdateSubmission populateUpdateSubmission =
+        new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
+    UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
+    assertNull(updateSubmission.getNoChangesInFilingPeriodStatement());
+  }
+
+  @Test
+  void testPopulateUpdateSubmissionForDueDiligence() throws Exception {
+
+    setIsTrustWebEnabledFeatureFlag(true);
+    buildOverseasEntitySubmissionDto();
 
     PopulateUpdateSubmission populateUpdateSubmission =
         new PopulateUpdateSubmission(overseasEntitySubmissionDto, new UpdateSubmission());
     UpdateSubmission updateSubmission = populateUpdateSubmission.populate();
-
-    assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
-    assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+    assertEquals("John Smith", updateSubmission.getDueDiligence().getPartnerName());
+    assertEquals("2022-01-01", updateSubmission.getDueDiligence().getDateChecked());
+    assertEquals("user@domain.roe", updateSubmission.getDueDiligence().getEmail());
+    assertEquals("c0de", updateSubmission.getDueDiligence().getAgentAssuranceCode());
+    assertEquals("Super Supervisor", updateSubmission.getDueDiligence().getSupervisoryBody());
+    assertEquals("agree", updateSubmission.getDueDiligence().getDiligence());
   }
 
   @Test
@@ -181,6 +222,7 @@ class PopulateUpdateSubmissionTest {
   private void setIsTrustWebEnabledFeatureFlag(boolean value) {
     ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
   }
+
   @Test
   void testBeneficialOwnersStatementTypeGetValue() throws Exception {
     var enumBeneficialOwnersStatementType =
