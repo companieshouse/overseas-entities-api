@@ -282,7 +282,7 @@ class PopulateUpdateSubmissionTest {
     assertEquals("Super Supervisor", updateSubmission.getDueDiligence().getSupervisoryBody());
   }
 
-  private void buildOverseasEntitySubmissionDto(boolean isDueDiligenceNull) {
+  private void buildOverseasEntitySubmissionDto(boolean isSetDueDiligenceNull) {
     overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
     overseasEntitySubmissionDto.setEntityName(entityNameDto);
     overseasEntitySubmissionDto.setEntity(entityDto);
@@ -292,7 +292,7 @@ class PopulateUpdateSubmissionTest {
     overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
     overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(
         beneficialOwnerGovernmentOrPublicAuthorityDtoList);
-    if ((isDueDiligenceNull)) {
+    if ((isSetDueDiligenceNull)) {
       overseasEntitySubmissionDto.setDueDiligence(null);
     } else {
       overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
