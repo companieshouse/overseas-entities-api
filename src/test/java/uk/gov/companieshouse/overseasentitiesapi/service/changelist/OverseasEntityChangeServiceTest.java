@@ -9,6 +9,7 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
+import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

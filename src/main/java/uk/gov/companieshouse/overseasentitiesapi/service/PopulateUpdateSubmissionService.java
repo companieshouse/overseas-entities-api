@@ -1,5 +1,6 @@
-package uk.gov.companieshouse.overseasentitiesapi.service.update;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -14,46 +15,38 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSu
  * produce a json output of change submissions. It uses OESubmissionDTO and UpdateDTO values to
  * populate UpdateSubmission model.
  */
-public class PopulateUpdateSubmission {
-    private final OverseasEntitySubmissionDto overseasEntitySubmissionDto;
-    private final UpdateSubmission updateSubmission;
-
-    public PopulateUpdateSubmission(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-        this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
-        this.updateSubmission = updateSubmission;
-    }
+@Component
+public class PopulateUpdateSubmissionService {
 
     /** Method populates values into UpdateSubmission for JSON output */
-    public UpdateSubmission populate() {
+    public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
 
-        updateSubmission.setUserSubmission(this.overseasEntitySubmissionDto);
-        populateDueDiligence(this.overseasEntitySubmissionDto, updateSubmission);
-        populatePresenter(this.overseasEntitySubmissionDto, this.updateSubmission);
+        updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
+        populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
+        populatePresenter(overseasEntitySubmissionDto, updateSubmission);
         updateSubmission.setBeneficialOwnerStatement(
-                this.overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
+                overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
         updateSubmission.setAnyBOsOrMOsAddedOrCeased(
-                this.overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
-        populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
-
-        return updateSubmission;
+                overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
+        populateFilingForDate(overseasEntitySubmissionDto, updateSubmission);
     }
 
     public void populateDueDiligence(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
 
-        DueDiligenceDto dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
-        OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto =
-                overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        DueDiligence submissionDueDiligence = new DueDiligence();
-        submissionDueDiligence =
-                (overseasEntitySubmissionDto.getDueDiligence() != null)
-                        ? populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto)
-                        : populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
+        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
+        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
+        var submissionDueDiligence = new DueDiligence();
+
+        if (overseasEntitySubmissionDto.getDueDiligence() != null) {
+            populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto);
+        } else {
+            populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
+        }
         updateSubmission.setDueDiligence(submissionDueDiligence);
     }
 
-    public DueDiligence populateByDueDiligenceDto(
+    public void populateByDueDiligenceDto(
             DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
 
         dueDiligence.setDateChecked(dueDiligenceDto.getIdentityDate().toString());
@@ -64,11 +57,9 @@ public class PopulateUpdateSubmission {
         dueDiligence.setEmail(dueDiligenceDto.getEmail());
         dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
         dueDiligence.setDiligence(dueDiligenceDto.getDiligence());
-
-        return dueDiligence;
     }
 
-    public DueDiligence populateByOEDueDiligenceDto(
+    public void populateByOEDueDiligenceDto(
             DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
 
         dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
@@ -78,8 +69,6 @@ public class PopulateUpdateSubmission {
         dueDiligence.setPartnerName(overseasEntityDueDiligenceDto.getPartnerName());
         dueDiligence.setEmail(overseasEntityDueDiligenceDto.getEmail());
         dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
-
-        return dueDiligence;
     }
 
     public void populateFilingForDate(

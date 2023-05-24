@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.service.changelist;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
 
 class PersonNameTest {
 

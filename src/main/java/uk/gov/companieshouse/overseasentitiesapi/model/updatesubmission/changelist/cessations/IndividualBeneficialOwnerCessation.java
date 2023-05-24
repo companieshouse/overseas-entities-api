@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import uk.gov.companieshouse.overseasentitiesapi.service.changelist.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
 
 public class IndividualBeneficialOwnerCessation extends BeneficialOwnerCessation {
 
