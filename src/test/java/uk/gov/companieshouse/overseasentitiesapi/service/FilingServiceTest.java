@@ -23,14 +23,16 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,14 +85,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import java.util.List;
-import java.util.Optional;
-
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
-import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
-
 import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
@@ -144,6 +142,9 @@ class FilingServiceTest {
 
     @Mock
     private PrivateDataRetrievalService privateDataRetrievalService;
+
+    @Mock
+    private BeneficialOwnerCessationService beneficialOwnerCessationService;
 
     @Mock
     private PublicPrivateDataCombiner publicPrivateDataCombiner;
@@ -678,7 +679,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenThrowsExceptionForNoSubmission()  {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.empty();
-                when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         assertThrows(SubmissionNotFoundException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
     }
 
@@ -941,8 +942,8 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
-       ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
-       assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
+        ServiceException serviceEx = assertThrows(ServiceException.class, () -> filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER));
+        assertEquals(ERROR_MESSAGE, serviceEx.getMessage());
     }
 
     @Test
@@ -1038,7 +1039,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
             throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1185,7 +1186,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
             throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1272,6 +1273,7 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {

@@ -1,10 +1,14 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class EntityNameChange extends Change {
     private static final String CHANGE_NAME = "changeOfEntityName";
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedCorporateBodyName")
     private String proposedCorporateBodyName;
 
