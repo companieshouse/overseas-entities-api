@@ -107,7 +107,7 @@ class FilingServiceTest {
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
-    private static final List<Change> DUMMY_CHANGES = Arrays.asList(new EntityNameChange("Old name", "New name"));
+    private static final List<Change> DUMMY_CHANGES = Arrays.asList(new EntityNameChange("New name"));
 
     @InjectMocks
     private FilingsService filingsService;

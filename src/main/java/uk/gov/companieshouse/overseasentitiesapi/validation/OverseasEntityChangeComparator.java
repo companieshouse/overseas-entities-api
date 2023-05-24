@@ -11,8 +11,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 @Component
 public class OverseasEntityChangeComparator {
     public EntityNameChange compareEntityName(String existing, String updated) {
-        return StringUtils.equals(existing, updated) || updated == null ?
-                null : new EntityNameChange(existing, updated);
+        return StringUtils.equals(existing, updated) || updated == null ? null : new EntityNameChange(updated);
     }
 
     public PrincipalAddressChange comparePrincipalAddress(
@@ -24,8 +23,7 @@ public class OverseasEntityChangeComparator {
         var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
         var updatedAddress = convertAddressDtoToAddressModel(updated);
 
-        return updatedAddress.equals(existingAddress) ?
-                null : new PrincipalAddressChange(existingAddress, updatedAddress);
+        return updatedAddress.equals(existingAddress) ? null : new PrincipalAddressChange(updatedAddress);
     }
 
     public CorrespondenceAddressChange compareCorrespondenceAddress(
@@ -37,18 +35,17 @@ public class OverseasEntityChangeComparator {
         var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
         var updatedAddress = convertAddressDtoToAddressModel(updated);
 
-        return updatedAddress.equals(existingAddress) ?
-                null : new CorrespondenceAddressChange(existingAddress, updatedAddress);
+        return updatedAddress.equals(existingAddress) ? null : new CorrespondenceAddressChange(updatedAddress);
     }
 
     public CompanyIdentificationChange compareCompanyIdentification(
             CompanyIdentification existing, CompanyIdentification updated) {
-        return existing.equals(updated) || updated == null ? null : new CompanyIdentificationChange(existing, updated);
+        return existing.equals(updated) || updated == null ?
+                null : createCompanyIdentificationChange(existing, updated);
     }
 
     public EntityEmailAddressChange compareEntityEmailAddress(String existing, String updated) {
-        return StringUtils.equals(existing, updated) || updated == null ?
-                null : new EntityEmailAddressChange(existing, updated);
+        return StringUtils.equals(existing, updated) || updated == null ? null : new EntityEmailAddressChange(updated);
     }
 
     private Address convertRegisteredOfficeAddressApiToAddressModel(
@@ -82,5 +79,26 @@ public class OverseasEntityChangeComparator {
         address.setCareOf(addressDto.getCareOf());
 
         return address;
+    }
+
+    private CompanyIdentificationChange createCompanyIdentificationChange(
+            CompanyIdentification existing, CompanyIdentification updated){
+        var proposedLegalForm = existing.getLegalForm().equals(updated.getLegalForm()) ?
+                null : updated.getLegalForm();
+        var proposedGoverningLaw = existing.getGoverningLaw().equals(updated.getGoverningLaw()) ?
+                null : updated.getGoverningLaw();
+        var proposedRegisterLocation = existing.getRegisterLocation().equals(updated.getRegisterLocation()) ?
+                null : updated.getRegisterLocation();
+        var proposedPlaceRegistered = existing.getPlaceRegistered().equals(updated.getPlaceRegistered()) ?
+                null : updated.getPlaceRegistered();
+        var proposedRegistrationNumber = existing.getRegistrationNumber().equals(updated.getRegistrationNumber()) ?
+                null : updated.getRegistrationNumber();
+
+        return new CompanyIdentificationChange(
+                proposedLegalForm,
+                proposedGoverningLaw,
+                proposedRegisterLocation,
+                proposedPlaceRegistered,
+                proposedRegistrationNumber);
     }
 }
