@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +16,9 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.service.PopulateUpdateSubmissionService;
 import uk.gov.companieshouse.overseasentitiesapi.validation.*;
 

@@ -31,7 +31,7 @@ public class PopulateUpdateSubmissionService {
         populateFilingForDate(overseasEntitySubmissionDto, updateSubmission);
     }
 
-    public void populateDueDiligence(
+    void populateDueDiligence(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
 
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
@@ -46,7 +46,7 @@ public class PopulateUpdateSubmissionService {
         updateSubmission.setDueDiligence(submissionDueDiligence);
     }
 
-    public void populateByDueDiligenceDto(
+    void populateByDueDiligenceDto(
             DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
 
         dueDiligence.setDateChecked(dueDiligenceDto.getIdentityDate().toString());
@@ -59,7 +59,7 @@ public class PopulateUpdateSubmissionService {
         dueDiligence.setDiligence(dueDiligenceDto.getDiligence());
     }
 
-    public void populateByOEDueDiligenceDto(
+    void populateByOEDueDiligenceDto(
             DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
 
         dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
@@ -71,9 +71,9 @@ public class PopulateUpdateSubmissionService {
         dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
     }
 
-    public void populateFilingForDate(
+    void populateFilingForDate(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-        FilingForDate filingForDate = new FilingForDate();
+        var filingForDate = new FilingForDate();
         var filingDate = overseasEntitySubmissionDto.getUpdate().getFilingDate();
         filingForDate.setDay((String.valueOf(filingDate.getDayOfMonth())));
         filingForDate.setMonth((String.valueOf(filingDate.getMonth())));
@@ -81,9 +81,9 @@ public class PopulateUpdateSubmissionService {
         updateSubmission.setFilingForDate(filingForDate);
     }
 
-    public void populatePresenter(
+    void populatePresenter(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-        Presenter presenter = new Presenter();
+        var presenter = new Presenter();
         if (overseasEntitySubmissionDto.getPresenter() != null) {
             presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
             presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
