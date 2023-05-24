@@ -2,7 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changel
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -29,7 +28,11 @@ public class CompanyIdentificationChange extends Change {
     @JsonInclude(NON_NULL)
     private String proposedRegistrationNumber;
 
-    public CompanyIdentificationChange(String proposedLegalForm, String proposedGoverningLaw, String proposedRegisterLocation, String proposedPlaceRegistered, String proposedRegistrationNumber) {
+    public CompanyIdentificationChange(String proposedLegalForm,
+                                       String proposedGoverningLaw,
+                                       String proposedRegisterLocation,
+                                       String proposedPlaceRegistered,
+                                       String proposedRegistrationNumber) {
         super.setChangeName(CHANGE_NAME);
         this.proposedLegalForm = proposedLegalForm;
         this.proposedGoverningLaw = proposedGoverningLaw;

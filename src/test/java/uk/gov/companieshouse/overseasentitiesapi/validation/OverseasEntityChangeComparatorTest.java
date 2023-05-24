@@ -187,10 +187,10 @@ class OverseasEntityChangeComparatorTest {
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
         assertEquals(UPDATED_LEGAL_FORM_VALUE, result.getProposedLegalForm());
-        assertEquals(null, result.getProposedGoverningLaw());
-        assertEquals(null, result.getProposedRegisterLocation());
-        assertEquals(null, result.getProposedPlaceRegistered());
-        assertEquals(null, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
@@ -204,11 +204,11 @@ class OverseasEntityChangeComparatorTest {
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(null, result.getProposedLegalForm());
+        assertNull(result.getProposedLegalForm());
         assertEquals(UPDATED_GOVERNING_LAW_VALUE, result.getProposedGoverningLaw());
-        assertEquals(null, result.getProposedRegisterLocation());
-        assertEquals(null, result.getProposedPlaceRegistered());
-        assertEquals(null, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
@@ -222,11 +222,11 @@ class OverseasEntityChangeComparatorTest {
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(null, result.getProposedLegalForm());
-        assertEquals(null, result.getProposedGoverningLaw());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
         assertEquals(UPDATED_REGISTER_LOCATION_VALUE, result.getProposedRegisterLocation());
-        assertEquals(null, result.getProposedPlaceRegistered());
-        assertEquals(null, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
@@ -240,11 +240,11 @@ class OverseasEntityChangeComparatorTest {
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(null, result.getProposedLegalForm());
-        assertEquals(null, result.getProposedGoverningLaw());
-        assertEquals(null, result.getProposedRegisterLocation());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
         assertEquals(UPDATED_PLACE_REGISTERED_VALUE, result.getProposedPlaceRegistered());
-        assertEquals(null, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
@@ -258,10 +258,10 @@ class OverseasEntityChangeComparatorTest {
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(null, result.getProposedLegalForm());
-        assertEquals(null, result.getProposedGoverningLaw());
-        assertEquals(null, result.getProposedRegisterLocation());
-        assertEquals(null, result.getProposedPlaceRegistered());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
         assertEquals(UPDATED_REGISTRATION_NUMBER_VALUE, result.getProposedRegistrationNumber());
     }
 
