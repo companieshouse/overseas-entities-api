@@ -163,7 +163,7 @@ public class FilingsService {
 
       ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
-      UpdateSubmission updateSubmission = new PopulateUpdateSubmission(submissionDto, new UpdateSubmission()).populate();
+       updateSubmission = new PopulateUpdateSubmission(submissionDto, new UpdateSubmission()).populate();
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
