@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
@@ -50,12 +53,15 @@ public class UpdateSubmission {
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
     private String beneficialOwnerStatement;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
     private List<Change> changes;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty(ADDITIONS_FIELD)
     private List<Addition> additions;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty(CESSATIONS_FIELD)
     private List<Cessation> cessations;
 

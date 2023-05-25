@@ -8,7 +8,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class EntityEmailAddressChange extends Change {
     private static final String CHANGE_NAME = "entityEmailAddress";
 
-    @JsonInclude(NON_NULL)
     @JsonProperty("proposedEmailAddress")
     private String proposedEmailAddress;
 

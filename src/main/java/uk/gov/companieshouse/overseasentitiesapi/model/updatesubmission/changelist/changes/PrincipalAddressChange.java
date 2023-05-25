@@ -9,7 +9,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class PrincipalAddressChange extends Change {
     private static final String CHANGE_NAME = "changeOfRoa";
 
-    @JsonInclude(NON_NULL)
     @JsonProperty("proposedRegisteredOfficeAddress")
     private Address proposedRegisteredOfficeAddress;
 
