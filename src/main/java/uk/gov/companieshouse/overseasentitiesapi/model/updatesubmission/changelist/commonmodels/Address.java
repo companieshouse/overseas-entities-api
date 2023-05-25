@@ -1,37 +1,50 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
 public class Address {
+    @JsonInclude(NON_NULL)
     @JsonProperty("careOf")
     private String careOf;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("poBox")
     private String poBox;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("careOfCompany")
     private String careOfCompany;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("houseNameNum")
     private String houseNameNum;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("street")
     private String street;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("area")
     private String area;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("postTown")
     private String postTown;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("region")
     private String region;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("postCode")
     private String postCode;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("country")
     private String country;
 

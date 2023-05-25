@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.ChangeListItem;
 
 public abstract class Addition extends ChangeListItem {
-    @JsonProperty("type")
-    private String type;
+    @JsonProperty("appointmentType")
+    private String appointmentType;
 
-    public String getType() {
-        return type;
+    public String getAppointmentType() {
+        return appointmentType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAppointmentType(String appointmentType) {
+        this.appointmentType = appointmentType;
     }
 }

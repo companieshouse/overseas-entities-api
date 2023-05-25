@@ -1,38 +1,51 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 public class CompanyIdentificationChange extends Change {
     private static final String CHANGE_NAME = "changeOfCompanyIdentification";
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("legalForm")
     private String legalForm;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedLegalForm")
     private String proposedLegalForm;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("governingLaw")
     private String governingLaw;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedGoverningLaw")
     private String proposedGoverningLaw;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("registerLocation")
     private String registerLocation;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedRegisterLocation")
     private String proposedRegisterLocation;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("placeRegistered")
     private String placeRegistered;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedPlaceRegistered")
     private String proposedPlaceRegistered;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("registrationNumber")
     private String registrationNumber;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedRegistrationNumber")
     private String proposedRegistrationNumber;
 
