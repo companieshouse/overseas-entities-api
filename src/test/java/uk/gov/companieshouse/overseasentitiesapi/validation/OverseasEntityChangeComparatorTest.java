@@ -16,6 +16,11 @@ class OverseasEntityChangeComparatorTest {
     private final String CHANGE_COMPANY_IDENTIFICATION = "changeOfCompanyIdentification";
     private final String CHANGE_ENTITY_EMAIL_ADDRESS = "entityEmailAddress";
     private final String TEST_EXISTING_VALUE = "TEST";
+    private final String UPDATED_LEGAL_FORM_VALUE = "NEW LEGAL FORM";
+    private final String UPDATED_GOVERNING_LAW_VALUE = "NEW GOVERNING LAW";
+    private final String UPDATED_REGISTER_LOCATION_VALUE = "NEW REGISTER LOCATION";
+    private final String UPDATED_PLACE_REGISTERED_VALUE = "NEW PLACE REGISTERED";
+    private final String UPDATED_REGISTRATION_NUMBER_VALUE = "NEW REGISTRATION NUMBER";
     private OverseasEntityChangeComparator overseasEntityChangeComparator = new OverseasEntityChangeComparator();
 
     @Test
@@ -153,98 +158,111 @@ class OverseasEntityChangeComparatorTest {
     }
 
     @Test
-    void testCompareCompanyIdentificationChangeDifferentLegalFormReturnsObject() {
-        var updatedLegalForm = "New legal form";
+    void testCompareCompanyIdentificationChangeAllFieldsDifferentReturnsObject() {
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
-        var updated = new CompanyIdentification(updatedLegalForm, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
+        var updated = new CompanyIdentification(UPDATED_LEGAL_FORM_VALUE, UPDATED_GOVERNING_LAW_VALUE,
+                UPDATED_REGISTER_LOCATION_VALUE, UPDATED_PLACE_REGISTERED_VALUE, UPDATED_REGISTRATION_NUMBER_VALUE);
+
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
+
+        assertNotNull(result);
+        assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
+        assertEquals(UPDATED_LEGAL_FORM_VALUE, result.getProposedLegalForm());
+        assertEquals(UPDATED_GOVERNING_LAW_VALUE, result.getProposedGoverningLaw());
+        assertEquals(UPDATED_REGISTER_LOCATION_VALUE, result.getProposedRegisterLocation());
+        assertEquals(UPDATED_PLACE_REGISTERED_VALUE, result.getProposedPlaceRegistered());
+        assertEquals(UPDATED_REGISTRATION_NUMBER_VALUE, result.getProposedRegistrationNumber());
+    }
+
+    @Test
+    void testCompareCompanyIdentificationChangeDifferentLegalFormReturnsObject() {
+        var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
+                TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
+        var updated = new CompanyIdentification(UPDATED_LEGAL_FORM_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
         var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(updatedLegalForm, result.getProposedLegalForm());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedGoverningLaw());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegisterLocation());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedPlaceRegistered());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegistrationNumber());
+        assertEquals(UPDATED_LEGAL_FORM_VALUE, result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
     void testCompareCompanyIdentificationChangeDifferentGoverningLawReturnsObject() {
-        var updatedGoverningLaw = "New governing law";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
-        var updated = new CompanyIdentification(TEST_EXISTING_VALUE, updatedGoverningLaw, TEST_EXISTING_VALUE,
+        var updated = new CompanyIdentification(TEST_EXISTING_VALUE, UPDATED_GOVERNING_LAW_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
         var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedLegalForm());
-        assertEquals(updatedGoverningLaw, result.getProposedGoverningLaw());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegisterLocation());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedPlaceRegistered());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedLegalForm());
+        assertEquals(UPDATED_GOVERNING_LAW_VALUE, result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
     void testCompareCompanyIdentificationChangeDifferentRegisterLocationReturnsObject() {
-        var updatedRegisterLocation = "New register location";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
-        var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, updatedRegisterLocation,
-                TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
+        var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
+                UPDATED_REGISTER_LOCATION_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
 
         var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedLegalForm());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedGoverningLaw());
-        assertEquals(updatedRegisterLocation, result.getProposedRegisterLocation());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedPlaceRegistered());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertEquals(UPDATED_REGISTER_LOCATION_VALUE, result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
     void testCompareCompanyIdentificationChangeDifferentPlaceRegisteredReturnsObject() {
-        var updatedPlaceRegistered = "New place registered";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
-                updatedPlaceRegistered, TEST_EXISTING_VALUE);
+                UPDATED_PLACE_REGISTERED_VALUE, TEST_EXISTING_VALUE);
 
         var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedLegalForm());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedGoverningLaw());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegisterLocation());
-        assertEquals(updatedPlaceRegistered, result.getProposedPlaceRegistered());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertEquals(UPDATED_PLACE_REGISTERED_VALUE, result.getProposedPlaceRegistered());
+        assertNull(result.getProposedRegistrationNumber());
     }
 
     @Test
     void testCompareCompanyIdentificationChangeDifferentRegistrationNumberReturnsObject() {
-        var updatedRegistrationNumber = "New registration number";
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);
         var updated = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
-                TEST_EXISTING_VALUE, updatedRegistrationNumber);
+                TEST_EXISTING_VALUE, UPDATED_REGISTRATION_NUMBER_VALUE);
 
         var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
 
         assertNotNull(result);
         assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedLegalForm());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedGoverningLaw());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedRegisterLocation());
-        assertEquals(TEST_EXISTING_VALUE, result.getProposedPlaceRegistered());
-        assertEquals(updatedRegistrationNumber, result.getProposedRegistrationNumber());
+        assertNull(result.getProposedLegalForm());
+        assertNull(result.getProposedGoverningLaw());
+        assertNull(result.getProposedRegisterLocation());
+        assertNull(result.getProposedPlaceRegistered());
+        assertEquals(UPDATED_REGISTRATION_NUMBER_VALUE, result.getProposedRegistrationNumber());
     }
 
     @Test
