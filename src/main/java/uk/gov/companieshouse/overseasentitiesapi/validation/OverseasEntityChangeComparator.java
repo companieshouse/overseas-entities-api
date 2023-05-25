@@ -8,6 +8,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
+import java.util.Optional;
+
 @Component
 public class OverseasEntityChangeComparator {
     public EntityNameChange compareEntityName(String existing, String updated) {
@@ -83,15 +85,20 @@ public class OverseasEntityChangeComparator {
 
     private CompanyIdentificationChange createCompanyIdentificationChange(
             CompanyIdentification existing, CompanyIdentification updated){
-        var proposedLegalForm = existing.getLegalForm().equals(updated.getLegalForm()) ?
+        var proposedLegalForm = existing.getLegalForm() != null &&
+                existing.getLegalForm().equals(updated.getLegalForm()) ?
                 null : updated.getLegalForm();
-        var proposedGoverningLaw = existing.getGoverningLaw().equals(updated.getGoverningLaw()) ?
+        var proposedGoverningLaw = existing.getGoverningLaw() != null &&
+                existing.getGoverningLaw().equals(updated.getGoverningLaw()) ?
                 null : updated.getGoverningLaw();
-        var proposedRegisterLocation = existing.getRegisterLocation().equals(updated.getRegisterLocation()) ?
+        var proposedRegisterLocation = existing.getRegisterLocation() != null &&
+                existing.getRegisterLocation().equals(updated.getRegisterLocation()) ?
                 null : updated.getRegisterLocation();
-        var proposedPlaceRegistered = existing.getPlaceRegistered().equals(updated.getPlaceRegistered()) ?
+        var proposedPlaceRegistered = existing.getPlaceRegistered() != null &&
+                existing.getPlaceRegistered().equals(updated.getPlaceRegistered()) ?
                 null : updated.getPlaceRegistered();
-        var proposedRegistrationNumber = existing.getRegistrationNumber().equals(updated.getRegistrationNumber()) ?
+        var proposedRegistrationNumber = existing.getRegistrationNumber() != null &&
+                existing.getRegistrationNumber().equals(updated.getRegistrationNumber()) ?
                 null : updated.getRegistrationNumber();
 
         return new CompanyIdentificationChange(
