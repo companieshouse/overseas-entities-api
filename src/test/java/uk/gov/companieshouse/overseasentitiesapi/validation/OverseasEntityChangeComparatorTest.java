@@ -176,6 +176,23 @@ class OverseasEntityChangeComparatorTest {
     }
 
     @Test
+    void testCompareCompanyIdentificationChangeExistingValuesNullReturnsObject() {
+        var existing = new CompanyIdentification(null, null, null, null, null);
+        var updated = new CompanyIdentification(UPDATED_LEGAL_FORM_VALUE, UPDATED_GOVERNING_LAW_VALUE,
+                UPDATED_REGISTER_LOCATION_VALUE, UPDATED_PLACE_REGISTERED_VALUE, UPDATED_REGISTRATION_NUMBER_VALUE);
+
+        var result = overseasEntityChangeComparator.compareCompanyIdentification(existing, updated);
+
+        assertNotNull(result);
+        assertEquals(CHANGE_COMPANY_IDENTIFICATION, result.getChangeName());
+        assertEquals(UPDATED_LEGAL_FORM_VALUE, result.getProposedLegalForm());
+        assertEquals(UPDATED_GOVERNING_LAW_VALUE, result.getProposedGoverningLaw());
+        assertEquals(UPDATED_REGISTER_LOCATION_VALUE, result.getProposedRegisterLocation());
+        assertEquals(UPDATED_PLACE_REGISTERED_VALUE, result.getProposedPlaceRegistered());
+        assertEquals(UPDATED_REGISTRATION_NUMBER_VALUE, result.getProposedRegistrationNumber());
+    }
+
+    @Test
     void testCompareCompanyIdentificationChangeDifferentLegalFormReturnsObject() {
         var existing = new CompanyIdentification(TEST_EXISTING_VALUE, TEST_EXISTING_VALUE, TEST_EXISTING_VALUE,
                 TEST_EXISTING_VALUE, TEST_EXISTING_VALUE);

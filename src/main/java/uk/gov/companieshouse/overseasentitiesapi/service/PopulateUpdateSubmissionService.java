@@ -74,10 +74,13 @@ public class PopulateUpdateSubmissionService {
     void populateFilingForDate(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
         var filingForDate = new FilingForDate();
-        var filingDate = overseasEntitySubmissionDto.getUpdate().getFilingDate();
-        filingForDate.setDay((String.valueOf(filingDate.getDayOfMonth())));
-        filingForDate.setMonth((String.valueOf(filingDate.getMonth())));
-        filingForDate.setYear((String.valueOf(filingDate.getYear())));
+        if (overseasEntitySubmissionDto.getUpdate() != null &&
+                overseasEntitySubmissionDto.getUpdate().getFilingDate() != null) {
+            var filingDate = overseasEntitySubmissionDto.getUpdate().getFilingDate();
+            filingForDate.setDay((String.valueOf(filingDate.getDayOfMonth())));
+            filingForDate.setMonth((String.valueOf(filingDate.getMonth())));
+            filingForDate.setYear((String.valueOf(filingDate.getYear())));
+        }
         updateSubmission.setFilingForDate(filingForDate);
     }
 

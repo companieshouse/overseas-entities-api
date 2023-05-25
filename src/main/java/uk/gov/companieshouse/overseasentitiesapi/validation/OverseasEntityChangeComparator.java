@@ -8,8 +8,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
-import java.util.Optional;
-
 @Component
 public class OverseasEntityChangeComparator {
     public EntityNameChange compareEntityName(String existing, String updated) {
