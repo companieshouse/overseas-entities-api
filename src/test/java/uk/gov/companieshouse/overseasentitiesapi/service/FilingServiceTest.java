@@ -87,7 +87,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
-import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @ExtendWith(MockitoExtension.class)
@@ -151,6 +150,9 @@ class FilingServiceTest {
 
     @Mock
     private OverseasEntityChangeService overseasEntityChangeService;
+
+    @Mock
+    private PopulateUpdateSubmissionService populateUpdateSubmissionService;
 
     private Transaction transaction;
 
