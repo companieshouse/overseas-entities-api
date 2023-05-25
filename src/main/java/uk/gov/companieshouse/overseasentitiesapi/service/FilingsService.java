@@ -55,7 +55,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
-import uk.gov.companieshouse.overseasentitiesapi.service.changelist.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
@@ -93,6 +92,7 @@ public class FilingsService {
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
+  private final PopulateUpdateSubmissionService populateUpdateSubmissionService;
 
   @Autowired
   public FilingsService(
@@ -103,7 +103,8 @@ public class FilingsService {
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
-          OverseasEntityChangeService overseasEntityChangeService) {
+          OverseasEntityChangeService overseasEntityChangeService,
+          PopulateUpdateSubmissionService populateUpdateSubmissionService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
@@ -112,6 +113,7 @@ public class FilingsService {
     this.publicDataRetrievalService = publicDataRetrievalService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.overseasEntityChangeService = overseasEntityChangeService;
+    this.populateUpdateSubmissionService = populateUpdateSubmissionService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -175,6 +177,8 @@ public class FilingsService {
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,
                                        OverseasEntitySubmissionDto submissionDto,
                                        Map<String, Object> logMap) throws ServiceException {
+
+    populateUpdateSubmissionService.populate(submissionDto, updateSubmission);
 
     var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
     var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();

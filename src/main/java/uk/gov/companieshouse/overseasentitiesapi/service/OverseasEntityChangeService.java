@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.service.changelist;
+package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
