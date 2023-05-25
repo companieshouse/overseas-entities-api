@@ -8,24 +8,24 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class CompanyIdentificationChange extends Change {
     private static final String CHANGE_NAME = "changeOfCompanyIdentification";
 
-    @JsonProperty("proposedLegalForm")
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedLegalForm")
     private String proposedLegalForm;
 
-    @JsonProperty("proposedGoverningLaw")
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedGoverningLaw")
     private String proposedGoverningLaw;
 
-    @JsonProperty("proposedRegisterLocation")
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedRegisterLocation")
     private String proposedRegisterLocation;
 
-    @JsonProperty("proposedPlaceRegistered")
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedPlaceRegistered")
     private String proposedPlaceRegistered;
 
-    @JsonProperty("proposedRegistrationNumber")
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedRegistrationNumber")
     private String proposedRegistrationNumber;
 
     public CompanyIdentificationChange(String proposedLegalForm,
