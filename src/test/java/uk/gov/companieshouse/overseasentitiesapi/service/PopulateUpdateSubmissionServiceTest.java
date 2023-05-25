@@ -127,6 +127,22 @@ class PopulateUpdateSubmissionServiceTest {
     }
 
     @Test
+    void testPopulateUpdateSubmissionForPopulateFilingForDateNullFilingForDateValue() {
+        setIsTrustWebEnabledFeatureFlag();
+        buildOverseasEntitySubmissionDto(false);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+
+        UpdateSubmission updateSubmission = new UpdateSubmission();
+        PopulateUpdateSubmissionService populateUpdateSubmissionService = new PopulateUpdateSubmissionService();
+
+        populateUpdateSubmissionService.populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
+
+        assertNull(updateSubmission.getFilingForDate().getDay());
+        assertNull(updateSubmission.getFilingForDate().getMonth());
+        assertNull(updateSubmission.getFilingForDate().getYear());
+    }
+
+    @Test
     void testPopulateUpdateSubmissionForPopulateByOEDueDiligenceDto() throws Exception {
         setIsTrustWebEnabledFeatureFlag();
         buildOverseasEntitySubmissionDto(true);
