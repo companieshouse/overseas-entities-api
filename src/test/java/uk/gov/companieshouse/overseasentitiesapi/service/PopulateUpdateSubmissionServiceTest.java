@@ -17,9 +17,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatement
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
-import uk.gov.companieshouse.overseasentitiesapi.service.PopulateUpdateSubmissionService;
 import uk.gov.companieshouse.overseasentitiesapi.validation.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,12 +103,43 @@ class PopulateUpdateSubmissionServiceTest {
         PopulateUpdateSubmissionService populateUpdateSubmissionService = new PopulateUpdateSubmissionService();
         populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
 
-        populateUpdateSubmissionService.populateFilingForDate(
-                this.overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmissionService.populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
 
         assertEquals( String.valueOf(LOCAL_DATE_TODAY.getDayOfMonth()), updateSubmission.getFilingForDate().getDay());
         assertEquals(String.valueOf(LOCAL_DATE_TODAY.getMonth()), updateSubmission.getFilingForDate().getMonth());
         assertEquals(String.valueOf(LOCAL_DATE_TODAY.getYear()), updateSubmission.getFilingForDate().getYear());
+    }
+
+    @Test
+    void testPopulateUpdateSubmissionForPopulateFilingForDateNullUpdateValue() {
+        setIsTrustWebEnabledFeatureFlag();
+        buildOverseasEntitySubmissionDto(false);
+        overseasEntitySubmissionDto.setUpdate(null);
+
+        UpdateSubmission updateSubmission = new UpdateSubmission();
+        PopulateUpdateSubmissionService populateUpdateSubmissionService = new PopulateUpdateSubmissionService();
+
+        populateUpdateSubmissionService.populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
+
+        assertNull(updateSubmission.getFilingForDate().getDay());
+        assertNull(updateSubmission.getFilingForDate().getMonth());
+        assertNull(updateSubmission.getFilingForDate().getYear());
+    }
+
+    @Test
+    void testPopulateUpdateSubmissionForPopulateFilingForDateNullFilingForDateValue() {
+        setIsTrustWebEnabledFeatureFlag();
+        buildOverseasEntitySubmissionDto(false);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+
+        UpdateSubmission updateSubmission = new UpdateSubmission();
+        PopulateUpdateSubmissionService populateUpdateSubmissionService = new PopulateUpdateSubmissionService();
+
+        populateUpdateSubmissionService.populateFilingForDate(this.overseasEntitySubmissionDto, updateSubmission);
+
+        assertNull(updateSubmission.getFilingForDate().getDay());
+        assertNull(updateSubmission.getFilingForDate().getMonth());
+        assertNull(updateSubmission.getFilingForDate().getYear());
     }
 
     @Test
@@ -201,11 +230,10 @@ class PopulateUpdateSubmissionServiceTest {
         UpdateSubmission updateSubmission = new UpdateSubmission();
         PopulateUpdateSubmissionService populateUpdateSubmissionService = new PopulateUpdateSubmissionService();
         populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
-        FilingForDate filingForDate = updateSubmission.getFilingForDate();
+
         assertEquals( String.valueOf(LOCAL_DATE_TODAY.getDayOfMonth()), updateSubmission.getFilingForDate().getDay());
         assertEquals(String.valueOf(LOCAL_DATE_TODAY.getMonth()), updateSubmission.getFilingForDate().getMonth());
         assertEquals(String.valueOf(LOCAL_DATE_TODAY.getYear()), updateSubmission.getFilingForDate().getYear());
-
     }
 
     @Test
