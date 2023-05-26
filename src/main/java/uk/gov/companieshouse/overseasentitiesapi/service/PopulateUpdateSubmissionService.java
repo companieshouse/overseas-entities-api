@@ -18,35 +18,35 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSu
 @Component
 public class PopulateUpdateSubmissionService {
 
-    /** Method populates values into UpdateSubmission for JSON output */
+    /**
+     * Method populates values into UpdateSubmission for JSON output
+     */
     public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
 
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
         populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
         populatePresenter(overseasEntitySubmissionDto, updateSubmission);
-        updateSubmission.setBeneficialOwnerStatement(
-                overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
-        updateSubmission.setAnyBOsOrMOsAddedOrCeased(
-                overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
+        populateStatements(overseasEntitySubmissionDto, updateSubmission);
         populateFilingForDate(overseasEntitySubmissionDto, updateSubmission);
     }
 
-    void populateDueDiligence(
+    private void populateDueDiligence(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
 
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
         var submissionDueDiligence = new DueDiligence();
 
-        if (overseasEntitySubmissionDto.getDueDiligence() != null) {
+        if (dueDiligenceDto != null) {
             populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto);
-        } else {
+            updateSubmission.setDueDiligence(submissionDueDiligence);
+        } else if (overseasEntityDueDiligenceDto != null) {
             populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
+            updateSubmission.setDueDiligence(submissionDueDiligence);
         }
-        updateSubmission.setDueDiligence(submissionDueDiligence);
     }
 
-    void populateByDueDiligenceDto(
+    private void populateByDueDiligenceDto(
             DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
 
         dueDiligence.setDateChecked(dueDiligenceDto.getIdentityDate().toString());
@@ -59,7 +59,7 @@ public class PopulateUpdateSubmissionService {
         dueDiligence.setDiligence(dueDiligenceDto.getDiligence());
     }
 
-    void populateByOEDueDiligenceDto(
+    private void populateByOEDueDiligenceDto(
             DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
 
         dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
@@ -71,26 +71,43 @@ public class PopulateUpdateSubmissionService {
         dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
     }
 
-    void populateFilingForDate(
+    private void populatePresenter(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-        var filingForDate = new FilingForDate();
+        if (overseasEntitySubmissionDto.getPresenter() != null) {
+            var presenter = new Presenter();
+            presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
+            presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
+            updateSubmission.setPresenter(presenter);
+        }
+    }
+
+    private void populateStatements(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission) {
+
+        if (overseasEntitySubmissionDto.getBeneficialOwnersStatement() != null) {
+            updateSubmission.setBeneficialOwnerStatement(
+                    overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
+        }
+
+        if (overseasEntitySubmissionDto.getUpdate() != null) {
+            updateSubmission.setAnyBOsOrMOsAddedOrCeased(
+                    overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
+        }
+    }
+
+    private void populateFilingForDate(
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+
         if (overseasEntitySubmissionDto.getUpdate() != null &&
                 overseasEntitySubmissionDto.getUpdate().getFilingDate() != null) {
+
+            var filingForDate = new FilingForDate();
             var filingDate = overseasEntitySubmissionDto.getUpdate().getFilingDate();
             filingForDate.setDay((String.valueOf(filingDate.getDayOfMonth())));
             filingForDate.setMonth((String.valueOf(filingDate.getMonth())));
             filingForDate.setYear((String.valueOf(filingDate.getYear())));
+            updateSubmission.setFilingForDate(filingForDate);
         }
-        updateSubmission.setFilingForDate(filingForDate);
     }
 
-    void populatePresenter(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
-        var presenter = new Presenter();
-        if (overseasEntitySubmissionDto.getPresenter() != null) {
-            presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
-            presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
-        }
-        updateSubmission.setPresenter(presenter);
-    }
 }
