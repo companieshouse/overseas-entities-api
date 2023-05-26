@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,6 +69,7 @@ class PopulateUpdateSubmissionServiceTest {
         assertNull(updateSubmission.getFilingForDate());
         assertNull(updateSubmission.getDueDiligence());
     }
+
     private void checkPresenterDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getPresenter());
         assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
@@ -113,7 +113,8 @@ class PopulateUpdateSubmissionServiceTest {
         assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostcode());
     }
 
-    private void checkOverseasEntityDueDiligenceDetailsArePopulated(UpdateSubmission updateSubmission) {
+    private void checkOverseasEntityDueDiligenceDetailsArePopulated(
+            UpdateSubmission updateSubmission) {
         final DueDiligence dueDiligence = updateSubmission.getDueDiligence();
         assertNotNull(dueDiligence);
         assertEquals("John Smith", dueDiligence.getPartnerName());

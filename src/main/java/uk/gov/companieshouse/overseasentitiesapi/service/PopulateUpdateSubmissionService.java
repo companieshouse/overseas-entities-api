@@ -21,7 +21,8 @@ public class PopulateUpdateSubmissionService {
     /**
      * Method populates values into UpdateSubmission for JSON output
      */
-    public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+    public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission) {
 
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
         populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
@@ -31,7 +32,8 @@ public class PopulateUpdateSubmissionService {
     }
 
     private void populateDueDiligence(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission) {
 
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
@@ -60,11 +62,13 @@ public class PopulateUpdateSubmissionService {
     }
 
     private void populateByOEDueDiligenceDto(
-            DueDiligence dueDiligence, OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
+            DueDiligence dueDiligence,
+            OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
 
         dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
         dueDiligence.setAgentName(overseasEntityDueDiligenceDto.getName());
-        dueDiligence.setDueDiligenceCorrespondenceAddress(overseasEntityDueDiligenceDto.getAddress());
+        dueDiligence.setDueDiligenceCorrespondenceAddress(
+                overseasEntityDueDiligenceDto.getAddress());
         dueDiligence.setSupervisoryBody(overseasEntityDueDiligenceDto.getSupervisoryName());
         dueDiligence.setPartnerName(overseasEntityDueDiligenceDto.getPartnerName());
         dueDiligence.setEmail(overseasEntityDueDiligenceDto.getEmail());
@@ -72,7 +76,8 @@ public class PopulateUpdateSubmissionService {
     }
 
     private void populatePresenter(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission) {
         if (overseasEntitySubmissionDto.getPresenter() != null) {
             var presenter = new Presenter();
             presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
@@ -96,7 +101,8 @@ public class PopulateUpdateSubmissionService {
     }
 
     private void populateFilingForDate(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto, UpdateSubmission updateSubmission) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission) {
 
         if (overseasEntitySubmissionDto.getUpdate() != null &&
                 overseasEntitySubmissionDto.getUpdate().getFilingDate() != null) {
