@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
@@ -57,16 +59,19 @@ class PopulateUpdateSubmissionServiceTest {
     }
 
     @Test
-    void testUpdateSubmissionIsNotPopulatedWhenNoChanges() {
+    void testUpdateSubmissionIsPopulatedWithOverseasEntitySubmissionDataWhenNoChanges() {
         final OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setUpdate(UpdateMock.getUpdateDto());
+        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
+
         final UpdateSubmission updateSubmission = new UpdateSubmission();
         populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
 
-        assertNotNull(updateSubmission.getUserSubmission());
-        assertNull(updateSubmission.getPresenter());
-        assertNull(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+        assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+        assertNotNull(updateSubmission.getPresenter());
+        assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
         assertNull(updateSubmission.getBeneficialOwnerStatement());
-        assertNull(updateSubmission.getFilingForDate());
+        assertNotNull(updateSubmission.getFilingForDate());
         assertNull(updateSubmission.getDueDiligence());
     }
 

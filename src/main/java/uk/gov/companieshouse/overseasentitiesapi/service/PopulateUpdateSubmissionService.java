@@ -1,9 +1,15 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.Presenter;
@@ -35,85 +41,123 @@ public class PopulateUpdateSubmissionService {
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
 
-        var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
-        var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
-        var submissionDueDiligence = new DueDiligence();
+        var dueDiligenceDto = Optional.ofNullable(overseasEntitySubmissionDto.getDueDiligence());
+        var overseasEntityDueDiligenceDto = Optional.ofNullable(
+                overseasEntitySubmissionDto.getOverseasEntityDueDiligence());
 
-        if (dueDiligenceDto != null) {
-            populateByDueDiligenceDto(submissionDueDiligence, dueDiligenceDto);
-            updateSubmission.setDueDiligence(submissionDueDiligence);
-        } else if (overseasEntityDueDiligenceDto != null) {
-            populateByOEDueDiligenceDto(submissionDueDiligence, overseasEntityDueDiligenceDto);
-            updateSubmission.setDueDiligence(submissionDueDiligence);
+        if (dueDiligenceDto.isPresent()) {
+            populateDueDiligenceFiledByAgent(dueDiligenceDto.get(), updateSubmission);
+        } else {
+            overseasEntityDueDiligenceDto.ifPresent(
+                    entityDueDiligenceDto -> populateDueDiligenceFiledByOverseasEntity(
+                            entityDueDiligenceDto, updateSubmission));
         }
     }
 
-    private void populateByDueDiligenceDto(
-            DueDiligence dueDiligence, DueDiligenceDto dueDiligenceDto) {
+    private void populateDueDiligenceFiledByOverseasEntity(
+            OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
+            UpdateSubmission updateSubmission) {
 
-        dueDiligence.setDateChecked(dueDiligenceDto.getIdentityDate().toString());
-        dueDiligence.setAgentName(dueDiligenceDto.getName());
-        dueDiligence.setDueDiligenceCorrespondenceAddress(dueDiligenceDto.getAddress());
-        dueDiligence.setSupervisoryBody(dueDiligenceDto.getSupervisoryName());
-        dueDiligence.setPartnerName(dueDiligenceDto.getPartnerName());
-        dueDiligence.setEmail(dueDiligenceDto.getEmail());
-        dueDiligence.setAgentAssuranceCode(dueDiligenceDto.getAgentCode());
-        dueDiligence.setDiligence(dueDiligenceDto.getDiligence());
+        var submissionDueDiligence = new DueDiligence();
+
+        populateCommonDueDiligenceDetails(submissionDueDiligence,
+                overseasEntityDueDiligenceDto.getIdentityDate(),
+                overseasEntityDueDiligenceDto.getName(),
+                overseasEntityDueDiligenceDto.getAddress(),
+                overseasEntityDueDiligenceDto.getSupervisoryName(),
+                overseasEntityDueDiligenceDto.getPartnerName(),
+                overseasEntityDueDiligenceDto.getEmail());
+
+        Optional.ofNullable(overseasEntityDueDiligenceDto.getAmlNumber())
+                .ifPresent(submissionDueDiligence::setAmlRegistrationNumber);
+
+        Optional.of(submissionDueDiligence).ifPresent(updateSubmission::setDueDiligence);
     }
 
-    private void populateByOEDueDiligenceDto(
-            DueDiligence dueDiligence,
-            OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto) {
+    private void populateDueDiligenceFiledByAgent(DueDiligenceDto dueDiligenceDto,
+            UpdateSubmission updateSubmission) {
 
-        dueDiligence.setDateChecked(overseasEntityDueDiligenceDto.getIdentityDate().toString());
-        dueDiligence.setAgentName(overseasEntityDueDiligenceDto.getName());
-        dueDiligence.setDueDiligenceCorrespondenceAddress(
-                overseasEntityDueDiligenceDto.getAddress());
-        dueDiligence.setSupervisoryBody(overseasEntityDueDiligenceDto.getSupervisoryName());
-        dueDiligence.setPartnerName(overseasEntityDueDiligenceDto.getPartnerName());
-        dueDiligence.setEmail(overseasEntityDueDiligenceDto.getEmail());
-        dueDiligence.setAmlRegistrationNumber(overseasEntityDueDiligenceDto.getAmlNumber());
+        var submissionDueDiligence = new DueDiligence();
+
+        populateCommonDueDiligenceDetails(submissionDueDiligence, dueDiligenceDto.getIdentityDate(),
+                dueDiligenceDto.getName(), dueDiligenceDto.getAddress(),
+                dueDiligenceDto.getSupervisoryName(), dueDiligenceDto.getPartnerName(),
+                dueDiligenceDto.getEmail());
+
+        Optional.ofNullable(dueDiligenceDto.getAgentCode())
+                .ifPresent(submissionDueDiligence::setAgentAssuranceCode);
+        Optional.ofNullable(dueDiligenceDto.getDiligence())
+                .ifPresent(submissionDueDiligence::setDiligence);
+
+        Optional.of(submissionDueDiligence).ifPresent(updateSubmission::setDueDiligence);
+    }
+
+    private void populateCommonDueDiligenceDetails(DueDiligence submissionDueDiligence,
+            LocalDate identityDate, String name, AddressDto address, String supervisoryName,
+            String partnerName, String email) {
+        Optional.ofNullable(identityDate)
+                .map(LocalDate::toString)
+                .ifPresent(submissionDueDiligence::setDateChecked);
+        Optional.ofNullable(name)
+                .ifPresent(submissionDueDiligence::setAgentName);
+        Optional.ofNullable(address)
+                .ifPresent(submissionDueDiligence::setDueDiligenceCorrespondenceAddress);
+        Optional.ofNullable(supervisoryName)
+                .ifPresent(submissionDueDiligence::setSupervisoryBody);
+        Optional.ofNullable(partnerName)
+                .ifPresent(submissionDueDiligence::setPartnerName);
+        Optional.ofNullable(email)
+                .ifPresent(submissionDueDiligence::setEmail);
     }
 
     private void populatePresenter(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
-        if (overseasEntitySubmissionDto.getPresenter() != null) {
-            var presenter = new Presenter();
-            presenter.setEmail(overseasEntitySubmissionDto.getPresenter().getEmail());
-            presenter.setName(overseasEntitySubmissionDto.getPresenter().getFullName());
-            updateSubmission.setPresenter(presenter);
-        }
+
+        Optional.of(overseasEntitySubmissionDto.getPresenter())
+                .ifPresent(presenterDto -> {
+                    var presenter = new Presenter();
+                    Optional.of(presenterDto).
+                            map(PresenterDto::getEmail)
+                            .ifPresent(presenter::setEmail);
+                    Optional.of(presenterDto).
+                            map(PresenterDto::getFullName)
+                            .ifPresent(presenter::setName);
+                    Optional.of(presenter)
+                            .ifPresent(updateSubmission::setPresenter);
+                });
     }
 
     private void populateStatements(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
 
-        if (overseasEntitySubmissionDto.getBeneficialOwnersStatement() != null) {
-            updateSubmission.setBeneficialOwnerStatement(
-                    overseasEntitySubmissionDto.getBeneficialOwnersStatement().getValue());
-        }
+        Optional.ofNullable(overseasEntitySubmissionDto.getBeneficialOwnersStatement())
+                .map(BeneficialOwnersStatementType::getValue)
+                .ifPresent(updateSubmission::setBeneficialOwnerStatement);
 
-        if (overseasEntitySubmissionDto.getUpdate() != null) {
-            updateSubmission.setAnyBOsOrMOsAddedOrCeased(
-                    overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner());
-        }
+        Optional.of(overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner())
+                .ifPresent(updateSubmission::setAnyBOsOrMOsAddedOrCeased);
     }
 
     private void populateFilingForDate(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
 
-        if (overseasEntitySubmissionDto.getUpdate() != null &&
-                overseasEntitySubmissionDto.getUpdate().getFilingDate() != null) {
-
-            var filingForDate = new FilingForDate();
-            var filingDate = overseasEntitySubmissionDto.getUpdate().getFilingDate();
-            filingForDate.setDay((String.valueOf(filingDate.getDayOfMonth())));
-            filingForDate.setMonth((String.valueOf(filingDate.getMonth())));
-            filingForDate.setYear((String.valueOf(filingDate.getYear())));
-            updateSubmission.setFilingForDate(filingForDate);
-        }
+        Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getFilingDate())
+                .ifPresent(filingDate -> {
+                    var filingForDate = new FilingForDate();
+                    Optional.of(filingDate).map(LocalDate::getDayOfMonth)
+                            .map(Objects::toString)
+                            .ifPresent(filingForDate::setDay);
+                    Optional.of(filingDate).map(LocalDate::getMonth)
+                            .map(Objects::toString)
+                            .ifPresent(filingForDate::setMonth);
+                    Optional.of(filingDate).map(LocalDate::getYear)
+                            .map(Objects::toString)
+                            .ifPresent(filingForDate::setYear);
+                    Optional.of(filingForDate)
+                            .ifPresent(updateSubmission::setFilingForDate);
+                });
     }
 
 }
