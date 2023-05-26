@@ -76,7 +76,7 @@ public class FilingsService {
   @Value("${OE01_COST}")
   private String registerCostAmount;
 
-  @Value("${OE01_UPDATE_COST}")
+  @Value("${OE02_COST}")
   private String updateCostAmount;
 
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
