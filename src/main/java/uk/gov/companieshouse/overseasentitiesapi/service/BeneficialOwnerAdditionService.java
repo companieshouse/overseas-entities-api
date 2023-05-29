@@ -152,14 +152,6 @@ public class BeneficialOwnerAdditionService {
         return Optional.of(legalPersonBeneficialOwnerAddition);
     }
 
-    private static void mapNatureOfControlsForOverseasEntity(List<String> natureOfControls,
-                                                             List<NatureOfControlType> natureOfControlTypes,
-                                                             Map<NatureOfControlType, String> overseasEntitiesNocMap) {
-        if (!CollectionUtils.isEmpty(natureOfControlTypes)) {
-            natureOfControlTypes.forEach(nocType -> natureOfControls.add(overseasEntitiesNocMap.get(nocType)));
-        }
-    }
-
     private Address convertAddressDtoToAddressModel(AddressDto addressDto) {
         var address = new Address();
 
