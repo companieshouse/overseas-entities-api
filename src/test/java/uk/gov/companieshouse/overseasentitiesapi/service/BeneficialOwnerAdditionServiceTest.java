@@ -6,10 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -57,6 +55,57 @@ public class BeneficialOwnerAdditionServiceTest {
         assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
     }
 
+    @Test
+    void testBeneficialOwnerAdditionsNoDataReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions =
+                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testBeneficialOwnerAdditionsNoAdditionsInSubmissionReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(Arrays.asList(new BeneficialOwnerIndividualDto() {{
+                    setChipsReference("123456789");
+                }}));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(Arrays.asList(new BeneficialOwnerCorporateDto() {{
+                    setChipsReference("123456789");
+                }}));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Arrays.asList(new BeneficialOwnerGovernmentOrPublicAuthorityDto() {{
+                    setChipsReference("123456789");
+                }}));
+
+        List<Addition> additions =
+                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testBeneficialOwnerAdditionsNoSecondNationalityInSubmissionReturnsNationality() {
+        var individualBeneficialOwners = getIndividualBeneficialOwners();
+        individualBeneficialOwners.get(0).setSecondNationality(null);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(individualBeneficialOwners);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions =
+                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(1, additions.size());
+        assertEquals("Irish", ((IndividualBeneficialOwnerAddition) additions.get(0)).getNationalityOther());
+    }
+
     private List<BeneficialOwnerIndividualDto> getIndividualBeneficialOwners() {
         var individualBeneficialOwner = new BeneficialOwnerIndividualDto();
         individualBeneficialOwner.setStartDate(LocalDate.of(2020, 1, 1));
@@ -85,8 +134,8 @@ public class BeneficialOwnerAdditionServiceTest {
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", individualBeneficialOwnerAddition.getNatureOfControls().get(2));
         assertEquals("John", individualBeneficialOwnerAddition.getPersonName().getForename());
         assertEquals("Doe", individualBeneficialOwnerAddition.getPersonName().getSurname());
-        assertEquals(LocalDate.of(1990, 5, 15),individualBeneficialOwnerAddition.getBirthDate());
-        assertEquals("Irish, Spanish",individualBeneficialOwnerAddition.getNationalityOther());
+        assertEquals(LocalDate.of(1990, 5, 15), individualBeneficialOwnerAddition.getBirthDate());
+        assertEquals("Irish, Spanish", individualBeneficialOwnerAddition.getNationalityOther());
     }
 
     private List<BeneficialOwnerCorporateDto> getCorporateBeneficialOwners() {

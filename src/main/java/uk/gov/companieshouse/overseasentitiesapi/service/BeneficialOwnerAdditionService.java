@@ -39,7 +39,7 @@ public class BeneficialOwnerAdditionService {
         var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         return beneficialOwnersIndividual.stream()
                 .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(beneficialOwner -> getIndividualBeneficialOwnerAddition(beneficialOwner))
+                .map(this::getIndividualBeneficialOwnerAddition)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +48,7 @@ public class BeneficialOwnerAdditionService {
         var beneficialOwnersCorporateEntity = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
         return beneficialOwnersCorporateEntity.stream()
                 .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(beneficialOwner -> getCorporateEntityBeneficialOwnerAddition(beneficialOwner))
+                .map(this::getCorporateEntityBeneficialOwnerAddition)
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +57,7 @@ public class BeneficialOwnerAdditionService {
         var beneficialOwnersLegalPerson = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
         return beneficialOwnersLegalPerson.stream()
                 .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(beneficialOwner -> getLegalPersonBeneficialOwnerAddition(beneficialOwner))
+                .map(this::getLegalPersonBeneficialOwnerAddition)
                 .collect(Collectors.toList());
     }
 
