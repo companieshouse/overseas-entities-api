@@ -13,7 +13,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlTyp
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
-public class NatureOfControlTypeMappingTest {
+class NatureOfControlTypeMappingTest {
     @Test
     void collectAllNatureOfControlsIntoSingleListAllValueNonNull() {
         List<NatureOfControlType> personNatureOfControlTypes =
