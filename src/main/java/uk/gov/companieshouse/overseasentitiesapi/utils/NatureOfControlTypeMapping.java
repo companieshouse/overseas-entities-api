@@ -37,7 +37,11 @@ public class NatureOfControlTypeMapping {
         OVERSEAS_ENTITIES_FIRM_MAP.put(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, "OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM");
         OVERSEAS_ENTITIES_FIRM_MAP.put(SIGNIFICANT_INFLUENCE_OR_CONTROL, "OE_SIGINFLUENCECONTROL_AS_FIRM");
     }
-    
+
+    private NatureOfControlTypeMapping() {
+        throw new IllegalAccessError("Use the static method designation");
+    }
+
     /**
      * Collects the nature of control types from the dto and maps them to the api values
      *
