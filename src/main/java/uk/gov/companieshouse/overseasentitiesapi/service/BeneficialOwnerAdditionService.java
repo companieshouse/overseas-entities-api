@@ -69,13 +69,11 @@ public class BeneficialOwnerAdditionService {
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
         var residentialAddress = bo.getUsualResidentialAddress();
-        List<String> natureOfControls = new ArrayList<>();
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getBeneficialOwnerNatureOfControlTypes(), OVERSEAS_ENTITIES_PERSON_MAP);
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getNonLegalFirmMembersNatureOfControlTypes(), OVERSEAS_ENTITIES_FIRM_MAP);
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getTrusteesNatureOfControlTypes(), OVERSEAS_ENTITIES_TRUST_MAP);
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
+                bo.getBeneficialOwnerNatureOfControlTypes(),
+                bo.getTrusteesNatureOfControlTypes(),
+                bo.getNonLegalFirmMembersNatureOfControlTypes()
+        );
 
         var individualBeneficialOwnerAddition =
                 new IndividualBeneficialOwnerAddition(
@@ -104,13 +102,11 @@ public class BeneficialOwnerAdditionService {
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
         var residentialAddress = bo.getPrincipalAddress();
-        List<String> natureOfControls = new ArrayList<>();
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getBeneficialOwnerNatureOfControlTypes(), OVERSEAS_ENTITIES_PERSON_MAP);
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getNonLegalFirmMembersNatureOfControlTypes(), OVERSEAS_ENTITIES_FIRM_MAP);
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getTrusteesNatureOfControlTypes(), OVERSEAS_ENTITIES_TRUST_MAP);
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
+                bo.getBeneficialOwnerNatureOfControlTypes(),
+                bo.getTrusteesNatureOfControlTypes(),
+                bo.getNonLegalFirmMembersNatureOfControlTypes()
+        );
 
         var corporateEntityBeneficialOwnerAddition =
                 new CorporateEntityBeneficialOwnerAddition(
@@ -135,11 +131,11 @@ public class BeneficialOwnerAdditionService {
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
         var residentialAddress = bo.getPrincipalAddress();
-        List<String> natureOfControls = new ArrayList<>();
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getBeneficialOwnerNatureOfControlTypes(), OVERSEAS_ENTITIES_PERSON_MAP);
-        mapNatureOfControlsForOverseasEntity(
-                natureOfControls, bo.getNonLegalFirmMembersNatureOfControlTypes(), OVERSEAS_ENTITIES_FIRM_MAP);
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
+                bo.getBeneficialOwnerNatureOfControlTypes(),
+                null,
+                bo.getNonLegalFirmMembersNatureOfControlTypes()
+        );
 
         var legalPersonBeneficialOwnerAddition =
                 new LegalPersonBeneficialOwnerAddition(
