@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.*;
@@ -153,17 +151,19 @@ public class BeneficialOwnerAdditionService {
     }
 
     private Address convertAddressDtoToAddressModel(AddressDto addressDto) {
-        var address = new Address();
-
-        address.setHouseNameNum(addressDto.getPropertyNameNumber());
-        address.setStreet(addressDto.getLine1());
-        address.setArea(addressDto.getLine2());
-        address.setPostTown(addressDto.getLocality());
-        address.setRegion(addressDto.getCounty());
-        address.setCountry(addressDto.getCountry());
-        address.setPostCode(addressDto.getPostcode());
-        address.setPoBox(addressDto.getPoBox());
-        address.setCareOf(addressDto.getCareOf());
+        Address address = null;
+        if (addressDto != null) {
+            address = new Address();
+            address.setHouseNameNum(addressDto.getPropertyNameNumber());
+            address.setStreet(addressDto.getLine1());
+            address.setArea(addressDto.getLine2());
+            address.setPostTown(addressDto.getLocality());
+            address.setRegion(addressDto.getCounty());
+            address.setCountry(addressDto.getCountry());
+            address.setPostCode(addressDto.getPostcode());
+            address.setPoBox(addressDto.getPoBox());
+            address.setCareOf(addressDto.getCareOf());
+        }
 
         return address;
     }
