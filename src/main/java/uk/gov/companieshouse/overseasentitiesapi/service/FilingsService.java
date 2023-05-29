@@ -55,7 +55,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.BeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 

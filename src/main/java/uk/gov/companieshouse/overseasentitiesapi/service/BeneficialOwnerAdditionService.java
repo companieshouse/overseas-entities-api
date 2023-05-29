@@ -1,15 +1,25 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.*;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
 @Service
 public class BeneficialOwnerAdditionService {

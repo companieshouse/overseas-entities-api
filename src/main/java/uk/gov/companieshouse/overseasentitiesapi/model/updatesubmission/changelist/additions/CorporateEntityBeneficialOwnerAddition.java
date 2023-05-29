@@ -1,13 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddition {
     private static final String APPOINTMENT_TYPE = "OE OLE BO";

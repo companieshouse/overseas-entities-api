@@ -22,9 +22,6 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
                                               Address serviceAddress, List<String> natureOfControls) {
         super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls);
         setAppointmentType(APPOINTMENT_TYPE);
-        this.corporateSoleName = corporateSoleName;
-        this.legalForm = legalForm;
-        this.governingLaw = governingLaw;
     }
 
     public String getCorporateSoleName() {
