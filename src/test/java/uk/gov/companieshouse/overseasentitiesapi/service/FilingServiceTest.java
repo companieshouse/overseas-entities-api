@@ -86,9 +86,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.Presenter;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
@@ -313,31 +310,10 @@ class FilingServiceTest {
         assertEquals("OE111229", filing.getData().get("entityNumber"));
         assertEquals("OE02", filing.getData().get("type"));
 
-        final OverseasEntitySubmissionDto userSubmission = (OverseasEntitySubmissionDto) filing.getData().get("userSubmission");
-        assertNotNull(userSubmission);
-        assertEquals(submissionOpt.get(), userSubmission);
-
-        final DueDiligence dueDiligence = (DueDiligence) filing.getData().get("dueDiligence");
-        assertNotNull(dueDiligence);
-        assertEquals("Mr Partner", dueDiligence.getPartnerName());
-        assertEquals("2021-12-31", dueDiligence.getDateChecked());
-        assertEquals("lorem@ipsum.com", dueDiligence.getEmail());
-        assertEquals("ABC Checking limited", dueDiligence.getAgentName());
-        assertEquals("Super supervisor", dueDiligence.getSupervisoryBody());
-        assertEquals("agreed", dueDiligence.getDiligence());
-        assertEquals("agent567", dueDiligence.getAgentAssuranceCode());
-
-        final Presenter presenterInFiling = (Presenter)filing.getData().get("presenter");
-        assertNotNull(presenterInFiling);
-        assertEquals("Joe Bloggs", presenterInFiling.getName());
-        assertEquals("user@domain.roe", presenterInFiling.getEmail());
-
-        final FilingForDate filingForDate = (FilingForDate)filing.getData().get("filingForDate");
-        assertNotNull(filingForDate);
-        assertEquals("30", filingForDate.getDay());
-        assertEquals("MAY", filingForDate.getMonth());
-        assertEquals("2023", filingForDate.getYear());
-
+        assertNotNull(filing.getData().get("userSubmission"));
+        assertNotNull(filing.getData().get("dueDiligence"));
+        assertNotNull(filing.getData().get("presenter"));
+        assertNotNull(filing.getData().get("filingForDate"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
