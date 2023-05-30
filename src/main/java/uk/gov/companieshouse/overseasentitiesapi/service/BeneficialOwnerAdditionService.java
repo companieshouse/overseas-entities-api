@@ -14,7 +14,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
@@ -25,25 +24,14 @@ public class BeneficialOwnerAdditionService {
     public List<Addition> beneficialOwnerAdditions(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         List<Addition> additions = new ArrayList<>();
 
-        additions.addAll(getIndividualBeneficialOwnerAdditions(overseasEntitySubmissionDto)
-                .stream()
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList()));
-
-        additions.addAll(getCorporateEntityBeneficialOwnerAdditions(overseasEntitySubmissionDto)
-                .stream()
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList()));
-
-        additions.addAll(getLegalPersonBeneficialOwnerAdditions(overseasEntitySubmissionDto)
-                .stream()
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList()));
+        additions.addAll(getIndividualBeneficialOwnerAdditions(overseasEntitySubmissionDto));
+        additions.addAll(getCorporateEntityBeneficialOwnerAdditions(overseasEntitySubmissionDto));
+        additions.addAll(getLegalPersonBeneficialOwnerAdditions(overseasEntitySubmissionDto));
 
         return additions;
     }
 
-    private List<Optional<IndividualBeneficialOwnerAddition>> getIndividualBeneficialOwnerAdditions(
+    private List<IndividualBeneficialOwnerAddition> getIndividualBeneficialOwnerAdditions(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         return beneficialOwnersIndividual.stream()
@@ -52,7 +40,7 @@ public class BeneficialOwnerAdditionService {
                 .collect(Collectors.toList());
     }
 
-    private List<Optional<CorporateEntityBeneficialOwnerAddition>> getCorporateEntityBeneficialOwnerAdditions(
+    private List<CorporateEntityBeneficialOwnerAddition> getCorporateEntityBeneficialOwnerAdditions(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersCorporateEntity = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
         return beneficialOwnersCorporateEntity.stream()
@@ -61,7 +49,7 @@ public class BeneficialOwnerAdditionService {
                 .collect(Collectors.toList());
     }
 
-    private List<Optional<LegalPersonBeneficialOwnerAddition>> getLegalPersonBeneficialOwnerAdditions(
+    private List<LegalPersonBeneficialOwnerAddition> getLegalPersonBeneficialOwnerAdditions(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersLegalPerson = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
         return beneficialOwnersLegalPerson.stream()
@@ -70,7 +58,7 @@ public class BeneficialOwnerAdditionService {
                 .collect(Collectors.toList());
     }
 
-    private Optional<IndividualBeneficialOwnerAddition> getIndividualBeneficialOwnerAddition(
+    private IndividualBeneficialOwnerAddition getIndividualBeneficialOwnerAddition(
             BeneficialOwnerIndividualDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
@@ -100,10 +88,10 @@ public class BeneficialOwnerAdditionService {
                     String.format("%s, %s", bo.getNationality(), bo.getSecondNationality()));
         }
 
-        return Optional.of(individualBeneficialOwnerAddition);
+        return individualBeneficialOwnerAddition;
     }
 
-    private Optional<CorporateEntityBeneficialOwnerAddition> getCorporateEntityBeneficialOwnerAddition(
+    private CorporateEntityBeneficialOwnerAddition getCorporateEntityBeneficialOwnerAddition(
             BeneficialOwnerCorporateDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
@@ -129,10 +117,10 @@ public class BeneficialOwnerAdditionService {
         corporateEntityBeneficialOwnerAddition.setRegisterLocation(bo.getPublicRegisterName());
         corporateEntityBeneficialOwnerAddition.setRegistrationNumber(bo.getRegistrationNumber());
 
-        return Optional.of(corporateEntityBeneficialOwnerAddition);
+        return corporateEntityBeneficialOwnerAddition;
     }
 
-    private Optional<LegalPersonBeneficialOwnerAddition> getLegalPersonBeneficialOwnerAddition(
+    private LegalPersonBeneficialOwnerAddition getLegalPersonBeneficialOwnerAddition(
             BeneficialOwnerGovernmentOrPublicAuthorityDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
@@ -156,6 +144,6 @@ public class BeneficialOwnerAdditionService {
         legalPersonBeneficialOwnerAddition.setLegalForm(bo.getLegalForm());
         legalPersonBeneficialOwnerAddition.setGoverningLaw(bo.getLawGoverned());
 
-        return Optional.of(legalPersonBeneficialOwnerAddition);
+        return legalPersonBeneficialOwnerAddition;
     }
 }

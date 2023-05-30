@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertRegisteredOfficeAddressApiToAddressModel;
 
-public class AddressUtilsTest {
+class AddressUtilsTest {
     @Test
     void convertRegisteredOfficeAddressApiToAddressModelInputNonNull() {
         var inputAddress = new RegisteredOfficeAddressApi();
