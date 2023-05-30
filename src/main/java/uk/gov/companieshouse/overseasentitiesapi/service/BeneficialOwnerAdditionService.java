@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -11,7 +10,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
 @Service
@@ -158,23 +157,5 @@ public class BeneficialOwnerAdditionService {
         legalPersonBeneficialOwnerAddition.setGoverningLaw(bo.getLawGoverned());
 
         return Optional.of(legalPersonBeneficialOwnerAddition);
-    }
-
-    private Address convertAddressDtoToAddressModel(AddressDto addressDto) {
-        Address address = null;
-        if (addressDto != null) {
-            address = new Address();
-            address.setHouseNameNum(addressDto.getPropertyNameNumber());
-            address.setStreet(addressDto.getLine1());
-            address.setArea(addressDto.getLine2());
-            address.setPostTown(addressDto.getLocality());
-            address.setRegion(addressDto.getCounty());
-            address.setCountry(addressDto.getCountry());
-            address.setPostCode(addressDto.getPostcode());
-            address.setPoBox(addressDto.getPoBox());
-            address.setCareOf(addressDto.getCareOf());
-        }
-
-        return address;
     }
 }
