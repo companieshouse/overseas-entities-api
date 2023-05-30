@@ -88,7 +88,7 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         // Change when trusts are added:
-        // validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        // call validateTrustDetails with (overseasEntitySubmissionDto, errors, loggingContext)
 
     }
 
