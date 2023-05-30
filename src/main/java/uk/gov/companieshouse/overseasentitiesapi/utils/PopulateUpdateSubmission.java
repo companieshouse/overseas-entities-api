@@ -29,7 +29,6 @@ public class PopulateUpdateSubmission {
      */
     public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
-
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
         populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
         populatePresenter(overseasEntitySubmissionDto, updateSubmission);
@@ -40,16 +39,13 @@ public class PopulateUpdateSubmission {
     private void populateDueDiligence(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
-
         var dueDiligenceDto = Optional.ofNullable(overseasEntitySubmissionDto.getDueDiligence());
-        var overseasEntityDueDiligenceDto = Optional.ofNullable(
-                overseasEntitySubmissionDto.getOverseasEntityDueDiligence());
 
         if (dueDiligenceDto.isPresent()) {
             populateDueDiligenceFiledByAgent(dueDiligenceDto.get(), updateSubmission);
         } else {
-            overseasEntityDueDiligenceDto.ifPresent(
-                    entityDueDiligenceDto -> populateDueDiligenceFiledByOverseasEntity(
+            Optional.ofNullable(overseasEntitySubmissionDto.getOverseasEntityDueDiligence())
+                    .ifPresent(entityDueDiligenceDto -> populateDueDiligenceFiledByOverseasEntity(
                             entityDueDiligenceDto, updateSubmission));
         }
     }
@@ -57,7 +53,6 @@ public class PopulateUpdateSubmission {
     private void populateDueDiligenceFiledByOverseasEntity(
             OverseasEntityDueDiligenceDto overseasEntityDueDiligenceDto,
             UpdateSubmission updateSubmission) {
-
         var submissionDueDiligence = new DueDiligence();
 
         populateCommonDueDiligenceDetails(submissionDueDiligence,
@@ -76,7 +71,6 @@ public class PopulateUpdateSubmission {
 
     private void populateDueDiligenceFiledByAgent(DueDiligenceDto dueDiligenceDto,
             UpdateSubmission updateSubmission) {
-
         var submissionDueDiligence = new DueDiligence();
 
         populateCommonDueDiligenceDetails(submissionDueDiligence, dueDiligenceDto.getIdentityDate(),
@@ -142,7 +136,6 @@ public class PopulateUpdateSubmission {
     private void populateFilingForDate(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
-
         Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getFilingDate())
                 .ifPresent(filingDate -> {
                     var filingForDate = new FilingForDate();
