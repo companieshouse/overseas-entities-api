@@ -29,7 +29,6 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -110,20 +109,19 @@ class FilingServiceTest {
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
-    private static final List<Change> DUMMY_CHANGES
-            = Arrays.asList(new EntityNameChange("New name"));
-    private static final List<Cessation> DUMMY_CESSATION = Arrays.asList(
+    private static final List<Change> DUMMY_CHANGES = List.of(new EntityNameChange("New name"));
+    private static final List<Cessation> DUMMY_CESSATION = List.of(
             new IndividualBeneficialOwnerCessation("Appointment id",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 1, 1),
                 new PersonName("Joe", "Bloggs")));
-    private static final List<Addition> DUMMY_ADDITION = Arrays.asList(
+    private static final List<Addition> DUMMY_ADDITION = List.of(
             new IndividualBeneficialOwnerAddition(
                     LocalDate.of(2023, 1, 1),
                     LocalDate.of(2023, 1, 1),
                     new Address(),
                     new Address(),
-                    Arrays.asList("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON")));
+                    List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON")));
 
     @InjectMocks
     private FilingsService filingsService;

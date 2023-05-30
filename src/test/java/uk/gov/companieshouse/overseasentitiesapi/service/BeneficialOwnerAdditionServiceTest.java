@@ -16,7 +16,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,15 +80,15 @@ class BeneficialOwnerAdditionServiceTest {
     @Test
     void testBeneficialOwnerAdditionsNoAdditionsInSubmissionReturnsEmptyList() {
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
-                .thenReturn(Arrays.asList(new BeneficialOwnerIndividualDto() {{
+                .thenReturn(List.of(new BeneficialOwnerIndividualDto() {{
                     setChipsReference("123456789");
                 }}));
         when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
-                .thenReturn(Arrays.asList(new BeneficialOwnerCorporateDto() {{
+                .thenReturn(List.of(new BeneficialOwnerCorporateDto() {{
                     setChipsReference("123456789");
                 }}));
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
-                .thenReturn(Arrays.asList(new BeneficialOwnerGovernmentOrPublicAuthorityDto() {{
+                .thenReturn(List.of(new BeneficialOwnerGovernmentOrPublicAuthorityDto() {{
                     setChipsReference("123456789");
                 }}));
 
@@ -122,16 +121,16 @@ class BeneficialOwnerAdditionServiceTest {
         individualBeneficialOwner.setCeasedDate(LocalDate.of(2023, 1, 1));
         individualBeneficialOwner.setServiceAddress(TEST_ADDRESS_DTO);
         individualBeneficialOwner.setUsualResidentialAddress(TEST_ADDRESS_DTO);
-        individualBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_SHARES));
-        individualBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_VOTING_RIGHTS));
-        individualBeneficialOwner.setTrusteesNatureOfControlTypes(Arrays.asList(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
+        individualBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_SHARES));
+        individualBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_VOTING_RIGHTS));
+        individualBeneficialOwner.setTrusteesNatureOfControlTypes(List.of(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
         individualBeneficialOwner.setFirstName("John");
         individualBeneficialOwner.setLastName("Doe");
         individualBeneficialOwner.setDateOfBirth(LocalDate.of(1990, 5, 15));
         individualBeneficialOwner.setNationality("Irish");
         individualBeneficialOwner.setSecondNationality("Spanish");
 
-        return Arrays.asList(individualBeneficialOwner);
+        return List.of(individualBeneficialOwner);
     }
 
     private void assertIndividualBeneficialOwnerDetails(IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition) {
@@ -154,16 +153,16 @@ class BeneficialOwnerAdditionServiceTest {
         corporateBeneficialOwner.setCeasedDate(LocalDate.of(2023, 1, 1));
         corporateBeneficialOwner.setServiceAddress(TEST_ADDRESS_DTO);
         corporateBeneficialOwner.setPrincipalAddress(TEST_ADDRESS_DTO);
-        corporateBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_SHARES));
-        corporateBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_VOTING_RIGHTS));
-        corporateBeneficialOwner.setTrusteesNatureOfControlTypes(Arrays.asList(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
+        corporateBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_SHARES));
+        corporateBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_VOTING_RIGHTS));
+        corporateBeneficialOwner.setTrusteesNatureOfControlTypes(List.of(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
         corporateBeneficialOwner.setName("Corporation name");
         corporateBeneficialOwner.setLegalForm("Legal form");
         corporateBeneficialOwner.setLawGoverned("Governing law");
         corporateBeneficialOwner.setPublicRegisterName("Register location");
         corporateBeneficialOwner.setRegistrationNumber("Registration number");
 
-        return Arrays.asList(corporateBeneficialOwner);
+        return List.of(corporateBeneficialOwner);
     }
 
     private void assertCorporateBeneficialOwnerDetails(CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition) {
@@ -187,14 +186,14 @@ class BeneficialOwnerAdditionServiceTest {
         legalPersonBeneficialOwner.setCeasedDate(LocalDate.of(2023, 1, 1));
         legalPersonBeneficialOwner.setServiceAddress(TEST_ADDRESS_DTO);
         legalPersonBeneficialOwner.setPrincipalAddress(TEST_ADDRESS_DTO);
-        legalPersonBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_SHARES));
-        legalPersonBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(Arrays.asList(OVER_25_PERCENT_OF_VOTING_RIGHTS));
+        legalPersonBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_SHARES));
+        legalPersonBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_VOTING_RIGHTS));
         legalPersonBeneficialOwner.setName("Government Authority");
         legalPersonBeneficialOwner.setLegalForm("Legal form");
         legalPersonBeneficialOwner.setLawGoverned("Governing law");
         legalPersonBeneficialOwner.setName("Government Authority");
 
-        return Arrays.asList(legalPersonBeneficialOwner);
+        return List.of(legalPersonBeneficialOwner);
     }
 
     private void assertLegalPersonBeneficialOwnerDetails(LegalPersonBeneficialOwnerAddition legalPersonBeneficialOwnerAddition) {
