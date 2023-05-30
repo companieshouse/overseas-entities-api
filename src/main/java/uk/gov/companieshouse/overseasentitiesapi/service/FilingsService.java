@@ -56,6 +56,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.PopulateUpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @Service
@@ -92,7 +93,6 @@ public class FilingsService {
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
-  private final PopulateUpdateSubmissionService populateUpdateSubmissionService;
 
   @Autowired
   public FilingsService(
@@ -103,8 +103,7 @@ public class FilingsService {
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
-          OverseasEntityChangeService overseasEntityChangeService,
-          PopulateUpdateSubmissionService populateUpdateSubmissionService) {
+          OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
@@ -113,7 +112,6 @@ public class FilingsService {
     this.publicDataRetrievalService = publicDataRetrievalService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.overseasEntityChangeService = overseasEntityChangeService;
-    this.populateUpdateSubmissionService = populateUpdateSubmissionService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -178,7 +176,8 @@ public class FilingsService {
                                        OverseasEntitySubmissionDto submissionDto,
                                        Map<String, Object> logMap) throws ServiceException {
 
-    populateUpdateSubmissionService.populate(submissionDto, updateSubmission);
+    var populateUpdateSubmission = new PopulateUpdateSubmission();
+    populateUpdateSubmission.populate(submissionDto, updateSubmission);
 
     var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
     var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();

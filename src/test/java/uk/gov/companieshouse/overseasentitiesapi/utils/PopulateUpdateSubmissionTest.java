@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.service;
+package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,12 +19,12 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDilig
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 
 @ExtendWith(MockitoExtension.class)
-class PopulateUpdateSubmissionServiceTest {
+class PopulateUpdateSubmissionTest {
 
     private static final LocalDate LOCAL_DATE_TODAY = LocalDate.now();
 
     @InjectMocks
-    private PopulateUpdateSubmissionService populateUpdateSubmissionService;
+    private PopulateUpdateSubmission populateUpdateSubmission;
 
     @Test
     void testUpdateSubmissionIsPopulatedWithOverseasEntitySubmissionDataFiledByAgent() {
@@ -32,7 +32,7 @@ class PopulateUpdateSubmissionServiceTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -48,7 +48,7 @@ class PopulateUpdateSubmissionServiceTest {
         overseasEntitySubmissionDto.setDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -65,7 +65,7 @@ class PopulateUpdateSubmissionServiceTest {
         overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmissionService.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
         assertNotNull(updateSubmission.getPresenter());

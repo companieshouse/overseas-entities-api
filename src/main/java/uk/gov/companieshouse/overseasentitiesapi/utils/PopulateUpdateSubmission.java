@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.overseasentitiesapi.service;
+package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -22,7 +22,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSu
  * populate UpdateSubmission model.
  */
 @Component
-public class PopulateUpdateSubmissionService {
+public class PopulateUpdateSubmission {
 
     /**
      * Method populates values into UpdateSubmission for JSON output

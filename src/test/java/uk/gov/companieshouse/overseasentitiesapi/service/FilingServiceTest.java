@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +31,6 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -85,6 +86,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.FilingForDate;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.Presenter;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
@@ -104,7 +108,7 @@ class FilingServiceTest {
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
-    private static final List<Change> DUMMY_CHANGES = Arrays.asList(new EntityNameChange("New name"));
+    private static final List<Change> DUMMY_CHANGES = List.of(new EntityNameChange("New name"));
 
     @InjectMocks
     private FilingsService filingsService;
@@ -150,9 +154,6 @@ class FilingServiceTest {
 
     @Mock
     private OverseasEntityChangeService overseasEntityChangeService;
-
-    @Mock
-    private PopulateUpdateSubmissionService populateUpdateSubmissionService;
 
     private Transaction transaction;
 
@@ -300,6 +301,7 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
         verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
 
         verify(localDateSupplier, times(1)).get();
@@ -308,18 +310,41 @@ class FilingServiceTest {
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
         // TODO: Update 'null' fields and cessations/additions
-        assertEquals(null, filing.getData().get("beneficialOwnerStatement"));
-        assertEquals(null, filing.getData().get("presenter"));
         assertEquals("OE111229", filing.getData().get("entityNumber"));
-        assertEquals(null, filing.getData().get("noChangesInFilingPeriodStatement"));
-        assertEquals(null, filing.getData().get("dueDiligence"));
         assertEquals("OE02", filing.getData().get("type"));
-        assertEquals(null, filing.getData().get("filingForDate"));
-        assertEquals(null, filing.getData().get("anyBOsOrMOsAddedOrCeased"));
-        assertEquals(null, filing.getData().get("userSubmission"));
-        assertEquals(1, ((List)filing.getData().get("changes")).size());
-        assertEquals(0, ((List)filing.getData().get("additions")).size());
-        assertEquals(0, ((List)filing.getData().get("cessations")).size());
+
+        final OverseasEntitySubmissionDto userSubmission = (OverseasEntitySubmissionDto) filing.getData().get("userSubmission");
+        assertNotNull(userSubmission);
+        assertEquals(submissionOpt.get(), userSubmission);
+
+        final DueDiligence dueDiligence = (DueDiligence) filing.getData().get("dueDiligence");
+        assertNotNull(dueDiligence);
+        assertEquals("Mr Partner", dueDiligence.getPartnerName());
+        assertEquals("2021-12-31", dueDiligence.getDateChecked());
+        assertEquals("lorem@ipsum.com", dueDiligence.getEmail());
+        assertEquals("ABC Checking limited", dueDiligence.getAgentName());
+        assertEquals("Super supervisor", dueDiligence.getSupervisoryBody());
+        assertEquals("agreed", dueDiligence.getDiligence());
+        assertEquals("agent567", dueDiligence.getAgentAssuranceCode());
+
+        final Presenter presenterInFiling = (Presenter)filing.getData().get("presenter");
+        assertNotNull(presenterInFiling);
+        assertEquals("Joe Bloggs", presenterInFiling.getName());
+        assertEquals("user@domain.roe", presenterInFiling.getEmail());
+
+        final FilingForDate filingForDate = (FilingForDate)filing.getData().get("filingForDate");
+        assertNotNull(filingForDate);
+        assertEquals("30", filingForDate.getDay());
+        assertEquals("MAY", filingForDate.getMonth());
+        assertEquals("2023", filingForDate.getYear());
+
+        assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
+
+        assertEquals(1, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(0, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(0, ((List<?>)filing.getData().get("cessations")).size());
     }
 
     @Test
@@ -718,7 +743,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
         final TrustDataDto trustData = trustDataList.get(boIndex);
@@ -750,7 +775,7 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
         final TrustDataDto trustData1 = trustDataList.get(0);
@@ -783,7 +808,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
 
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
@@ -818,7 +843,7 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
 
@@ -971,7 +996,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-        
+
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1005,7 +1030,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1040,7 +1065,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1076,7 +1101,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1111,7 +1136,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1147,7 +1172,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1187,7 +1212,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1223,7 +1248,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
