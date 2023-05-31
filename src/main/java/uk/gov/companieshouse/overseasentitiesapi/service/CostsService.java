@@ -28,7 +28,7 @@ public class CostsService {
     @Value("${OE01_COST}")
     private String registerCostAmount;
 
-    @Value("${OE01_UPDATE_COST}")
+    @Value("${OE02_COST}")
     private String updateCostAmount;
 
     private final OverseasEntitiesService overseasEntitiesService;

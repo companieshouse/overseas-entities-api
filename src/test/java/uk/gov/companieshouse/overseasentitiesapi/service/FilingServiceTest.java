@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -171,9 +173,6 @@ class FilingServiceTest {
     @Mock
     private OverseasEntityChangeService overseasEntityChangeService;
 
-    @Mock
-    private PopulateUpdateSubmissionService populateUpdateSubmissionService;
-
     private Transaction transaction;
 
     @BeforeEach
@@ -332,18 +331,20 @@ class FilingServiceTest {
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
         // TODO: Update 'null' fields and cessations/additions
-        assertEquals(null, filing.getData().get("beneficialOwnerStatement"));
-        assertEquals(null, filing.getData().get("presenter"));
         assertEquals("OE111229", filing.getData().get("entityNumber"));
-        assertEquals(null, filing.getData().get("noChangesInFilingPeriodStatement"));
-        assertEquals(null, filing.getData().get("dueDiligence"));
         assertEquals("OE02", filing.getData().get("type"));
-        assertEquals(null, filing.getData().get("filingForDate"));
-        assertEquals(null, filing.getData().get("anyBOsOrMOsAddedOrCeased"));
-        assertEquals(null, filing.getData().get("userSubmission"));
-        assertEquals(1, ((List)filing.getData().get("changes")).size());
-        assertEquals(1, ((List)filing.getData().get("additions")).size());
-        assertEquals(1, ((List)filing.getData().get("cessations")).size());
+
+        assertNotNull(filing.getData().get("userSubmission"));
+        assertNotNull(filing.getData().get("dueDiligence"));
+        assertNotNull(filing.getData().get("presenter"));
+        assertNotNull(filing.getData().get("filingForDate"));
+        assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
+
+        assertEquals(1, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(1, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(1, ((List<?>)filing.getData().get("cessations")).size());
     }
 
     @Test
@@ -1299,7 +1300,6 @@ class FilingServiceTest {
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
-        verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
