@@ -4,12 +4,26 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 
 class TypeConverterTest {
+    @Test
+    void privateConstructorThrowsException() {
+        Class<TypeConverter> typeConverterClass = TypeConverter.class;
+
+        Constructor<?> constructor = typeConverterClass.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+
+        Throwable exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+        assertEquals(IllegalAccessError.class, exception.getCause().getClass());
+        assertEquals("Use the static methods instead of instantiating Converters", exception.getCause().getMessage());
+    }
+
     @Test
     void registeredOfficeAddressApiToAddressInputNonNull() {
         var inputAddress = new RegisteredOfficeAddressApi();

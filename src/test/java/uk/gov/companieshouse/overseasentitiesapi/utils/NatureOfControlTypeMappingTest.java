@@ -3,10 +3,13 @@ package uk.gov.companieshouse.overseasentitiesapi.utils;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS;
@@ -14,6 +17,18 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlTyp
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
 class NatureOfControlTypeMappingTest {
+    @Test
+    void privateConstructorThrowsException() {
+        Class<NatureOfControlTypeMapping> natureOfControlTypeMappingClass = NatureOfControlTypeMapping.class;
+
+        Constructor<?> constructor = natureOfControlTypeMappingClass.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+
+        Throwable exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+        assertEquals(IllegalAccessError.class, exception.getCause().getClass());
+        assertEquals("Use the static method designation", exception.getCause().getMessage());
+    }
+
     @Test
     void collectAllNatureOfControlsIntoSingleListAllValueNonNull() {
         List<NatureOfControlType> personNatureOfControlTypes =

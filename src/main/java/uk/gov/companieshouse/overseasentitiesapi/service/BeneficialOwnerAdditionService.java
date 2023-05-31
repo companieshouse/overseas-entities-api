@@ -23,14 +23,14 @@ public class BeneficialOwnerAdditionService {
     public List<Addition> beneficialOwnerAdditions(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         List<Addition> additions = new ArrayList<>();
 
-        getIndividualBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
-        getCorporateEntityBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
-        getLegalPersonBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
+        addIndividualBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
+        addCorporateEntityBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
+        addLegalPersonBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
 
         return additions;
     }
 
-    private void getIndividualBeneficialOwnerAdditions(
+    private void addIndividualBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
         if (beneficialOwnersIndividual != null) {
@@ -41,7 +41,7 @@ public class BeneficialOwnerAdditionService {
         }
     }
 
-    private void getCorporateEntityBeneficialOwnerAdditions(
+    private void addCorporateEntityBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersCorporateEntity = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
         if (beneficialOwnersCorporateEntity != null) {
@@ -52,7 +52,7 @@ public class BeneficialOwnerAdditionService {
         }
     }
 
-    private void getLegalPersonBeneficialOwnerAdditions(
+    private void addLegalPersonBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersLegalPerson = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
         if (beneficialOwnersLegalPerson != null) {
