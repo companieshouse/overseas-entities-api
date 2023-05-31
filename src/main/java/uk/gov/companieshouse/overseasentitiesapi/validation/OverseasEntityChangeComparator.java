@@ -7,8 +7,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertRegisteredOfficeAddressApiToAddressModel;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 
 @Component
 public class OverseasEntityChangeComparator {
@@ -22,8 +22,8 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
-        var updatedAddress = convertAddressDtoToAddressModel(updated);
+        var existingAddress = existing != null ? registeredOfficeAddressApiToAddress(existing) : null;
+        var updatedAddress = addressDtoToAddress(updated);
 
         return updatedAddress.equals(existingAddress) ? null : new PrincipalAddressChange(updatedAddress);
     }
@@ -34,8 +34,8 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
-        var updatedAddress = convertAddressDtoToAddressModel(updated);
+        var existingAddress = existing != null ? registeredOfficeAddressApiToAddress(existing) : null;
+        var updatedAddress = addressDtoToAddress(updated);
 
         return updatedAddress.equals(existingAddress) ? null : new CorrespondenceAddressChange(updatedAddress);
     }

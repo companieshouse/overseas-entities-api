@@ -6,12 +6,12 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertRegisteredOfficeAddressApiToAddressModel;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 
-class AddressUtilsTest {
+class TypeConverterTest {
     @Test
-    void convertRegisteredOfficeAddressApiToAddressModelInputNonNull() {
+    void registeredOfficeAddressApiToAddressInputNonNull() {
         var inputAddress = new RegisteredOfficeAddressApi();
         inputAddress.setPremises("Premises");
         inputAddress.setAddressLine1("Line 1");
@@ -23,7 +23,7 @@ class AddressUtilsTest {
         inputAddress.setPoBox("Po box");
         inputAddress.setCareOf("Care of");
 
-        var result = convertRegisteredOfficeAddressApiToAddressModel(inputAddress);
+        var result = registeredOfficeAddressApiToAddress(inputAddress);
 
         assertEquals("Premises", result.getHouseNameNum());
         assertEquals("Line 1", result.getStreet());
@@ -37,16 +37,16 @@ class AddressUtilsTest {
     }
 
     @Test
-    void convertRegisteredOfficeAddressApiToAddressModelInputIsNull() {
+    void registeredOfficeAddressApiToAddressInputIsNull() {
         RegisteredOfficeAddressApi inputAddress = null;
 
-        var result = convertRegisteredOfficeAddressApiToAddressModel(inputAddress);
+        var result = registeredOfficeAddressApiToAddress(inputAddress);
 
         assertNull(result);
     }
 
     @Test
-    void convertAddressDtoToAddressModelInputNonNull() {
+    void addressDtoToAddressInputNonNull() {
         var inputAddress = new AddressDto();
         inputAddress.setPropertyNameNumber("Premises");
         inputAddress.setLine1("Line 1");
@@ -58,7 +58,7 @@ class AddressUtilsTest {
         inputAddress.setPoBox("Po box");
         inputAddress.setCareOf("Care of");
 
-        var result = convertAddressDtoToAddressModel(inputAddress);
+        var result = addressDtoToAddress(inputAddress);
 
         assertEquals("Premises", result.getHouseNameNum());
         assertEquals("Line 1", result.getStreet());
@@ -72,10 +72,10 @@ class AddressUtilsTest {
     }
 
     @Test
-    void convertAddressDtoToAddressModelInputIsNull() {
+    void addressDtoToAddressInputIsNull() {
         AddressDto inputAddress = null;
 
-        var result = convertAddressDtoToAddressModel(inputAddress);
+        var result = addressDtoToAddress(inputAddress);
 
         assertNull(result);
     }

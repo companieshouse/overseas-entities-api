@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
 @Service
@@ -79,8 +79,8 @@ public class BeneficialOwnerAdditionService {
                 new IndividualBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        convertAddressDtoToAddressModel(serviceAddress),
-                        convertAddressDtoToAddressModel(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
+                        addressDtoToAddress(residentialAddress),
                         natureOfControls);
 
         individualBeneficialOwnerAddition.setPersonName(new PersonName(bo.getFirstName(), bo.getLastName()));
@@ -112,8 +112,8 @@ public class BeneficialOwnerAdditionService {
                 new CorporateEntityBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        convertAddressDtoToAddressModel(serviceAddress),
-                        convertAddressDtoToAddressModel(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
+                        addressDtoToAddress(residentialAddress),
                         natureOfControls);
 
         corporateEntityBeneficialOwnerAddition.setCorporateName(bo.getName());
@@ -141,8 +141,8 @@ public class BeneficialOwnerAdditionService {
                 new LegalPersonBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        convertAddressDtoToAddressModel(serviceAddress),
-                        convertAddressDtoToAddressModel(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
+                        addressDtoToAddress(residentialAddress),
                         natureOfControls);
 
         legalPersonBeneficialOwnerAddition.setCorporateSoleName(bo.getName());

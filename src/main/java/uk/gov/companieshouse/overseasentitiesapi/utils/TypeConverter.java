@@ -4,8 +4,12 @@ import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
-public class AddressUtils {
-    public static Address convertRegisteredOfficeAddressApiToAddressModel(
+public class TypeConverter {
+    private TypeConverter() {
+        throw new IllegalAccessError("Use the static methods instead of instantiating Converters");
+    }
+
+    public static Address registeredOfficeAddressApiToAddress(
             RegisteredOfficeAddressApi registeredOfficeAddressApi) {
         if (registeredOfficeAddressApi == null) {
             return null;
@@ -24,7 +28,7 @@ public class AddressUtils {
         return address;
     }
 
-    public static Address convertAddressDtoToAddressModel(AddressDto addressDto) {
+    public static Address addressDtoToAddress(AddressDto addressDto) {
         if (addressDto == null) {
             return null;
         }
@@ -40,9 +44,5 @@ public class AddressUtils {
         address.setPoBox(addressDto.getPoBox());
         address.setCareOf(addressDto.getCareOf());
         return address;
-    }
-
-    private AddressUtils() {
-        throw new IllegalAccessError("Use the static method designation");
     }
 }
