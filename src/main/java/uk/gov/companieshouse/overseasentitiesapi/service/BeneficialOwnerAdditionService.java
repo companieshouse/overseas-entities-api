@@ -14,7 +14,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.AddressUtils.convertAddressDtoToAddressModel;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
@@ -24,38 +23,38 @@ public class BeneficialOwnerAdditionService {
     public List<Addition> beneficialOwnerAdditions(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         List<Addition> additions = new ArrayList<>();
 
-        additions.addAll(getIndividualBeneficialOwnerAdditions(overseasEntitySubmissionDto));
-        additions.addAll(getCorporateEntityBeneficialOwnerAdditions(overseasEntitySubmissionDto));
-        additions.addAll(getLegalPersonBeneficialOwnerAdditions(overseasEntitySubmissionDto));
+        getIndividualBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
+        getCorporateEntityBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
+        getLegalPersonBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
 
         return additions;
     }
 
-    private List<IndividualBeneficialOwnerAddition> getIndividualBeneficialOwnerAdditions(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+    private void getIndividualBeneficialOwnerAdditions(
+            List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
-        return beneficialOwnersIndividual.stream()
-                .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(this::getIndividualBeneficialOwnerAddition)
-                .collect(Collectors.toList());
+        beneficialOwnersIndividual.stream()
+            .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
+            .map(this::getIndividualBeneficialOwnerAddition)
+            .forEachOrdered(additions::add);
     }
 
-    private List<CorporateEntityBeneficialOwnerAddition> getCorporateEntityBeneficialOwnerAdditions(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+    private void getCorporateEntityBeneficialOwnerAdditions(
+            List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersCorporateEntity = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
-        return beneficialOwnersCorporateEntity.stream()
+        beneficialOwnersCorporateEntity.stream()
                 .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
                 .map(this::getCorporateEntityBeneficialOwnerAddition)
-                .collect(Collectors.toList());
+                .forEachOrdered(additions::add);
     }
 
-    private List<LegalPersonBeneficialOwnerAddition> getLegalPersonBeneficialOwnerAdditions(
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+    private void getLegalPersonBeneficialOwnerAdditions(
+            List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersLegalPerson = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
-        return beneficialOwnersLegalPerson.stream()
+        beneficialOwnersLegalPerson.stream()
                 .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
                 .map(this::getLegalPersonBeneficialOwnerAddition)
-                .collect(Collectors.toList());
+                .forEachOrdered(additions::add);
     }
 
     private IndividualBeneficialOwnerAddition getIndividualBeneficialOwnerAddition(
