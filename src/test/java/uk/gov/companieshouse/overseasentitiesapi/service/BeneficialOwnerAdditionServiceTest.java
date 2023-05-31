@@ -55,8 +55,7 @@ class BeneficialOwnerAdditionServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
                 .thenReturn(getLegalPersonBeneficialOwners());
 
-        List<Addition> additions =
-                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(3, additions.size());
         assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
@@ -71,8 +70,18 @@ class BeneficialOwnerAdditionServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
                 .thenReturn(Collections.emptyList());
 
-        List<Addition> additions =
-                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testBeneficialOwnerAdditionsNullReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(null);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(null);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(null);
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(0, additions.size());
     }
@@ -92,8 +101,7 @@ class BeneficialOwnerAdditionServiceTest {
                     setChipsReference("123456789");
                 }}));
 
-        List<Addition> additions =
-                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(0, additions.size());
     }
@@ -108,8 +116,7 @@ class BeneficialOwnerAdditionServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
                 .thenReturn(Collections.emptyList());
 
-        List<Addition> additions =
-                beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(1, additions.size());
         assertEquals("Irish", ((IndividualBeneficialOwnerAddition) additions.get(0)).getNationalityOther());

@@ -33,28 +33,34 @@ public class BeneficialOwnerAdditionService {
     private void getIndividualBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
-        beneficialOwnersIndividual.stream()
-            .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-            .map(this::getIndividualBeneficialOwnerAddition)
-            .forEachOrdered(additions::add);
+        if (beneficialOwnersIndividual != null) {
+            beneficialOwnersIndividual.stream()
+                    .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
+                    .map(this::getIndividualBeneficialOwnerAddition)
+                    .forEachOrdered(additions::add);
+        }
     }
 
     private void getCorporateEntityBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersCorporateEntity = overseasEntitySubmissionDto.getBeneficialOwnersCorporate();
-        beneficialOwnersCorporateEntity.stream()
-                .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(this::getCorporateEntityBeneficialOwnerAddition)
-                .forEachOrdered(additions::add);
+        if (beneficialOwnersCorporateEntity != null) {
+            beneficialOwnersCorporateEntity.stream()
+                    .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
+                    .map(this::getCorporateEntityBeneficialOwnerAddition)
+                    .forEachOrdered(additions::add);
+        }
     }
 
     private void getLegalPersonBeneficialOwnerAdditions(
             List<Addition> additions, OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var beneficialOwnersLegalPerson = overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority();
-        beneficialOwnersLegalPerson.stream()
-                .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
-                .map(this::getLegalPersonBeneficialOwnerAddition)
-                .forEachOrdered(additions::add);
+        if (beneficialOwnersLegalPerson != null) {
+            beneficialOwnersLegalPerson.stream()
+                    .filter(beneficialOwner -> (beneficialOwner.getChipsReference() == null))
+                    .map(this::getLegalPersonBeneficialOwnerAddition)
+                    .forEachOrdered(additions::add);
+        }
     }
 
     private IndividualBeneficialOwnerAddition getIndividualBeneficialOwnerAddition(
