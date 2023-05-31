@@ -74,8 +74,7 @@ public class OverseasEntitySubmissionDtoValidator {
         // Method to be added to as Update journey developed
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        // Change to Statement Validation once BO/MO Statements are complete
-        // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
     }
@@ -140,8 +139,10 @@ public class OverseasEntitySubmissionDtoValidator {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey
+
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,

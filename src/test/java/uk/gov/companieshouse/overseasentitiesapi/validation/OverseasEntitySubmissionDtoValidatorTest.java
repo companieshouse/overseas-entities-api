@@ -554,7 +554,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                     eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                     any(),
                     any());
-        verify(ownersAndOfficersDataBlockValidator, times(0)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
         assertFalse(errors.hasErrors());
     }
 
