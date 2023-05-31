@@ -86,8 +86,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualBeneficialOwnerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner;
 
 @ExtendWith(MockitoExtension.class)
@@ -106,6 +112,18 @@ class FilingServiceTest {
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
     private static final List<Change> DUMMY_CHANGES = List.of(new EntityNameChange("New name"));
+    private static final List<Cessation> DUMMY_CESSATION = List.of(
+            new IndividualBeneficialOwnerCessation("Appointment id",
+                LocalDate.of(2023, 1, 1),
+                LocalDate.of(2023, 1, 1),
+                new PersonName("Joe", "Bloggs")));
+    private static final List<Addition> DUMMY_ADDITION = List.of(
+            new IndividualBeneficialOwnerAddition(
+                    LocalDate.of(2023, 1, 1),
+                    LocalDate.of(2023, 1, 1),
+                    new Address(),
+                    new Address(),
+                    List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON")));
 
     @InjectMocks
     private FilingsService filingsService;
@@ -142,6 +160,9 @@ class FilingServiceTest {
 
     @Mock
     private PrivateDataRetrievalService privateDataRetrievalService;
+
+    @Mock
+    private BeneficialOwnerAdditionService beneficialOwnerAdditionService;
 
     @Mock
     private BeneficialOwnerCessationService beneficialOwnerCessationService;
@@ -294,12 +315,15 @@ class FilingServiceTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_ADDITION);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
-        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
         verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
+        verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
@@ -319,8 +343,8 @@ class FilingServiceTest {
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
 
         assertEquals(1, ((List<?>)filing.getData().get("changes")).size());
-        assertEquals(0, ((List<?>)filing.getData().get("additions")).size());
-        assertEquals(0, ((List<?>)filing.getData().get("cessations")).size());
+        assertEquals(1, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(1, ((List<?>)filing.getData().get("cessations")).size());
     }
 
     @Test
@@ -719,7 +743,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
+    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
         final TrustDataDto trustData = trustDataList.get(boIndex);
@@ -751,7 +775,7 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
+    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
         final TrustDataDto trustData1 = trustDataList.get(0);
@@ -784,7 +808,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
+    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
 
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
@@ -819,7 +843,7 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
+    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
 
@@ -972,7 +996,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
-
+        
         setValidationEnabledFeatureFlag(true);
 
         initTransactionPaymentLinkMocks();
@@ -1006,7 +1030,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1041,7 +1065,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1077,7 +1101,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1112,7 +1136,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1148,7 +1172,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1188,7 +1212,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1224,7 +1248,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
 
         setValidationEnabledFeatureFlag(true);
 
