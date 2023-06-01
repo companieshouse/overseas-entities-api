@@ -93,6 +93,7 @@ public class FilingsService {
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
+  private final ManagingOfficerAdditionService managingOfficerAdditionService;
   private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
@@ -105,6 +106,7 @@ public class FilingsService {
           PublicDataRetrievalService publicDataRetrievalService,
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
+          ManagingOfficerAdditionService managingOfficerAdditionService,
           OverseasEntityChangeService overseasEntityChangeService) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
@@ -114,6 +116,7 @@ public class FilingsService {
     this.publicDataRetrievalService = publicDataRetrievalService;
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
+    this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
@@ -192,6 +195,7 @@ public class FilingsService {
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
     updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+    updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
     ApiLogger.debug("Updates have been collected", logMap);
   }
