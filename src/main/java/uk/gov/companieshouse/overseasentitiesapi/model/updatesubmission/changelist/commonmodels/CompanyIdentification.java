@@ -1,16 +1,31 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 public class CompanyIdentification {
+    @JsonInclude(NON_NULL)
+    @JsonProperty("legalForm")
     private String legalForm;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("governingLaw")
     private String governingLaw;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registerLocation")
     private String registerLocation;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("placeRegistered")
     private String placeRegistered;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registrationNumber")
     private String registrationNumber;
 
     public CompanyIdentification(String legalForm, String governingLaw, String registerLocation, String placeRegistered, String registrationNumber) {
