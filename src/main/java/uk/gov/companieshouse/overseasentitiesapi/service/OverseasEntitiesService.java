@@ -224,6 +224,11 @@ public class OverseasEntitiesService {
 
         transaction.setCompanyName(entityName);
 
+        if (overseasEntitySubmissionDto.isForUpdate()) {
+            var entityNumber = overseasEntitySubmissionDto.getEntityNumber();
+            transaction.setCompanyNumber(entityNumber);
+        }
+
         transaction.setResources(Collections.singletonMap(submissionUri, overseasEntityResource));
 
         if (addResumeLinkToTransaction) {
