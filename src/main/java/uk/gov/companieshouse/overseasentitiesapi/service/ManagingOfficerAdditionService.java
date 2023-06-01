@@ -54,6 +54,8 @@ public class ManagingOfficerAdditionService {
         individualManagingOfficerAddition.setPersonName(new PersonName(mo.getFirstName(), mo.getLastName()));
         individualManagingOfficerAddition.setFormerNames(mo.getFormerNames());
         individualManagingOfficerAddition.setBirthDate(mo.getDateOfBirth());
+        individualManagingOfficerAddition.setRole(mo.getRoleAndResponsibilities());
+        individualManagingOfficerAddition.setOccupation(mo.getOccupation());
 
         if (Objects.isNull(mo.getSecondNationality())) {
             individualManagingOfficerAddition.setNationalityOther(mo.getNationality());
