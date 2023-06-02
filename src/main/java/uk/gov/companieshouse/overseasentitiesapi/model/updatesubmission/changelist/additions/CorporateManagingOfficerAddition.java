@@ -7,8 +7,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.time.LocalDate;
 
 public class CorporateManagingOfficerAddition extends ManagingOfficerAddition{
-    private static final String APPOINTMENT_TYPE = "Managing Officer";
-
     @JsonProperty("name")
     private String name;
 
@@ -26,7 +24,6 @@ public class CorporateManagingOfficerAddition extends ManagingOfficerAddition{
                                             Address serviceAddress,
                                             LocalDate resignedOn) {
         super(actionDate, residentialAddress, serviceAddress, resignedOn);
-        setAppointmentType(APPOINTMENT_TYPE);
     }
 
     public String getName() {

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 public abstract class ManagingOfficerAddition extends Addition {
     private static final String CHANGE_NAME = "addOfficerAppointment";
+    private static final String APPOINTMENT_TYPE = "Managing Officer";
 
     @JsonProperty("actionDate")
     private LocalDate actionDate;
@@ -25,6 +26,7 @@ public abstract class ManagingOfficerAddition extends Addition {
                                    Address serviceAddress,
                                    LocalDate resignedOn) {
         super.setChangeName(CHANGE_NAME);
+        super.setAppointmentType(APPOINTMENT_TYPE);
         this.actionDate = actionDate;
         this.residentialAddress = residentialAddress;
         this.serviceAddress = serviceAddress;
