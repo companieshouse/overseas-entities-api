@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -311,5 +312,107 @@ class PublicPrivateDataCombinerTest {
     String actualOutput = publicPrivateDataCombiner.logCollatedData();
 
     assertEquals(expectedOutput, actualOutput);
+  }
+
+  @Test
+  void testBuildMergedBeneficialOwnerDataMapNoPrivatePublicBoData() throws JsonProcessingException, ServiceException {
+    // Configure mock behavior
+    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(null);
+    when(publicDataRetrievalService.getPscs()).thenReturn(null);
+
+    // Execute the method to test
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+
+    assertTrue(results.isEmpty());
+  }
+
+  @Test
+  void testBuildMergedBeneficialOwnerDataMapNoPrivateBoData() throws JsonProcessingException, ServiceException {
+    // Prepare test data
+    PscApi pscApi = objectMapper.readValue(pscJsonString, PscApi.class);
+    PscsApi pscsApi = new PscsApi();
+    pscsApi.setItems(Collections.singletonList(pscApi));
+
+    // Configure mock behavior
+    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(null);
+    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+
+    // Execute the method to test
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+
+    assertTrue(results.isEmpty());
+  }
+
+  @Test
+  void testBuildMergedBeneficialOwnerDataMapNoPublicBoData() throws JsonProcessingException, ServiceException {
+    // Prepare test data
+    PrivateBoDataApi privateBoDataApi = new PrivateBoDataApi();
+    privateBoDataApi.setPscId("12345");
+
+    PscApi pscApi = objectMapper.readValue(pscJsonString, PscApi.class);
+    PscsApi pscsApi = new PscsApi();
+    pscsApi.setItems(Collections.singletonList(pscApi));
+
+    // Configure mock behavior
+    when(privateDataRetrievalService.getBeneficialOwnerData())
+            .thenReturn(new PrivateBoDataListApi(List.of(privateBoDataApi)));
+    when(publicDataRetrievalService.getPscs()).thenReturn(null);
+
+    // Execute the method to test
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+
+    assertTrue(results.isEmpty());
+  }
+
+  @Test
+  void testBuildMergedManagingOfficerDataMapNoPrivatePublicMoData() throws JsonProcessingException, ServiceException {
+    // Prepare test data
+    ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
+    managingOfficerDataApi.setManagingOfficerId("12345");
+
+    OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
+    CompanyOfficerApi companyOfficerApi = officersApi.getItems().get(0);
+
+    // Configure mock behavior
+    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(null);
+    when(publicDataRetrievalService.getOfficers()).thenReturn(null);
+
+    // Execute the method to test
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+    assertTrue(results.isEmpty());
+  }
+
+  @Test
+  void testBuildMergedManagingOfficerDataMapNoPrivateMoData() throws JsonProcessingException, ServiceException {
+    // Prepare test data
+    OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
+    CompanyOfficerApi companyOfficerApi = officersApi.getItems().get(0);
+
+    // Configure mock behavior
+    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(null);
+    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+
+    // Execute the method to test
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+    assertTrue(results.isEmpty());
+  }
+
+  @Test
+  void testBuildMergedManagingOfficerDataMapNoPublicMoData() throws JsonProcessingException, ServiceException {
+    // Prepare test data
+    ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
+    managingOfficerDataApi.setManagingOfficerId("12345");
+
+    // Configure mock behavior
+    when(privateDataRetrievalService.getManagingOfficerData())
+            .thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
+    when(publicDataRetrievalService.getOfficers()).thenReturn(null);
+
+    // Execute the method to test
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
+    assertTrue(results.isEmpty());
   }
 }
