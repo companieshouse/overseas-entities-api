@@ -89,6 +89,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualBeneficialOwnerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
@@ -112,18 +113,24 @@ class FilingServiceTest {
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
     private static final List<Change> DUMMY_CHANGES = List.of(new EntityNameChange("New name"));
-    private static final List<Cessation> DUMMY_CESSATION = List.of(
+    private static final List<Cessation> DUMMY_BO_CESSATION = List.of(
             new IndividualBeneficialOwnerCessation("Appointment id",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 1, 1),
                 new PersonName("Joe", "Bloggs")));
-    private static final List<Addition> DUMMY_ADDITION = List.of(
+    private static final List<Addition> DUMMY_BO_ADDITION = List.of(
             new IndividualBeneficialOwnerAddition(
                     LocalDate.of(2023, 1, 1),
                     LocalDate.of(2023, 1, 1),
                     new Address(),
                     new Address(),
                     List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON")));
+    private static final List<Addition> DUMMY_MO_ADDITION = List.of(
+            new IndividualManagingOfficerAddition(
+                    LocalDate.of(2023, 1, 1),
+                    new Address(),
+                    new Address(),
+                    LocalDate.of(2023, 1, 1)));
 
     @InjectMocks
     private FilingsService filingsService;
@@ -166,6 +173,9 @@ class FilingServiceTest {
 
     @Mock
     private BeneficialOwnerCessationService beneficialOwnerCessationService;
+
+    @Mock
+    private ManagingOfficerAdditionService managingOfficerAdditionService;
 
     @Mock
     private PublicPrivateDataCombiner publicPrivateDataCombiner;
@@ -315,14 +325,16 @@ class FilingServiceTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
-        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CESSATION);
-        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_ADDITION);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
+        when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
         verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
         verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
+        verify(managingOfficerAdditionService, times(1)).managingOfficerAdditions(Mockito.any());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
 
         verify(localDateSupplier, times(1)).get();
@@ -343,7 +355,7 @@ class FilingServiceTest {
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
 
         assertEquals(1, ((List<?>)filing.getData().get("changes")).size());
-        assertEquals(1, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(1, ((List<?>)filing.getData().get("cessations")).size());
     }
 

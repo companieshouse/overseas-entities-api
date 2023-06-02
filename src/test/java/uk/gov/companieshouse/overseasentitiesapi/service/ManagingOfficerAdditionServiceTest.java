@@ -6,14 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateManagingOfficerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,6 +50,55 @@ public class ManagingOfficerAdditionServiceTest {
         assertEquals(2, additions.size());
         assertIndividualManagingOfficerDetails((IndividualManagingOfficerAddition) additions.get(0));
         assertCorporateManagingOfficerDetails((CorporateManagingOfficerAddition) additions.get(1));
+    }
+
+    @Test
+    void testManagingOfficerAdditionsNoDataReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testManagingOfficerAdditionsNullReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(null);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(null);
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testManagingOfficerNoAdditionsInSubmissionReturnsEmptyList() {
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual())
+                .thenReturn(List.of(new ManagingOfficerIndividualDto() {{
+                    setChipsReference("123456789");
+                }}));
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
+                .thenReturn(List.of(new ManagingOfficerCorporateDto() {{
+                    setChipsReference("123456789");
+                }}));
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(0, additions.size());
+    }
+
+    @Test
+    void testManagingOfficerAdditionsNoSecondNationalityInSubmissionReturnsNationality() {
+        var individualManagingOfficers = getIndividualManagingOfficers();
+        individualManagingOfficers.get(0).setSecondNationality(null);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(individualManagingOfficers);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(1, additions.size());
+        assertEquals("Irish", ((IndividualManagingOfficerAddition) additions.get(0)).getNationalityOther());
     }
 
     private List<ManagingOfficerIndividualDto> getIndividualManagingOfficers() {
