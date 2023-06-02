@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ManagingOfficerAdditionServiceTest {
+class ManagingOfficerAdditionServiceTest {
     @Mock
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
     private ManagingOfficerAdditionService managingOfficerAdditionService;

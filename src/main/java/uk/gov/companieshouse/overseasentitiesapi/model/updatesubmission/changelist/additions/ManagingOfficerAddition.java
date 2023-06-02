@@ -20,7 +20,7 @@ public abstract class ManagingOfficerAddition extends Addition {
     @JsonProperty("resignedOn")
     private LocalDate resignedOn;
 
-    public ManagingOfficerAddition(LocalDate actionDate,
+    protected ManagingOfficerAddition(LocalDate actionDate,
                                    Address residentialAddress,
                                    Address serviceAddress,
                                    LocalDate resignedOn) {
