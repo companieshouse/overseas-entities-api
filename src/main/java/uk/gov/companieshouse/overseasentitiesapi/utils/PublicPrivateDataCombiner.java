@@ -63,42 +63,44 @@ public class PublicPrivateDataCombiner {
     var privateBOs = privateDataRetrievalService.getBeneficialOwnerData();
     var publicPSCs = publicDataRetrievalService.getPscs();
 
-    for (PrivateBoDataApi privateBO : privateBOs.getBoPrivateData()) {
+    if (privateBOs != null && publicPSCs != null) {
+      for (PrivateBoDataApi privateBO : privateBOs.getBoPrivateData()) {
 
-      String hashedId = null;
-      try {
-        hashedId = hashHelper.encode(privateBO.getPscId());
-      } catch (NoSuchAlgorithmException e) {
-        throw new ServiceException("Error hashing PSC ID", e);
+        String hashedId = null;
+        try {
+          hashedId = hashHelper.encode(privateBO.getPscId());
+        } catch (NoSuchAlgorithmException e) {
+          throw new ServiceException("Error hashing PSC ID", e);
+        }
+
+        var pairFromMap = combinedBOs.get(hashedId);
+        Pair<PscApi, PrivateBoDataApi> pairToPutInMap;
+
+        if (pairFromMap != null) {
+          pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateBO);
+        } else {
+          pairToPutInMap = Pair.of(null, privateBO);
+        }
+        combinedBOs.put(hashedId, pairToPutInMap);
       }
 
-      var pairFromMap = combinedBOs.get(hashedId);
-      Pair<PscApi, PrivateBoDataApi> pairToPutInMap;
+      for (PscApi publicPSC : publicPSCs.getItems()) {
+        String[] linkAsArray = publicPSC
+                .getLinks()
+                .getSelf()
+                .split("/");
+        String hashedId = linkAsArray[linkAsArray.length - 1];
 
-      if (pairFromMap != null) {
-        pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateBO);
-      } else {
-        pairToPutInMap = Pair.of(null, privateBO);
+        var pairFromMap = combinedBOs.get(hashedId);
+        Pair<PscApi, PrivateBoDataApi> pairToGoInMap;
+
+        if (pairFromMap != null) {
+          pairToGoInMap = Pair.of(publicPSC, pairFromMap.getRight());
+        } else {
+          pairToGoInMap = Pair.of(publicPSC, null);
+        }
+        combinedBOs.put(hashedId, pairToGoInMap);
       }
-      combinedBOs.put(hashedId, pairToPutInMap);
-    }
-
-    for (PscApi publicPSC : publicPSCs.getItems()) {
-      String[] linkAsArray = publicPSC
-          .getLinks()
-          .getSelf()
-          .split("/");
-      String hashedId = linkAsArray[linkAsArray.length - 1];
-
-      var pairFromMap = combinedBOs.get(hashedId);
-      Pair<PscApi, PrivateBoDataApi> pairToGoInMap;
-
-      if (pairFromMap != null) {
-        pairToGoInMap = Pair.of(publicPSC, pairFromMap.getRight());
-      } else {
-        pairToGoInMap = Pair.of(publicPSC, null);
-      }
-      combinedBOs.put(hashedId, pairToGoInMap);
     }
 
     return combinedBOs;
@@ -119,40 +121,42 @@ public class PublicPrivateDataCombiner {
     var privateMOs = privateDataRetrievalService.getManagingOfficerData();
     var publicOfficers = publicDataRetrievalService.getOfficers();
 
-    for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
-      String hashedId = null;
-      try {
-        hashedId = hashHelper.encode(privateMO.getManagingOfficerId());
-      } catch (NoSuchAlgorithmException e) {
-        throw new ServiceException("Error hashing Managing Officer ID", e);
+    if (privateMOs != null && publicOfficers != null) {
+      for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
+        String hashedId = null;
+        try {
+          hashedId = hashHelper.encode(privateMO.getManagingOfficerId());
+        } catch (NoSuchAlgorithmException e) {
+          throw new ServiceException("Error hashing Managing Officer ID", e);
+        }
+
+        var pairFromMap = combinedMOs.get(hashedId);
+        Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
+
+        if (pairFromMap != null) {
+          pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateMO);
+        } else {
+          pairToPutInMap = Pair.of(null, privateMO);
+        }
+
+        combinedMOs.put(hashedId, pairToPutInMap);
       }
 
-      var pairFromMap = combinedMOs.get(hashedId);
-      Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
+      for (CompanyOfficerApi publicOfficer : publicOfficers.getItems()) {
+        String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
+        String hashedId = linkAsArray[linkAsArray.length - 1];
 
-      if (pairFromMap != null) {
-        pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateMO);
-      } else {
-        pairToPutInMap = Pair.of(null, privateMO);
+        var pairFromMap = combinedMOs.get(hashedId);
+        Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
+
+        if (pairFromMap != null) {
+          var pair = combinedMOs.get(hashedId);
+          pairToPutInMap = Pair.of(publicOfficer, pair.getRight());
+        } else {
+          pairToPutInMap = Pair.of(publicOfficer, null);
+        }
+        combinedMOs.put(hashedId, pairToPutInMap);
       }
-
-      combinedMOs.put(hashedId, pairToPutInMap);
-    }
-
-    for (CompanyOfficerApi publicOfficer : publicOfficers.getItems()) {
-      String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
-      String hashedId = linkAsArray[linkAsArray.length - 1];
-
-      var pairFromMap = combinedMOs.get(hashedId);
-      Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
-      
-      if (pairFromMap != null) {
-        var pair = combinedMOs.get(hashedId);
-        pairToPutInMap = Pair.of(publicOfficer, pair.getRight());
-      } else {
-        pairToPutInMap = Pair.of(publicOfficer, null);
-      }
-      combinedMOs.put(hashedId, pairToPutInMap);
     }
 
     return combinedMOs;

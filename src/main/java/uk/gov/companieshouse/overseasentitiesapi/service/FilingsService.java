@@ -186,12 +186,16 @@ public class FilingsService {
     var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
     var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
     publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
-    updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
+
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
-    updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+    if (!publicPrivateBoData.isEmpty()) {
+      updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+      //TODO: Add BO Changes to update submission
+    }
 
     ApiLogger.debug("Updates have been collected", logMap);
   }
