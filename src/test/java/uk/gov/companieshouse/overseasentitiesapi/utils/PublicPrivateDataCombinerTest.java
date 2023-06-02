@@ -354,8 +354,7 @@ class PublicPrivateDataCombinerTest {
     pscsApi.setItems(Collections.singletonList(pscApi));
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData())
-            .thenReturn(new PrivateBoDataListApi(List.of(privateBoDataApi)));
+    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(new PrivateBoDataListApi(List.of(privateBoDataApi)));
     when(publicDataRetrievalService.getPscs()).thenReturn(null);
 
     // Execute the method to test
@@ -406,8 +405,7 @@ class PublicPrivateDataCombinerTest {
     managingOfficerDataApi.setManagingOfficerId("12345");
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData())
-            .thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
+    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
     when(publicDataRetrievalService.getOfficers()).thenReturn(null);
 
     // Execute the method to test
