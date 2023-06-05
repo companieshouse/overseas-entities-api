@@ -95,6 +95,7 @@ public class FilingsService {
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
   private final ManagingOfficerAdditionService managingOfficerAdditionService;
   private final OverseasEntityChangeService overseasEntityChangeService;
+  private final BeneficialOwnerChangeService beneficialOwnerChangeService;
 
   @Autowired
   public FilingsService(
@@ -104,10 +105,12 @@ public class FilingsService {
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
+          BeneficialOwnerChangeService beneficialOwnerChangeService,
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
           ManagingOfficerAdditionService managingOfficerAdditionService,
-          OverseasEntityChangeService overseasEntityChangeService) {
+          OverseasEntityChangeService overseasEntityChangeService
+  ) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
@@ -118,6 +121,7 @@ public class FilingsService {
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
+    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -193,6 +197,7 @@ public class FilingsService {
 
     updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
+    updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
     updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
     updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
