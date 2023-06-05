@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.NatureOfControl;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 import java.time.LocalDate;
@@ -87,16 +87,6 @@ class IndividualBeneficialOwnerPscTest {
   }
 
   @Test
-  void testSetAndGetNatureOfControls() {
-    NatureOfControl natureOfControl = new NatureOfControl();
-    individualBeneficialOwnerPsc1.setNatureOfControls(natureOfControl);
-    assertEquals(natureOfControl, individualBeneficialOwnerPsc1.getNatureOfControls());
-
-    individualBeneficialOwnerPsc2.setNatureOfControls(natureOfControl);
-    assertEquals(natureOfControl, individualBeneficialOwnerPsc2.getNatureOfControls());
-  }
-
-  @Test
   void testEqualsAndHashCode() {
     var individualBeneficialOwnerPsc1 = createIndividualBeneficialOwnerPsc();
     var individualBeneficialOwnerPsc2 = createIndividualBeneficialOwnerPsc();
@@ -119,7 +109,7 @@ class IndividualBeneficialOwnerPscTest {
     psc.setActionDate(LocalDate.now().toString());
     psc.setServiceAddress(new Address());
     psc.setResidentialAddress(new Address());
-    psc.setNatureOfControls(new NatureOfControl());
+    psc.setNatureOfControls(List.of("over_25_percent_of_voting_rights"));
     return psc;
   }
 }

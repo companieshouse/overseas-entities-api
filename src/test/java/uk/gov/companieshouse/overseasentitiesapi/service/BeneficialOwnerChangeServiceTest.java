@@ -170,7 +170,7 @@ class BeneficialOwnerChangeServiceTest {
       assertEquals("Bangladeshi,Indonesian",
           individualBeneficialOwnerChange.getPsc().getNationalityOther());
       assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
-          individualBeneficialOwnerChange.getPsc().getNatureOfControls().getNatureOfControlTypes());
+          individualBeneficialOwnerChange.getPsc().getNatureOfControls());
     }
   }
 

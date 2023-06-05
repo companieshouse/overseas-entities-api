@@ -1,9 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.NatureOfControl;
 
 public abstract class Psc {
 
@@ -13,7 +14,7 @@ public abstract class Psc {
   @JsonProperty("serviceAddress")
   private Address serviceAddress;
   @JsonProperty("natureOfControls")
-  private NatureOfControl natureOfControls = new NatureOfControl();
+  private List<String> natureOfControls;
 
   public String getActionDate() {
     return actionDate;
@@ -39,13 +40,21 @@ public abstract class Psc {
 
   public abstract void setResidentialAddress(Address residentialAddress);
 
-  public NatureOfControl getNatureOfControls() {
+  public List<String> getNatureOfControls() {
     return natureOfControls;
   }
 
+
   public void setNatureOfControls(
-      NatureOfControl natureOfControls) {
+      List<String> natureOfControls) {
     this.natureOfControls = natureOfControls;
+  }
+
+  public void addNatureOfControlTypes(List<String> natureOfControls) {
+    if (this.natureOfControls == null) {
+      this.natureOfControls = new ArrayList<>();
+    }
+    this.natureOfControls.addAll(natureOfControls);
   }
 
   @Override

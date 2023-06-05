@@ -28,7 +28,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc.OtherBeneficialOwnerPsc;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc.Psc;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.NatureOfControl;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
@@ -166,7 +165,6 @@ public class BeneficialOwnerChangeService {
         trusteesNatureOfControlTypes, nonLegalFirmMembersNatureOfControlTypes);
 
     boolean hasChange = setCommonAttributes(changeManager,
-        publicPrivateBoPair,
         beneficialOwnerCorporateDto.getServiceAddress(),
         beneficialOwnerCorporateDto.getPrincipalAddress(),
         collectedNatureOfControl);
@@ -243,7 +241,6 @@ public class BeneficialOwnerChangeService {
         null, nonLegalFirmMembersNatureOfControlTypes);
 
     boolean hasChange = setCommonAttributes(changeManager,
-        publicPrivateBoPair,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(),
         collectedNatureOfControl
@@ -317,7 +314,6 @@ public class BeneficialOwnerChangeService {
         trusteesNatureOfControlTypes, nonLegalFirmMembersNatureOfControlTypes);
 
     boolean hasChange = setCommonAttributes(changeManager,
-        publicPrivateBoPair,
         beneficialOwnerIndividualDto.getServiceAddress(),
         beneficialOwnerIndividualDto.getUsualResidentialAddress(),
         collectedNatureOfControl);
@@ -367,7 +363,6 @@ public class BeneficialOwnerChangeService {
    * If discrepancies are detected, the changes are applied accordingly.</p>
    *
    * @param changeManager       The ChangeManager used to detect and apply changes to the PSC.
-   * @param publicPrivateBoPair The pair containing current PSC data the public and private data.
    * @param serviceAddress      The service address DTO to be compared and potentially applied.
    * @param residentialAddress  The residential address DTO to be compared and potentially applied.
    * @param natureOfControls    The list of nature of controls to be compared and potentially
@@ -377,7 +372,6 @@ public class BeneficialOwnerChangeService {
    */
   private <P extends Psc> boolean setCommonAttributes(
       ChangeManager<P, PscApi, PrivateBoDataApi> changeManager,
-      Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair,
       AddressDto serviceAddress,
       AddressDto residentialAddress,
       List<String> natureOfControls
@@ -399,19 +393,12 @@ public class BeneficialOwnerChangeService {
         Psc::setResidentialAddress
     );
 
-    NatureOfControl publicNatureOfControls = changeManager.getObjectToAddChanges() == null ? null
-        : changeManager.getObjectToAddChanges().getNatureOfControls();
-
-    ChangeManager<NatureOfControl, PscApi, NatureOfControl> natureOfControlsChangeManager
-        = new ChangeManager<>(changeManager.getObjectToAddChanges().getNatureOfControls(),
-        new ImmutablePair<>(publicPrivateBoPair.getLeft(), publicNatureOfControls));
-
-    hasChange |= natureOfControlsChangeManager.compareAndBuildLeftChange(
+    hasChange |= changeManager.compareAndBuildLeftChange(
         natureOfControls,
         PscApi::getNaturesOfControl,
         Function.identity(),
         ComparisonHelper::equals,
-        NatureOfControl::addNatureOfControlTypes);
+        Psc::addNatureOfControlTypes);
 
     return hasChange;
   }

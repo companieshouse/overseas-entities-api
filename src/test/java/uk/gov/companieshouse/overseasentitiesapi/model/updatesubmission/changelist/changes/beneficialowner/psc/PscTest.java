@@ -3,10 +3,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changel
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.NatureOfControl;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +52,7 @@ class PscTest {
 
   @Test
   void testSetAndGetNatureOfControls() {
-    NatureOfControl natureOfControl = createNatureOfControl();
+    var natureOfControl = List.of("over_25_percent_of_voting_rights");
     psc1.setNatureOfControls(natureOfControl);
     assertEquals(natureOfControl, psc1.getNatureOfControls());
 
@@ -81,7 +79,7 @@ class PscTest {
     OtherBeneficialOwnerPsc psc = new OtherBeneficialOwnerPsc();
     psc.setServiceAddress(createAddress());
     psc.setResidentialAddress(createAddress());
-    psc.setNatureOfControls(createNatureOfControl());
+    psc.setNatureOfControls(List.of("Type 1", "Type 2"));
     return psc;
   }
 
@@ -98,12 +96,5 @@ class PscTest {
     address.setPostCode("Post Code");
     address.setCountry("Country");
     return address;
-  }
-
-  private NatureOfControl createNatureOfControl() {
-    NatureOfControl natureOfControl = new NatureOfControl();
-    List<String> natureOfControlTypes = Arrays.asList("Type 1", "Type 2");
-    natureOfControl.setNatureOfControlTypes(natureOfControlTypes);
-    return natureOfControl;
   }
 }

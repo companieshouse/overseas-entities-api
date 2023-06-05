@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.NatureOfControl;
 
 import java.time.LocalDate;
 
@@ -60,9 +60,8 @@ class OtherBeneficialOwnerPscTest {
 
   @Test
   void testSetAndGetNatureOfControls() {
-    NatureOfControl natureOfControl = mock(NatureOfControl.class);
-    otherBeneficialOwnerPsc.setNatureOfControls(natureOfControl);
-    assertEquals(natureOfControl, otherBeneficialOwnerPsc.getNatureOfControls());
+    otherBeneficialOwnerPsc.setNatureOfControls(List.of("Type 1"));
+    assertEquals(List.of("Type 1"), otherBeneficialOwnerPsc.getNatureOfControls());
   }
 
   @Test
