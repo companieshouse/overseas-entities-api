@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Objects;
 
 public class NationalityOtherMapping {
@@ -8,7 +10,7 @@ public class NationalityOtherMapping {
     }
 
     public static String generateNationalityOtherField(String nationality, String secondNationality) {
-        if (Objects.isNull(secondNationality)) {
+        if (StringUtils.isEmpty(secondNationality)) {
             return nationality;
         } else {
             return String.format("%s, %s", nationality, secondNationality);

@@ -12,7 +12,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
