@@ -146,7 +146,15 @@ class ComparisonHelperTest {
   }
 
   @Test
-  void equalsLocalDateAndStringReturnCorrectResult() {
+  void equalsLocalDateAndStringWithTimeReturnCorrectResult() {
+    LocalDate localDate = LocalDate.of(2001, 2, 3);
+    String dateString = "2001-02-03 00:00:00.000000";
+
+    assertTrue(ComparisonHelper.equals(localDate, dateString));
+  }
+
+  @Test
+  void equalsLocalDateAndStringWithoutTimeReturnCorrectResult() {
     LocalDate localDate = LocalDate.of(2001, 2, 3);
     String dateString = "2001-02-03";
 
