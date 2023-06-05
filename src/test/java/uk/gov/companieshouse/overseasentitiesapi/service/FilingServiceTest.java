@@ -8,9 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
@@ -31,9 +29,13 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +61,7 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.OfficersApi;
 import uk.gov.companieshouse.api.model.payment.PaymentApi;
 import uk.gov.companieshouse.api.model.psc.PscApi;
@@ -175,6 +178,9 @@ class FilingServiceTest {
 
     @Mock
     private BeneficialOwnerChangeService beneficialOwnerChangeService;
+
+    @Mock
+    private ManagingOfficerCessationService managingOfficerCessationService;
 
     private Transaction transaction;
 
@@ -1311,4 +1317,17 @@ class FilingServiceTest {
     private void setValidationEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(filingsService, "isTrustsSubmissionThroughWebEnabled", value);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testManagingOfficerCessationsServiceIsCalled() {
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = mock(OverseasEntitySubmissionDto.class);
+        Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedMoData = mock(Map.class);
+        Map<String, Object> logMap = mock(Map.class);
+
+        List<Cessation> cessations = managingOfficerCessationService.managingOfficerCessations(overseasEntitySubmissionDto, combinedMoData, logMap);
+
+        assertNotNull(cessations);
+    }
+
 }
