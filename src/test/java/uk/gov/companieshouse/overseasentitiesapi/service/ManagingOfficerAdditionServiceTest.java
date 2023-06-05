@@ -160,9 +160,9 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("Some corporate MO", corporateManagingOfficerAddition.getName());
         assertEquals("John Doe", corporateManagingOfficerAddition.getContactName());
         assertEquals("test@email.com", corporateManagingOfficerAddition.getContactEmail());
-        assertEquals("Legal form", corporateManagingOfficerAddition.getIdentification().getLegalForm());
-        assertEquals("Governing law", corporateManagingOfficerAddition.getIdentification().getGoverningLaw());
-        assertEquals("Register location", corporateManagingOfficerAddition.getIdentification().getRegisterLocation());
-        assertEquals("Registration number", corporateManagingOfficerAddition.getIdentification().getRegistrationNumber());
+        assertEquals("Legal form", corporateManagingOfficerAddition.getCompanyIdentification().getLegalForm());
+        assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
+        assertEquals("Register location", corporateManagingOfficerAddition.getCompanyIdentification().getRegisterLocation());
+        assertEquals("Registration number", corporateManagingOfficerAddition.getCompanyIdentification().getRegistrationNumber());
     }
 }

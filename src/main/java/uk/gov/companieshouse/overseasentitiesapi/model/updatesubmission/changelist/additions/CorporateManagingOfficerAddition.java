@@ -16,8 +16,8 @@ public class CorporateManagingOfficerAddition extends ManagingOfficerAddition {
     @JsonProperty("contactEmail")
     private String contactEmail;
 
-    @JsonProperty("identification")
-    private CompanyIdentification identification;
+    @JsonProperty("companyIdentification")
+    private CompanyIdentification companyIdentification;
 
     public CorporateManagingOfficerAddition(LocalDate actionDate,
                                             Address residentialAddress,
@@ -50,11 +50,11 @@ public class CorporateManagingOfficerAddition extends ManagingOfficerAddition {
         this.contactEmail = contactEmail;
     }
 
-    public CompanyIdentification getIdentification() {
-        return identification;
+    public CompanyIdentification getCompanyIdentification() {
+        return companyIdentification;
     }
 
-    public void setIdentification(CompanyIdentification identification) {
-        this.identification = identification;
+    public void setCompanyIdentification(CompanyIdentification companyIdentification) {
+        this.companyIdentification = companyIdentification;
     }
 }

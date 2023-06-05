@@ -101,7 +101,7 @@ public class ManagingOfficerAdditionService {
         identification.setGoverningLaw(governingLaw);
         identification.setRegisterLocation(registerLocation);
         identification.setRegistrationNumber(registrationNumber);
-        corporateManagingOfficerAddition.setIdentification(identification);
+        corporateManagingOfficerAddition.setCompanyIdentification(identification);
 
         return corporateManagingOfficerAddition;
     }
