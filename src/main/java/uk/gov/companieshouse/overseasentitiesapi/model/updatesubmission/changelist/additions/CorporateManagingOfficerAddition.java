@@ -6,7 +6,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.time.LocalDate;
 
-public class CorporateManagingOfficerAddition extends ManagingOfficerAddition{
+public class CorporateManagingOfficerAddition extends ManagingOfficerAddition {
     @JsonProperty("name")
     private String name;
 

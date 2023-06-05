@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 
 @Service
@@ -57,12 +58,8 @@ public class ManagingOfficerAdditionService {
         individualManagingOfficerAddition.setRole(mo.getRoleAndResponsibilities());
         individualManagingOfficerAddition.setOccupation(mo.getOccupation());
 
-        if (Objects.isNull(mo.getSecondNationality())) {
-            individualManagingOfficerAddition.setNationalityOther(mo.getNationality());
-        } else {
-            individualManagingOfficerAddition.setNationalityOther(
-                    String.format("%s, %s", mo.getNationality(), mo.getSecondNationality()));
-        }
+        individualManagingOfficerAddition.setNationalityOther(
+                generateNationalityOtherField(mo.getNationality(), mo.getSecondNationality()));
 
         return individualManagingOfficerAddition;
     }
@@ -99,8 +96,12 @@ public class ManagingOfficerAdditionService {
         var governingLaw = mo.getLawGoverned();
         var registerLocation = mo.getPublicRegisterName();
         var registrationNumber = mo.getRegistrationNumber();
-        var identification = new CompanyIdentification(
-                legalForm, governingLaw, registerLocation, null, registrationNumber);
+
+        var identification = new CompanyIdentification();
+        identification.setLegalForm(legalForm);
+        identification.setGoverningLaw(governingLaw);
+        identification.setRegisterLocation(registerLocation);
+        identification.setRegistrationNumber(registrationNumber);
         corporateManagingOfficerAddition.setIdentification(identification);
 
         return corporateManagingOfficerAddition;
