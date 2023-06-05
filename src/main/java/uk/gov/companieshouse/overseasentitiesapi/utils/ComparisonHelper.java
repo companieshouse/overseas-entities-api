@@ -53,7 +53,10 @@ public class ComparisonHelper {
       return false;
     }
 
-    return Arrays.equals(list.toArray(), array);
+    var arrayFromList = list.toArray();
+    Arrays.sort(arrayFromList);
+    Arrays.sort(array);
+    return Arrays.equals(arrayFromList, array);
   }
 
   public static boolean equals(PersonName personName, String string) {
