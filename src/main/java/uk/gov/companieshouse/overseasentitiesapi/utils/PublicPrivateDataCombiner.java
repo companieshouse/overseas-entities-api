@@ -211,58 +211,63 @@ public class PublicPrivateDataCombiner {
     }
 
     private void putPublicBoData(PscsApi publicPSCs) {
-        for (PscApi publicPSC : publicPSCs.getItems()) {
-            String[] linkAsArray = publicPSC
-                    .getLinks()
-                    .getSelf()
-                    .split("/");
-            String hashedId = linkAsArray[linkAsArray.length - 1];
+        if (publicPSCs.getItems() != null) {
+            for (PscApi publicPSC : publicPSCs.getItems()) {
+                String[] linkAsArray = publicPSC
+                        .getLinks()
+                        .getSelf()
+                        .split("/");
+                String hashedId = linkAsArray[linkAsArray.length - 1];
 
-            var pairFromMap = combinedBOs.get(hashedId);
-            Pair<PscApi, PrivateBoDataApi> pairToGoInMap;
+                var pairFromMap = combinedBOs.get(hashedId);
+                Pair<PscApi, PrivateBoDataApi> pairToGoInMap;
 
-            if (pairFromMap != null) {
-                pairToGoInMap = Pair.of(publicPSC, pairFromMap.getRight());
-            } else {
-                pairToGoInMap = Pair.of(publicPSC, null);
+                if (pairFromMap != null) {
+                    pairToGoInMap = Pair.of(publicPSC, pairFromMap.getRight());
+                } else {
+                    pairToGoInMap = Pair.of(publicPSC, null);
+                }
+                combinedBOs.put(hashedId, pairToGoInMap);
             }
-            combinedBOs.put(hashedId, pairToGoInMap);
         }
     }
 
     private void putPrivateMoData(ManagingOfficerListDataApi privateMOs) throws ServiceException {
-        for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
-            String hashedId = retrieveHashedId(privateMO.getManagingOfficerId());
+        if (privateMOs.getManagingOfficerData() != null) {
+            for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
+                String hashedId = retrieveHashedId(privateMO.getManagingOfficerId());
 
-            var pairFromMap = combinedMOs.get(hashedId);
-            Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
+                var pairFromMap = combinedMOs.get(hashedId);
+                Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
 
-            if (pairFromMap != null) {
-                pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateMO);
-            } else {
-                pairToPutInMap = Pair.of(null, privateMO);
+                if (pairFromMap != null) {
+                    pairToPutInMap = Pair.of(pairFromMap.getLeft(), privateMO);
+                } else {
+                    pairToPutInMap = Pair.of(null, privateMO);
+                }
+
+                combinedMOs.put(hashedId, pairToPutInMap);
             }
-
-            combinedMOs.put(hashedId, pairToPutInMap);
         }
     }
 
     private void putPublicMoData(OfficersApi publicOfficers) {
+        if (publicOfficers.getItems() != null) {
+            for (CompanyOfficerApi publicOfficer : publicOfficers.getItems()) {
+                String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
+                String hashedId = linkAsArray[linkAsArray.length - 1];
 
-        for (CompanyOfficerApi publicOfficer : publicOfficers.getItems()) {
-            String[] linkAsArray = publicOfficer.getLinks().getSelf().split("/");
-            String hashedId = linkAsArray[linkAsArray.length - 1];
+                var pairFromMap = combinedMOs.get(hashedId);
+                Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
 
-            var pairFromMap = combinedMOs.get(hashedId);
-            Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
-
-            if (pairFromMap != null) {
-                var pair = combinedMOs.get(hashedId);
-                pairToPutInMap = Pair.of(publicOfficer, pair.getRight());
-            } else {
-                pairToPutInMap = Pair.of(publicOfficer, null);
+                if (pairFromMap != null) {
+                    var pair = combinedMOs.get(hashedId);
+                    pairToPutInMap = Pair.of(publicOfficer, pair.getRight());
+                } else {
+                    pairToPutInMap = Pair.of(publicOfficer, null);
+                }
+                combinedMOs.put(hashedId, pairToPutInMap);
             }
-            combinedMOs.put(hashedId, pairToPutInMap);
         }
     }
 
