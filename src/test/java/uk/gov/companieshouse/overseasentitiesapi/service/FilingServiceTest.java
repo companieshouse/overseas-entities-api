@@ -348,7 +348,6 @@ class FilingServiceTest {
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
-        // TODO: Update 'null' fields and cessations/additions
         assertEquals("OE111229", filing.getData().get("entityNumber"));
         assertEquals("OE02", filing.getData().get("type"));
 
