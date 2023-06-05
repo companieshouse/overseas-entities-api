@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 
-public class NationalityOtherMappingTest {
+class NationalityOtherMappingTest {
     @Test
     void testGenerateNationalityOtherField() {
         String nationality = "Irish";
