@@ -37,10 +37,12 @@ public class ComparisonHelper {
     if (a == null || b == null) {
       return false;
     }
+    if (b.contains(" ")) {
+      b = b.substring(0, b.indexOf(" "));
+    }
+
     var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     var localDate = LocalDate.parse(b, formatter);
-
     return a.equals(localDate);
   }
 
