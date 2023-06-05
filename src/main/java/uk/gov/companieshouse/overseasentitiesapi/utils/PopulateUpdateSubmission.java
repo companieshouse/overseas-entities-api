@@ -29,6 +29,7 @@ public class PopulateUpdateSubmission {
      */
     public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
+        updateSubmission.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
         populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
         populatePresenter(overseasEntitySubmissionDto, updateSubmission);
