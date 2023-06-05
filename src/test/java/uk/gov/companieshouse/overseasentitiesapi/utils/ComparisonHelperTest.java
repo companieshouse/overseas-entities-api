@@ -169,6 +169,22 @@ class ComparisonHelperTest {
   }
 
   @Test
+  void equalsListAndArrayWithSameElementsReturnCorrectResult() {
+    List<String> list = Arrays.asList("element2", "element1", "element3");
+    String[] array = {"element1", "element2", "element3"};
+
+    assertTrue(ComparisonHelper.equals(list, array));
+  }
+
+  @Test
+  void equalsListAndArrayWithDifferentElementsReturnCorrectResult() {
+    List<String> list = Arrays.asList("element2", "element1", "element3");
+    String[] array = {"element1", "element2"};
+
+    assertFalse(ComparisonHelper.equals(list, array));
+  }
+
+  @Test
   void equalsListAndArrayWhenNullReturnCorrectResult() {
     List<String> list = Arrays.asList("element1", "element2", "element3");
 
