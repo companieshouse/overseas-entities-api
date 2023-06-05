@@ -13,6 +13,8 @@ public class CompanyIdentification {
 
     private String registrationNumber;
 
+    public CompanyIdentification() {}
+
     public CompanyIdentification(String legalForm, String governingLaw, String registerLocation, String placeRegistered, String registrationNumber) {
         this.legalForm = legalForm;
         this.governingLaw = governingLaw;

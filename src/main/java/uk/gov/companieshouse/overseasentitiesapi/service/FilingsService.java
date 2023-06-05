@@ -94,6 +94,7 @@ public class FilingsService {
   private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
+  private final BeneficialOwnerChangeService beneficialOwnerChangeService;
 
   @Autowired
   public FilingsService(
@@ -105,7 +106,9 @@ public class FilingsService {
           PublicDataRetrievalService publicDataRetrievalService,
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
-          OverseasEntityChangeService overseasEntityChangeService) {
+          OverseasEntityChangeService overseasEntityChangeService,
+          BeneficialOwnerChangeService beneficialOwnerChangeService
+  ) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
@@ -115,6 +118,7 @@ public class FilingsService {
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.overseasEntityChangeService = overseasEntityChangeService;
+    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -190,6 +194,7 @@ public class FilingsService {
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
+    updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
     updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
 

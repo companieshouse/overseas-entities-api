@@ -86,7 +86,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDili
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
@@ -172,6 +172,9 @@ class FilingServiceTest {
 
     @Mock
     private OverseasEntityChangeService overseasEntityChangeService;
+
+    @Mock
+    private BeneficialOwnerChangeService beneficialOwnerChangeService;
 
     private Transaction transaction;
 
@@ -281,6 +284,7 @@ class FilingServiceTest {
         verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(0)).initialisePrivateData(Mockito.anyString());
         verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(0)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
 
 
         verify(localDateSupplier, times(1)).get();
@@ -315,6 +319,7 @@ class FilingServiceTest {
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
         when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
         when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CESSATION);
         when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_ADDITION);
 
@@ -322,6 +327,7 @@ class FilingServiceTest {
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
         verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
         verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
         verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
 
@@ -342,7 +348,7 @@ class FilingServiceTest {
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
 
-        assertEquals(1, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("changes")).size());
         assertEquals(1, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(1, ((List<?>)filing.getData().get("cessations")).size());
     }
