@@ -15,6 +15,7 @@ import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataAp
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.CorporateManagingOfficerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualManagingOfficerCessation;
 
 class ManagingOfficerCessationServiceTest {
@@ -45,7 +46,7 @@ class ManagingOfficerCessationServiceTest {
     List<ManagingOfficerCorporateDto> corporateManagingOfficers = new ArrayList<>();
     ManagingOfficerCorporateDto corporateManagingOfficer = new ManagingOfficerCorporateDto();
     corporateManagingOfficer.setName("ACME Corporation");
-    corporateManagingOfficer.setResignedOn(LocalDate.now());
+    corporateManagingOfficer.setResignedOn(LocalDate.of(2023, 5, 15));
     corporateManagingOfficer.setChipsReference("DEF456");
     corporateManagingOfficers.add(corporateManagingOfficer);
 
@@ -73,12 +74,16 @@ class ManagingOfficerCessationServiceTest {
 
     assertEquals(2, cessations.size()); // Assuming only one beneficial owner satisfies the filter criteria
 
-    IndividualManagingOfficerCessation individualCessation =
-        (IndividualManagingOfficerCessation) cessations.get(0);
+    IndividualManagingOfficerCessation individualCessation = (IndividualManagingOfficerCessation) cessations.get(0);
+    CorporateManagingOfficerCessation corporateCessation = (CorporateManagingOfficerCessation) cessations.get(1);
+
     assertEquals("123", individualCessation.getOfficerAppointmentId());
     assertEquals(LocalDate.now(), individualCessation.getActionDate());
     assertEquals(LocalDate.of(1990, 5, 15).toString(), individualCessation.getBirthDate());
     assertEquals("John Doe", individualCessation.getOfficerName());
+
+    assertEquals("ACME Corporation", corporateCessation.getOfficerName());
+    assertEquals("2023-05-15", corporateCessation.getActionDate().toString());
   }
 
   @Test
