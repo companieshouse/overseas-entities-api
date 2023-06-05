@@ -93,6 +93,7 @@ public class FilingsService {
   private final PrivateDataRetrievalService privateDataRetrievalService;
   private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
+  private final ManagingOfficerAdditionService managingOfficerAdditionService;
   private final ManagingOfficerCessationService managingOfficerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
   private final BeneficialOwnerChangeService beneficialOwnerChangeService;
@@ -105,22 +106,25 @@ public class FilingsService {
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
+          BeneficialOwnerChangeService beneficialOwnerChangeService,
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
+          ManagingOfficerAdditionService managingOfficerAdditionService,
           ManagingOfficerCessationService managingOfficerCessationService,
-          BeneficialOwnerChangeService beneficialOwnerChangeService,
-          OverseasEntityChangeService overseasEntityChangeService) {
+          OverseasEntityChangeService overseasEntityChangeService
+  ) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.managingOfficerCessationService = managingOfficerCessationService;
+    this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
-    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
@@ -198,9 +202,9 @@ public class FilingsService {
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
     updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
-
     updateSubmission.getCessations().addAll(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
     updateSubmission.getCessations().addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto, publicPrivateMoData, logMap));
+    updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
     ApiLogger.debug("Updates have been collected", logMap);
   }

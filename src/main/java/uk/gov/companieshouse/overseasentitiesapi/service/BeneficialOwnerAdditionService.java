@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
 
@@ -86,12 +87,8 @@ public class BeneficialOwnerAdditionService {
         individualBeneficialOwnerAddition.setPersonName(new PersonName(bo.getFirstName(), bo.getLastName()));
         individualBeneficialOwnerAddition.setBirthDate(bo.getDateOfBirth());
 
-        if (Objects.isNull(bo.getSecondNationality())) {
-            individualBeneficialOwnerAddition.setNationalityOther(bo.getNationality());
-        } else {
-            individualBeneficialOwnerAddition.setNationalityOther(
-                    String.format("%s, %s", bo.getNationality(), bo.getSecondNationality()));
-        }
+        individualBeneficialOwnerAddition.setNationalityOther(
+                generateNationalityOtherField(bo.getNationality(), bo.getSecondNationality()));
 
         return individualBeneficialOwnerAddition;
     }
