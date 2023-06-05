@@ -117,11 +117,11 @@ public class FilingsService {
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
     this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
-    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
   }
 
   public FilingApi generateOverseasEntityFiling(
