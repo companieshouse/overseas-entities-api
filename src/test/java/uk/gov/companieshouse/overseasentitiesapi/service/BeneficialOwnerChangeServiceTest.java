@@ -4,6 +4,7 @@ import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -201,6 +202,34 @@ class BeneficialOwnerChangeServiceTest {
   }
 
   @Test
+  void testCovertBeneficialOwnerOtherChangeCheckCompanyIdentificationThroughCollateChanges() {
+    BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+    beneficialOwnerOtherDto.setLegalForm("Private Limited");
+
+    mockPublicPrivateBoPair.getLeft().getIdentification().setLegalForm("Not Private Limited");
+
+    when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
+        mockPublicPrivateBoPair);
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
+        List.of(beneficialOwnerOtherDto));
+
+    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        publicPrivateBo, overseasEntitySubmissionDto);
+
+    assertEquals(1, result.size());
+    assertNotNull(result);
+    assertFalse(result.isEmpty());
+    assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
+
+    if (result.get(0) instanceof OtherBeneficialOwnerChange) {
+      OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
+          0);
+      assertEquals("Private Limited",
+          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCompanyIdentification().getLegalForm());
+    }
+  }
+
+  @Test
   void testCollateAllBeneficialOwnerChanges() {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
@@ -266,10 +295,15 @@ class BeneficialOwnerChangeServiceTest {
     when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
         List.of(beneficialOwnerOtherDto));
 
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+    Exception exception = assertThrows(IllegalArgumentException.class, () ->
+      beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+          publicPrivateBo, overseasEntitySubmissionDto)
+    );
 
-    assertEquals(0, result.size());
+    String expectedMessage = "Invalid input parameter: pair is null";
+    String actualMessage = exception.getMessage();
+
+    assertTrue(actualMessage.contains(expectedMessage));
   }
 
   @Test

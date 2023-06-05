@@ -23,6 +23,13 @@ public class ChangeManager<T, L, R> {
    * @param objectToAddChanges The object containing the data that has been changed
    */
   public ChangeManager(T objectToAddChanges, Pair<L, R> pair) {
+    if (objectToAddChanges == null) {
+      throw new IllegalArgumentException("Invalid input parameter: objectToAddChanges is null.");
+    }
+    if (pair == null) {
+      throw new IllegalArgumentException("Invalid input parameter: pair is null.");
+    }
+
     this.objectToAddChanges = objectToAddChanges;
     this.leftPairData = pair.getLeft();
     this.rightPairData = pair.getRight();
@@ -52,23 +59,32 @@ public class ChangeManager<T, L, R> {
       BiPredicate<P, C> equalityPredicate,
       BiConsumer<T, S> dataSetter) {
 
-    var convertedProposedData = proposedConverter.apply(proposedData);
-
-    if (leftOrRightDataFromPair == null && objectToAddChanges == null) {
+    if (isEmpty(proposedData)) {
       return false;
     }
+    if (currentDataGetter == null) {
+      throw new IllegalArgumentException("Invalid input parameter: currentDataGetter is null.");
+    }
+    if (equalityPredicate == null) {
+      throw new IllegalArgumentException("Invalid input parameter: equalityPredicate is null.");
+    }
+    if (proposedConverter == null) {
+      throw new IllegalArgumentException("Invalid input parameter: proposedConverter is null.");
+    }
+    if (dataSetter == null) {
+      throw new IllegalArgumentException("Invalid input parameter: dataSetter is null.");
+    }
 
-    if (
-        !isEmpty(convertedProposedData) &&
-            (leftOrRightDataFromPair == null ||
-                !equalityPredicate.test(proposedData,
-                    currentDataGetter.apply(leftOrRightDataFromPair)))
-    ) {
+    var convertedProposedData = proposedConverter.apply(proposedData);
+    C currentData =
+        leftOrRightDataFromPair != null ? currentDataGetter.apply(leftOrRightDataFromPair) : null;
+    if (leftOrRightDataFromPair == null || !equalityPredicate.test(proposedData, currentData)) {
       dataSetter.accept(objectToAddChanges, convertedProposedData);
       return true;
     }
     return false;
   }
+
 
   /**
    * @param proposedData      The data that could be added to objectToAddChanges
@@ -157,10 +173,6 @@ public class ChangeManager<T, L, R> {
 
     return this.compareAndBuildRightChange(proposedData, currentDataGetter, Function.identity(),
         Objects::equals, dataSetter);
-  }
-
-  public T getObjectToAddChanges() {
-    return objectToAddChanges;
   }
 
 }
