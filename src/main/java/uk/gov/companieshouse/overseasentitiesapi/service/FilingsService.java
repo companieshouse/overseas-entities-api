@@ -94,6 +94,7 @@ public class FilingsService {
   private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
   private final ManagingOfficerAdditionService managingOfficerAdditionService;
+  private final ManagingOfficerCessationService managingOfficerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
   private final BeneficialOwnerChangeService beneficialOwnerChangeService;
 
@@ -109,6 +110,7 @@ public class FilingsService {
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
           ManagingOfficerAdditionService managingOfficerAdditionService,
+          ManagingOfficerCessationService managingOfficerCessationService,
           OverseasEntityChangeService overseasEntityChangeService
   ) {
     this.overseasEntitiesService = overseasEntitiesService;
@@ -120,6 +122,7 @@ public class FilingsService {
     this.beneficialOwnerChangeService = beneficialOwnerChangeService;
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
+    this.managingOfficerCessationService = managingOfficerCessationService;
     this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
   }
@@ -192,14 +195,15 @@ public class FilingsService {
     var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
     var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
     var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
-    publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    var publicPrivateMoData = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
 
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
     updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
     updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
-    updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+    updateSubmission.getCessations().addAll(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+    updateSubmission.getCessations().addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto, publicPrivateMoData, logMap));
     updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
     ApiLogger.debug("Updates have been collected", logMap);
