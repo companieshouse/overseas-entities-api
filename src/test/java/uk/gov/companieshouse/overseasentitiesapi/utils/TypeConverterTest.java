@@ -1,96 +1,108 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
-import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
+import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import uk.gov.companieshouse.api.model.utils.AddressApi;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 class TypeConverterTest {
-    @Test
-    void privateConstructorThrowsException() {
-        Class<TypeConverter> typeConverterClass = TypeConverter.class;
 
-        Constructor<?> constructor = typeConverterClass.getDeclaredConstructors()[0];
-        constructor.setAccessible(true);
+  @Mock
+  private AddressDto addressDto;
 
-        Throwable exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
-        assertEquals(IllegalAccessError.class, exception.getCause().getClass());
-        assertEquals("Use the static methods instead of instantiating Converters", exception.getCause().getMessage());
-    }
+  @Mock
+  private AddressApi addressApi;
 
-    @Test
-    void registeredOfficeAddressApiToAddressInputNonNull() {
-        var inputAddress = new RegisteredOfficeAddressApi();
-        inputAddress.setPremises("Premises");
-        inputAddress.setAddressLine1("Line 1");
-        inputAddress.setAddressLine2("Line 2");
-        inputAddress.setLocality("Locality");
-        inputAddress.setRegion("Region");
-        inputAddress.setCountry("Country");
-        inputAddress.setPostalCode("Post code");
-        inputAddress.setPoBox("Po box");
-        inputAddress.setCareOf("Care of");
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
 
-        var result = registeredOfficeAddressApiToAddress(inputAddress);
+  @Test
+  void testPrivateConstructor() throws NoSuchMethodException {
+    Constructor<TypeConverter> constructor = TypeConverter.class.getDeclaredConstructor();
+    assertTrue(Modifier.isPrivate(constructor.getModifiers()));
 
-        assertEquals("Premises", result.getHouseNameNum());
-        assertEquals("Line 1", result.getStreet());
-        assertEquals("Line 2", result.getArea());
-        assertEquals("Locality", result.getPostTown());
-        assertEquals("Region", result.getRegion());
-        assertEquals("Country", result.getCountry());
-        assertEquals("Post code", result.getPostCode());
-        assertEquals("Po box", result.getPoBox());
-        assertEquals("Care of", result.getCareOf());
-    }
+    constructor.setAccessible(true);
+    InvocationTargetException e = assertThrows(InvocationTargetException.class,
+        constructor::newInstance);
+    assertTrue(e.getTargetException() instanceof IllegalAccessError);
+  }
 
-    @Test
-    void registeredOfficeAddressApiToAddressInputIsNull() {
-        RegisteredOfficeAddressApi inputAddress = null;
+  @Test
+  void addressDtoToAddressTest() {
+    var expectedAddress = new Address();
+    expectedAddress.setCareOf(addressDto.getCareOf());
+    expectedAddress.setPoBox(addressDto.getPoBox());
+    expectedAddress.setHouseNameNum(addressDto.getPropertyNameNumber());
+    expectedAddress.setStreet(addressDto.getLine1());
+    expectedAddress.setArea(addressDto.getLine2());
+    expectedAddress.setPostTown(addressDto.getTown());
+    expectedAddress.setRegion(addressDto.getCounty());
+    expectedAddress.setPostCode(addressDto.getPostcode());
+    expectedAddress.setCountry(addressDto.getCountry());
 
-        var result = registeredOfficeAddressApiToAddress(inputAddress);
+    Address result = TypeConverter.addressDtoToAddress(addressDto);
+    assertEquals(expectedAddress, result);
+  }
 
-        assertNull(result);
-    }
+  @Test
+  void addressDtoToAddressTestNull() {
+    assertNull(TypeConverter.addressDtoToAddress(null));
+  }
 
-    @Test
-    void addressDtoToAddressInputNonNull() {
-        var inputAddress = new AddressDto();
-        inputAddress.setPropertyNameNumber("Premises");
-        inputAddress.setLine1("Line 1");
-        inputAddress.setLine2("Line 2");
-        inputAddress.setLocality("Locality");
-        inputAddress.setCounty("Region");
-        inputAddress.setCountry("Country");
-        inputAddress.setPostcode("Post code");
-        inputAddress.setPoBox("Po box");
-        inputAddress.setCareOf("Care of");
+  @Test
+  void addressApiToAddressTest() {
+    var expectedAddress = new Address();
+    expectedAddress.setCareOf(addressApi.getCareOf());
+    expectedAddress.setPoBox(addressApi.getPoBox());
+    expectedAddress.setHouseNameNum(addressApi.getPremises());
+    expectedAddress.setStreet(addressApi.getAddressLine1());
+    expectedAddress.setArea(addressApi.getRegion());
+    expectedAddress.setPostTown(addressApi.getLocality());
+    expectedAddress.setRegion(addressApi.getRegion());
+    expectedAddress.setPostCode(addressApi.getPostcode());
+    expectedAddress.setCountry(addressApi.getCountry());
 
-        var result = addressDtoToAddress(inputAddress);
+    Address result = TypeConverter.addressApiToAddress(addressApi);
+    assertEquals(expectedAddress, result);
+  }
 
-        assertEquals("Premises", result.getHouseNameNum());
-        assertEquals("Line 1", result.getStreet());
-        assertEquals("Line 2", result.getArea());
-        assertEquals("Locality", result.getPostTown());
-        assertEquals("Region", result.getRegion());
-        assertEquals("Country", result.getCountry());
-        assertEquals("Post code", result.getPostCode());
-        assertEquals("Po box", result.getPoBox());
-        assertEquals("Care of", result.getCareOf());
-    }
+  @Test
+  void addressApitoAddressTestNull() {
+    assertNull(TypeConverter.addressApiToAddress(null));
+  }
 
-    @Test
-    void addressDtoToAddressInputIsNull() {
-        AddressDto inputAddress = null;
+  @Test
+  void stringToLocalDateTest() {
+    String dateStr = "2023-05-30";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDate expectedDate = LocalDate.parse(dateStr, formatter);
 
-        var result = addressDtoToAddress(inputAddress);
+    LocalDate result = TypeConverter.stringToLocalDate(dateStr);
+    assertEquals(expectedDate, result);
+  }
 
-        assertNull(result);
-    }
+  @Test
+  void stringToLocalDateTestNull() {
+    assertNull(TypeConverter.stringToLocalDate(null));
+  }
+
+  @Test
+  void registeredOfficeAddressApiToAddressInputIsNull() {
+    assertNull(TypeConverter.registeredOfficeAddressApiToAddress(null));
+  }
 }
