@@ -145,16 +145,12 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerCorporateDto.getChipsReference());
 
-    if (publicPrivateBoPair == null) {
-      return null;
-    }
+    ChangeManager<CorporateBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
+        psc, publicPrivateBoPair);
 
     if (publicPrivateBoPair.getRight() != null) {
       beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
     }
-
-    ChangeManager<CorporateBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
-        psc, publicPrivateBoPair);
 
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes();
@@ -173,6 +169,8 @@ public class BeneficialOwnerChangeService {
         beneficialOwnerCorporateDto.getName(),
         PscApi::getName,
         CorporateBeneficialOwnerPsc::setCorporateName);
+
+    psc.setCompanyIdentification(new CompanyIdentification());
 
     Identification publicIdentification = publicPrivateBoPair.getLeft() == null ? null
         : publicPrivateBoPair.getLeft().getIdentification();
@@ -225,10 +223,6 @@ public class BeneficialOwnerChangeService {
 
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
-
-    if (publicPrivateBoPair == null) {
-      return null;
-    }
 
     ChangeManager<OtherBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
@@ -294,16 +288,12 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerIndividualDto.getChipsReference());
 
-    if (publicPrivateBoPair == null) {
-      return null;
-    }
+    ChangeManager<IndividualBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
+        psc, publicPrivateBoPair);
 
     if (publicPrivateBoPair.getRight() != null) {
       beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
     }
-
-    ChangeManager<IndividualBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
-        psc, publicPrivateBoPair);
 
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes();
