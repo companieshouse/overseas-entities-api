@@ -292,7 +292,7 @@ class BeneficialOwnerChangeServiceTest {
   }
 
   @Test
-  void testCollateAllBeneficialOwnerChangesNoChipsReference() {
+  void testCollateAllBeneficialOwnerChangesProducesNoLogsIfNoChipsReference() {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
@@ -323,7 +323,7 @@ class BeneficialOwnerChangeServiceTest {
     PrintStream standardOut = System.out;
     ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outputStreamCaptor));
-    
+
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
         publicPrivateBo, overseasEntitySubmissionDto);
 
@@ -334,7 +334,7 @@ class BeneficialOwnerChangeServiceTest {
   }
 
   @Test
-  void testCollateAllBeneficialOwnerChangesPairIsNull() {
+  void testCollateAllBeneficialOwnerChangesProducesLogsIfPairIsNull() {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
