@@ -255,7 +255,7 @@ class ChangeManagerTest {
             Dummy::setField)
     );
 
-    String expectedMessage = "nvalid input parameter: equalityPredicate is null.";
+    String expectedMessage = "Invalid input parameter: equalityPredicate is null.";
     String actualMessage = exception.getMessage();
 
     assertTrue(actualMessage.contains(expectedMessage));
