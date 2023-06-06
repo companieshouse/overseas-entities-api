@@ -1,10 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public abstract class BeneficialOwnerAddition extends Addition {
     private static final String CHANGE_NAME = "pscAppointment";
@@ -12,6 +15,7 @@ public abstract class BeneficialOwnerAddition extends Addition {
     @JsonProperty("actionDate")
     private LocalDate actionDate;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("ceasedDate")
     private LocalDate ceasedDate;
 

@@ -1,9 +1,12 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 import java.time.LocalDate;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public abstract class ManagingOfficerAddition extends Addition {
     private static final String CHANGE_NAME = "addOfficerAppointment";
@@ -18,6 +21,7 @@ public abstract class ManagingOfficerAddition extends Addition {
     @JsonProperty("serviceAddress")
     private Address serviceAddress;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("resignedOn")
     private LocalDate resignedOn;
 
