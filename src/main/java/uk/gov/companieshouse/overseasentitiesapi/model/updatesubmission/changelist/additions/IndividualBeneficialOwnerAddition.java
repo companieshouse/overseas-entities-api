@@ -20,8 +20,8 @@ public class IndividualBeneficialOwnerAddition extends BeneficialOwnerAddition {
     private LocalDate birthDate;
 
     public IndividualBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialResidence,
-                                             Address serviceAddress, List<String> natureOfControls) {
-        super(actionDate, ceasedDate, residentialResidence, serviceAddress, natureOfControls);
+                                             Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionedList) {
+        super(actionDate, ceasedDate, residentialResidence, serviceAddress, natureOfControls, isOnSanctionedList);
         setAppointmentType(APPOINTMENT_TYPE);
     }
 

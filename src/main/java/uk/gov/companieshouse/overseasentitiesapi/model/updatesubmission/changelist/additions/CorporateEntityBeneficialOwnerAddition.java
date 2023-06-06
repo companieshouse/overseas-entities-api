@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
@@ -18,15 +21,17 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
     @JsonProperty("governingLaw")
     private String governingLaw;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("registerLocation")
     private String registerLocation;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("registrationNumber")
     private String registrationNumber;
 
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
-                                                  Address serviceAddress, List<String> natureOfControls) {
-        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls);
+                                                  Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionedList) {
+        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionedList);
         setAppointmentType(APPOINTMENT_TYPE);
     }
 

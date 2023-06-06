@@ -16,6 +16,9 @@ public abstract class Psc {
   @JsonProperty("natureOfControls")
   private List<String> natureOfControls;
 
+  @JsonProperty("isOnSanctionsList")
+  private boolean isOnSanctionsList;
+
   public String getActionDate() {
     return actionDate;
   }
@@ -57,6 +60,14 @@ public abstract class Psc {
     this.natureOfControls.addAll(natureOfControls);
   }
 
+  public boolean isOnSanctionsList() {
+    return isOnSanctionsList;
+  }
+
+  public void setOnSanctionsList(boolean isOnSanctionsList) {
+    this.isOnSanctionsList = isOnSanctionsList;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -67,9 +78,11 @@ public abstract class Psc {
       return false;
     }
     var psc = (Psc) o;
-    return Objects.equals(actionDate, psc.actionDate) && Objects.equals(
-        serviceAddress, psc.serviceAddress) && Objects.equals(residentialAddress,
-        psc.residentialAddress) && Objects.equals(natureOfControls, psc.natureOfControls);
+    return Objects.equals(actionDate, psc.actionDate) &&
+            Objects.equals(serviceAddress, psc.serviceAddress) &&
+            Objects.equals(residentialAddress, psc.residentialAddress) &&
+            Objects.equals(natureOfControls, psc.natureOfControls) &&
+            isOnSanctionsList == psc.isOnSanctionsList;
   }
 
   @Override

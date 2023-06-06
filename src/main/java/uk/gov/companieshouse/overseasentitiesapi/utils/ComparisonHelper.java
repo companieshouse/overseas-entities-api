@@ -62,4 +62,11 @@ public class ComparisonHelper {
   public static boolean equals(PersonName personName, String string) {
     return personName.toString().equals(string);
   }
+
+  public static boolean equals(Boolean b, boolean b2) {
+    if (b == null) {
+      return false;
+    }
+    return b == b2;
+  }
 }

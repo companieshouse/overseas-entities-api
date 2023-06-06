@@ -19,7 +19,9 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
@@ -136,6 +138,7 @@ class BeneficialOwnerAdditionServiceTest {
         individualBeneficialOwner.setDateOfBirth(LocalDate.of(1990, 5, 15));
         individualBeneficialOwner.setNationality("Irish");
         individualBeneficialOwner.setSecondNationality("Spanish");
+        individualBeneficialOwner.setOnSanctionsList(true);
 
         return List.of(individualBeneficialOwner);
     }
@@ -152,6 +155,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Doe", individualBeneficialOwnerAddition.getPersonName().getSurname());
         assertEquals(LocalDate.of(1990, 5, 15), individualBeneficialOwnerAddition.getBirthDate());
         assertEquals("Irish, Spanish", individualBeneficialOwnerAddition.getNationalityOther());
+        assertTrue(individualBeneficialOwnerAddition.isOnSanctionsList());
     }
 
     private List<BeneficialOwnerCorporateDto> getCorporateBeneficialOwners() {
@@ -168,6 +172,7 @@ class BeneficialOwnerAdditionServiceTest {
         corporateBeneficialOwner.setLawGoverned("Governing law");
         corporateBeneficialOwner.setPublicRegisterName("Register location");
         corporateBeneficialOwner.setRegistrationNumber("Registration number");
+        corporateBeneficialOwner.setOnSanctionsList(true);
 
         return List.of(corporateBeneficialOwner);
     }
@@ -185,6 +190,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Governing law", corporateEntityBeneficialOwnerAddition.getGoverningLaw());
         assertEquals("Register location", corporateEntityBeneficialOwnerAddition.getRegisterLocation());
         assertEquals("Registration number", corporateEntityBeneficialOwnerAddition.getRegistrationNumber());
+        assertTrue(corporateEntityBeneficialOwnerAddition.isOnSanctionsList());
     }
 
     private List<BeneficialOwnerGovernmentOrPublicAuthorityDto> getLegalPersonBeneficialOwners() {
@@ -199,6 +205,7 @@ class BeneficialOwnerAdditionServiceTest {
         legalPersonBeneficialOwner.setLegalForm("Legal form");
         legalPersonBeneficialOwner.setLawGoverned("Governing law");
         legalPersonBeneficialOwner.setName("Government Authority");
+        legalPersonBeneficialOwner.setOnSanctionsList(true);
 
         return List.of(legalPersonBeneficialOwner);
     }
@@ -213,5 +220,6 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateSoleName());
         assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getLegalForm());
         assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getGoverningLaw());
+        assertTrue(legalPersonBeneficialOwnerAddition.isOnSanctionsList());
     }
 }

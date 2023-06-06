@@ -167,7 +167,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerCorporateDto.getServiceAddress(),
         beneficialOwnerCorporateDto.getPrincipalAddress(),
-        collectedNatureOfControl);
+        collectedNatureOfControl, beneficialOwnerCorporateDto.getOnSanctionsList());
 
     hasChange |= changeManager.compareAndBuildLeftChange(
         beneficialOwnerCorporateDto.getName(),
@@ -243,7 +243,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(),
-        collectedNatureOfControl
+        collectedNatureOfControl, beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList()
     );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
@@ -316,7 +316,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerIndividualDto.getServiceAddress(),
         beneficialOwnerIndividualDto.getUsualResidentialAddress(),
-        collectedNatureOfControl);
+        collectedNatureOfControl, beneficialOwnerIndividualDto.getOnSanctionsList());
 
     var delimiter = ",";
     var submissionNationalityArray = new String[]{beneficialOwnerIndividualDto.getNationality(), beneficialOwnerIndividualDto.getSecondNationality()};
@@ -371,10 +371,11 @@ public class BeneficialOwnerChangeService {
    * were applied, false otherwise).
    */
   private <P extends Psc> boolean setCommonAttributes(
-      ChangeManager<P, PscApi, PrivateBoDataApi> changeManager,
-      AddressDto serviceAddress,
-      AddressDto residentialAddress,
-      List<String> natureOfControls
+          ChangeManager<P, PscApi, PrivateBoDataApi> changeManager,
+          AddressDto serviceAddress,
+          AddressDto residentialAddress,
+          List<String> natureOfControls,
+          Boolean isOnSanctionsList
   ) {
 
     var hasChange = changeManager.compareAndBuildRightChange(
@@ -399,6 +400,13 @@ public class BeneficialOwnerChangeService {
         Function.identity(),
         ComparisonHelper::equals,
         Psc::addNatureOfControlTypes);
+
+    hasChange |= changeManager.compareAndBuildLeftChange(
+            isOnSanctionsList,
+            PscApi::isSanctioned,
+            Function.identity(),
+            ComparisonHelper::equals,
+            Psc::setOnSanctionsList);
 
     return hasChange;
   }

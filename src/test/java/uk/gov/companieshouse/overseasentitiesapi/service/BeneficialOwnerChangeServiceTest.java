@@ -148,6 +148,7 @@ class BeneficialOwnerChangeServiceTest {
     beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
     beneficialOwnerIndividualDto.setNonLegalFirmMembersNatureOfControlTypes(
         List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+    beneficialOwnerIndividualDto.setOnSanctionsList(true);
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -171,6 +172,7 @@ class BeneficialOwnerChangeServiceTest {
           individualBeneficialOwnerChange.getPsc().getNationalityOther());
       assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
           individualBeneficialOwnerChange.getPsc().getNatureOfControls());
+      assertTrue(individualBeneficialOwnerChange.getPsc().isOnSanctionsList());
     }
   }
 
@@ -255,6 +257,7 @@ class BeneficialOwnerChangeServiceTest {
     // setup other DTO
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setOnSanctionsList(true);
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(null);
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(null);
@@ -492,6 +495,7 @@ class BeneficialOwnerChangeServiceTest {
     beneficialOwnerIndividualDto.setLastName(null);
 
     mockPublicPrivateBoPair.getLeft().setName("John Doe");
+    mockPublicPrivateBoPair.getLeft().setSanctioned(true);
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
