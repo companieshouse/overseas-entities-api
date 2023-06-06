@@ -4,15 +4,19 @@ import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,6 +91,17 @@ class BeneficialOwnerChangeServiceTest {
     return address;
   }
 
+  private static List<String> extractMatches(String input, String patternString) {
+    List<String> matches = new ArrayList<>();
+    Pattern pattern = Pattern.compile(patternString);
+    Matcher matcher = pattern.matcher(input);
+    while (matcher.find()) {
+      String match = matcher.group(1);
+      matches.add(match);
+    }
+    return matches;
+  }
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -118,6 +133,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerCorporateChangeThroughCollateChanges() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("1234567890");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -179,6 +195,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerOtherChangeThroughCollateChanges() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("1234567890");
 
     when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -205,6 +222,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerOtherChangeCheckCompanyIdentificationThroughCollateChanges() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setLegalForm("Private Limited");
+    beneficialOwnerOtherDto.setChipsReference("1234567890");
 
     mockPublicPrivateBoPair.getLeft().getIdentification().setLegalForm("Not Private Limited");
 
@@ -225,7 +243,8 @@ class BeneficialOwnerChangeServiceTest {
       OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
           0);
       assertEquals("Private Limited",
-          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCompanyIdentification().getLegalForm());
+          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCompanyIdentification()
+              .getLegalForm());
     }
   }
 
@@ -234,16 +253,18 @@ class BeneficialOwnerChangeServiceTest {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("1234567890");
 
     // setup individual DTO
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567890");
+    beneficialOwnerIndividualDto.setChipsReference("1234567891");
     beneficialOwnerIndividualDto.setFirstName("John");
     beneficialOwnerIndividualDto.setLastName("Doe");
 
     // setup other DTO
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("1234567892");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -251,6 +272,7 @@ class BeneficialOwnerChangeServiceTest {
         mockPublicPrivateBoPair);
     when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
+
     when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
         List.of(beneficialOwnerCorporateDto));
     when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
@@ -270,20 +292,64 @@ class BeneficialOwnerChangeServiceTest {
   }
 
   @Test
-  void testCollateAllBeneficialOwnerChangesPairIsNull() {
+  void testCollateAllBeneficialOwnerChangesProducesNoLogsIfNoChipsReference() {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
 
     // setup individual DTO
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567890");
     beneficialOwnerIndividualDto.setFirstName("John");
     beneficialOwnerIndividualDto.setLastName("Doe");
 
     // setup other DTO
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+
+    when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+        mockPublicPrivateBoPair);
+    when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+        mockPublicPrivateBoPair);
+    when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
+        mockPublicPrivateBoPair);
+
+    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+        List.of(beneficialOwnerCorporateDto));
+    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+        List.of(beneficialOwnerIndividualDto));
+    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
+        List.of(beneficialOwnerOtherDto));
+
+    PrintStream standardOut = System.out;
+    ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outputStreamCaptor));
+
+    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        publicPrivateBo, overseasEntitySubmissionDto);
+
+    System.setOut(standardOut);
+
+    assertEquals("", outputStreamCaptor.toString());
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  void testCollateAllBeneficialOwnerChangesProducesLogsIfPairIsNull() {
+    // setup corporate DTO
+    BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+    beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("1234567890");
+
+    // setup individual DTO
+    BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+    beneficialOwnerIndividualDto.setChipsReference("1234567891");
+    beneficialOwnerIndividualDto.setFirstName("John");
+    beneficialOwnerIndividualDto.setLastName("Doe");
+
+    // setup other DTO
+    BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+    beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("1234567892");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(null);
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(null);
@@ -295,15 +361,20 @@ class BeneficialOwnerChangeServiceTest {
     when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
         List.of(beneficialOwnerOtherDto));
 
-    Exception exception = assertThrows(IllegalArgumentException.class, () ->
-      beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-          publicPrivateBo, overseasEntitySubmissionDto)
-    );
+    PrintStream standardOut = System.out;
+    ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outputStreamCaptor));
 
-    String expectedMessage = "Invalid input parameter: pair is null";
-    String actualMessage = exception.getMessage();
+    String pattern = "\"message\":\"(.*?)\"";
 
-    assertTrue(actualMessage.contains(expectedMessage));
+    var result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBo,
+        overseasEntitySubmissionDto);
+
+    List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
+    System.setOut(standardOut);
+
+    assertEquals(3, Collections.frequency(matches, "No matching BO was found in the database"));
+    assertEquals(0, result.size());
   }
 
   @Test
@@ -343,6 +414,7 @@ class BeneficialOwnerChangeServiceTest {
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
     beneficialOwnerIndividualDto.setFirstName("John");
     beneficialOwnerIndividualDto.setLastName("Smith");
+    beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -370,6 +442,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesCorporateLeftOfPairNull() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith Corp");
+    beneficialOwnerCorporateDto.setChipsReference("1234567890");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -396,6 +469,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesOtherLeftOfPairNull() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Smith Other");
+    beneficialOwnerOtherDto.setChipsReference("1234567892");
 
     when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -439,6 +513,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesIndividualRightOfPairNull() {
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
     beneficialOwnerIndividualDto.setDateOfBirth(LocalDate.of(2000, 1, 1));
+    beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairRightNull);
@@ -464,6 +539,7 @@ class BeneficialOwnerChangeServiceTest {
   @Test
   void testCollateBeneficialOwnerChangesCorporateRightOfPairNull() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+    beneficialOwnerCorporateDto.setChipsReference("1234567890");
 
     beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
 
@@ -492,7 +568,7 @@ class BeneficialOwnerChangeServiceTest {
   @Test
   void testCollateBeneficialOwnerChangesOtherRightOfPairNull() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
-
+    beneficialOwnerGovernmentOrPublicAuthorityDto.setChipsReference("1234567892");
     beneficialOwnerGovernmentOrPublicAuthorityDto.setPrincipalAddress(createDummyAddressDto());
 
     when(publicPrivateBo.get(
