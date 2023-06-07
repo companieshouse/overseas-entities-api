@@ -30,8 +30,8 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
     private String registrationNumber;
 
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
-                                                  Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionedList) {
-        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionedList);
+                                                  Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
+        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionsList);
         setAppointmentType(APPOINTMENT_TYPE);
     }
 
