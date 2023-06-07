@@ -75,6 +75,7 @@ public class BeneficialOwnerAdditionService {
                 bo.getTrusteesNatureOfControlTypes(),
                 bo.getNonLegalFirmMembersNatureOfControlTypes()
         );
+        var isOnSanctionsList = bo.getOnSanctionsList();
 
         var individualBeneficialOwnerAddition =
                 new IndividualBeneficialOwnerAddition(
@@ -82,7 +83,8 @@ public class BeneficialOwnerAdditionService {
                         ceasedDate,
                         addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
-                        natureOfControls);
+                        natureOfControls,
+                        isOnSanctionsList);
 
         individualBeneficialOwnerAddition.setPersonName(new PersonName(bo.getFirstName(), bo.getLastName()));
         individualBeneficialOwnerAddition.setBirthDate(bo.getDateOfBirth());
@@ -104,6 +106,7 @@ public class BeneficialOwnerAdditionService {
                 bo.getTrusteesNatureOfControlTypes(),
                 bo.getNonLegalFirmMembersNatureOfControlTypes()
         );
+        var isOnSanctionsList = bo.getOnSanctionsList();
 
         var corporateEntityBeneficialOwnerAddition =
                 new CorporateEntityBeneficialOwnerAddition(
@@ -111,7 +114,8 @@ public class BeneficialOwnerAdditionService {
                         ceasedDate,
                         addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
-                        natureOfControls);
+                        natureOfControls,
+                        isOnSanctionsList);
 
         corporateEntityBeneficialOwnerAddition.setCorporateName(bo.getName());
         corporateEntityBeneficialOwnerAddition.setLegalForm(bo.getLegalForm());
@@ -133,6 +137,7 @@ public class BeneficialOwnerAdditionService {
                 null,
                 bo.getNonLegalFirmMembersNatureOfControlTypes()
         );
+        var isOnSanctionsList = bo.getOnSanctionsList();
 
         var legalPersonBeneficialOwnerAddition =
                 new LegalPersonBeneficialOwnerAddition(
@@ -140,7 +145,8 @@ public class BeneficialOwnerAdditionService {
                         ceasedDate,
                         addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
-                        natureOfControls);
+                        natureOfControls,
+                        isOnSanctionsList);
 
         legalPersonBeneficialOwnerAddition.setCorporateSoleName(bo.getName());
         legalPersonBeneficialOwnerAddition.setLegalForm(bo.getLegalForm());

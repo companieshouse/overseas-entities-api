@@ -169,6 +169,20 @@ class ComparisonHelperTest {
   }
 
   @Test
+  void equalsLocalDateWhenLocalDateNull() {
+    LocalDate localDate = null;
+    String strDate = "2001-02-03";
+    assertFalse(ComparisonHelper.equals(localDate, strDate));
+  }
+
+  @Test
+  void equalsLocalDateWhenStringDateNull() {
+    LocalDate localDate = LocalDate.of(2001, 2, 3);;
+    String strDate = null;
+    assertFalse(ComparisonHelper.equals(localDate, strDate));
+  }
+
+  @Test
   void equalsListAndArrayReturnCorrectResult() {
     List<String> list = Arrays.asList("element1", "element2", "element3");
     String[] array = {"element1", "element2", "element3"};
@@ -203,5 +217,40 @@ class ComparisonHelperTest {
     String[] nullArray = null;
 
     assertTrue(ComparisonHelper.equals(nullList, nullArray));
+  }
+
+  @Test
+  void equalsBooleanNull() {
+    Boolean first = null;
+    boolean second = true;
+    assertFalse(ComparisonHelper.equals(first, second));
+  }
+
+  @Test
+  void equalsBooleanAllFalse() {
+    Boolean first = false;
+    boolean second = false;
+    assertTrue(ComparisonHelper.equals(first, second));
+  }
+
+  @Test
+  void equalsBooleanAllTrue() {
+    Boolean first = true;
+    boolean second = true;
+    assertTrue(ComparisonHelper.equals(first, second));
+  }
+
+  @Test
+  void equalsBooleanOneFalse() {
+    Boolean first = false;
+    boolean second = true;
+    assertFalse(ComparisonHelper.equals(first, second));
+  }
+
+  @Test
+  void equalsBooleanOtherFalse() {
+    Boolean first = true;
+    boolean second = false;
+    assertFalse(ComparisonHelper.equals(first, second));
   }
 }

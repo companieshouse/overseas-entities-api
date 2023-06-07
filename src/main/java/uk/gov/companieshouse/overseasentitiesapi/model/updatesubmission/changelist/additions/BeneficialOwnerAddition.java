@@ -19,6 +19,7 @@ public abstract class BeneficialOwnerAddition extends Addition {
     @JsonProperty("ceasedDate")
     private LocalDate ceasedDate;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("residentialAddress")
     private Address residentialAddress;
 
@@ -28,17 +29,22 @@ public abstract class BeneficialOwnerAddition extends Addition {
     @JsonProperty("natureOfControls")
     private List<String> natureOfControls;
 
+    @JsonProperty("isOnSanctionsList")
+    private boolean isOnSanctionsList;
+
     protected BeneficialOwnerAddition(LocalDate actionDate,
                                       LocalDate ceasedDate,
                                       Address residentialAddress,
                                       Address serviceAddress,
-                                      List<String> natureOfControls) {
+                                      List<String> natureOfControls,
+                                      boolean isOnSanctionsList) {
         super.setChangeName(CHANGE_NAME);
         this.actionDate = actionDate;
         this.ceasedDate = ceasedDate;
         this.residentialAddress = residentialAddress;
         this.serviceAddress = serviceAddress;
         this.natureOfControls = natureOfControls;
+        this.isOnSanctionsList = isOnSanctionsList;
     }
 
     public LocalDate getActionDate() {
@@ -79,5 +85,13 @@ public abstract class BeneficialOwnerAddition extends Addition {
 
     public void setNatureOfControls(List<String> natureOfControls) {
         this.natureOfControls = natureOfControls;
+    }
+
+    public boolean isOnSanctionsList() {
+        return isOnSanctionsList;
+    }
+
+    public void setOnSanctionsList(boolean isOnSanctionsList) {
+        this.isOnSanctionsList = isOnSanctionsList;
     }
 }

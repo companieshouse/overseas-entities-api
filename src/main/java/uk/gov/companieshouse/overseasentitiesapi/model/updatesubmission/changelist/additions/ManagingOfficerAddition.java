@@ -15,6 +15,7 @@ public abstract class ManagingOfficerAddition extends Addition {
     @JsonProperty("actionDate")
     private LocalDate actionDate;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("residentialAddress")
     private Address residentialAddress;
 

@@ -103,11 +103,11 @@ public class ManagingOfficerCessationService {
 
   private Optional<CorporateManagingOfficerCessation> getCorporateManagingOfficerCessation(
       ManagingOfficerCorporateDto mo,
-      Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedBoData,
+      Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedMoData,
       Map<String, Object> logMap) {
 
     var publicPrivateMoPairOptional =
-        getPublicPrivateMoPairOptional(mo.getChipsReference(), combinedBoData);
+        getPublicPrivateMoPairOptional(mo.getChipsReference(), combinedMoData);
 
     if (publicPrivateMoPairOptional.isEmpty()) {
       ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null, logMap);

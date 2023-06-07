@@ -127,7 +127,8 @@ class FilingServiceTest {
                     LocalDate.of(2023, 1, 1),
                     new Address(),
                     new Address(),
-                    List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON")));
+                    List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON"),
+                    false));
     private static final List<Addition> DUMMY_MO_ADDITION = List.of(
             new IndividualManagingOfficerAddition(
                     LocalDate.of(2023, 1, 1),
