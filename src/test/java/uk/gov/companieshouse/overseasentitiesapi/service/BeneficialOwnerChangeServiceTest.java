@@ -113,7 +113,8 @@ class BeneficialOwnerChangeServiceTest {
     mockedIdentification.setCountryRegistered("UK");
     mockedIdentification.setLegalForm("Private Limited");
 
-    PrivateBoDataApi mockRightPart = mock(PrivateBoDataApi.class);
+    PrivateBoDataApi mockRightPart = new PrivateBoDataApi();
+    mockRightPart.setPscId("123");
     PscApi mockLeftPart = mock(PscApi.class);
 
     when(mockPublicPrivateBoPair.getRight()).thenReturn(mockRightPart);
@@ -152,6 +153,7 @@ class BeneficialOwnerChangeServiceTest {
       CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
           0);
       assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
+      assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -188,6 +190,7 @@ class BeneficialOwnerChangeServiceTest {
           individualBeneficialOwnerChange.getPsc().getNationalityOther());
       assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
           individualBeneficialOwnerChange.getPsc().getNatureOfControls());
+      assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -215,6 +218,7 @@ class BeneficialOwnerChangeServiceTest {
           0);
       assertEquals("John Doe",
           governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateSoleName());
+      assertEquals("123", governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
     }
   }
 

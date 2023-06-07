@@ -242,6 +242,10 @@ public class BeneficialOwnerChangeService {
     ChangeManager<OtherBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
+    if (publicPrivateBoPair.getRight() != null) {
+      beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
+    }
+
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes();
 
