@@ -59,9 +59,9 @@ class ManagingOfficerCessationServiceTest {
     String hashedId2 = corporateManagingOfficer.getChipsReference();
 
     ManagingOfficerDataApi privateMoData1 = new ManagingOfficerDataApi();
-    privateMoData1.setManagingOfficerId("123");
+    privateMoData1.setManagingOfficerAppointmentId("123");
     ManagingOfficerDataApi privateMoData2 = new ManagingOfficerDataApi();
-    privateMoData2.setManagingOfficerId("456");
+    privateMoData2.setManagingOfficerAppointmentId("456");
 
     when(combinedMoData.get(hashedId1)).thenReturn(new ImmutablePair<>(null, privateMoData1));
     when(combinedMoData.get(hashedId2)).thenReturn(new ImmutablePair<>(null, privateMoData2));
@@ -201,7 +201,7 @@ class ManagingOfficerCessationServiceTest {
     String hashedId = individualManagingOfficer.getChipsReference();
 
     ManagingOfficerDataApi privateMoData = new ManagingOfficerDataApi();
-    privateMoData.setManagingOfficerId(null);
+    privateMoData.setManagingOfficerAppointmentId(null);
 
     when(combinedMoData.get(hashedId)).thenReturn(new ImmutablePair<>(null, privateMoData));
 
@@ -246,7 +246,7 @@ class ManagingOfficerCessationServiceTest {
 
     CompanyOfficerApi publicOfficer = new CompanyOfficerApi();
     ManagingOfficerDataApi privateOfficerData = new ManagingOfficerDataApi();
-    privateOfficerData.setManagingOfficerId(null);
+    privateOfficerData.setManagingOfficerAppointmentId(null);
 
     when(combinedMoData.get(officerDto.getChipsReference()))
         .thenReturn(new ImmutablePair<>(publicOfficer, privateOfficerData));
@@ -284,7 +284,7 @@ class ManagingOfficerCessationServiceTest {
     officerDto.setChipsReference("XYZ987");
 
     ManagingOfficerDataApi privateMoData = new ManagingOfficerDataApi();
-    privateMoData.setManagingOfficerId(null); // Set the ID to null
+    privateMoData.setManagingOfficerAppointmentId(null); // Set the ID to null
 
     when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
             .thenReturn(Collections.singletonList(officerDto));

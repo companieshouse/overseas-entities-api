@@ -18,7 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 public class PrivateDataRetrievalService {
 
   private static final String COMPANY_NUMBER = "company_number";
-  private static final String MANAGING_OFFICER_ID = "managing_officer_id";
+  private static final String MANAGING_OFFICER_APPOINTMENT_ID = "managing_officer_appointment_id";
   private static final String OVERSEAS_ENTITY_URI_SECTION = "/overseas-entity/";
   private final ApiClientService apiClientService;
   private ManagingOfficerListDataApi managingOfficerData;
@@ -50,8 +50,8 @@ public class PrivateDataRetrievalService {
 
       if (managingOfficerDataList != null && managingOfficerDataList.getManagingOfficerData() != null
           && !managingOfficerDataList.getManagingOfficerData().isEmpty()) {
-        logMap.put(MANAGING_OFFICER_ID,
-            managingOfficerDataList.getManagingOfficerData().get(0).getManagingOfficerId());
+        logMap.put(MANAGING_OFFICER_APPOINTMENT_ID,
+            managingOfficerDataList.getManagingOfficerData().get(0).getManagingOfficerAppointmentId());
       }
 
       return managingOfficerDataList;

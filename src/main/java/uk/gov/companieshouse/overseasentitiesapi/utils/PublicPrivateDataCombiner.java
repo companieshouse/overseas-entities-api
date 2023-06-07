@@ -136,7 +136,7 @@ public class PublicPrivateDataCombiner {
             var privateOfficer = officer.getValue().getRight();
             String privateMoId;
             if (privateOfficer != null) {
-                privateMoId = privateOfficer.getManagingOfficerId();
+                privateMoId = privateOfficer.getManagingOfficerAppointmentId();
             } else {
                 privateMoId = "null";
             }
@@ -235,7 +235,7 @@ public class PublicPrivateDataCombiner {
     private void putPrivateMoData(ManagingOfficerListDataApi privateMOs) throws ServiceException {
         if (privateMOs.getManagingOfficerData() != null) {
             for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
-                String hashedId = retrieveHashedId(privateMO.getManagingOfficerId());
+                String hashedId = retrieveHashedId(privateMO.getManagingOfficerAppointmentId());
 
                 var pairFromMap = combinedMOs.get(hashedId);
                 Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
