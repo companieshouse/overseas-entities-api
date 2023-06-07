@@ -76,10 +76,11 @@ public class BeneficialOwnerChangeService {
   private List<Change> individualBeneficialOwnerChange() {
     var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
     return beneficialOwnersIndividual
-        .stream()
-        .map(this::covertBeneficialOwnerIndividualToChange)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+            .stream()
+            .filter(bo -> (bo.getChipsReference() != null))
+            .map(this::covertBeneficialOwnerIndividualToChange)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
   }
 
   /**
@@ -96,12 +97,13 @@ public class BeneficialOwnerChangeService {
    */
   private List<Change> beneficialOwnerOtherChange() {
     var beneficialOwnersGovernmentOrPublicAuthority = overseasEntitySubmissionDto
-        .getBeneficialOwnersGovernmentOrPublicAuthority();
+            .getBeneficialOwnersGovernmentOrPublicAuthority();
     return beneficialOwnersGovernmentOrPublicAuthority
-        .stream()
-        .map(this::covertBeneficialOwnerOtherChange)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+            .stream()
+            .filter(bo -> (bo.getChipsReference() != null))
+            .map(this::covertBeneficialOwnerOtherChange)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
   }
 
   /**
@@ -118,12 +120,13 @@ public class BeneficialOwnerChangeService {
    */
   private List<Change> beneficialOwnerCorporateChange() {
     var beneficialOwnersGovernmentOrPublicAuthority = overseasEntitySubmissionDto
-        .getBeneficialOwnersCorporate();
+            .getBeneficialOwnersCorporate();
     return beneficialOwnersGovernmentOrPublicAuthority
-        .stream()
-        .map(this::covertBeneficialOwnerCorporateChange)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+            .stream()
+            .filter(bo -> (bo.getChipsReference() != null))
+            .map(this::covertBeneficialOwnerCorporateChange)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
   }
 
   /**

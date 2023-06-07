@@ -118,6 +118,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerCorporateChangeThroughCollateChanges() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -179,6 +180,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerOtherChangeThroughCollateChanges() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -205,6 +207,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCovertBeneficialOwnerOtherChangeCheckCompanyIdentificationThroughCollateChanges() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setLegalForm("Private Limited");
+    beneficialOwnerOtherDto.setChipsReference("123456");
 
     mockPublicPrivateBoPair.getLeft().getIdentification().setLegalForm("Not Private Limited");
 
@@ -234,6 +237,7 @@ class BeneficialOwnerChangeServiceTest {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("123456");
 
     // setup individual DTO
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
@@ -244,6 +248,7 @@ class BeneficialOwnerChangeServiceTest {
     // setup other DTO
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPair);
@@ -274,6 +279,7 @@ class BeneficialOwnerChangeServiceTest {
     // setup corporate DTO
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith");
+    beneficialOwnerCorporateDto.setChipsReference("123456");
 
     // setup individual DTO
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
@@ -284,6 +290,7 @@ class BeneficialOwnerChangeServiceTest {
     // setup other DTO
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Doe");
+    beneficialOwnerOtherDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(null);
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(null);
@@ -343,6 +350,7 @@ class BeneficialOwnerChangeServiceTest {
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
     beneficialOwnerIndividualDto.setFirstName("John");
     beneficialOwnerIndividualDto.setLastName("Smith");
+    beneficialOwnerIndividualDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -370,6 +378,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesCorporateLeftOfPairNull() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
     beneficialOwnerCorporateDto.setName("John Smith Corp");
+    beneficialOwnerCorporateDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -396,6 +405,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesOtherLeftOfPairNull() {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
     beneficialOwnerOtherDto.setName("John Smith Other");
+    beneficialOwnerOtherDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairLeftNull);
@@ -439,6 +449,7 @@ class BeneficialOwnerChangeServiceTest {
   void testCollateBeneficialOwnerChangesIndividualRightOfPairNull() {
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
     beneficialOwnerIndividualDto.setDateOfBirth(LocalDate.of(2000, 1, 1));
+    beneficialOwnerIndividualDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
         mockPublicPrivateBoPairRightNull);
@@ -464,6 +475,7 @@ class BeneficialOwnerChangeServiceTest {
   @Test
   void testCollateBeneficialOwnerChangesCorporateRightOfPairNull() {
     BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+    beneficialOwnerCorporateDto.setChipsReference("123456");
 
     beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
 
@@ -494,6 +506,7 @@ class BeneficialOwnerChangeServiceTest {
     BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
 
     beneficialOwnerGovernmentOrPublicAuthorityDto.setPrincipalAddress(createDummyAddressDto());
+    beneficialOwnerGovernmentOrPublicAuthorityDto.setChipsReference("123456");
 
     when(publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference())).thenReturn(
