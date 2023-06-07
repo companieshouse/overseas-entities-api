@@ -148,7 +148,7 @@ class PublicPrivateDataCombinerTest {
       throws JsonProcessingException, ServiceException {
     // Prepare test data
     ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
-    managingOfficerDataApi.setManagingOfficerId("12345");
+    managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
     OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
     CompanyOfficerApi companyOfficerApi = officersApi.getItems().get(0);
@@ -179,10 +179,10 @@ class PublicPrivateDataCombinerTest {
 
     // Mocking for Managing Officer Data
     ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
-    managingOfficerDataApi.setManagingOfficerId("12345");
+    managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
     ManagingOfficerDataApi managingOfficerDataApi2 = new ManagingOfficerDataApi();
-    managingOfficerDataApi2.setManagingOfficerId("123456");
+    managingOfficerDataApi2.setManagingOfficerAppointmentId("123456");
 
     OfficersApi officersApi = objectMapper.readValue(officersApiStringTwoItems, OfficersApi.class);
 
@@ -248,10 +248,10 @@ class PublicPrivateDataCombinerTest {
 
     // Mocking for Managing Officer Data
     ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
-    managingOfficerDataApi.setManagingOfficerId("12");
+    managingOfficerDataApi.setManagingOfficerAppointmentId("12");
 
     ManagingOfficerDataApi managingOfficerDataApi2 = new ManagingOfficerDataApi();
-    managingOfficerDataApi2.setManagingOfficerId("123");
+    managingOfficerDataApi2.setManagingOfficerAppointmentId("123");
 
     OfficersApi officersApi = objectMapper.readValue(officersApiStringTwoItems, OfficersApi.class);
 
@@ -407,7 +407,7 @@ class PublicPrivateDataCombinerTest {
   void testBuildMergedManagingOfficerDataMapNoPublicMoData() throws ServiceException {
     // Prepare test data
     ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
-    managingOfficerDataApi.setManagingOfficerId("12345");
+    managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
     // Configure mock behavior
     when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));

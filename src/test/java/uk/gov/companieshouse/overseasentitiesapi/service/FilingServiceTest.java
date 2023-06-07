@@ -269,7 +269,7 @@ class FilingServiceTest {
         pscsApi.setItems(List.of(pscApi));
 
         ManagingOfficerDataApi managingOfficerDataApi = new ManagingOfficerDataApi();
-        managingOfficerDataApi.setManagingOfficerId("12345");
+        managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
         OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
 

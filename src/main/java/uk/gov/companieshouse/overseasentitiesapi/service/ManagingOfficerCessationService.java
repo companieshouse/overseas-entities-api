@@ -129,7 +129,7 @@ public class ManagingOfficerCessationService {
       Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair) {
     return Optional.ofNullable(publicPrivateMoPair)
         .map(Pair::getRight)
-        .map(ManagingOfficerDataApi::getManagingOfficerId)
+        .map(ManagingOfficerDataApi::getManagingOfficerAppointmentId)
         .orElse(null);
   }
 

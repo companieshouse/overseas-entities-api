@@ -177,7 +177,7 @@ class PrivateDataRetrievalServiceTest {
 
   private final String jsonManagingOfficerString = "[" +
           "{" +
-          "\"managingOfficerId\":\"9001808986\"," +
+          "\"managingOfficerAppointmentId\":\"9001808986\"," +
           "\"residential_address\":{" +
           "\"address_line_1\":\"32 WHITE FIRST ROAD\"," +
           "\"address_line_2\":\"QUOS ADIPISCI OFFICI\"," +
@@ -205,7 +205,7 @@ class PrivateDataRetrievalServiceTest {
           "\"contact_email_address\":null" +
           "}," +
           "{" +
-          "\"managingOfficerId\":\"9001808987\"," +
+          "\"managingOfficerAppointmentId\":\"9001808987\"," +
           "\"residential_address\":{" +
           "\"address_line_1\":null," +
           "\"address_line_2\":null," +
