@@ -19,8 +19,8 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
     private String governingLaw;
 
     public LegalPersonBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
-                                              Address serviceAddress, List<String> natureOfControls) {
-        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls);
+                                              Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
+        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionsList);
         setAppointmentType(APPOINTMENT_TYPE);
     }
 
