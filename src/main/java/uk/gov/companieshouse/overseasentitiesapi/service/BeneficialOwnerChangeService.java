@@ -29,6 +29,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc.Psc;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
@@ -37,8 +38,9 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 @Service
 public class BeneficialOwnerChangeService {
 
+  public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
+  public static final String SERVICE = "BeneficialOwnerChangeService";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
-
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
   /**
@@ -77,6 +79,7 @@ public class BeneficialOwnerChangeService {
     var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
     return beneficialOwnersIndividual
         .stream()
+        .filter(bo -> bo.getChipsReference() != null)
         .map(this::covertBeneficialOwnerIndividualToChange)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
@@ -99,6 +102,7 @@ public class BeneficialOwnerChangeService {
         .getBeneficialOwnersGovernmentOrPublicAuthority();
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
+        .filter(bo -> bo.getChipsReference() != null)
         .map(this::covertBeneficialOwnerOtherChange)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
@@ -121,6 +125,7 @@ public class BeneficialOwnerChangeService {
         .getBeneficialOwnersCorporate();
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
+        .filter(bo -> bo.getChipsReference() != null)
         .map(this::covertBeneficialOwnerCorporateChange)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
@@ -144,6 +149,11 @@ public class BeneficialOwnerChangeService {
 
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerCorporateDto.getChipsReference());
+
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      return null;
+    }
 
     ChangeManager<CorporateBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
@@ -224,6 +234,11 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
 
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      return null;
+    }
+
     ChangeManager<OtherBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
@@ -288,6 +303,10 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerIndividualDto.getChipsReference());
 
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      return null;
+    }
     ChangeManager<IndividualBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
