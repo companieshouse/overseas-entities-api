@@ -5,6 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
@@ -118,10 +119,18 @@ public class BeneficialOwnerAdditionService {
                         isOnSanctionsList);
 
         corporateEntityBeneficialOwnerAddition.setCorporateName(bo.getName());
-        corporateEntityBeneficialOwnerAddition.setLegalForm(bo.getLegalForm());
-        corporateEntityBeneficialOwnerAddition.setGoverningLaw(bo.getLawGoverned());
-        corporateEntityBeneficialOwnerAddition.setRegisterLocation(bo.getPublicRegisterName());
-        corporateEntityBeneficialOwnerAddition.setRegistrationNumber(bo.getRegistrationNumber());
+
+        var legalForm = bo.getLegalForm();
+        var governingLaw = bo.getLawGoverned();
+        var placeRegistered = bo.getPublicRegisterName();
+        var registrationNumber = bo.getRegistrationNumber();
+
+        var identification = new CompanyIdentification();
+        identification.setLegalForm(legalForm);
+        identification.setGoverningLaw(governingLaw);
+        identification.setPlaceRegistered(placeRegistered);
+        identification.setRegistrationNumber(registrationNumber);
+        corporateEntityBeneficialOwnerAddition.setCompanyIdentification(identification);
 
         return corporateEntityBeneficialOwnerAddition;
     }
@@ -149,8 +158,11 @@ public class BeneficialOwnerAdditionService {
                         isOnSanctionsList);
 
         legalPersonBeneficialOwnerAddition.setCorporateSoleName(bo.getName());
-        legalPersonBeneficialOwnerAddition.setLegalForm(bo.getLegalForm());
-        legalPersonBeneficialOwnerAddition.setGoverningLaw(bo.getLawGoverned());
+
+        var identification = new CompanyIdentification();
+        identification.setLegalForm(bo.getLegalForm());
+        identification.setGoverningLaw(bo.getLawGoverned());
+        legalPersonBeneficialOwnerAddition.setCompanyIdentification(identification);
 
         return legalPersonBeneficialOwnerAddition;
     }
