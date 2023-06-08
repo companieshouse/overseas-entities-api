@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
+import static com.mongodb.assertions.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -113,7 +114,8 @@ class BeneficialOwnerChangeServiceTest {
     mockedIdentification.setCountryRegistered("UK");
     mockedIdentification.setLegalForm("Private Limited");
 
-    PrivateBoDataApi mockRightPart = mock(PrivateBoDataApi.class);
+    PrivateBoDataApi mockRightPart = new PrivateBoDataApi();
+    mockRightPart.setPscId("123");
     PscApi mockLeftPart = mock(PscApi.class);
 
     when(mockPublicPrivateBoPair.getRight()).thenReturn(mockRightPart);
@@ -152,6 +154,7 @@ class BeneficialOwnerChangeServiceTest {
       CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
           0);
       assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
+      assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -190,6 +193,7 @@ class BeneficialOwnerChangeServiceTest {
       assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
           individualBeneficialOwnerChange.getPsc().getNatureOfControls());
       assertTrue(individualBeneficialOwnerChange.getPsc().isOnSanctionsList());
+      assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -217,6 +221,7 @@ class BeneficialOwnerChangeServiceTest {
           0);
       assertEquals("John Doe",
           governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateSoleName());
+      assertEquals("123", governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -536,6 +541,7 @@ class BeneficialOwnerChangeServiceTest {
       IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
           0);
       assertEquals("2000-01-01", individualBeneficialOwnerChange.getPsc().getBirthDate());
+      assertNull(individualBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -547,7 +553,7 @@ class BeneficialOwnerChangeServiceTest {
     beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
 
     when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
-        mockPublicPrivateBoPairLeftNull);
+        mockPublicPrivateBoPairRightNull);
     when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
         List.of(beneficialOwnerCorporateDto));
 
@@ -565,6 +571,7 @@ class BeneficialOwnerChangeServiceTest {
           0);
       assertEquals(createDummyAddress(),
           corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
+      assertNull(corporateBeneficialOwnerChange.getAppointmentId());
     }
   }
 
@@ -576,7 +583,7 @@ class BeneficialOwnerChangeServiceTest {
 
     when(publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference())).thenReturn(
-        mockPublicPrivateBoPairLeftNull);
+        mockPublicPrivateBoPairRightNull);
     when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
         List.of(beneficialOwnerGovernmentOrPublicAuthorityDto));
 
@@ -590,10 +597,11 @@ class BeneficialOwnerChangeServiceTest {
     assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
 
     if (result.get(0) instanceof OtherBeneficialOwnerChange) {
-      OtherBeneficialOwnerChange corporateBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
+      OtherBeneficialOwnerChange otherBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
           0);
       assertEquals(createDummyAddress(),
-          corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
+          otherBeneficialOwnerChange.getPsc().getResidentialAddress());
+      assertNull(otherBeneficialOwnerChange.getAppointmentId());
     }
   }
 
