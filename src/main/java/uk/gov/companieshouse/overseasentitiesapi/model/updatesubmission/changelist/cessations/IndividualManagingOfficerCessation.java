@@ -18,11 +18,11 @@ public class IndividualManagingOfficerCessation extends ManagingOfficerCessation
         this.officerDateOfBirth = officerDateOfBirth;
     }
 
-    public String getBirthDate() {
+    public String getOfficerDateOfBirth() {
         return officerDateOfBirth;
     }
 
-    public void setBirthDate(String officerDateOfBirth) {
+    public void setOfficerDateOfBirth(String officerDateOfBirth) {
         this.officerDateOfBirth = officerDateOfBirth;
     }
 }

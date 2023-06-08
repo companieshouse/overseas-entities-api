@@ -79,7 +79,7 @@ class ManagingOfficerCessationServiceTest {
 
     assertEquals("123", individualCessation.getOfficerAppointmentId());
     assertEquals(LocalDate.now(), individualCessation.getActionDate());
-    assertEquals(LocalDate.of(1990, 5, 15).toString(), individualCessation.getBirthDate());
+    assertEquals(LocalDate.of(1990, 5, 15).toString(), individualCessation.getOfficerDateOfBirth());
     assertEquals("John Doe", individualCessation.getOfficerName());
 
     assertEquals("ACME Corporation", corporateCessation.getOfficerName());
