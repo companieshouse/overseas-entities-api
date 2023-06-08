@@ -9,8 +9,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 public abstract class Psc {
 
   protected Address residentialAddress;
-  @JsonProperty("actionDate")
-  private String actionDate;
+
   @JsonProperty("serviceAddress")
   private Address serviceAddress;
   @JsonProperty("natureOfControls")
@@ -18,14 +17,6 @@ public abstract class Psc {
 
   @JsonProperty("isOnSanctionsList")
   private boolean isOnSanctionsList;
-
-  public String getActionDate() {
-    return actionDate;
-  }
-
-  public void setActionDate(String actionDate) {
-    this.actionDate = actionDate;
-  }
 
   public Address getServiceAddress() {
     return serviceAddress;
@@ -78,8 +69,7 @@ public abstract class Psc {
       return false;
     }
     var psc = (Psc) o;
-    return Objects.equals(actionDate, psc.actionDate) &&
-            Objects.equals(serviceAddress, psc.serviceAddress) &&
+    return  Objects.equals(serviceAddress, psc.serviceAddress) &&
             Objects.equals(residentialAddress, psc.residentialAddress) &&
             Objects.equals(natureOfControls, psc.natureOfControls) &&
             isOnSanctionsList == psc.isOnSanctionsList;
@@ -87,7 +77,7 @@ public abstract class Psc {
 
   @Override
   public int hashCode() {
-    return Objects.hash(actionDate, serviceAddress, residentialAddress, natureOfControls);
+    return Objects.hash(serviceAddress, residentialAddress, natureOfControls, isOnSanctionsList);
   }
 }
 

@@ -41,29 +41,9 @@ class IndividualBeneficialOwnerPscTest {
   }
 
   @Test
-  void testSetAndGetBirthDate() {
-    String expected = LocalDate.now().toString();
-    individualBeneficialOwnerPsc1.setBirthDate(expected);
-    assertEquals(expected, individualBeneficialOwnerPsc1.getBirthDate());
-
-    individualBeneficialOwnerPsc2.setBirthDate(expected);
-    assertEquals(expected, individualBeneficialOwnerPsc2.getBirthDate());
-  }
-
-  @Test
   void testSetAndGetAppointmentType() {
     String expected = "OE INDIVIDUAL BO";
     assertEquals(expected, individualBeneficialOwnerPsc1.getAppointmentType());
-  }
-
-  @Test
-  void testSetAndGetActionDate() {
-    String expected = LocalDate.now().toString();
-    individualBeneficialOwnerPsc1.setActionDate(expected);
-    assertEquals(expected, individualBeneficialOwnerPsc1.getActionDate());
-
-    individualBeneficialOwnerPsc2.setActionDate(expected);
-    assertEquals(expected, individualBeneficialOwnerPsc2.getActionDate());
   }
 
   @Test
@@ -95,7 +75,7 @@ class IndividualBeneficialOwnerPscTest {
     assertEquals(individualBeneficialOwnerPsc1.hashCode(), individualBeneficialOwnerPsc2.hashCode());
 
     var individualBeneficialOwnerPsc3 = createIndividualBeneficialOwnerPsc();
-    individualBeneficialOwnerPsc3.setBirthDate(LocalDate.of(2000, 1, 2).toString());
+    individualBeneficialOwnerPsc3.setOnSanctionsList(true);
 
     assertNotEquals(individualBeneficialOwnerPsc1, individualBeneficialOwnerPsc3);
     assertNotEquals(individualBeneficialOwnerPsc1.hashCode(), individualBeneficialOwnerPsc3.hashCode());
@@ -105,8 +85,6 @@ class IndividualBeneficialOwnerPscTest {
     IndividualBeneficialOwnerPsc psc = new IndividualBeneficialOwnerPsc();
     psc.setPersonName(new PersonName("John", "Smith"));
     psc.setNationalityOther("nationality,nationalityOther");
-    psc.setBirthDate(LocalDate.of(2000, 1, 1).toString());
-    psc.setActionDate(LocalDate.now().toString());
     psc.setServiceAddress(new Address());
     psc.setResidentialAddress(new Address());
     psc.setNatureOfControls(List.of("over_25_percent_of_voting_rights"));
