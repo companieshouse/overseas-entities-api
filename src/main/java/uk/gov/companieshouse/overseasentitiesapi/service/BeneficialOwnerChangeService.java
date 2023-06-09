@@ -38,7 +38,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 @Service
 public class BeneficialOwnerChangeService {
 
-  public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
+  public static final String NO_PSC_FOUND = "No matching PSC identified in database for BO";
   public static final String SERVICE = "BeneficialOwnerChangeService";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -151,7 +151,7 @@ public class BeneficialOwnerChangeService {
         beneficialOwnerCorporateDto.getChipsReference());
 
     if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
 
@@ -233,7 +233,7 @@ public class BeneficialOwnerChangeService {
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
 
     if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
 
@@ -304,7 +304,7 @@ public class BeneficialOwnerChangeService {
         beneficialOwnerIndividualDto.getChipsReference());
 
     if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
 
