@@ -8,5 +8,6 @@ public class CorporateManagingOfficerCessation extends ManagingOfficerCessation 
                                              LocalDate actionDate,
                                              String officerName) {
         super(officerAppointmentId, officerName, actionDate);
+        setAppointmentType("Corporate Managing Officer");
     }
 }

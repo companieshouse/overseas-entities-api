@@ -16,6 +16,7 @@ public class IndividualManagingOfficerCessation extends ManagingOfficerCessation
             ) {
         super(officerAppointmentId, officerName, actionDate);
         this.officerDateOfBirth = officerDateOfBirth;
+        setAppointmentType("Individual Managing Officer");
     }
 
     public String getOfficerDateOfBirth() {
