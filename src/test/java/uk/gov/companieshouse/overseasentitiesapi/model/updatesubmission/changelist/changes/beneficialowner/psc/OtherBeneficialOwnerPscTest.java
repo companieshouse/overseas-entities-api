@@ -36,14 +36,6 @@ class OtherBeneficialOwnerPscTest {
     assertEquals(companyIdentification, otherBeneficialOwnerPsc.getCompanyIdentification());
   }
 
-
-  @Test
-  void testSetAndGetActionDate() {
-    String expected = LocalDate.now().toString();
-    otherBeneficialOwnerPsc.setActionDate(expected);
-    assertEquals(expected, otherBeneficialOwnerPsc.getActionDate());
-  }
-
   @Test
   void testSetAndGetServiceAddress() {
     Address address = mock(Address.class);
@@ -78,7 +70,7 @@ class OtherBeneficialOwnerPscTest {
     assertTrue(psc1.equals(psc2) && psc2.equals(psc1));
     assertEquals(psc1.hashCode(), psc2.hashCode());
 
-    psc2.setActionDate(LocalDate.now().plusDays(1).toString());
+    psc2.setOnSanctionsList(true);
 
     assertFalse(psc1.equals(psc2) || psc2.equals(psc1));
     assertNotEquals(psc1.hashCode(), psc2.hashCode());

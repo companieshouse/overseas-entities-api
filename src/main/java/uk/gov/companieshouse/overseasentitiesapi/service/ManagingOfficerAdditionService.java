@@ -93,13 +93,13 @@ public class ManagingOfficerAdditionService {
 
         var legalForm = mo.getLegalForm();
         var governingLaw = mo.getLawGoverned();
-        var registerLocation = mo.getPublicRegisterName();
+        var placeRegistered = mo.getPublicRegisterName();
         var registrationNumber = mo.getRegistrationNumber();
 
         var identification = new CompanyIdentification();
         identification.setLegalForm(legalForm);
         identification.setGoverningLaw(governingLaw);
-        identification.setRegisterLocation(registerLocation);
+        identification.setPlaceRegistered(placeRegistered);
         identification.setRegistrationNumber(registrationNumber);
         corporateManagingOfficerAddition.setCompanyIdentification(identification);
 

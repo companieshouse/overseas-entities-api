@@ -170,7 +170,7 @@ class BeneficialOwnerAdditionServiceTest {
         corporateBeneficialOwner.setName("Corporation name");
         corporateBeneficialOwner.setLegalForm("Legal form");
         corporateBeneficialOwner.setLawGoverned("Governing law");
-        corporateBeneficialOwner.setPublicRegisterName("Register location");
+        corporateBeneficialOwner.setPublicRegisterName("Register name");
         corporateBeneficialOwner.setRegistrationNumber("Registration number");
         corporateBeneficialOwner.setOnSanctionsList(true);
 
@@ -186,10 +186,10 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", corporateEntityBeneficialOwnerAddition.getNatureOfControls().get(1));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", corporateEntityBeneficialOwnerAddition.getNatureOfControls().get(2));
         assertEquals("Corporation name", corporateEntityBeneficialOwnerAddition.getCorporateName());
-        assertEquals("Legal form", corporateEntityBeneficialOwnerAddition.getLegalForm());
-        assertEquals("Governing law", corporateEntityBeneficialOwnerAddition.getGoverningLaw());
-        assertEquals("Register location", corporateEntityBeneficialOwnerAddition.getRegisterLocation());
-        assertEquals("Registration number", corporateEntityBeneficialOwnerAddition.getRegistrationNumber());
+        assertEquals("Legal form", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
+        assertEquals("Governing law", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
+        assertEquals("Register name", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getPlaceRegistered());
+        assertEquals("Registration number", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getRegistrationNumber());
         assertTrue(corporateEntityBeneficialOwnerAddition.isOnSanctionsList());
     }
 
@@ -218,8 +218,8 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(0));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(1));
         assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateSoleName());
-        assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getLegalForm());
-        assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getGoverningLaw());
+        assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
+        assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
         assertTrue(legalPersonBeneficialOwnerAddition.isOnSanctionsList());
     }
 }

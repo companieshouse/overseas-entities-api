@@ -8,6 +8,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.time.LocalDate;
 import java.util.List;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddition {
     private static final String APPOINTMENT_TYPE = "OE OLE BO";
@@ -15,19 +16,8 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
     @JsonProperty("corporateName")
     private String corporateName;
 
-    @JsonProperty("legalForm")
-    private String legalForm;
-
-    @JsonProperty("governingLaw")
-    private String governingLaw;
-
-    @JsonInclude(NON_NULL)
-    @JsonProperty("registerLocation")
-    private String registerLocation;
-
-    @JsonInclude(NON_NULL)
-    @JsonProperty("registrationNumber")
-    private String registrationNumber;
+    @JsonProperty("companyIdentification")
+    private CompanyIdentification companyIdentification;
 
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                                   Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
@@ -43,35 +33,11 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
         this.corporateName = corporateName;
     }
 
-    public String getLegalForm() {
-        return legalForm;
+    public CompanyIdentification getCompanyIdentification() {
+        return companyIdentification;
     }
 
-    public void setLegalForm(String legalForm) {
-        this.legalForm = legalForm;
-    }
-
-    public String getGoverningLaw() {
-        return governingLaw;
-    }
-
-    public void setGoverningLaw(String governingLaw) {
-        this.governingLaw = governingLaw;
-    }
-
-    public String getRegisterLocation() {
-        return registerLocation;
-    }
-
-    public void setRegisterLocation(String registerLocation) {
-        this.registerLocation = registerLocation;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
+    public void setCompanyIdentification(CompanyIdentification companyIdentification) {
+        this.companyIdentification = companyIdentification;
     }
 }

@@ -145,7 +145,7 @@ class ManagingOfficerAdditionServiceTest {
         corporateManagingOfficer.setContactEmail("test@email.com");
         corporateManagingOfficer.setLegalForm("Legal form");
         corporateManagingOfficer.setLawGoverned("Governing law");
-        corporateManagingOfficer.setPublicRegisterName("Register location");
+        corporateManagingOfficer.setPublicRegisterName("Register name");
         corporateManagingOfficer.setRegistrationNumber("Registration number");
 
         return List.of(corporateManagingOfficer);
@@ -162,7 +162,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("test@email.com", corporateManagingOfficerAddition.getContactEmail());
         assertEquals("Legal form", corporateManagingOfficerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
-        assertEquals("Register location", corporateManagingOfficerAddition.getCompanyIdentification().getRegisterLocation());
+        assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getPlaceRegistered());
         assertEquals("Registration number", corporateManagingOfficerAddition.getCompanyIdentification().getRegistrationNumber());
     }
 }

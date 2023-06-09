@@ -21,16 +21,6 @@ class PscTest {
   }
 
   @Test
-  void testSetAndGetActionDate() {
-    String actionDate = LocalDate.now().toString();
-    psc1.setActionDate(actionDate);
-    assertEquals(actionDate, psc1.getActionDate());
-
-    psc2.setActionDate(actionDate);
-    assertEquals(actionDate, psc2.getActionDate());
-  }
-
-  @Test
   void testSetAndGetServiceAddress() {
     Address serviceAddress = createAddress();
     psc1.setServiceAddress(serviceAddress);
