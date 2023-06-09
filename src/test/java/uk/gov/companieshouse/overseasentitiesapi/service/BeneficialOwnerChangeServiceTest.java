@@ -381,7 +381,7 @@ class BeneficialOwnerChangeServiceTest {
     List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
     System.setOut(standardOut);
 
-    assertEquals(3, Collections.frequency(matches, "No matching BO was found in the database"));
+    assertEquals(3, Collections.frequency(matches, "No matching PSC identified in database for BO"));
     assertEquals(0, result.size());
   }
 
