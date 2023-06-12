@@ -6,38 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 class ComparisonHelperTest {
-
-  @Test
-  void equalsAddressDtoAndAddressApiReturnCorrectResult() {
-    AddressDto addressDto = new AddressDto();
-    addressDto.setPropertyNameNumber("PropertyNameNumber");
-    addressDto.setLine1("Line1");
-    addressDto.setLine2("Line2");
-    addressDto.setTown("Town");
-    addressDto.setCounty("County");
-    addressDto.setCountry("Country");
-    addressDto.setPoBox("PoBox");
-    addressDto.setCareOf("CareOf");
-    addressDto.setPostcode("Postcode");
-
-    AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("PropertyNameNumber");
-    addressApi.setAddressLine2("Line1");
-    addressApi.setAddressLine1("Line2");
-    addressApi.setLocality("Town");
-    addressApi.setRegion("County");
-    addressApi.setCountry("Country");
-    addressApi.setPoBox("PoBox");
-    addressApi.setCareOf("CareOf");
-    addressApi.setPostcode("Postcode");
-
-    assertTrue(ComparisonHelper.equals(addressDto, addressApi));
-  }
 
   @Test
   void equalsAddressDtoAndAddressApiCompleteFalseTest(){
@@ -252,5 +226,83 @@ class ComparisonHelperTest {
     Boolean first = true;
     boolean second = false;
     assertFalse(ComparisonHelper.equals(first, second));
+  }
+
+  @Test
+  void equalsAddressesNullTrue() {
+    AddressDto addressDto = null;
+    AddressApi addressApi = null;
+
+    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+  }
+
+  @Test
+  void equalsAddressApiNullTrue() {
+    AddressDto addressDto = new AddressDto();
+    AddressApi addressApi = null;
+
+    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+  }
+
+  @Test
+  void equalsAddressDtoNullTrue() {
+    AddressDto addressDto = null;
+    AddressApi addressApi = new AddressApi();
+
+    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+  }
+
+  @Test
+  void equalAddressesTrue() {
+    AddressDto addressDto = new AddressDto();
+    addressDto.setPropertyNameNumber("1");
+    addressDto.setLine1("line1");
+    addressDto.setLine2("line2");
+    addressDto.setTown("town1");
+    addressDto.setCounty("county1");
+    addressDto.setCountry("Canada");
+    addressDto.setPoBox("pobox1");
+    addressDto.setCareOf("careOf1");
+    addressDto.setPostcode("postcode1");
+
+    AddressApi addressApi = new AddressApi();
+    addressApi.setPremises("1");
+    addressApi.setAddressLine1("line1");
+    addressApi.setAddressLine2("line2");
+    addressApi.setLocality("town1");
+    addressApi.setRegion("county1");
+    addressApi.setCountry("Canada");
+    addressApi.setPoBox("pobox1");
+    addressApi.setCareOf("careOf1");
+    addressApi.setPostcode("postcode1");
+
+    assertTrue(ComparisonHelper.equals(addressDto, addressApi));
+  }
+
+  @Test
+  void notEqualAddressesFalse() {
+    AddressDto addressDto = new AddressDto();
+    addressDto.setPropertyNameNumber("1");
+    addressDto.setLine1("line1");
+    addressDto.setLine2("line2");
+    addressDto.setTown("town1");
+    addressDto.setCounty("county1");
+    addressDto.setCountry("Canada");
+    addressDto.setPoBox("pobox1");
+    addressDto.setCareOf("careOf1");
+    addressDto.setPostcode("postcode1");
+
+    AddressApi addressApi = new AddressApi();
+    addressApi.setPremises("1");
+    addressApi.setAddressLine1("line2");
+    addressApi.setAddressLine2("line1");
+    addressApi.setLocality("town1");
+    addressApi.setRegion("county1");
+    addressApi.setCountry("Canada");
+    addressApi.setPoBox("pobox1");
+    addressApi.setCareOf("careOf1");
+    addressApi.setPostcode("postcode1");
+
+    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
   }
 }
