@@ -123,6 +123,7 @@ public class ManagingOfficerCessationService {
 
     return Optional.of(
         new CorporateManagingOfficerCessation(
+                // foreName is not used by CHIPS to display Corporate Managing Officer which is ceased
             officerAppointmentId, mo.getResignedOn(), new PersonName(null, mo.getName())));
   }
 
