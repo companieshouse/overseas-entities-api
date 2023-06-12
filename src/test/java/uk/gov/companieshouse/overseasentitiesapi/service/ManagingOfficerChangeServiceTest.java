@@ -23,9 +23,15 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,6 +91,17 @@ public class ManagingOfficerChangeServiceTest {
         return address;
     }
 
+    private static List<String> extractMatches(String input, String patternString) {
+        List<String> matches = new ArrayList<>();
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(input);
+        while (matcher.find()) {
+            String match = matcher.group(1);
+            matches.add(match);
+        }
+        return matches;
+    }
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -93,7 +110,6 @@ public class ManagingOfficerChangeServiceTest {
         mockedIdentificationApi.setPlaceRegistered("London");
         mockedIdentificationApi.setLegalAuthority("UK Law");
         mockedIdentificationApi.setRegistrationNumber("123456");
-        //mockedIdentificationApi.setCountryRegistered("UK");
         mockedIdentificationApi.setLegalForm("Private Limited");
 
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
@@ -114,14 +130,14 @@ public class ManagingOfficerChangeServiceTest {
     }
 
     @Test
-    void testCollateAllManagingOfficerChanges() {
+    void testCollateManagingOfficerChanges() {
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
         managingOfficerIndividualDto.setChipsReference("1234567891");
         managingOfficerIndividualDto.setFirstName("John");
         managingOfficerIndividualDto.setLastName("Doe");
 
         ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
-        managingOfficerCorporateDto.setName("John Smith");
+        managingOfficerCorporateDto.setName("John Smith Corp");
         managingOfficerCorporateDto.setChipsReference("1234567890");
 
         when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
@@ -142,6 +158,215 @@ public class ManagingOfficerChangeServiceTest {
         assertFalse(result.isEmpty());
         assertTrue(result.stream().anyMatch(IndividualManagingOfficerChange.class::isInstance));
         assertTrue(result.stream().anyMatch(CorporateManagingOfficerChange.class::isInstance));
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesProducesNoLogsIfNoChipsReference() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setName("John Smith Corp");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        PrintStream standardOut = System.out;
+        ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        System.setOut(standardOut);
+
+        assertEquals("", outputStreamCaptor.toString());
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesProducesLogsIfPairIsNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setName("John Smith");
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                null);
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                null);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        PrintStream standardOut = System.out;
+        ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        String pattern = "\"message\":\"(.*?)\"";
+
+        var result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
+        System.setOut(standardOut);
+
+        assertEquals(2, Collections.frequency(matches, "No matching MO was found in the database"));
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testCollateNoManagingOfficerChanges() {
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                Collections.emptyList());
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                Collections.emptyList());
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertEquals(0, result.size());
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesEmptyRightOfPairNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(mockPublicPrivateMoPairRightNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo,
+                overseasEntitySubmissionDto);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesIndividualLeftOfPairNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPairLeftNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(0);
+        assertEquals(new PersonName("John", "Doe"), individualManagingOfficerChange.getOfficer().getPersonName());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesCorporateLeftOfPairNull() {
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setName("John Smith Corp");
+        managingOfficerCorporateDto.setChipsReference("1234567891");
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPairLeftNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(0);
+        assertEquals("John Smith Corp", corporateManagingOfficerChange.getOfficer().getName());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesEmptyLeftOfPairNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPairLeftNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesIndividualRightOfPairNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPairRightNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateBeneficialOwnerChangesCorporateRightOfPairNull() {
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPairRightNull);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesInvalidData() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567890");
+        managingOfficerIndividualDto.setFirstName(null);
+        managingOfficerIndividualDto.setLastName(null);
+
+        mockPublicPrivateMoPair.getLeft().setName("John Doe");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -173,8 +398,8 @@ public class ManagingOfficerChangeServiceTest {
         assertFalse(result.isEmpty());
         assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
 
-        IndividualManagingOfficerChange individualManagingOfficerChange =
-                (IndividualManagingOfficerChange) result.get(0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(0);
+        assertEquals("123", individualManagingOfficerChange.getAppointmentId());
         assertEquals(new PersonName("John", "Doe"),
                 individualManagingOfficerChange.getOfficer().getPersonName());
         assertEquals("Bangladeshi, Indonesian",
@@ -186,5 +411,47 @@ public class ManagingOfficerChangeServiceTest {
         assertEquals("Role", individualManagingOfficerChange.getOfficer().getRole());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getServiceAddress().getHouseNameNum());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getResidentialAddress().getHouseNameNum());
+    }
+
+    @Test
+    void testConvertManagingOfficerCorporateToChangeThroughCollateChanges() {
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+        managingOfficerCorporateDto.setName("John Smith Corp");
+        managingOfficerCorporateDto.setServiceAddress(createDummyAddressDto());
+        managingOfficerCorporateDto.setPrincipalAddress(createDummyAddressDto());
+        managingOfficerCorporateDto.setContactFullName("Contact name");
+        managingOfficerCorporateDto.setContactEmail("contact@test.com");
+        managingOfficerCorporateDto.setStartDate(LocalDate.of(2022, 1, 1));
+        managingOfficerCorporateDto.setResignedOn(LocalDate.of(2023, 1, 1));
+        managingOfficerCorporateDto.setLegalForm("Legal form");
+        managingOfficerCorporateDto.setLawGoverned("Law governed");
+        managingOfficerCorporateDto.setRegistrationNumber("1234");
+        managingOfficerCorporateDto.setPublicRegisterName("Public register name");
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(0);
+        assertEquals("123", corporateManagingOfficerChange.getAppointmentId());
+        assertEquals("John Smith Corp", corporateManagingOfficerChange.getOfficer().getName());
+        assertEquals("Contact name", corporateManagingOfficerChange.getOfficer().getContactName());
+        assertEquals("contact@test.com", corporateManagingOfficerChange.getOfficer().getEmail());
+        assertEquals("2022-01-01", corporateManagingOfficerChange.getOfficer().getStartDate().toString());
+        assertEquals("2023-01-01", corporateManagingOfficerChange.getOfficer().getActionDate().toString());
+        assertEquals("Legal form", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getLegalForm());
+        assertEquals("Law governed", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getGoverningLaw());
+        assertEquals("1234", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getRegistrationNumber());
+        assertEquals("Public register name", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getPlaceRegistered());
     }
 }
