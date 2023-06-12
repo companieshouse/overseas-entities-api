@@ -74,8 +74,7 @@ class FormerNameConcatenationTest {
     @Test
     void testConcatenateFormerNamesNoForenamesNorSurname() {
         List<FormerNamesApi> formerNamesApiList = List.of(
-                new FormerNamesApi() {{
-                }}
+                new FormerNamesApi()
         );
 
         var result = concatenateFormerNames(formerNamesApiList);
