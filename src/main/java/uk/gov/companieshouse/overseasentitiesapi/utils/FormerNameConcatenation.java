@@ -15,16 +15,23 @@ public class FormerNameConcatenation {
 
         if (formerNames != null) {
             for(FormerNamesApi formerName : formerNames){
-                var forenames = formerName.getForenames();
-                var surname = formerName.getSurname();
-                var fullName = StringUtils.isNotEmpty(forenames) ? forenames.concat(" " + surname) : surname;
+                if (StringUtils.isNotEmpty(allFormerNames.toString())) {
+                    allFormerNames.append(", ");
+                }
 
-                if (StringUtils.isEmpty(allFormerNames.toString()) && fullName != null) {
-                    allFormerNames.append(fullName);
+                var fullName = StringUtils.EMPTY;
+
+                var forenames = formerName.getForenames();
+                if (StringUtils.isNotEmpty(forenames)) {
+                    fullName = forenames;
                 }
-                else {
-                    allFormerNames.append(", " + fullName);
+
+                var surname = formerName.getSurname();
+                if (StringUtils.isNotEmpty(surname)) {
+                    fullName += " " + surname;
                 }
+
+                allFormerNames.append(fullName.trim());
             }
         }
 
