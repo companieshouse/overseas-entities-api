@@ -20,8 +20,8 @@ public class ComparisonHelper {
       return false;
     }
     return Objects.equals(addressDto.getPropertyNameNumber(), addressApi.getPremises())
-        && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine2())
-        && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine1())
+        && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine1())
+        && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine2())
         && Objects.equals(addressDto.getTown(), addressApi.getLocality())
         && Objects.equals(addressDto.getCounty(), addressApi.getRegion())
         && Objects.equals(addressDto.getCountry(), addressApi.getCountry())
