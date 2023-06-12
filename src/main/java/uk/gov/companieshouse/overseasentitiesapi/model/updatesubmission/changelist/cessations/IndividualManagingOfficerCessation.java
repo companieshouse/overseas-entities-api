@@ -3,6 +3,8 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changel
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition.INDIVIDUAL_MANAGING_OFFICER;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+
 import java.time.LocalDate;
 
 public class IndividualManagingOfficerCessation extends ManagingOfficerCessation {
@@ -12,7 +14,7 @@ public class IndividualManagingOfficerCessation extends ManagingOfficerCessation
 
     public IndividualManagingOfficerCessation(
             String officerAppointmentId,
-            String officerName,
+            PersonName officerName,
             String officerDateOfBirth,
             LocalDate actionDate
             ) {

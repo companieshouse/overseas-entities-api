@@ -80,10 +80,12 @@ class ManagingOfficerCessationServiceTest {
     assertEquals("123", individualCessation.getOfficerAppointmentId());
     assertEquals(LocalDate.now(), individualCessation.getActionDate());
     assertEquals(LocalDate.of(1990, 5, 15).toString(), individualCessation.getOfficerDateOfBirth());
-    assertEquals("John Doe", individualCessation.getOfficerName());
+    assertEquals("John Doe", new StringJoiner(" ")
+            .add(individualCessation.getOfficerName().getForename())
+            .add(individualCessation.getOfficerName().getSurname()).toString());
     assertEquals("Individual Managing Officer", individualCessation.getAppointmentType());
 
-    assertEquals("ACME Corporation", corporateCessation.getOfficerName());
+    assertEquals("ACME Corporation", corporateCessation.getOfficerName().getSurname());
     assertEquals("2023-05-15", corporateCessation.getActionDate().toString());
     assertEquals("Corporate Managing Officer", corporateCessation.getAppointmentType());
   }

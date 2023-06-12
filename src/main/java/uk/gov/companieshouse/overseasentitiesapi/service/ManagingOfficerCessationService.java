@@ -16,6 +16,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.CorporateManagingOfficerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualManagingOfficerCessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 @Service
@@ -96,7 +97,7 @@ public class ManagingOfficerCessationService {
     return Optional.of(
         new IndividualManagingOfficerCessation(
             officerAppointmentId,
-            mo.getFirstName() + " " + mo.getLastName(),
+            new PersonName(mo.getFirstName(), mo.getLastName()),
             formattedDate,
             mo.getResignedOn()));
   }
@@ -122,7 +123,8 @@ public class ManagingOfficerCessationService {
 
     return Optional.of(
         new CorporateManagingOfficerCessation(
-            officerAppointmentId, mo.getResignedOn(), mo.getName()));
+                // foreName is not used by CHIPS to display Corporate Managing Officer which is ceased
+            officerAppointmentId, mo.getResignedOn(), new PersonName(null, mo.getName())));
   }
 
   private String getAppointmentId(
