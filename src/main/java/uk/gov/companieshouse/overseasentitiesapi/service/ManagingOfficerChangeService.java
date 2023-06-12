@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.IdentificationApi;
-import uk.gov.companieshouse.api.model.psc.Identification;
-import uk.gov.companieshouse.api.model.psc.PscApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
@@ -21,10 +19,16 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.officer.Officer;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
-import uk.gov.companieshouse.overseasentitiesapi.utils.*;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -178,6 +182,7 @@ public class ManagingOfficerChangeService {
                 IndividualManagingOfficer::setNationalityOther
         );
 
+        managingOfficerChange.setOfficer(officer);
         return hasChange ? managingOfficerChange : null;
     }
 
@@ -264,6 +269,7 @@ public class ManagingOfficerChangeService {
                 IdentificationApi::getRegistrationNumber,
                 CompanyIdentification::setRegistrationNumber);
 
+        managingOfficerChange.setOfficer(officer);
         return hasChange ? managingOfficerChange : null;
     }
 

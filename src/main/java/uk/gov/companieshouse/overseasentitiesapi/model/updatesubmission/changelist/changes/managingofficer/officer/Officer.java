@@ -5,7 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.time.LocalDate;
 
-public class Officer {
+public abstract class Officer {
     @JsonProperty("actionDate")
     private LocalDate actionDate;
     @JsonProperty("serviceAddress")

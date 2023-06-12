@@ -101,7 +101,7 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(PersonName personName, String string) {
-    var nullValuesCheck = handleNulls(string, string);
+    var nullValuesCheck = handleNulls(personName, string);
     if (nullValuesCheck != null) {
       return nullValuesCheck;
     }

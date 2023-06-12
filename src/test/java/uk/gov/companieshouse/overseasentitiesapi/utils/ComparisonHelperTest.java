@@ -27,8 +27,8 @@ class ComparisonHelperTest {
 
     AddressApi addressApi = new AddressApi();
     addressApi.setPremises("PropertyNameNumber");
-    addressApi.setAddressLine2("Line1");
-    addressApi.setAddressLine1("Line2");
+    addressApi.setAddressLine1("Line1");
+    addressApi.setAddressLine2("Line2");
     addressApi.setLocality("Town");
     addressApi.setRegion("County");
     addressApi.setCountry("Country");
