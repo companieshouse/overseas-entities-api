@@ -38,7 +38,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 @Service
 public class BeneficialOwnerChangeService {
 
-  public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
+  public static final String NO_PSC_FOUND = "No matching PSC identified in database for BO";
   public static final String SERVICE = "BeneficialOwnerChangeService";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -150,17 +150,15 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerCorporateDto.getChipsReference());
 
-    if (publicPrivateBoPair == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
 
     ChangeManager<CorporateBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
-    if (publicPrivateBoPair.getRight() != null) {
-      beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
-    }
+    beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
 
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes();
@@ -202,7 +200,7 @@ public class BeneficialOwnerChangeService {
     hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
         beneficialOwnerCorporateDto.getPublicRegisterName(),
         Identification::getPlaceRegistered,
-        CompanyIdentification::setRegisterLocation);
+        CompanyIdentification::setPlaceRegistered);
 
     hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
         beneficialOwnerCorporateDto.getRegistrationNumber(),
@@ -234,17 +232,15 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
 
-    if (publicPrivateBoPair == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
 
     ChangeManager<OtherBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
-    if (publicPrivateBoPair.getRight() != null) {
-      beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
-    }
+    beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
 
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes();
@@ -307,16 +303,15 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerIndividualDto.getChipsReference());
 
-    if (publicPrivateBoPair == null) {
-      ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
       return null;
     }
+
     ChangeManager<IndividualBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
         psc, publicPrivateBoPair);
 
-    if (publicPrivateBoPair.getRight() != null) {
-      beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
-    }
+    beneficialOwnerChange.setAppointmentId(publicPrivateBoPair.getRight().getPscId());
 
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes();
@@ -340,14 +335,6 @@ public class BeneficialOwnerChangeService {
         submissionNationality,
         PscApi::getNationality,
         IndividualBeneficialOwnerPsc::setNationalityOther);
-
-    hasChange |= changeManager.compareAndBuildRightChange(
-        beneficialOwnerIndividualDto.getDateOfBirth(),
-        PrivateBoDataApi::getDateOfBirth,
-        TypeConverter::localDateToString,
-        ComparisonHelper::equals,
-        IndividualBeneficialOwnerPsc::setBirthDate
-    );
 
     PersonName personName = null;
     if(beneficialOwnerIndividualDto.getFirstName() != null && beneficialOwnerIndividualDto.getLastName() != null) {

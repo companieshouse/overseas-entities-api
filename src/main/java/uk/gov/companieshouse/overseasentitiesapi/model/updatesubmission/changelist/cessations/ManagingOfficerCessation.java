@@ -6,7 +6,6 @@ import java.time.LocalDate;
 public abstract class ManagingOfficerCessation extends Cessation {
 
     private static final String CHANGE_NAME = "ceaseOfficerAppointment";
-    private static final String MANAGING_OFFICER = "Managing Officer";
 
     @JsonProperty("officerAppointmentId")
     private String officerAppointmentId;
@@ -27,7 +26,6 @@ public abstract class ManagingOfficerCessation extends Cessation {
         super.setChangeName(CHANGE_NAME);
         this.officerAppointmentId = officerAppointmentId;
         this.officerName = officerName;
-        this.appointmentType = MANAGING_OFFICER;
         this.actionDate = actionDate;
     }
 

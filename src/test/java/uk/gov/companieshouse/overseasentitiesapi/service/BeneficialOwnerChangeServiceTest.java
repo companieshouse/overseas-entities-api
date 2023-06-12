@@ -381,7 +381,7 @@ class BeneficialOwnerChangeServiceTest {
     List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
     System.setOut(standardOut);
 
-    assertEquals(3, Collections.frequency(matches, "No matching BO was found in the database"));
+    assertEquals(3, Collections.frequency(matches, "No matching PSC identified in database for BO"));
     assertEquals(0, result.size());
   }
 
@@ -520,7 +520,6 @@ class BeneficialOwnerChangeServiceTest {
   @Test
   void testCollateBeneficialOwnerChangesIndividualRightOfPairNull() {
     BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setDateOfBirth(LocalDate.of(2000, 1, 1));
     beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
     when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
@@ -532,17 +531,7 @@ class BeneficialOwnerChangeServiceTest {
         publicPrivateBo,
         overseasEntitySubmissionDto);
 
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
-
-    if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
-      IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
-          0);
-      assertEquals("2000-01-01", individualBeneficialOwnerChange.getPsc().getBirthDate());
-      assertNull(individualBeneficialOwnerChange.getAppointmentId());
-    }
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -561,18 +550,7 @@ class BeneficialOwnerChangeServiceTest {
         publicPrivateBo,
         overseasEntitySubmissionDto);
 
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
-
-    if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
-      CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
-          0);
-      assertEquals(createDummyAddress(),
-          corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
-      assertNull(corporateBeneficialOwnerChange.getAppointmentId());
-    }
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -591,18 +569,7 @@ class BeneficialOwnerChangeServiceTest {
         publicPrivateBo,
         overseasEntitySubmissionDto);
 
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
-
-    if (result.get(0) instanceof OtherBeneficialOwnerChange) {
-      OtherBeneficialOwnerChange otherBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
-          0);
-      assertEquals(createDummyAddress(),
-          otherBeneficialOwnerChange.getPsc().getResidentialAddress());
-      assertNull(otherBeneficialOwnerChange.getAppointmentId());
-    }
+    assertTrue(result.isEmpty());
   }
 
   @Test

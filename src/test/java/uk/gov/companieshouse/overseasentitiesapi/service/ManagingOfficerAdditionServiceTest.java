@@ -120,7 +120,7 @@ class ManagingOfficerAdditionServiceTest {
     }
 
     private void assertIndividualManagingOfficerDetails(IndividualManagingOfficerAddition individualManagingOfficerAddition) {
-        assertEquals("Managing Officer", individualManagingOfficerAddition.getAppointmentType());
+        assertEquals("Individual Managing Officer", individualManagingOfficerAddition.getAppointmentType());
         assertEquals(LocalDate.of(2020, 1, 1), individualManagingOfficerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), individualManagingOfficerAddition.getResignedOn());
         assertEquals("Some country", individualManagingOfficerAddition.getServiceAddress().getCountry());
@@ -145,14 +145,14 @@ class ManagingOfficerAdditionServiceTest {
         corporateManagingOfficer.setContactEmail("test@email.com");
         corporateManagingOfficer.setLegalForm("Legal form");
         corporateManagingOfficer.setLawGoverned("Governing law");
-        corporateManagingOfficer.setPublicRegisterName("Register location");
+        corporateManagingOfficer.setPublicRegisterName("Register name");
         corporateManagingOfficer.setRegistrationNumber("Registration number");
 
         return List.of(corporateManagingOfficer);
     }
 
     private void assertCorporateManagingOfficerDetails(CorporateManagingOfficerAddition corporateManagingOfficerAddition) {
-        assertEquals("Managing Officer", corporateManagingOfficerAddition.getAppointmentType());
+        assertEquals("Corporate Managing Officer", corporateManagingOfficerAddition.getAppointmentType());
         assertEquals(LocalDate.of(2020, 1, 1), corporateManagingOfficerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), corporateManagingOfficerAddition.getResignedOn());
         assertEquals("Some country", corporateManagingOfficerAddition.getServiceAddress().getCountry());
@@ -162,7 +162,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("test@email.com", corporateManagingOfficerAddition.getContactEmail());
         assertEquals("Legal form", corporateManagingOfficerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
-        assertEquals("Register location", corporateManagingOfficerAddition.getCompanyIdentification().getRegisterLocation());
+        assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getPlaceRegistered());
         assertEquals("Registration number", corporateManagingOfficerAddition.getCompanyIdentification().getRegistrationNumber());
     }
 }

@@ -10,7 +10,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public abstract class ManagingOfficerAddition extends Addition {
     private static final String CHANGE_NAME = "addOfficerAppointment";
-    private static final String APPOINTMENT_TYPE = "Managing Officer";
 
     @JsonProperty("actionDate")
     private LocalDate actionDate;
@@ -26,12 +25,14 @@ public abstract class ManagingOfficerAddition extends Addition {
     @JsonProperty("resignedOn")
     private LocalDate resignedOn;
 
-    protected ManagingOfficerAddition(LocalDate actionDate,
-                                   Address residentialAddress,
-                                   Address serviceAddress,
-                                   LocalDate resignedOn) {
+    protected ManagingOfficerAddition(
+            LocalDate actionDate,
+            Address residentialAddress,
+            Address serviceAddress,
+            LocalDate resignedOn,
+            String appointmentType) {
         super.setChangeName(CHANGE_NAME);
-        super.setAppointmentType(APPOINTMENT_TYPE);
+        super.setAppointmentType(appointmentType);
         this.actionDate = actionDate;
         this.residentialAddress = residentialAddress;
         this.serviceAddress = serviceAddress;

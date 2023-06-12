@@ -12,9 +12,6 @@ public class IndividualBeneficialOwnerPsc extends Psc {
   @JsonProperty("nationalityOther")
   private String nationalityOther;
 
-  @JsonProperty("birthDate")
-  private String birthDate;
-
   private static final String APPOINTMENT_TYPE = "OE INDIVIDUAL BO";
 
 
@@ -33,14 +30,6 @@ public class IndividualBeneficialOwnerPsc extends Psc {
 
   public void setNationalityOther(String nationalityOther) {
     this.nationalityOther = nationalityOther;
-  }
-
-  public String getBirthDate() {
-    return birthDate;
-  }
-
-  public void setBirthDate(String birthDate) {
-    this.birthDate = birthDate;
   }
 
   @Override
@@ -72,12 +61,11 @@ public class IndividualBeneficialOwnerPsc extends Psc {
       return false;
     }
     IndividualBeneficialOwnerPsc that = (IndividualBeneficialOwnerPsc) o;
-    return Objects.equals(personName, that.personName) && Objects.equals(nationalityOther,
-        that.nationalityOther) && Objects.equals(birthDate, that.birthDate);
+    return Objects.equals(personName, that.personName) && Objects.equals(nationalityOther, that.nationalityOther);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(personName, nationalityOther, birthDate, APPOINTMENT_TYPE, super.hashCode());
+    return Objects.hash(personName, nationalityOther, APPOINTMENT_TYPE, super.hashCode());
   }
 }

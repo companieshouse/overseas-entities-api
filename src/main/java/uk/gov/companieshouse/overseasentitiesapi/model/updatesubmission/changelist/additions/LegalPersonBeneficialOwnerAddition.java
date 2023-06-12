@@ -5,6 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.time.LocalDate;
 import java.util.List;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition {
     private static final String APPOINTMENT_TYPE = "OE GPA BO";
@@ -12,11 +13,8 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
     @JsonProperty("corporateSoleName")
     private String corporateSoleName;
 
-    @JsonProperty("legalForm")
-    private String legalForm;
-
-    @JsonProperty("governingLaw")
-    private String governingLaw;
+    @JsonProperty("companyIdentification")
+    private CompanyIdentification companyIdentification;
 
     public LegalPersonBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                               Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
@@ -32,19 +30,11 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
         this.corporateSoleName = corporateSoleName;
     }
 
-    public String getLegalForm() {
-        return legalForm;
+    public CompanyIdentification getCompanyIdentification() {
+        return companyIdentification;
     }
 
-    public void setLegalForm(String legalForm) {
-        this.legalForm = legalForm;
-    }
-
-    public String getGoverningLaw() {
-        return governingLaw;
-    }
-
-    public void setGoverningLaw(String governingLaw) {
-        this.governingLaw = governingLaw;
+    public void setCompanyIdentification(CompanyIdentification companyIdentification) {
+        this.companyIdentification = companyIdentification;
     }
 }
