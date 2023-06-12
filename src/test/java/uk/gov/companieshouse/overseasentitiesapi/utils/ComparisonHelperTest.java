@@ -293,15 +293,15 @@ class ComparisonHelperTest {
     addressDto.setPostcode("postcode1");
 
     AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("1");
+    addressApi.setPremises("2");
     addressApi.setAddressLine1("line2");
     addressApi.setAddressLine2("line1");
-    addressApi.setLocality("town1");
-    addressApi.setRegion("county1");
-    addressApi.setCountry("Canada");
-    addressApi.setPoBox("pobox1");
-    addressApi.setCareOf("careOf1");
-    addressApi.setPostcode("postcode1");
+    addressApi.setLocality("town2");
+    addressApi.setRegion("county2");
+    addressApi.setCountry("Australia");
+    addressApi.setPoBox("pobox2");
+    addressApi.setCareOf("careOf2");
+    addressApi.setPostcode("postcode2");
 
     assertFalse(ComparisonHelper.equals(addressDto, addressApi));
   }
