@@ -124,7 +124,7 @@ class FilingServiceTest {
                 new PersonName("Joe", "Bloggs")));
     private static final List<Cessation> DUMMY_MO_CESSATION = List.of(
             new IndividualManagingOfficerCessation("Appointment id",
-                    "Joe Bloggs",
+                    new PersonName("Joe","Bloggs"),
                     "1980-01-01",
                     LocalDate.of(2023, 1, 1)));
     private static final List<Addition> DUMMY_BO_ADDITION = List.of(
