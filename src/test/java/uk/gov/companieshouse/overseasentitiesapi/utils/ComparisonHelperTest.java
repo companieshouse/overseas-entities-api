@@ -142,7 +142,7 @@ class ComparisonHelperTest {
   void equalsAddressDtoAndAddressApiWhenNullReturnFalse() {
     AddressApi addressApi = new AddressApi();
     assertFalse(ComparisonHelper.equals(null, addressApi));
-    assertFalse(ComparisonHelper.equals(new AddressDto(), null));
+    assertFalse(ComparisonHelper.equals(new AddressDto(), (AddressApi) null));
   }
 
   @Test
@@ -210,7 +210,7 @@ class ComparisonHelperTest {
   void equalsListAndArrayWhenNullReturnCorrectResult() {
     List<String> list = Arrays.asList("element1", "element2", "element3");
 
-    assertFalse(ComparisonHelper.equals(null, new String[]{"element1", "element2", "element3"}));
+    assertFalse(ComparisonHelper.equals((String) null, new String[]{"element1", "element2", "element3"}));
     assertFalse(ComparisonHelper.equals(list, null));
 
     List<String> nullList = null;

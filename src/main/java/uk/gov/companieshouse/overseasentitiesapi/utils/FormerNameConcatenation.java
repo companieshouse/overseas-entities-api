@@ -5,29 +5,29 @@ import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 
 import java.util.List;
 
-public class FormerNameConcatenator {
-    private FormerNameConcatenator() {
+public class FormerNameConcatenation {
+    private FormerNameConcatenation() {
         throw new IllegalAccessError("Use the static method designation");
     }
 
     public static String concatenateFormerNames(List<FormerNamesApi> formerNames) {
-        var allFormerNames = StringUtils.EMPTY;
+        var allFormerNames = new StringBuilder();
 
         if (formerNames != null) {
             for(FormerNamesApi formerName : formerNames){
                 var forenames = formerName.getForenames();
-                var surname = formerName.getForenames();
+                var surname = formerName.getSurname();
                 var fullName = StringUtils.isNotEmpty(forenames) ? forenames.concat(" " + surname) : surname;
 
-                if (StringUtils.isEmpty(allFormerNames) && fullName != null) {
-                    allFormerNames = fullName;
+                if (StringUtils.isEmpty(allFormerNames.toString()) && fullName != null) {
+                    allFormerNames.append(fullName);
                 }
                 else {
-                    allFormerNames += ", " + fullName;
+                    allFormerNames.append(", " + fullName);
                 }
             }
         }
 
-        return allFormerNames;
+        return allFormerNames.toString();
     }
 }

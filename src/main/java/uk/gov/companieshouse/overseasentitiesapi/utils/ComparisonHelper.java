@@ -13,7 +13,7 @@ import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcatenator.concatenateFormerNames;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcatenation.concatenateFormerNames;
 
 public class ComparisonHelper {
 
@@ -22,9 +22,11 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(AddressDto addressDto, AddressApi addressApi) {
-    if (addressDto == null || addressApi == null) {
-      return false;
+    var nullValuesCheck = handleNulls(addressDto, addressApi);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return Objects.equals(addressDto.getPropertyNameNumber(), addressApi.getPremises())
             && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine1())
             && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine2())
@@ -38,9 +40,11 @@ public class ComparisonHelper {
 
   public static boolean equals(AddressDto addressDto,
                                uk.gov.companieshouse.api.model.managingofficerdata.AddressApi addressApi) {
-    if (addressDto == null || addressApi == null) {
-      return false;
+    var nullValuesCheck = handleNulls(addressDto, addressApi);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return Objects.equals(addressDto.getPropertyNameNumber(), addressApi.getPremises())
             && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine1())
             && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine2())
@@ -53,9 +57,11 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(AddressDto addressDto, Address address) {
-    if (addressDto == null || address == null) {
-      return false;
+    var nullValuesCheck = handleNulls(addressDto, address);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return Objects.equals(addressDto.getPropertyNameNumber(), address.getPremises())
             && Objects.equals(addressDto.getLine1(), address.getAddressLine1())
             && Objects.equals(addressDto.getLine2(), address.getAddressLine2())
@@ -68,12 +74,11 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(LocalDate a, String b) {
-    if (a == null && b == null) {
-      return true;
+    var nullValuesCheck = handleNulls(a, b);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
-    if (a == null || b == null) {
-      return false;
-    }
+
     if (b.contains(" ")) {
       b = b.substring(0, b.indexOf(" "));
     }
@@ -84,10 +89,9 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(List<String> list, String[] array) {
-    if (list == null && array == null) {
-      return true;
-    } else if (list == null || array == null) {
-      return false;
+    var nullValuesCheck = handleNulls(list, array);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
 
     var arrayFromList = list.toArray();
@@ -97,46 +101,58 @@ public class ComparisonHelper {
   }
 
   public static boolean equals(PersonName personName, String string) {
+    var nullValuesCheck = handleNulls(string, string);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
+    }
+
+
     return personName.toString().equals(string);
   }
 
   public static boolean equals(Boolean b, boolean b2) {
-    if (b == null) {
-      return false;
+    var nullValuesCheck = handleNulls(b, b2);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return b == b2;
   }
 
   public static boolean equals(String string, OfficerRoleApi officerRoleApi) {
-    if (string == null) {
-      if (officerRoleApi == null) {
-        return true;
-      }
-      return false;
+    var nullValuesCheck = handleNulls(string, officerRoleApi);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return string.equals(officerRoleApi.getOfficerRole());
   }
 
   public static boolean equals(String string, String[] strings) {
-    if (string == null) {
-      if (strings == null) {
-        return true;
-      }
-      return false;
+    var nullValuesCheck = handleNulls(string, strings);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
+
     return string.equals(String.join(" ", strings));
   }
 
   public static boolean equalsFormerName(String string, List<FormerNamesApi> strings) {
-    if (string == null) {
-      if (strings == null) {
-        return true;
-      }
-      return false;
+    var nullValuesCheck = handleNulls(string, strings);
+    if (nullValuesCheck != null) {
+      return nullValuesCheck;
     }
 
     var concatenatedFormerNames = concatenateFormerNames(strings);
 
     return string.equals(concatenatedFormerNames);
+  }
+
+  private static Boolean handleNulls(Object a, Object b) {
+    if (a == null || b == null) {
+      return a == null && b == null;
+    }
+
+    return null;
   }
 }
