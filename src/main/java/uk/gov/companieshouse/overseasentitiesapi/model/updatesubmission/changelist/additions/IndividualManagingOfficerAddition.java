@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,11 +9,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.time.LocalDate;
 
-public class IndividualManagingOfficerAddition extends ManagingOfficerAddition{
+public class IndividualManagingOfficerAddition extends ManagingOfficerAddition {
+
+    public static final String INDIVIDUAL_MANAGING_OFFICER = "Individual Managing Officer";
     @JsonProperty("personName")
     private PersonName personName;
 
-    @JsonInclude(NON_NULL)
+    @JsonInclude(NON_EMPTY)
     @JsonProperty("formerNames")
     private String formerNames;
 
@@ -33,7 +35,7 @@ public class IndividualManagingOfficerAddition extends ManagingOfficerAddition{
                                              Address residentialAddress,
                                              Address serviceAddress,
                                              LocalDate resignedOn) {
-        super(actionDate, residentialAddress, serviceAddress, resignedOn);
+        super(actionDate, residentialAddress, serviceAddress, resignedOn, INDIVIDUAL_MANAGING_OFFICER);
     }
 
     public PersonName getPersonName() {
