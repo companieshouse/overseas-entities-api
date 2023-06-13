@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+
 import java.time.LocalDate;
 
 public abstract class ManagingOfficerCessation extends Cessation {
@@ -11,7 +13,7 @@ public abstract class ManagingOfficerCessation extends Cessation {
     private String officerAppointmentId;
 
     @JsonProperty("officerName")
-    private String officerName;
+    private PersonName officerName;
 
     @JsonProperty("appointmentType")
     private String appointmentType;
@@ -21,7 +23,7 @@ public abstract class ManagingOfficerCessation extends Cessation {
 
     protected ManagingOfficerCessation(
             String officerAppointmentId,
-            String officerName,
+            PersonName officerName,
             LocalDate actionDate) {
         super.setChangeName(CHANGE_NAME);
         this.officerAppointmentId = officerAppointmentId;
@@ -37,11 +39,11 @@ public abstract class ManagingOfficerCessation extends Cessation {
         this.officerAppointmentId = officerAppointmentId;
     }
 
-    public String getOfficerName(){
+    public PersonName getOfficerName(){
         return officerName;
     }
 
-    public void setOfficerName(String officerName){
+    public void setOfficerName(PersonName officerName){
         this.officerName = officerName;
     }
 
