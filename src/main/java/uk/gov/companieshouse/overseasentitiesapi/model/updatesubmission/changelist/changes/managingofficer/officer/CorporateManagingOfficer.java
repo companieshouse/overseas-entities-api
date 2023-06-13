@@ -7,12 +7,16 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 public class CorporateManagingOfficer extends Officer{
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("registeredOffice")
     private Address registeredOffice;
+
     @JsonProperty("contactName")
     private String contactName;
+
     @JsonProperty("email")
     private String email;
+
     @JsonProperty("companyIdentification")
     private CompanyIdentification companyIdentification;
 

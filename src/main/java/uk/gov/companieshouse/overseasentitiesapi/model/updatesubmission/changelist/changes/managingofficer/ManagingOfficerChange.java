@@ -5,15 +5,17 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.officer.Officer;
 
 public abstract class ManagingOfficerChange<T extends Officer> extends Change {
-    private final String CHANGE_NAME = "officerAppointmentChange";
-    private final String APPOINTMENT_TYPE = "Managing Officer";
+    private static final String CHANGE_NAME = "officerAppointmentChange";
 
     @JsonProperty("change")
     private String change = CHANGE_NAME;
+
     @JsonProperty("appointmentId")
     private String appointmentId;
+
     @JsonProperty("appointmentType")
-    private String appointmentType = APPOINTMENT_TYPE;
+    protected String appointmentType;
+
     @JsonProperty("officer")
     private T officer;
 

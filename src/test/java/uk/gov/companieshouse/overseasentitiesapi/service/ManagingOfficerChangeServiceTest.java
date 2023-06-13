@@ -371,7 +371,6 @@ class ManagingOfficerChangeServiceTest {
         managingOfficerIndividualDto.setNationality("Bangladeshi");
         managingOfficerIndividualDto.setSecondNationality("Indonesian");
         managingOfficerIndividualDto.setStartDate(LocalDate.of(2022, 1, 1));
-        managingOfficerIndividualDto.setResignedOn(LocalDate.of(2023, 1, 1));
         managingOfficerIndividualDto.setOccupation("Occupation");
         managingOfficerIndividualDto.setRoleAndResponsibilities("Role");
         managingOfficerIndividualDto.setFormerNames("Jonathan Doe, Johnny Doe");
@@ -392,13 +391,13 @@ class ManagingOfficerChangeServiceTest {
         assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
 
         IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(0);
+        assertEquals("Individual Managing Officer", individualManagingOfficerChange.getAppointmentType());
         assertEquals("123", individualManagingOfficerChange.getAppointmentId());
         assertEquals(new PersonName("John", "Doe"),
                 individualManagingOfficerChange.getOfficer().getPersonName());
         assertEquals("Bangladeshi, Indonesian",
                 individualManagingOfficerChange.getOfficer().getNationalityOther());
         assertEquals("2022-01-01", individualManagingOfficerChange.getOfficer().getStartDate().toString());
-        assertEquals("2023-01-01", individualManagingOfficerChange.getOfficer().getActionDate().toString());
         assertEquals("Jonathan Doe, Johnny Doe", individualManagingOfficerChange.getOfficer().getFormerNames());
         assertEquals("Occupation", individualManagingOfficerChange.getOfficer().getOccupation());
         assertEquals("Role", individualManagingOfficerChange.getOfficer().getRole());
@@ -416,7 +415,6 @@ class ManagingOfficerChangeServiceTest {
         managingOfficerCorporateDto.setContactFullName("Contact name");
         managingOfficerCorporateDto.setContactEmail("contact@test.com");
         managingOfficerCorporateDto.setStartDate(LocalDate.of(2022, 1, 1));
-        managingOfficerCorporateDto.setResignedOn(LocalDate.of(2023, 1, 1));
         managingOfficerCorporateDto.setLegalForm("Legal form");
         managingOfficerCorporateDto.setLawGoverned("Law governed");
         managingOfficerCorporateDto.setRegistrationNumber("1234");
@@ -436,12 +434,12 @@ class ManagingOfficerChangeServiceTest {
         assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
 
         CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(0);
+        assertEquals("Corporate Managing Officer", corporateManagingOfficerChange.getAppointmentType());
         assertEquals("123", corporateManagingOfficerChange.getAppointmentId());
         assertEquals("John Smith Corp", corporateManagingOfficerChange.getOfficer().getName());
         assertEquals("Contact name", corporateManagingOfficerChange.getOfficer().getContactName());
         assertEquals("contact@test.com", corporateManagingOfficerChange.getOfficer().getEmail());
         assertEquals("2022-01-01", corporateManagingOfficerChange.getOfficer().getStartDate().toString());
-        assertEquals("2023-01-01", corporateManagingOfficerChange.getOfficer().getActionDate().toString());
         assertEquals("Legal form", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getLegalForm());
         assertEquals("Law governed", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getGoverningLaw());
         assertEquals("1234", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getRegistrationNumber());

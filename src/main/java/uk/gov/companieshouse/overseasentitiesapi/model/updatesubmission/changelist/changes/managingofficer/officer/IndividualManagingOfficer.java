@@ -1,22 +1,28 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.officer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 public class IndividualManagingOfficer extends Officer{
     @JsonProperty("personName")
     private PersonName personName;
+
+    @JsonInclude(NON_EMPTY)
     @JsonProperty("formerNames")
     private String formerNames;
+
     @JsonProperty("residentialAddress")
     private Address residentialAddress;
+
     @JsonProperty("nationalityOther")
     private String nationalityOther;
+
     @JsonProperty("occupation")
     private String occupation;
-    @JsonProperty("role")
-    private String role;
 
     public PersonName getPersonName() {
         return personName;
@@ -56,13 +62,5 @@ public class IndividualManagingOfficer extends Officer{
 
     public void setOccupation(String occupation) {
         this.occupation = occupation;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

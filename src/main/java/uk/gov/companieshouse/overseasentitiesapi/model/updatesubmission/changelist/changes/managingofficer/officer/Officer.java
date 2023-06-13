@@ -6,20 +6,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.time.LocalDate;
 
 public abstract class Officer {
-    @JsonProperty("actionDate")
-    private LocalDate actionDate;
     @JsonProperty("serviceAddress")
     private Address serviceAddress;
+
     @JsonProperty("startDate")
     private LocalDate startDate;
 
-    public LocalDate getActionDate() {
-        return actionDate;
-    }
-
-    public void setActionDate(LocalDate actionDate) {
-        this.actionDate = actionDate;
-    }
+    @JsonProperty("role")
+    private String role;
 
     public Address getServiceAddress() {
         return serviceAddress;
@@ -35,5 +29,13 @@ public abstract class Officer {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
