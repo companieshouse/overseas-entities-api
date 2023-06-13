@@ -25,8 +25,8 @@ public abstract class ManagingOfficerAddition extends Addition {
     @JsonProperty("resignedOn")
     private LocalDate resignedOn;
 
-    @JsonProperty("role")
-    private String role;
+    @JsonProperty("roleAndResponsibilities")
+    private String roleAndResponsibilities;
 
     protected ManagingOfficerAddition(
             LocalDate actionDate,
@@ -74,11 +74,11 @@ public abstract class ManagingOfficerAddition extends Addition {
         this.resignedOn = resignedOn;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleAndResponsibilities() {
+        return roleAndResponsibilities;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleAndResponsibilities(String roleAndResponsibilities) {
+        this.roleAndResponsibilities = roleAndResponsibilities;
     }
 }

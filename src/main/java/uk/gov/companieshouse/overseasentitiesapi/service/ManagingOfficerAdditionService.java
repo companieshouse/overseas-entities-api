@@ -54,7 +54,7 @@ public class ManagingOfficerAdditionService {
         individualManagingOfficerAddition.setPersonName(new PersonName(mo.getFirstName(), mo.getLastName()));
         individualManagingOfficerAddition.setFormerNames(mo.getFormerNames());
         individualManagingOfficerAddition.setBirthDate(mo.getDateOfBirth());
-        individualManagingOfficerAddition.setRole(mo.getRoleAndResponsibilities());
+        individualManagingOfficerAddition.setRoleAndResponsibilities(mo.getRoleAndResponsibilities());
         individualManagingOfficerAddition.setOccupation(mo.getOccupation());
 
         individualManagingOfficerAddition.setNationalityOther(
@@ -90,7 +90,7 @@ public class ManagingOfficerAdditionService {
         corporateManagingOfficerAddition.setName(mo.getName());
         corporateManagingOfficerAddition.setContactName(mo.getContactFullName());
         corporateManagingOfficerAddition.setContactEmail(mo.getContactEmail());
-        corporateManagingOfficerAddition.setRole(mo.getRoleAndResponsibilities());
+        corporateManagingOfficerAddition.setRoleAndResponsibilities(mo.getRoleAndResponsibilities());
 
         var legalForm = mo.getLegalForm();
         var governingLaw = mo.getLawGoverned();

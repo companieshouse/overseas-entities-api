@@ -131,7 +131,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals(LocalDate.of(1990, 5, 15), individualManagingOfficerAddition.getBirthDate());
         assertEquals("Irish, Spanish", individualManagingOfficerAddition.getNationalityOther());
         assertEquals("Self employed", individualManagingOfficerAddition.getOccupation());
-        assertEquals("Owner", individualManagingOfficerAddition.getRole());
+        assertEquals("Owner", individualManagingOfficerAddition.getRoleAndResponsibilities());
     }
 
     private List<ManagingOfficerCorporateDto> getCorporateManagingOfficers() {
@@ -161,7 +161,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("Some corporate MO", corporateManagingOfficerAddition.getName());
         assertEquals("John Doe", corporateManagingOfficerAddition.getContactName());
         assertEquals("test@email.com", corporateManagingOfficerAddition.getContactEmail());
-        assertEquals("Manager", corporateManagingOfficerAddition.getRole());
+        assertEquals("Manager", corporateManagingOfficerAddition.getRoleAndResponsibilities());
         assertEquals("Legal form", corporateManagingOfficerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
         assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getPlaceRegistered());
