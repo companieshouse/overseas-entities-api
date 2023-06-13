@@ -25,9 +25,6 @@ public class IndividualManagingOfficerAddition extends ManagingOfficerAddition {
     @JsonProperty("occupation")
     private String occupation;
 
-    @JsonProperty("role")
-    private String role;
-
     @JsonProperty("birthDate")
     private LocalDate birthDate;
 
@@ -68,14 +65,6 @@ public class IndividualManagingOfficerAddition extends ManagingOfficerAddition {
 
     public void setOccupation(String occupation) {
         this.occupation = occupation;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public LocalDate getBirthDate() {

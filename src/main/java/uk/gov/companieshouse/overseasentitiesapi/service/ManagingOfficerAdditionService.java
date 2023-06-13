@@ -90,6 +90,7 @@ public class ManagingOfficerAdditionService {
         corporateManagingOfficerAddition.setName(mo.getName());
         corporateManagingOfficerAddition.setContactName(mo.getContactFullName());
         corporateManagingOfficerAddition.setContactEmail(mo.getContactEmail());
+        corporateManagingOfficerAddition.setRole(mo.getRoleAndResponsibilities());
 
         var legalForm = mo.getLegalForm();
         var governingLaw = mo.getLawGoverned();
