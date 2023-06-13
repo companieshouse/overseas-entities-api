@@ -24,7 +24,6 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
