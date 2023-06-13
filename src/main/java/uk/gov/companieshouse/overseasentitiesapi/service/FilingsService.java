@@ -91,12 +91,13 @@ public class FilingsService {
   private final ObjectMapper objectMapper;
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
+  private final BeneficialOwnerChangeService beneficialOwnerChangeService;
   private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
+  private final ManagingOfficerChangeService managingOfficerChangeService;
   private final ManagingOfficerAdditionService managingOfficerAdditionService;
   private final ManagingOfficerCessationService managingOfficerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
-  private final BeneficialOwnerChangeService beneficialOwnerChangeService;
 
   @Autowired
   public FilingsService(
@@ -109,6 +110,7 @@ public class FilingsService {
           BeneficialOwnerChangeService beneficialOwnerChangeService,
           BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
+          ManagingOfficerChangeService managingOfficerChangeService,
           ManagingOfficerAdditionService managingOfficerAdditionService,
           ManagingOfficerCessationService managingOfficerCessationService,
           OverseasEntityChangeService overseasEntityChangeService
@@ -122,6 +124,7 @@ public class FilingsService {
     this.beneficialOwnerChangeService = beneficialOwnerChangeService;
     this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
+    this.managingOfficerChangeService = managingOfficerChangeService;
     this.managingOfficerCessationService = managingOfficerCessationService;
     this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
@@ -203,6 +206,7 @@ public class FilingsService {
     updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
     updateSubmission.getCessations().addAll(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
+    updateSubmission.getChanges().addAll(managingOfficerChangeService.collateManagingOfficerChanges(publicPrivateMoData, submissionDto));
     updateSubmission.getCessations().addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto, publicPrivateMoData, logMap));
     updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
