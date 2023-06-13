@@ -1,17 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.officer;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 public class IndividualManagingOfficer extends Officer{
     @JsonProperty("personName")
     private PersonName personName;
 
-    @JsonInclude(NON_EMPTY)
     @JsonProperty("formerNames")
     private String formerNames;
 

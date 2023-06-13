@@ -17,9 +17,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcaten
 
 public class ComparisonHelper {
 
-  private ComparisonHelper() {
-    throw new IllegalAccessError("Use the static method designation");
-  }
+  private ComparisonHelper() {}
 
   public static boolean equals(AddressDto addressDto, AddressApi addressApi) {
     var nullValuesCheck = handleNulls(addressDto, addressApi);
