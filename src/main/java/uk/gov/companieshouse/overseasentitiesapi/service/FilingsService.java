@@ -160,8 +160,7 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       var updateSubmission = new UpdateSubmission();
-      getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
-      collectUpdateSubmissionData(updateSubmission, submissionDto, logMap);
+      collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, logMap);
       setUpdateSubmissionData(userSubmission, updateSubmission, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
     } else {
@@ -180,22 +179,20 @@ public class FilingsService {
     setDescriptionFields(filing, submissionDto.isForUpdate());
   }
 
-  private void getPublicAndPrivateData(String entityNumber, String passThroughTokenHeader) throws ServiceException {
-    publicDataRetrievalService.initialisePublicData(entityNumber, passThroughTokenHeader);
-    privateDataRetrievalService.initialisePrivateData(entityNumber);
-  }
-
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,
                                        OverseasEntitySubmissionDto submissionDto,
+                                       String passThroughTokenHeader,
                                        Map<String, Object> logMap) throws ServiceException {
 
     var populateUpdateSubmission = new PopulateUpdateSubmission();
     populateUpdateSubmission.populate(submissionDto, updateSubmission);
 
+    var companyNumber = submissionDto.getEntityNumber();
+
     var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
-    var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
-    var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
-    var publicPrivateMoData = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(companyNumber, passThroughTokenHeader);
+    var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(companyNumber, passThroughTokenHeader);
+    var publicPrivateMoData = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(companyNumber, passThroughTokenHeader);
 
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 

@@ -43,9 +43,9 @@ public class PublicPrivateDataCombiner {
      *
      * @return Pair of the public data on the right and private data on the left
      */
-    public Pair<CompanyProfileApi, OverseasEntityDataApi> buildMergedOverseasEntityDataPair() {
-        var publicOE = publicDataRetrievalService.getCompanyProfile();
-        var privateOE = privateDataRetrievalService.getOverseasEntityData();
+    public Pair<CompanyProfileApi, OverseasEntityDataApi> buildMergedOverseasEntityDataPair(String companyNumber, String passThroughTokenHeader) throws ServiceException {
+        var publicOE = publicDataRetrievalService.getCompanyProfile(companyNumber, passThroughTokenHeader);
+        var privateOE = privateDataRetrievalService.getOverseasEntityData(companyNumber);
 
         this.combinedOEs = Pair.of(publicOE, privateOE);
 
@@ -60,13 +60,13 @@ public class PublicPrivateDataCombiner {
      * @return Map of the combined Beneficial Owner data
      * @throws ServiceException
      */
-    public Map<String, Pair<PscApi, PrivateBoDataApi>> buildMergedBeneficialOwnerDataMap()
+    public Map<String, Pair<PscApi, PrivateBoDataApi>> buildMergedBeneficialOwnerDataMap(String companyNumber, String passThroughTokenHeader)
             throws ServiceException {
 
         this.combinedBOs = new HashMap<>();
 
-        var privateBOs = privateDataRetrievalService.getBeneficialOwnerData();
-        var publicPSCs = publicDataRetrievalService.getPscs();
+        var privateBOs = privateDataRetrievalService.getBeneficialOwnersData(companyNumber);
+        var publicPSCs = publicDataRetrievalService.getPSCs(companyNumber, passThroughTokenHeader);
 
         if (privateBOs != null && publicPSCs != null) {
             putPrivateBoData(privateBOs);
@@ -84,12 +84,12 @@ public class PublicPrivateDataCombiner {
      * @return Map of the combined Beneficial Owner data
      * @throws ServiceException
      */
-    public Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> buildMergedManagingOfficerDataMap()
+    public Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> buildMergedManagingOfficerDataMap(String companyNumber, String passThroughTokenHeader)
             throws ServiceException {
         this.combinedMOs = new HashMap<>();
 
-        var privateMOs = privateDataRetrievalService.getManagingOfficerData();
-        var publicOfficers = publicDataRetrievalService.getOfficers();
+        var privateMOs = privateDataRetrievalService.getManagingOfficerData(companyNumber);
+        var publicOfficers = publicDataRetrievalService.getOfficers(companyNumber, passThroughTokenHeader);
 
         if (privateMOs != null && publicOfficers != null) {
             putPrivateMoData(privateMOs);

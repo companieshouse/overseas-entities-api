@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,6 +73,9 @@ class PublicPrivateDataCombinerTest {
       "]" +
       "}";
 
+  private String COMPANY_NUMBER = "OE123456";
+
+  private String PASS_THROUGH_TOKEN_HEADER = "abc123";
 
   private PublicDataRetrievalService publicDataRetrievalService;
   private PrivateDataRetrievalService privateDataRetrievalService;
@@ -87,16 +91,16 @@ class PublicPrivateDataCombinerTest {
   }
 
   @Test
-  void testBuildMergedOverseasEntityDataPair() {
+  void testBuildMergedOverseasEntityDataPair() throws ServiceException {
     CompanyProfileApi publicOE = new CompanyProfileApi();
     publicOE.setCompanyName("Test Public Company");
     OverseasEntityDataApi privateOE = new OverseasEntityDataApi();
     privateOE.setEmail("john@smith.com");
 
-    when(publicDataRetrievalService.getCompanyProfile()).thenReturn(publicOE);
-    when(privateDataRetrievalService.getOverseasEntityData()).thenReturn(privateOE);
+    when(publicDataRetrievalService.getCompanyProfile(any(), any())).thenReturn(publicOE);
+    when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(privateOE);
 
-    var result = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+    var result = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertEquals(publicOE, result.getLeft());
     assertEquals(privateOE, result.getRight());
@@ -124,12 +128,12 @@ class PublicPrivateDataCombinerTest {
     pscsApi.setItems(Collections.singletonList(pscApi));
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(
         new PrivateBoDataListApi(List.of(privateBoDataApi)));
-    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
 
     // Execute the method to test
-    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Verify the result
     assertEquals(1, results.size());
@@ -139,8 +143,8 @@ class PublicPrivateDataCombinerTest {
     assertEquals(privateBoDataApi, pair.getRight());
 
     // Verify mock interactions
-    verify(publicDataRetrievalService, times(1)).getPscs();
-    verify(privateDataRetrievalService, times(1)).getBeneficialOwnerData();
+    verify(publicDataRetrievalService, times(1)).getPSCs(any(), any());
+    verify(privateDataRetrievalService, times(1)).getBeneficialOwnersData(any());
   }
 
   @Test
@@ -154,12 +158,12 @@ class PublicPrivateDataCombinerTest {
     CompanyOfficerApi companyOfficerApi = officersApi.getItems().get(0);
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(
         new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
-    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
     // Execute the method to test
-    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Verify the result
     assertEquals(1, results.size());
@@ -170,8 +174,8 @@ class PublicPrivateDataCombinerTest {
     assertEquals(managingOfficerDataApi, pair.getRight());
 
     // Verify mock interactions
-    verify(publicDataRetrievalService, times(1)).getOfficers();
-    verify(privateDataRetrievalService, times(1)).getManagingOfficerData();
+    verify(publicDataRetrievalService, times(1)).getOfficers(any(), any());
+    verify(privateDataRetrievalService, times(1)).getManagingOfficerData(any());
   }
 
   @Test
@@ -186,11 +190,11 @@ class PublicPrivateDataCombinerTest {
 
     OfficersApi officersApi = objectMapper.readValue(officersApiStringTwoItems, OfficersApi.class);
 
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(
         new ManagingOfficerListDataApi(List.of(managingOfficerDataApi, managingOfficerDataApi2)));
-    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
-    var mo = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    var mo = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Mocking for Beneficial Owner Data
     PrivateBoDataApi privateBoDataApi = new PrivateBoDataApi();
@@ -206,11 +210,11 @@ class PublicPrivateDataCombinerTest {
     PscsApi pscsApi = new PscsApi();
     pscsApi.setItems(List.of(pscApi, pscApi2));
 
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(
         new PrivateBoDataListApi(List.of(privateBoDataApi, privateBoDataApi2)));
-    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
 
-    var bo = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    var bo = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Mocking for Overseas Entity Data
     CompanyProfileApi publicOE = new CompanyProfileApi();
@@ -219,10 +223,10 @@ class PublicPrivateDataCombinerTest {
     OverseasEntityDataApi privateOE = new OverseasEntityDataApi();
     privateOE.setEmail("john@smith.com");
 
-    when(publicDataRetrievalService.getCompanyProfile()).thenReturn(publicOE);
-    when(privateDataRetrievalService.getOverseasEntityData()).thenReturn(privateOE);
+    when(publicDataRetrievalService.getCompanyProfile(any(), any())).thenReturn(publicOE);
+    when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(privateOE);
 
-    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     String expectedOutput = "{" +
         "\"Managing Officer Data\": [" +
@@ -255,11 +259,11 @@ class PublicPrivateDataCombinerTest {
 
     OfficersApi officersApi = objectMapper.readValue(officersApiStringTwoItems, OfficersApi.class);
 
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(
         new ManagingOfficerListDataApi(List.of(managingOfficerDataApi, managingOfficerDataApi2)));
-    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
-    var mo = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    var mo = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Mocking for Beneficial Owner Data
     PrivateBoDataApi privateBoDataApi = new PrivateBoDataApi();
@@ -275,11 +279,11 @@ class PublicPrivateDataCombinerTest {
     PscsApi pscsApi = new PscsApi();
     pscsApi.setItems(List.of(pscApi, pscApi2));
 
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(
         new PrivateBoDataListApi(List.of(privateBoDataApi, privateBoDataApi2)));
-    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
 
-    var bo = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    var bo = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     // Mocking for Overseas Entity Data
     CompanyProfileApi publicOE = new CompanyProfileApi();
@@ -288,10 +292,10 @@ class PublicPrivateDataCombinerTest {
     OverseasEntityDataApi privateOE = new OverseasEntityDataApi();
     privateOE.setEmail("john@smith.com");
 
-    when(publicDataRetrievalService.getCompanyProfile()).thenReturn(publicOE);
-    when(privateDataRetrievalService.getOverseasEntityData()).thenReturn(privateOE);
+    when(publicDataRetrievalService.getCompanyProfile(any(), any())).thenReturn(publicOE);
+    when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(privateOE);
 
-    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
+    publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(any(), any());
 
     String expectedOutput = "{\"Managing Officer Data\": [" +
         "{\"Public Hashed ID\": \"Iq6hRNqa-Twx1eWhHv_FOwTb1i4\", \"Private ID\": \"null\"}, " +
@@ -317,11 +321,11 @@ class PublicPrivateDataCombinerTest {
   @Test
   void testBuildMergedBeneficialOwnerDataMapNoPrivatePublicBoData() throws ServiceException {
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(null);
-    when(publicDataRetrievalService.getPscs()).thenReturn(null);
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(null);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(null);
 
     // Execute the method to test
-    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
@@ -334,44 +338,44 @@ class PublicPrivateDataCombinerTest {
     pscsApi.setItems(Collections.singletonList(pscApi));
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(null);
-    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(null);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
 
     // Execute the method to test
-    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
 
   @Test
-  void testBuildMergedBeneficialOwnerDataMapNoPublicBoData() throws ServiceException {
+  void testBuildMergedBeneficialOwnersDataMapNoPublicBoData() throws ServiceException {
     // Prepare test data
     PrivateBoDataApi privateBoDataApi = new PrivateBoDataApi();
     privateBoDataApi.setPscId("12345");
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(new PrivateBoDataListApi(List.of(privateBoDataApi)));
-    when(publicDataRetrievalService.getPscs()).thenReturn(null);
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(new PrivateBoDataListApi(List.of(privateBoDataApi)));
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(null);
 
     // Execute the method to test
-    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
 
   @Test
-  void testBuildMergedBeneficialOwnerDataMapPublicHasNoData() throws ServiceException {
+  void testBuildMergedBeneficialOwnersDataMapPublicHasNoData() throws ServiceException {
     // Prepare test data
     PrivateBoDataListApi privateBoDataApis = new PrivateBoDataListApi(Collections.emptyList());
     PscsApi pscsApi = new PscsApi();
     pscsApi.setItems(null);
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(privateBoDataApis);
-    when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+    when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(privateBoDataApis);
+    when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
 
     // Execute the method to test
-    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
+    Map<String, Pair<PscApi, PrivateBoDataApi>> results = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
@@ -379,11 +383,11 @@ class PublicPrivateDataCombinerTest {
   @Test
   void testBuildMergedManagingOfficerDataMapNoPrivatePublicMoData() throws ServiceException {
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(null);
-    when(publicDataRetrievalService.getOfficers()).thenReturn(null);
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(null);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(null);
 
     // Execute the method to test
-    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
@@ -394,11 +398,11 @@ class PublicPrivateDataCombinerTest {
     OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(null);
-    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(null);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
     // Execute the method to test
-    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
@@ -410,11 +414,11 @@ class PublicPrivateDataCombinerTest {
     managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
-    when(publicDataRetrievalService.getOfficers()).thenReturn(null);
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(null);
 
     // Execute the method to test
-    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
@@ -428,11 +432,11 @@ class PublicPrivateDataCombinerTest {
     officersApi.setItems(null);
 
     // Configure mock behavior
-    when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(managingOfficerDataApis);
-    when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+    when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(managingOfficerDataApis);
+    when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
     // Execute the method to test
-    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
+    Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> results = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(COMPANY_NUMBER, PASS_THROUGH_TOKEN_HEADER);
 
     assertTrue(results.isEmpty());
   }
