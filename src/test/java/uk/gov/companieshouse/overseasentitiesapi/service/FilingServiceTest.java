@@ -379,7 +379,7 @@ class FilingServiceTest {
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
 
-        assertEquals(2, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(3, ((List<?>)filing.getData().get("changes")).size());
         assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
