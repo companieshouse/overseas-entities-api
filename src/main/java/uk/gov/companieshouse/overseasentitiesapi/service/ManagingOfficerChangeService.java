@@ -77,7 +77,7 @@ public class ManagingOfficerChangeService {
         return individualManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::covertManagingOfficerIndividualToChange)
+                .map(this::convertManagingOfficerIndividualToChange)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -100,7 +100,7 @@ public class ManagingOfficerChangeService {
         return corporateManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::covertManagingOfficerCorporateToChange)
+                .map(this::convertManagingOfficerCorporateToChange)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -114,7 +114,7 @@ public class ManagingOfficerChangeService {
      * @param managingOfficerIndividualDto The ManagingOfficerIndividualDto object to be converted.
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
-    private ManagingOfficerChange<IndividualManagingOfficer> covertManagingOfficerIndividualToChange(
+    private ManagingOfficerChange<IndividualManagingOfficer> convertManagingOfficerIndividualToChange(
             ManagingOfficerIndividualDto managingOfficerIndividualDto) {
         var managingOfficerChange = new IndividualManagingOfficerChange();
 
@@ -197,7 +197,7 @@ public class ManagingOfficerChangeService {
      * @param managingOfficerCorporateDto The ManagingOfficerCorporateDto object to be converted.
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
-    private ManagingOfficerChange<CorporateManagingOfficer> covertManagingOfficerCorporateToChange(
+    private ManagingOfficerChange<CorporateManagingOfficer> convertManagingOfficerCorporateToChange(
             ManagingOfficerCorporateDto managingOfficerCorporateDto) {
         var managingOfficerChange = new CorporateManagingOfficerChange();
 
@@ -214,9 +214,7 @@ public class ManagingOfficerChangeService {
         ChangeManager<CorporateManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager
                 = new ChangeManager<>(officer, publicPrivateMoPair);
 
-        if (publicPrivateMoPair.getRight() != null) {
-            managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
-        }
+        managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
 
         if (publicPrivateMoPair.getLeft() != null && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
             officer.setStartDate(managingOfficerCorporateDto.getStartDate());

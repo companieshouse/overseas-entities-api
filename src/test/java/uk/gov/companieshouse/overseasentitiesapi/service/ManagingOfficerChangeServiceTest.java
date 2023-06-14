@@ -154,6 +154,30 @@ class ManagingOfficerChangeServiceTest {
     }
 
     @Test
+    void testCollateManagingOfficerChangesNoChanges() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void testCollateManagingOfficerChangesProducesNoLogsIfNoChipsReference() {
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
         managingOfficerIndividualDto.setFirstName("John");
@@ -221,7 +245,7 @@ class ManagingOfficerChangeServiceTest {
     }
 
     @Test
-    void testCollateNoManagingOfficerChanges() {
+    void testCollateManagingOfficerChangesEmptyListReturnsEmpty() {
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
                 Collections.emptyList());
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(

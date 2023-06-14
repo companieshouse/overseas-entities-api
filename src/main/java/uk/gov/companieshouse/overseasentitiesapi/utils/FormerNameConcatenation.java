@@ -7,14 +7,13 @@ import java.util.List;
 
 public class FormerNameConcatenation {
     private FormerNameConcatenation() {
-        throw new IllegalAccessError("Use the static method designation");
     }
 
     public static String concatenateFormerNames(List<FormerNamesApi> formerNames) {
         var allFormerNames = new StringBuilder();
 
         if (formerNames != null) {
-            for(FormerNamesApi formerName : formerNames){
+            for (FormerNamesApi formerName : formerNames) {
                 if (allFormerNames.length() > 0) {
                     allFormerNames.append(", ");
                 }
