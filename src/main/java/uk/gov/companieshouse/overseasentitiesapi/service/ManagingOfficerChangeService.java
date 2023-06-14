@@ -302,7 +302,7 @@ public class ManagingOfficerChangeService {
                 CompanyOfficerApi::getOfficerRole,
                 Function.identity(),
                 ComparisonHelper::equals,
-                Officer::setRole
+                Officer::setRoleAndResponsibilities
         );
 
         return hasChange;

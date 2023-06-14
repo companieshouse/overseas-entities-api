@@ -12,8 +12,8 @@ public abstract class Officer {
     @JsonProperty("startDate")
     private LocalDate startDate;
 
-    @JsonProperty("role")
-    private String role;
+    @JsonProperty("roleAndResponsibilities")
+    private String roleAndResponsibilities;
 
     public Address getServiceAddress() {
         return serviceAddress;
@@ -31,11 +31,11 @@ public abstract class Officer {
         this.startDate = startDate;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleAndResponsibilities() {
+        return roleAndResponsibilities;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleAndResponsibilities(String roleAndResponsibilities) {
+        this.roleAndResponsibilities = roleAndResponsibilities;
     }
 }

@@ -400,7 +400,7 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("2022-01-01", individualManagingOfficerChange.getOfficer().getStartDate().toString());
         assertEquals("Jonathan Doe, Johnny Doe", individualManagingOfficerChange.getOfficer().getFormerNames());
         assertEquals("Occupation", individualManagingOfficerChange.getOfficer().getOccupation());
-        assertEquals("Role", individualManagingOfficerChange.getOfficer().getRole());
+        assertEquals("Role", individualManagingOfficerChange.getOfficer().getRoleAndResponsibilities());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getServiceAddress().getHouseNameNum());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getResidentialAddress().getHouseNameNum());
     }
@@ -415,6 +415,7 @@ class ManagingOfficerChangeServiceTest {
         managingOfficerCorporateDto.setContactFullName("Contact name");
         managingOfficerCorporateDto.setContactEmail("contact@test.com");
         managingOfficerCorporateDto.setStartDate(LocalDate.of(2022, 1, 1));
+        managingOfficerCorporateDto.setRoleAndResponsibilities("Role");
         managingOfficerCorporateDto.setLegalForm("Legal form");
         managingOfficerCorporateDto.setLawGoverned("Law governed");
         managingOfficerCorporateDto.setRegistrationNumber("1234");
@@ -440,6 +441,7 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("Contact name", corporateManagingOfficerChange.getOfficer().getContactName());
         assertEquals("contact@test.com", corporateManagingOfficerChange.getOfficer().getEmail());
         assertEquals("2022-01-01", corporateManagingOfficerChange.getOfficer().getStartDate().toString());
+        assertEquals("Role", corporateManagingOfficerChange.getOfficer().getRoleAndResponsibilities());
         assertEquals("Legal form", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getLegalForm());
         assertEquals("Law governed", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getGoverningLaw());
         assertEquals("1234", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getRegistrationNumber());
