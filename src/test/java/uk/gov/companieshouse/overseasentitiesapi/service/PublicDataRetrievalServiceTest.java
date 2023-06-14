@@ -86,8 +86,14 @@ class PublicDataRetrievalServiceTest {
         when(company.get(Mockito.anyString())).thenReturn(companyGet);
     }
 
+    private void retrievePublicData() throws ServiceException{
+        publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        publicDataRetrievalService.getOfficers(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        publicDataRetrievalService.getPSCs(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+    }
+
     @Test
-    void testInitialisePublicDataIsSuccessful() throws IOException, URIValidationException, ServiceException {
+    void testPublicDataIsSuccessful() throws IOException, URIValidationException, ServiceException {
         var companyProfileApi = new CompanyProfileApi();
         var officersApi = new OfficersApi();
         var companyOfficerApi = new CompanyOfficerApi();
@@ -115,12 +121,12 @@ class PublicDataRetrievalServiceTest {
         when(apiGetResponsePscs.getData()).thenReturn(pscsApi);
         when(apiGetResponseOfficers.getData()).thenReturn(officersApi);
 
-        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        retrievePublicData();
         verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
-    void testInitialisePublicDataOfficersDataNotFound() throws IOException, URIValidationException, ServiceException {
+    void testPublicDataOfficersDataNotFound() throws IOException, URIValidationException, ServiceException {
         var companyProfileApi = new CompanyProfileApi();
         var pscsApi = new PscsApi();
         var companyPSCsApi = new PscApi();
@@ -146,7 +152,7 @@ class PublicDataRetrievalServiceTest {
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenReturn(officersApiResponse);
 
-        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        retrievePublicData();
         verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
@@ -177,30 +183,30 @@ class PublicDataRetrievalServiceTest {
         when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
         when(pscsList.execute()).thenReturn(pscsApiResponse);
 
-        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        retrievePublicData();
         verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForCompanyProfileDataThrowsURIValidationException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForCompanyProfileDataThrowsURIValidationException() throws IOException, URIValidationException {
         when(companyGet.execute()).thenThrow(new URIValidationException(ERROR_MESSAGE));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
         });
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForCompanyProfileDataThrowsIOException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForCompanyProfileDataThrowsIOException() throws IOException, URIValidationException {
         when(companyGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException(ERROR_MESSAGE)));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
         });
     }
 
     @Test
-    void testInitialisePublicDataReturnsNoOfficersData() throws IOException, URIValidationException, ServiceException {
+    void testPublicDataReturnsNoOfficersData() throws IOException, URIValidationException, ServiceException {
         var companyProfileApi = new CompanyProfileApi();
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
@@ -216,12 +222,12 @@ class PublicDataRetrievalServiceTest {
         when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
         when(pscsList.execute()).thenReturn(apiGetResponsePscs);
 
-        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        retrievePublicData();
         verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
-    void testInitialisePublicDataReturnsNoPSCsData() throws IOException, URIValidationException, ServiceException {
+    void testPublicDataReturnsNoPSCsData() throws IOException, URIValidationException, ServiceException {
         var companyProfileApi = new CompanyProfileApi();
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
@@ -236,12 +242,12 @@ class PublicDataRetrievalServiceTest {
         when(pscsList.execute()).thenThrow(ApiErrorResponseException.fromHttpResponseException(
                 new HttpResponseException.Builder(404, "not found", new HttpHeaders()).setMessage(ERROR_MESSAGE).build()));
 
-        publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+        retrievePublicData();
         verify(apiClientService, times(3)).getOauthAuthenticatedClient(PASS_THROUGH_HEADER);
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForOfficersDataThrowsURIValidationException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForOfficersDataThrowsURIValidationException() throws IOException, URIValidationException {
         var companyProfileApi = new CompanyProfileApi();
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
@@ -252,12 +258,12 @@ class PublicDataRetrievalServiceTest {
         when(officersList.execute()).thenThrow(new URIValidationException("ERROR"));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            retrievePublicData();
         });
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForOfficersDataThrowsIOException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForOfficersDataThrowsIOException() throws IOException, URIValidationException {
         var companyProfileApi = new CompanyProfileApi();
 
         when(companyGet.execute()).thenReturn(apiGetResponseCompanyProfile);
@@ -268,12 +274,12 @@ class PublicDataRetrievalServiceTest {
         when(officersList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            retrievePublicData();
         });
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForPscsDataThrowsIOException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForPscsDataThrowsIOException() throws IOException, URIValidationException {
         var companyProfileApi = new CompanyProfileApi();
         var officersApi = new OfficersApi();
         var companyOfficerApi = new CompanyOfficerApi();
@@ -294,12 +300,12 @@ class PublicDataRetrievalServiceTest {
         when(pscsList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            retrievePublicData();
         });
     }
 
     @Test
-    void testServiceExceptionThrownWhenInitialisePublicDataForPscsDataThrowsURIValidationException() throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenPublicDataForPscsDataThrowsURIValidationException() throws IOException, URIValidationException {
         var companyProfileApi = new CompanyProfileApi();
         var officersApi = new OfficersApi();
         var companyOfficerApi = new CompanyOfficerApi();
@@ -320,7 +326,7 @@ class PublicDataRetrievalServiceTest {
         when(pscsList.execute()).thenThrow(new URIValidationException("ERROR"));
 
         assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.initialisePublicData(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
+            retrievePublicData();
         });
     }
 }

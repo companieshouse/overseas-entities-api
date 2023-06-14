@@ -21,22 +21,12 @@ public class PrivateDataRetrievalService {
   private static final String MANAGING_OFFICER_APPOINTMENT_ID = "managing_officer_appointment_id";
   private static final String OVERSEAS_ENTITY_URI_SECTION = "/overseas-entity/";
   private final ApiClientService apiClientService;
-  private ManagingOfficerListDataApi managingOfficerData;
-  private PrivateBoDataListApi beneficialOwnerData;
-  private OverseasEntityDataApi overseasEntityData;
 
   public PrivateDataRetrievalService(ApiClientService apiClientService) {
     this.apiClientService = apiClientService;
   }
 
-  public void initialisePrivateData(String companyNumber)
-      throws ServiceException {
-    this.beneficialOwnerData = getBeneficialOwnersData(companyNumber);
-    this.overseasEntityData = getOverseasEntityData(companyNumber);
-    this.managingOfficerData = getManagingOfficerData(companyNumber);
-  }
-
-  private ManagingOfficerListDataApi getManagingOfficerData(String companyNumber)
+  public ManagingOfficerListDataApi getManagingOfficerData(String companyNumber)
       throws ServiceException {
 
     var logMap = new HashMap<String, Object>();
@@ -68,7 +58,7 @@ public class PrivateDataRetrievalService {
     }
   }
 
-  private OverseasEntityDataApi getOverseasEntityData(String companyNumber)
+  public OverseasEntityDataApi getOverseasEntityData(String companyNumber)
       throws ServiceException {
     var logMap = new HashMap<String, Object>();
     try {
@@ -91,7 +81,7 @@ public class PrivateDataRetrievalService {
     }
   }
 
-  private PrivateBoDataListApi getBeneficialOwnersData(String companyNumber)
+  public PrivateBoDataListApi getBeneficialOwnersData(String companyNumber)
       throws ServiceException {
 
     var logMap = new HashMap<String, Object>();
@@ -125,17 +115,5 @@ public class PrivateDataRetrievalService {
       ApiLogger.errorContext(message, e);
       throw new ServiceException(e.getMessage(), e);
     }
-  }
-
-  public PrivateBoDataListApi getBeneficialOwnerData() {
-    return this.beneficialOwnerData;
-  }
-
-  public OverseasEntityDataApi getOverseasEntityData() {
-    return this.overseasEntityData;
-  }
-
-  public ManagingOfficerListDataApi getManagingOfficerData() {
-    return this.managingOfficerData;
   }
 }

@@ -29,7 +29,6 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -238,7 +237,7 @@ class FilingServiceTest {
         when(paymentGet.execute()).thenReturn(paymentApiResponse);
     }
 
-    void initGetPublicPrivateDataCombinerMocks() throws JsonProcessingException {
+    void initGetPublicPrivateDataCombinerMocks() throws JsonProcessingException, ServiceException {
         publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService,
             privateDataRetrievalService,
             "test_salt");
@@ -265,8 +264,8 @@ class FilingServiceTest {
         OverseasEntityDataApi privateOE = new OverseasEntityDataApi();
         privateOE.setEmail("john@smith.com");
 
-        when(publicDataRetrievalService.getCompanyProfile()).thenReturn(publicOE);
-        when(privateDataRetrievalService.getOverseasEntityData()).thenReturn(privateOE);
+        when(publicDataRetrievalService.getCompanyProfile(any(), any())).thenReturn(publicOE);
+        when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(privateOE);
 
         // Prepare test data
         PrivateBoDataApi privateBoDataApi = new PrivateBoDataApi();
@@ -284,14 +283,14 @@ class FilingServiceTest {
         OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
 
         // Configure mock behavior
-        when(privateDataRetrievalService.getManagingOfficerData()).thenReturn(
+        when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(
             new ManagingOfficerListDataApi(List.of(managingOfficerDataApi)));
-        when(publicDataRetrievalService.getOfficers()).thenReturn(officersApi);
+        when(publicDataRetrievalService.getOfficers(any(), any())).thenReturn(officersApi);
 
         // Configure mock behavior
-        when(privateDataRetrievalService.getBeneficialOwnerData()).thenReturn(
+        when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(
             new PrivateBoDataListApi(List.of(privateBoDataApi)));
-        when(publicDataRetrievalService.getPscs()).thenReturn(pscsApi);
+        when(publicDataRetrievalService.getPSCs(any(), any())).thenReturn(pscsApi);
     }
 
     @Test
@@ -307,8 +306,6 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(publicDataRetrievalService, times(0)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
-        verify(privateDataRetrievalService, times(0)).initialisePrivateData(Mockito.anyString());
         verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
         verify(beneficialOwnerChangeService, times(0)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
 
@@ -353,8 +350,6 @@ class FilingServiceTest {
         when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
-        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
         verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
         verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
         verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
@@ -1335,8 +1330,6 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
-        verify(privateDataRetrievalService, times(1)).initialisePrivateData(Mockito.anyString());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
     }
 

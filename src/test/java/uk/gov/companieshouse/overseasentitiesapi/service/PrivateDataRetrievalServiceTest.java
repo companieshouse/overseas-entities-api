@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpResponseException.Builder;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.beneficialowner.PrivateBeneficialOwnerResourceHandler;
@@ -38,15 +36,12 @@ import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
-import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
 @ExtendWith(MockitoExtension.class)
 class PrivateDataRetrievalServiceTest {
-  // Note: Mocks for these tests are dependent on the order of the calls in PrivateDataRetrievalService::initialisePrivateData
-  // If the order of the calls changes, the mocks will need to be updated accordingly
-  // Tests on a particular method needs the mocks for the previous methods to be set up
+
   private static final String COMPANY_NUMBER = "OE123456";
 
   @InjectMocks
@@ -234,6 +229,11 @@ class PrivateDataRetrievalServiceTest {
           "}" +
           "]";
 
+  protected void retrievePrivateData() throws ServiceException {
+    privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
+    privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
+    privateDataRetrievalService.getManagingOfficerData((COMPANY_NUMBER));
+  }
 
   @Nested
   class BeneficialOwnerTests {
@@ -256,7 +256,7 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
+            privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
           });
     }
 
@@ -270,7 +270,7 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+            privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER);
           });
     }
   }
@@ -319,7 +319,7 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
+            retrievePrivateData();
           });
     }
 
@@ -341,7 +341,7 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+            retrievePrivateData();
           });
     }
   }
@@ -378,7 +378,8 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
+            privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
+            privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
           });
     }
 
@@ -396,7 +397,8 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+            privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
+            privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
           });
     }
   }
@@ -428,7 +430,7 @@ class PrivateDataRetrievalServiceTest {
     }
 
     @Test
-    void testGetPrivateDataBeneficialOwnerDataNotFound()
+    void testGetPrivateDataBeneficialOwnersDataNotFound()
         throws IOException, URIValidationException, ServiceException {
       var overseasEntityApi = new OverseasEntityDataApi();
       var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(Collections.emptyList());
@@ -442,7 +444,7 @@ class PrivateDataRetrievalServiceTest {
 
       when(privateBeneficialOwnerGet.execute()).thenReturn(boDataListApiResponse);
 
-      privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+      retrievePrivateData();
       verify(apiClientService, times(3)).getInternalApiClient();
     }
 
@@ -462,7 +464,7 @@ class PrivateDataRetrievalServiceTest {
 
       when(privateOverseasEntityDataGet.execute()).thenReturn(oeDataListApiResponse);
 
-      privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+      retrievePrivateData();
       verify(apiClientService, times(3)).getInternalApiClient();
     }
 
@@ -483,7 +485,7 @@ class PrivateDataRetrievalServiceTest {
 
       when(privateManagingOfficerDataGet.execute()).thenReturn(moDataListApiResponse);
 
-      privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+      retrievePrivateData();
       verify(apiClientService, times(3)).getInternalApiClient();
     }
 
@@ -508,7 +510,7 @@ class PrivateDataRetrievalServiceTest {
       when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
       when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
 
-      privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
+      retrievePrivateData();
       verify(apiClientService, times(3)).getInternalApiClient();
     }
 
@@ -533,11 +535,9 @@ class PrivateDataRetrievalServiceTest {
       when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
       when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
 
-      privateDataRetrievalService.initialisePrivateData(COMPANY_NUMBER);
-
-      assertNotNull(privateDataRetrievalService.getBeneficialOwnerData());
-      assertNotNull(privateDataRetrievalService.getOverseasEntityData());
-      assertNotNull(privateDataRetrievalService.getManagingOfficerData());
+      assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
+      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
+      assertNotNull(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER));
     }
 
     @Test
@@ -559,9 +559,9 @@ class PrivateDataRetrievalServiceTest {
 
       when(privateBeneficialOwnerGet.execute()).thenThrow(FourHundredAndFourException);
 
-      privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
-
-      assertEquals(privateDataRetrievalService.getBeneficialOwnerData(), new PrivateBoDataListApi(Collections.emptyList()));
+      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
+      assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER), new PrivateBoDataListApi(Collections.emptyList()));
+      assertNotNull(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER));
     }
 
     @Test
@@ -583,9 +583,9 @@ class PrivateDataRetrievalServiceTest {
 
       when(privateManagingOfficerDataGet.execute()).thenThrow(FourHundredAndFourException);
 
-      privateDataRetrievalService.initialisePrivateData((COMPANY_NUMBER));
-
-      assertEquals(privateDataRetrievalService.getManagingOfficerData(), new ManagingOfficerListDataApi(Collections.emptyList()));
+      assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
+      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
+      assertEquals(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER), new ManagingOfficerListDataApi(Collections.emptyList()));
     }
   }
 }
