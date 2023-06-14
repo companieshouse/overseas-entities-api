@@ -6,303 +6,580 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
+import uk.gov.companieshouse.api.model.common.Address;
+import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
+import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 class ComparisonHelperTest {
 
-  @Test
-  void equalsAddressDtoAndAddressApiCompleteFalseTest(){
-    String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
-    String[] addressApiFields = addressDtoFields.clone();
+    @Test
+    void equalsAddressDtoAndAddressApiReturnCorrectResult() {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
 
-    var output = false;
+        AddressApi addressApi = new AddressApi();
+        addressApi.setPremises("PropertyNameNumber");
+        addressApi.setAddressLine1("Line1");
+        addressApi.setAddressLine2("Line2");
+        addressApi.setLocality("Town");
+        addressApi.setRegion("County");
+        addressApi.setCountry("Country");
+        addressApi.setPoBox("PoBox");
+        addressApi.setCareOf("CareOf");
+        addressApi.setPostcode("Postcode");
 
-    for(var i = 0; i < addressDtoFields.length; i++){
-      addressDtoFields[i] = "Different--" + addressDtoFields[i];
-      if(i < addressDtoFields.length - 1) {
-        addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
-      }
-
-      AddressDto addressDto = new AddressDto();
-      addressDto.setPropertyNameNumber(addressDtoFields[0]);
-      addressDto.setLine1(addressDtoFields[1]);
-      addressDto.setLine2(addressDtoFields[2]);
-      addressDto.setTown(addressDtoFields[3]);
-      addressDto.setCounty(addressDtoFields[4]);
-      addressDto.setCountry(addressDtoFields[5]);
-      addressDto.setPoBox(addressDtoFields[6]);
-      addressDto.setCareOf(addressDtoFields[7]);
-      addressDto.setPostcode(addressDtoFields[8]);
-
-      AddressApi addressApi = new AddressApi();
-      addressApi.setPremises(addressApiFields[0]);
-      addressApi.setAddressLine2(addressApiFields[1]);
-      addressApi.setAddressLine1(addressApiFields[2]);
-      addressApi.setLocality(addressApiFields[3]);
-      addressApi.setRegion(addressApiFields[4]);
-      addressApi.setCountry(addressApiFields[5]);
-      addressApi.setPoBox(addressApiFields[6]);
-      addressApi.setCareOf(addressApiFields[7]);
-      addressApi.setPostcode(addressApiFields[8]);
-
-      output |= ComparisonHelper.equals(addressDto, addressApi);
-
-      if(i < addressDtoFields.length - 1) {
-        addressDtoFields[i] = addressApiFields[i];
-        addressApiFields[i + 1] = addressDtoFields[i + 1];
-      }
+        assertTrue(ComparisonHelper.equals(addressDto, addressApi));
     }
-    assertFalse(output);
-  }
 
+    @Test
+    void equalsAddressDtoAndAddressApiCompleteFalseTest() {
+        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressApiFields = addressDtoFields.clone();
 
-  @Test
-  void equalsAddressDtoAndAddressApiReturnFalseWhenOneFieldDiffers() {
-    AddressDto addressDto = new AddressDto();
-    addressDto.setPropertyNameNumber("PropertyNameNumber");
-    addressDto.setLine1("Line1");
-    addressDto.setLine2("Line2");
-    addressDto.setTown("Town");
-    addressDto.setCounty("County");
-    addressDto.setCountry("Country");
-    addressDto.setPoBox("PoBox");
-    addressDto.setCareOf("CareOf");
-    addressDto.setPostcode("Postcode");
+        var output = false;
 
-    AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("PropertyNameNumber");
-    addressApi.setAddressLine2("Line1");
-    addressApi.setAddressLine1("Line2");
-    addressApi.setLocality("Town");
-    addressApi.setRegion("County");
-    addressApi.setCountry("DifferentCountry");
-    addressApi.setPoBox("PoBox");
-    addressApi.setCareOf("CareOf");
-    addressApi.setPostcode("Postcode");
+        for (var i = 0; i < addressDtoFields.length; i++) {
+            addressDtoFields[i] = "Different--" + addressDtoFields[i];
+            if (i < addressDtoFields.length - 1) {
+                addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
+            }
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
-  @Test
-  void equalsAddressDtoAndAddressApiReturnFalseWhenMultipleFieldsDiffer() {
-    AddressDto addressDto = new AddressDto();
-    addressDto.setPropertyNameNumber("PropertyNameNumber");
-    addressDto.setLine1("Line1");
-    addressDto.setLine2("Line2");
-    addressDto.setTown("Town");
-    addressDto.setCounty("County");
-    addressDto.setCountry("Country");
-    addressDto.setPoBox("PoBox");
-    addressDto.setCareOf("CareOf");
-    addressDto.setPostcode("Postcode");
+            AddressDto addressDto = new AddressDto();
+            addressDto.setPropertyNameNumber(addressDtoFields[0]);
+            addressDto.setLine1(addressDtoFields[1]);
+            addressDto.setLine2(addressDtoFields[2]);
+            addressDto.setTown(addressDtoFields[3]);
+            addressDto.setCounty(addressDtoFields[4]);
+            addressDto.setCountry(addressDtoFields[5]);
+            addressDto.setPoBox(addressDtoFields[6]);
+            addressDto.setCareOf(addressDtoFields[7]);
+            addressDto.setPostcode(addressDtoFields[8]);
 
-    AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("DifferentPropertyNameNumber");
-    addressApi.setAddressLine2("DifferentLine1");
-    addressApi.setAddressLine1("Line2");
-    addressApi.setLocality("Town");
-    addressApi.setRegion("County");
-    addressApi.setCountry("Country");
-    addressApi.setPoBox("DifferentPoBox");
-    addressApi.setCareOf("CareOf");
-    addressApi.setPostcode("Postcode");
+            AddressApi addressApi = new AddressApi();
+            addressApi.setPremises(addressApiFields[0]);
+            addressApi.setAddressLine2(addressApiFields[1]);
+            addressApi.setAddressLine1(addressApiFields[2]);
+            addressApi.setLocality(addressApiFields[3]);
+            addressApi.setRegion(addressApiFields[4]);
+            addressApi.setCountry(addressApiFields[5]);
+            addressApi.setPoBox(addressApiFields[6]);
+            addressApi.setCareOf(addressApiFields[7]);
+            addressApi.setPostcode(addressApiFields[8]);
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
+            output |= ComparisonHelper.equals(addressDto, addressApi);
 
-  @Test
-  void equalsAddressDtoAndAddressApiWhenNullReturnFalse() {
-    AddressApi addressApi = new AddressApi();
-    assertFalse(ComparisonHelper.equals(null, addressApi));
-    assertFalse(ComparisonHelper.equals(new AddressDto(), null));
-  }
+            if (i < addressDtoFields.length - 1) {
+                addressDtoFields[i] = addressApiFields[i];
+                addressApiFields[i + 1] = addressDtoFields[i + 1];
+            }
+        }
+        assertFalse(output);
+    }
 
-  @Test
-  void equalsLocalDateAndStringWithTimeReturnCorrectResult() {
-    LocalDate localDate = LocalDate.of(2001, 2, 3);
-    String dateString = "2001-02-03 00:00:00.000000";
+    @Test
+    void equalsAddressDtoAndAddressApiReturnFalseWhenOneFieldDiffers() {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
 
-    assertTrue(ComparisonHelper.equals(localDate, dateString));
-  }
+        AddressApi addressApi = new AddressApi();
+        addressApi.setPremises("PropertyNameNumber");
+        addressApi.setAddressLine2("Line1");
+        addressApi.setAddressLine1("Line2");
+        addressApi.setLocality("Town");
+        addressApi.setRegion("County");
+        addressApi.setCountry("DifferentCountry");
+        addressApi.setPoBox("PoBox");
+        addressApi.setCareOf("CareOf");
+        addressApi.setPostcode("Postcode");
 
-  @Test
-  void equalsLocalDateAndStringWithoutTimeReturnCorrectResult() {
-    LocalDate localDate = LocalDate.of(2001, 2, 3);
-    String dateString = "2001-02-03";
+        assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+    }
 
-    assertTrue(ComparisonHelper.equals(localDate, dateString));
-  }
+    @Test
+    void equalsAddressDtoAndAddressApiReturnFalseWhenMultipleFieldsDiffer() {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
 
-  @Test
-  void equalsLocalDateWhenBothNull(){
-    LocalDate localDate = null;
-    String strDate = null;
-    assertTrue(ComparisonHelper.equals(localDate, strDate));
-  }
+        AddressApi addressApi = new AddressApi();
+        addressApi.setPremises("DifferentPropertyNameNumber");
+        addressApi.setAddressLine2("DifferentLine1");
+        addressApi.setAddressLine1("Line2");
+        addressApi.setLocality("Town");
+        addressApi.setRegion("County");
+        addressApi.setCountry("Country");
+        addressApi.setPoBox("DifferentPoBox");
+        addressApi.setCareOf("CareOf");
+        addressApi.setPostcode("Postcode");
 
-  @Test
-  void equalsLocalDateWhenLocalDateNull() {
-    LocalDate localDate = null;
-    String strDate = "2001-02-03";
-    assertFalse(ComparisonHelper.equals(localDate, strDate));
-  }
+        assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+    }
 
-  @Test
-  void equalsLocalDateWhenStringDateNull() {
-    LocalDate localDate = LocalDate.of(2001, 2, 3);;
-    String strDate = null;
-    assertFalse(ComparisonHelper.equals(localDate, strDate));
-  }
+    @Test
+    void equalsAddressDtoAndAddressApiWhenNullReturnFalse() {
+        AddressApi addressApi = new AddressApi();
+        assertTrue(ComparisonHelper.equals(null, (AddressApi) null));
+        assertFalse(ComparisonHelper.equals(null, addressApi));
+        assertFalse(ComparisonHelper.equals(new AddressDto(), (AddressApi) null));
+    }
 
-  @Test
-  void equalsListAndArrayReturnCorrectResult() {
-    List<String> list = Arrays.asList("element1", "element2", "element3");
-    String[] array = {"element1", "element2", "element3"};
+    @Test
+    void equalsLocalDateAndStringWithTimeReturnCorrectResult() {
+        LocalDate localDate = LocalDate.of(2001, 2, 3);
+        String dateString = "2001-02-03 00:00:00.000000";
 
-    assertTrue(ComparisonHelper.equals(list, array));
-  }
+        assertTrue(ComparisonHelper.equals(localDate, dateString));
+    }
 
-  @Test
-  void equalsListAndArrayWithSameElementsReturnCorrectResult() {
-    List<String> list = Arrays.asList("element2", "element1", "element3");
-    String[] array = {"element1", "element2", "element3"};
+    @Test
+    void equalsLocalDateAndStringWithoutTimeReturnCorrectResult() {
+        LocalDate localDate = LocalDate.of(2001, 2, 3);
+        String dateString = "2001-02-03";
 
-    assertTrue(ComparisonHelper.equals(list, array));
-  }
+        assertTrue(ComparisonHelper.equals(localDate, dateString));
+    }
 
-  @Test
-  void equalsListAndArrayWithDifferentElementsReturnCorrectResult() {
-    List<String> list = Arrays.asList("element2", "element1", "element3");
-    String[] array = {"element1", "element2"};
+    @Test
+    void equalsLocalDateWhenNull() {
+        LocalDate localDate = LocalDate.of(2001, 2, 3);
+        String strDate = "2001-02-03";
 
-    assertFalse(ComparisonHelper.equals(list, array));
-  }
+        assertTrue(ComparisonHelper.equals((LocalDate) null, null));
+        assertFalse(ComparisonHelper.equals((LocalDate) null, strDate));
+        assertFalse(ComparisonHelper.equals(localDate, null));
+    }
 
-  @Test
-  void equalsListAndArrayWhenNullReturnCorrectResult() {
-    List<String> list = Arrays.asList("element1", "element2", "element3");
+    @Test
+    void equalsListAndArrayReturnCorrectResult() {
+        List<String> list = Arrays.asList("element1", "element2", "element3");
+        String[] array = {"element1", "element2", "element3"};
 
-    assertFalse(ComparisonHelper.equals(null, new String[]{"element1", "element2", "element3"}));
-    assertFalse(ComparisonHelper.equals(list, null));
+        assertTrue(ComparisonHelper.equals(list, array));
+    }
 
-    List<String> nullList = null;
-    String[] nullArray = null;
+    @Test
+    void equalsListAndArrayWithSameElementsReturnCorrectResult() {
+        List<String> list = Arrays.asList("element2", "element1", "element3");
+        String[] array = {"element1", "element2", "element3"};
 
-    assertTrue(ComparisonHelper.equals(nullList, nullArray));
-  }
+        assertTrue(ComparisonHelper.equals(list, array));
+    }
 
-  @Test
-  void equalsBooleanNull() {
-    Boolean first = null;
-    boolean second = true;
-    assertFalse(ComparisonHelper.equals(first, second));
-  }
+    @Test
+    void equalsListAndArrayWithDifferentElementsReturnCorrectResult() {
+        List<String> list = Arrays.asList("element2", "element1", "element3");
+        String[] array = {"element1", "element2"};
 
-  @Test
-  void equalsBooleanAllFalse() {
-    Boolean first = false;
-    boolean second = false;
-    assertTrue(ComparisonHelper.equals(first, second));
-  }
+        assertFalse(ComparisonHelper.equals(list, array));
+    }
 
-  @Test
-  void equalsBooleanAllTrue() {
-    Boolean first = true;
-    boolean second = true;
-    assertTrue(ComparisonHelper.equals(first, second));
-  }
+    @Test
+    void equalsListAndArrayWhenNullReturnCorrectResult() {
+        List<String> list = Arrays.asList("element1", "element2", "element3");
+        String[] array = new String[]{"element1", "element2", "element3"};
 
-  @Test
-  void equalsBooleanOneFalse() {
-    Boolean first = false;
-    boolean second = true;
-    assertFalse(ComparisonHelper.equals(first, second));
-  }
+        assertFalse(ComparisonHelper.equals((List<String>) null, array));
+        assertFalse(ComparisonHelper.equals(list, null));
+        assertTrue(ComparisonHelper.equals((List<String>) null, null));
+    }
 
-  @Test
-  void equalsBooleanOtherFalse() {
-    Boolean first = true;
-    boolean second = false;
-    assertFalse(ComparisonHelper.equals(first, second));
-  }
+    @Test
+    void equalsBooleanNull() {
+        Boolean first = null;
+        boolean second = true;
+        assertFalse(ComparisonHelper.equals(first, second));
+    }
 
-  @Test
-  void equalsAddressesNullTrue() {
-    AddressDto addressDto = null;
-    AddressApi addressApi = null;
+    @Test
+    void equalsBooleanAllFalse() {
+        Boolean first = false;
+        boolean second = false;
+        assertTrue(ComparisonHelper.equals(first, second));
+    }
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
+    @Test
+    void equalsBooleanAllTrue() {
+        Boolean first = true;
+        boolean second = true;
+        assertTrue(ComparisonHelper.equals(first, second));
+    }
 
-  @Test
-  void equalsAddressApiNullTrue() {
-    AddressDto addressDto = new AddressDto();
-    AddressApi addressApi = null;
+    @Test
+    void equalsBooleanOneFalse() {
+        Boolean first = false;
+        boolean second = true;
+        assertFalse(ComparisonHelper.equals(first, second));
+    }
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
+    @Test
+    void equalsBooleanOtherFalse() {
+        Boolean first = true;
+        boolean second = false;
+        assertFalse(ComparisonHelper.equals(first, second));
+    }
 
-  @Test
-  void equalsAddressDtoNullTrue() {
-    AddressDto addressDto = null;
-    AddressApi addressApi = new AddressApi();
+    @Test
+    void equalsStringAndOfficerRoleApiReturnCorrectResult() {
+        String string = "managing-officer";
+        var officerRoleApi = OfficerRoleApi.MANAGING_OFFICER;
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
+        assertTrue(ComparisonHelper.equals(string, officerRoleApi));
+    }
 
-  @Test
-  void equalAddressesTrue() {
-    AddressDto addressDto = new AddressDto();
-    addressDto.setPropertyNameNumber("1");
-    addressDto.setLine1("line1");
-    addressDto.setLine2("line2");
-    addressDto.setTown("town1");
-    addressDto.setCounty("county1");
-    addressDto.setCountry("Canada");
-    addressDto.setPoBox("pobox1");
-    addressDto.setCareOf("careOf1");
-    addressDto.setPostcode("postcode1");
+    @Test
+    void equalsStringAndOfficerRoleApiDifferentValuesReturnFalse() {
+        String string = "different";
+        var officerRoleApi = OfficerRoleApi.MANAGING_OFFICER;
 
-    AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("1");
-    addressApi.setAddressLine1("line1");
-    addressApi.setAddressLine2("line2");
-    addressApi.setLocality("town1");
-    addressApi.setRegion("county1");
-    addressApi.setCountry("Canada");
-    addressApi.setPoBox("pobox1");
-    addressApi.setCareOf("careOf1");
-    addressApi.setPostcode("postcode1");
+        assertFalse(ComparisonHelper.equals(string, officerRoleApi));
+    }
 
-    assertTrue(ComparisonHelper.equals(addressDto, addressApi));
-  }
+    @Test
+    void equalsStringAndOfficerRoleApiWhenNullReturnCorrectResult() {
+        String string = "managing-officer";
+        var officerRoleApi = OfficerRoleApi.MANAGING_OFFICER;
 
-  @Test
-  void notEqualAddressesFalse() {
-    AddressDto addressDto = new AddressDto();
-    addressDto.setPropertyNameNumber("1");
-    addressDto.setLine1("line1");
-    addressDto.setLine2("line2");
-    addressDto.setTown("town1");
-    addressDto.setCounty("county1");
-    addressDto.setCountry("Canada");
-    addressDto.setPoBox("pobox1");
-    addressDto.setCareOf("careOf1");
-    addressDto.setPostcode("postcode1");
+        assertTrue(ComparisonHelper.equals((String) null, (OfficerRoleApi) null));
+        assertFalse(ComparisonHelper.equals(null, officerRoleApi));
+        assertFalse(ComparisonHelper.equals(string, (OfficerRoleApi) null));
+    }
 
-    AddressApi addressApi = new AddressApi();
-    addressApi.setPremises("2");
-    addressApi.setAddressLine1("line2");
-    addressApi.setAddressLine2("line1");
-    addressApi.setLocality("town2");
-    addressApi.setRegion("county2");
-    addressApi.setCountry("Australia");
-    addressApi.setPoBox("pobox2");
-    addressApi.setCareOf("careOf2");
-    addressApi.setPostcode("postcode2");
+    @Test
+    void equalsStringAndStringArrayReturnCorrectResult() {
+        String string = "test1 test2";
+        String[] strings = {"test1", "test2"};
 
-    assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-  }
+        assertTrue(ComparisonHelper.equals(string, strings));
+    }
+
+    @Test
+    void equalsStringAndStringArrayDifferentValuesReturnFalse() {
+        String string = "test1";
+        String[] strings = {"test1", "test2"};
+
+        assertFalse(ComparisonHelper.equals(string, strings));
+    }
+
+    @Test
+    void equalsStringAndStringArrayWhenNullReturnCorrectResult() {
+        String string = "test1 test2";
+        String[] strings = {"test1", "test2"};
+
+        assertTrue(ComparisonHelper.equals((String) null, (String[]) null));
+        assertFalse(ComparisonHelper.equals((String) null, strings));
+        assertFalse(ComparisonHelper.equals(string, (String[]) null));
+    }
+
+    @Test
+    void equalsFormerNameReturnCorrectResult() {
+        String string = "John James Doe, Jonathan Doe";
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("John James");
+                    setSurname("Doe");
+                }},
+                new FormerNamesApi() {{
+                    setForenames("Jonathan");
+                    setSurname("Doe");
+                }}
+        );
+
+        assertTrue(ComparisonHelper.equalsFormerName(string, formerNamesApiList));
+    }
+
+    @Test
+    void equalsFormerNamesDifferentValuesReturnFalse() {
+        String string = "John James Doe";
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("John James");
+                    setSurname("Doe");
+                }},
+                new FormerNamesApi() {{
+                    setForenames("Jonathan");
+                    setSurname("Doe");
+                }}
+        );
+
+        assertFalse(ComparisonHelper.equalsFormerName(string, formerNamesApiList));
+    }
+
+    @Test
+    void equalsFormerNamesBothNullReturnCorrectResult() {
+        String string = "John James Doe, Jonathan Doe";
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("John James");
+                    setSurname("Doe");
+                }},
+                new FormerNamesApi() {{
+                    setForenames("Jonathan");
+                    setSurname("Doe");
+                }}
+        );
+
+        assertTrue(ComparisonHelper.equalsFormerName(null, null));
+        assertFalse(ComparisonHelper.equalsFormerName(null, formerNamesApiList));
+        assertFalse(ComparisonHelper.equalsFormerName(string, null));
+    }
+
+    @Test
+    void equalsAddressDtoAndMoDataAddressApiReturnCorrectResult() {
+        var addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
+
+        var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
+        addressApi.setPremises("PropertyNameNumber");
+        addressApi.setAddressLine1("Line1");
+        addressApi.setAddressLine2("Line2");
+        addressApi.setLocality("Town");
+        addressApi.setRegion("County");
+        addressApi.setCountry("Country");
+        addressApi.setPoBox("PoBox");
+        addressApi.setCareOf("CareOf");
+        addressApi.setPostalCode("Postcode");
+
+        assertTrue(ComparisonHelper.equals(addressDto, addressApi));
+    }
+
+    @Test
+    void equalsAddressDtoAndMoDataAddressApiReturnFalse() {
+
+        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressApiFields = addressDtoFields.clone();
+
+        var output = false;
+
+        for (var i = 0; i < addressDtoFields.length; i++) {
+            addressDtoFields[i] = "Different--" + addressDtoFields[i];
+            if (i < addressDtoFields.length - 1) {
+                addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
+            }
+
+            var addressDto = new AddressDto();
+            addressDto.setPropertyNameNumber(addressDtoFields[0]);
+            addressDto.setLine1(addressDtoFields[1]);
+            addressDto.setLine2(addressDtoFields[2]);
+            addressDto.setTown(addressDtoFields[3]);
+            addressDto.setCounty(addressDtoFields[4]);
+            addressDto.setCountry(addressDtoFields[5]);
+            addressDto.setPoBox(addressDtoFields[6]);
+            addressDto.setCareOf(addressDtoFields[7]);
+            addressDto.setPostcode(addressDtoFields[8]);
+
+            var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
+            addressApi.setPremises(addressApiFields[0]);
+            addressApi.setAddressLine1(addressApiFields[1]);
+            addressApi.setAddressLine2(addressApiFields[2]);
+            addressApi.setLocality(addressApiFields[3]);
+            addressApi.setRegion(addressApiFields[4]);
+            addressApi.setCountry(addressApiFields[5]);
+            addressApi.setPoBox(addressApiFields[6]);
+            addressApi.setCareOf(addressApiFields[7]);
+            addressApi.setPostalCode(addressApiFields[8]);
+
+            output |= ComparisonHelper.equals(addressDto, addressApi);
+
+            if (i < addressDtoFields.length - 1) {
+                addressDtoFields[i] = addressApiFields[i];
+                addressApiFields[i + 1] = addressDtoFields[i + 1];
+            }
+        }
+
+        assertFalse(output);
+    }
+
+    @Test
+    void equalsAddressDtoAndMoDataAddressApiWhenNullReturnCorrectResult() {
+        var addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
+
+        var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
+        addressApi.setPremises("PropertyNameNumber");
+        addressApi.setAddressLine1("Line1");
+        addressApi.setAddressLine2("Line2");
+        addressApi.setLocality("Town");
+        addressApi.setRegion("County");
+        addressApi.setCountry("Country");
+        addressApi.setPoBox("PoBox");
+        addressApi.setCareOf("CareOf");
+        addressApi.setPostalCode("Postcode");
+
+        assertTrue(ComparisonHelper.equals(null, (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
+        assertFalse(ComparisonHelper.equals(null, addressApi));
+        assertFalse(ComparisonHelper.equals(addressDto, (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
+    }
+
+    @Test
+    void equalsAddressDtoAndAddressReturnCorrectResult() {
+        var addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
+
+        var address = new Address();
+        address.setPremises("PropertyNameNumber");
+        address.setAddressLine1("Line1");
+        address.setAddressLine2("Line2");
+        address.setLocality("Town");
+        address.setRegion("County");
+        address.setCountry("Country");
+        address.setPoBox("PoBox");
+        address.setCareOf("CareOf");
+        address.setPostalCode("Postcode");
+
+        assertTrue(ComparisonHelper.equals(addressDto, address));
+    }
+
+    @Test
+    void equalsAddressDtoAndAddressReturnFalse() {
+
+        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressFields = addressDtoFields.clone();
+
+        var output = false;
+
+        for (var i = 0; i < addressDtoFields.length; i++) {
+            addressDtoFields[i] = "Different--" + addressDtoFields[i];
+            if (i < addressDtoFields.length - 1) {
+                addressFields[i + 1] = "Different--" + addressFields[i + 1];
+            }
+
+            var addressDto = new AddressDto();
+            addressDto.setPropertyNameNumber(addressDtoFields[0]);
+            addressDto.setLine1(addressDtoFields[1]);
+            addressDto.setLine2(addressDtoFields[2]);
+            addressDto.setTown(addressDtoFields[3]);
+            addressDto.setCounty(addressDtoFields[4]);
+            addressDto.setCountry(addressDtoFields[5]);
+            addressDto.setPoBox(addressDtoFields[6]);
+            addressDto.setCareOf(addressDtoFields[7]);
+            addressDto.setPostcode(addressDtoFields[8]);
+
+            var address = new Address();
+            address.setPremises(addressFields[0]);
+            address.setAddressLine1(addressFields[1]);
+            address.setAddressLine2(addressFields[2]);
+            address.setLocality(addressFields[3]);
+            address.setRegion(addressFields[4]);
+            address.setCountry(addressFields[5]);
+            address.setPoBox(addressFields[6]);
+            address.setCareOf(addressFields[7]);
+            address.setPostalCode(addressFields[8]);
+
+            output |= ComparisonHelper.equals(addressDto, address);
+
+            if (i < addressDtoFields.length - 1) {
+                addressDtoFields[i] = addressFields[i];
+                addressFields[i + 1] = addressDtoFields[i + 1];
+            }
+        }
+
+        assertFalse(output);
+    }
+
+    @Test
+    void equalsAddressDtoAndAddressWhenNullReturnCorrectResult() {
+        var addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber("PropertyNameNumber");
+        addressDto.setLine1("Line1");
+        addressDto.setLine2("Line2");
+        addressDto.setTown("Town");
+        addressDto.setCounty("County");
+        addressDto.setCountry("Country");
+        addressDto.setPoBox("PoBox");
+        addressDto.setCareOf("CareOf");
+        addressDto.setPostcode("Postcode");
+
+        var address = new Address();
+        address.setPremises("PropertyNameNumber");
+        address.setAddressLine1("Line1");
+        address.setAddressLine2("Line2");
+        address.setLocality("Town");
+        address.setRegion("County");
+        address.setCountry("Country");
+        address.setPoBox("PoBox");
+        address.setCareOf("CareOf");
+        address.setPostalCode("Postcode");
+
+        assertTrue(ComparisonHelper.equals(null, (Address) null));
+        assertFalse(ComparisonHelper.equals(null, address));
+        assertFalse(ComparisonHelper.equals(addressDto, (Address) null));
+    }
+
+    @Test
+    void equalsPersonNameAndStringReturnCorrectResult() {
+        var personName = new PersonName("John", "Doe");
+        var string = "John Doe";
+
+        assertTrue(ComparisonHelper.equals(personName, string));
+    }
+
+    @Test
+    void equalsPersonNameAndStringDifferentReturnFalse() {
+        var personName = new PersonName("John", "Doe");
+        var string = "Johnny Doe";
+
+        assertFalse(ComparisonHelper.equals(personName, string));
+    }
+
+    @Test
+    void equalsPersonNameAndStringWhenNullReturnCorrectResult() {
+        var personName = new PersonName("John", "Doe");
+        var string = "John Doe";
+
+        assertTrue(ComparisonHelper.equals((PersonName) null, (String) null));
+        assertFalse(ComparisonHelper.equals((PersonName) null, string));
+        assertFalse(ComparisonHelper.equals(personName, null));
+    }
 }

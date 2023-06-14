@@ -199,6 +199,9 @@ class FilingServiceTest {
     @Mock
     private ManagingOfficerCessationService managingOfficerCessationService;
 
+    @Mock
+    private ManagingOfficerChangeService managingOfficerChangeService;
+
     private Transaction transaction;
 
     @BeforeEach
@@ -347,6 +350,7 @@ class FilingServiceTest {
         when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
         when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
         when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
         verify(publicDataRetrievalService, times(1)).initialisePublicData(Mockito.anyString(), Mockito.anyString());
@@ -357,6 +361,7 @@ class FilingServiceTest {
         verify(managingOfficerAdditionService, times(1)).managingOfficerAdditions(Mockito.any());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
         verify(managingOfficerCessationService, times(1)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(1)).collateManagingOfficerChanges(Mockito.any(), Mockito.any());
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
@@ -374,7 +379,7 @@ class FilingServiceTest {
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
 
-        assertEquals(2, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(3, ((List<?>)filing.getData().get("changes")).size());
         assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }

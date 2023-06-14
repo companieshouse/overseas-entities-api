@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class PersonName {
@@ -47,5 +48,10 @@ public class PersonName {
   @Override
   public int hashCode() {
     return Objects.hash(forename, surname);
+  }
+
+  @Override
+  public String toString() {
+    return (forename + " " + surname).trim();
   }
 }
