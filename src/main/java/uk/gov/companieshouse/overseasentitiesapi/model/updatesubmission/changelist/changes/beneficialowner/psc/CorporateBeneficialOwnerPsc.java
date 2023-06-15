@@ -44,6 +44,7 @@ public class CorporateBeneficialOwnerPsc extends Psc {
   }
 
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("registeredOffice")
   public void setResidentialAddress(Address residentialAddress) {
     super.residentialAddress = residentialAddress;

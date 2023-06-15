@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,7 +14,7 @@ public class IndividualBeneficialOwnerPsc extends Psc {
   @JsonProperty("personName")
   private PersonName personName;
 
-  @JsonInclude(NON_EMPTY)
+  @JsonInclude(NON_NULL)
   @JsonProperty("nationalityOther")
   private String nationalityOther;
 
@@ -52,6 +51,7 @@ public class IndividualBeneficialOwnerPsc extends Psc {
   }
 
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("residentialAddress")
   public void setResidentialAddress(Address residentialAddress) {
     super.residentialAddress = residentialAddress;
