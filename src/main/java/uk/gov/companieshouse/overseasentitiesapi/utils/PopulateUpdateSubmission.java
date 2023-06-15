@@ -116,7 +116,7 @@ public class PopulateUpdateSubmission {
                             .ifPresent(presenter::setEmail);
                     Optional.of(presenterDto).
                             map(PresenterDto::getFullName)
-                            .ifPresent(presenter::setName);
+                            .ifPresent(presenter::setFullName);
                     Optional.of(presenter)
                             .ifPresent(updateSubmission::setPresenter);
                 });
