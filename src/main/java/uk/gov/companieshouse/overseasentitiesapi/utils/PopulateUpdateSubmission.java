@@ -96,7 +96,7 @@ public class PopulateUpdateSubmission {
         Optional.ofNullable(name)
                 .ifPresent(submissionDueDiligence::setAgentName);
         Optional.ofNullable(address)
-                .ifPresent(submissionDueDiligence::setDueDiligenceCorrespondenceAddress);
+                .ifPresent(addressDto -> submissionDueDiligence.setDueDiligenceCorrespondenceAddress(TypeConverter.addressDtoToAddress(addressDto)));
         Optional.ofNullable(supervisoryName)
                 .ifPresent(submissionDueDiligence::setSupervisoryBody);
         Optional.ofNullable(partnerName)
