@@ -77,7 +77,7 @@ class PopulateUpdateSubmissionTest {
 
     private void checkPresenterDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getPresenter());
-        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getFullName());
         assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
     }
 
