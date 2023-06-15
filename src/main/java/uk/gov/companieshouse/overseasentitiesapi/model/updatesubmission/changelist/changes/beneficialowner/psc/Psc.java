@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +14,17 @@ public abstract class Psc {
 
   protected Address residentialAddress;
 
+  @JsonInclude(NON_NULL)
   @JsonProperty("serviceAddress")
   private Address serviceAddress;
+
+  @JsonInclude(NON_EMPTY)
   @JsonProperty("natureOfControls")
   private List<String> natureOfControls;
 
+  @JsonInclude(NON_NULL)
   @JsonProperty("isOnSanctionsList")
-  private boolean isOnSanctionsList;
+  private Boolean isOnSanctionsList;
 
   public Address getServiceAddress() {
     return serviceAddress;
@@ -51,11 +59,11 @@ public abstract class Psc {
     this.natureOfControls.addAll(natureOfControls);
   }
 
-  public boolean isOnSanctionsList() {
+  public Boolean isOnSanctionsList() {
     return isOnSanctionsList;
   }
 
-  public void setOnSanctionsList(boolean isOnSanctionsList) {
+  public void setOnSanctionsList(Boolean isOnSanctionsList) {
     this.isOnSanctionsList = isOnSanctionsList;
   }
 

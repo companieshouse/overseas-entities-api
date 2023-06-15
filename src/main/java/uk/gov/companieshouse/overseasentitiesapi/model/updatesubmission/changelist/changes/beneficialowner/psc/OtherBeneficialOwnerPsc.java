@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
@@ -7,20 +10,21 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 public class OtherBeneficialOwnerPsc extends Psc {
 
-  @JsonProperty("corporateSoleName")
-  private String corporateSoleName;
+  @JsonInclude(NON_NULL)
+  @JsonProperty("corporateName")
+  private String corporateName;
 
   @JsonProperty("companyIdentification")
   private CompanyIdentification companyIdentification;
 
   private static final String APPOINTMENT_TYPE = "OE GPA BO";
 
-  public String getCorporateSoleName() {
-    return corporateSoleName;
+  public String getCorporateName() {
+    return corporateName;
   }
 
-  public void setCorporateSoleName(String corporateSoleName) {
-    this.corporateSoleName = corporateSoleName;
+  public void setCorporateName(String corporateName) {
+    this.corporateName = corporateName;
   }
 
   public CompanyIdentification getCompanyIdentification() {
@@ -32,6 +36,7 @@ public class OtherBeneficialOwnerPsc extends Psc {
     this.companyIdentification = companyIdentification;
   }
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("registeredOffice")
   public Address getResidentialAddress() {
     return super.residentialAddress;
@@ -61,13 +66,13 @@ public class OtherBeneficialOwnerPsc extends Psc {
     }
 
     OtherBeneficialOwnerPsc that = (OtherBeneficialOwnerPsc) o;
-    return Objects.equals(corporateSoleName, that.corporateSoleName)
+    return Objects.equals(corporateName, that.corporateName)
         && Objects.equals(companyIdentification, that.companyIdentification);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(corporateSoleName, companyIdentification, APPOINTMENT_TYPE,
+    return Objects.hash(corporateName, companyIdentification, APPOINTMENT_TYPE,
         super.hashCode());
   }
 }

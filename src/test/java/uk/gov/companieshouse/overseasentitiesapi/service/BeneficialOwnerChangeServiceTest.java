@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
-import static com.mongodb.assertions.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -220,7 +218,7 @@ class BeneficialOwnerChangeServiceTest {
       OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
           0);
       assertEquals("John Doe",
-          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateSoleName());
+          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateName());
       assertEquals("123", governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
     }
   }
@@ -497,7 +495,7 @@ class BeneficialOwnerChangeServiceTest {
       OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
           0);
       assertEquals("John Smith Other",
-          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateSoleName());
+          governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getCorporateName());
     }
   }
 

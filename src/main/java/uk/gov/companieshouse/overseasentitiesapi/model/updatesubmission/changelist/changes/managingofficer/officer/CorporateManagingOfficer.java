@@ -1,19 +1,27 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.officer;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
-public class CorporateManagingOfficer extends Officer{
+public class CorporateManagingOfficer extends Officer {
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("name")
     private String name;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("registeredOffice")
     private Address registeredOffice;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("contactName")
     private String contactName;
 
+    @JsonInclude(NON_NULL)
     @JsonProperty("email")
     private String email;
 

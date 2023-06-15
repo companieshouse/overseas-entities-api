@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
@@ -8,8 +11,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 public class CorporateBeneficialOwnerPsc extends Psc {
 
   private static final String APPOINTMENT_TYPE = "OE OLE BO";
+
+  @JsonInclude(NON_NULL)
   @JsonProperty("corporateName")
   private String corporateName;
+
   @JsonProperty("companyIdentification")
   private CompanyIdentification companyIdentification;
 
@@ -31,6 +37,7 @@ public class CorporateBeneficialOwnerPsc extends Psc {
   }
 
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("registeredOffice")
   public Address getResidentialAddress() {
     return super.residentialAddress;

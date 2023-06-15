@@ -108,7 +108,7 @@ public class ComparisonHelper {
         return personName.toString().equals(string);
     }
 
-    public static boolean equals(Boolean b, boolean b2) {
+    public static boolean equals(Boolean b, Boolean b2) {
         var nullValuesCheck = handleNulls(b, b2);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
