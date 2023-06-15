@@ -377,7 +377,7 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("filingForDate"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
-        assertEquals("all_identified_all_details", filing.getData().get("beneficialOwnerStatement"));
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
 
         assertEquals(3, ((List<?>)filing.getData().get("changes")).size());
         assertEquals(2, ((List<?>)filing.getData().get("additions")).size());

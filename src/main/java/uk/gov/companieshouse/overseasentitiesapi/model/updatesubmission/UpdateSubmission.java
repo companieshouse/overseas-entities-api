@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
@@ -51,7 +52,7 @@ public class UpdateSubmission {
     private Boolean anyBOsOrMOsAddedOrCeased;
 
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
-    private String beneficialOwnerStatement;
+    private BeneficialOwnersStatementType beneficialOwnerStatement;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
@@ -135,11 +136,11 @@ public class UpdateSubmission {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
     }
 
-    public String getBeneficialOwnerStatement() {
+    public BeneficialOwnersStatementType getBeneficialOwnerStatement() {
         return beneficialOwnerStatement;
     }
 
-    public void setBeneficialOwnerStatement(String beneficialOwnerStatement) {
+    public void setBeneficialOwnerStatement(BeneficialOwnersStatementType beneficialOwnerStatement) {
         this.beneficialOwnerStatement = beneficialOwnerStatement;
     }
 

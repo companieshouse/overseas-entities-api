@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
@@ -83,7 +84,7 @@ class PopulateUpdateSubmissionTest {
 
     private void checkStatementDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
-        assertEquals("all_identified_all_details", updateSubmission.getBeneficialOwnerStatement());
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, updateSubmission.getBeneficialOwnerStatement());
     }
 
     private void checkFilingForDataDetailsArePopulated(UpdateSubmission updateSubmission) {

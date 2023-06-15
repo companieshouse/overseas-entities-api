@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -127,7 +126,6 @@ public class PopulateUpdateSubmission {
             UpdateSubmission updateSubmission) {
 
         Optional.ofNullable(overseasEntitySubmissionDto.getBeneficialOwnersStatement())
-                .map(BeneficialOwnersStatementType::getValue)
                 .ifPresent(updateSubmission::setBeneficialOwnerStatement);
 
         Optional.of(overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner())
