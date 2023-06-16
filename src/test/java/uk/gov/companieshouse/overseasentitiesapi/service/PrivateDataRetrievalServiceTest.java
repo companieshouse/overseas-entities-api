@@ -354,31 +354,20 @@ class PrivateDataRetrievalServiceTest {
       when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
 
       when(apiClient.privateOverseasEntityDataHandler()).thenReturn(
-          privateOverseasEntityDataHandler);
+              privateOverseasEntityDataHandler);
       when(privateOverseasEntityDataHandler.getOverseasEntityData(Mockito.anyString())).thenReturn(
-          privateOverseasEntityDataGet);
-
-      // Beneficial Owner Data needs to be mocked for the Overseas Entities tests
-      when(apiClient.privateBeneficialOwnerResourceHandler()).thenReturn(
-          privateBeneficialOwnerResourceHandler);
-      when(privateBeneficialOwnerResourceHandler.getBeneficialOwners(
-          Mockito.anyString())).thenReturn(privateBeneficialOwnerGet);
+              privateOverseasEntityDataGet);
     }
 
     @Test
-    void testServiceExceptionThrownWhenGetOverseasEntitiesPrivateDataThrowsURIValidationException()
+    void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsURIValidationException()
         throws IOException, URIValidationException {
-      var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(privateBoDataListApi);
 
       when(privateOverseasEntityDataGet.execute()).thenThrow(new URIValidationException("ERROR"));
 
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
             privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
           });
     }
@@ -386,10 +375,6 @@ class PrivateDataRetrievalServiceTest {
     @Test
     void testServiceExceptionThrownWhenGetOverseasEntitiesPrivateDataThrowsIOException()
         throws IOException, URIValidationException {
-      var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(privateBoDataListApi);
 
       when(privateOverseasEntityDataGet.execute())
           .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
@@ -397,7 +382,6 @@ class PrivateDataRetrievalServiceTest {
       assertThrows(
           ServiceException.class,
           () -> {
-            privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
             privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
           });
     }
