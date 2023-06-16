@@ -31,7 +31,7 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getOverseasEntityData(companyNumber)).thenReturn(overseasEntityDataApi);
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService);
-        setValidationEnabledFeatureFlag(overseasEntitiesDataController, true);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         var response = overseasEntitiesDataController.getOverseasEntityDetails(companyNumber, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(companyNumber);
@@ -44,7 +44,7 @@ class OverseasEntitiesDataControllerTest {
         Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(companyNumber);
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService);
-        setValidationEnabledFeatureFlag(overseasEntitiesDataController, true);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         var response = overseasEntitiesDataController.getOverseasEntityDetails(companyNumber, ERIC_REQUEST_ID);
 
         assertNull(response.getBody());
@@ -56,14 +56,14 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
                 privateDataRetrievalService);
-        setValidationEnabledFeatureFlag(overseasEntitiesDataController, false);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
 
         assertThrows(ServiceException.class,
                 () -> overseasEntitiesDataController.getOverseasEntityDetails(companyNumber,
                         ERIC_REQUEST_ID));
     }
 
-    private void setValidationEnabledFeatureFlag(OverseasEntitiesDataController overseasEntitiesDataController, boolean value) {
+    private void setUpdateEnabledFeatureFlag(OverseasEntitiesDataController overseasEntitiesDataController, boolean value) {
         ReflectionTestUtils.setField(overseasEntitiesDataController, "isRoeUpdateEnabled", value);
     }
 }
