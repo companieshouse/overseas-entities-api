@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,6 +23,9 @@ public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
 
+    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
+    private boolean isRoeUpdateEnabled;
+
     @Autowired
     public OverseasEntitiesDataController(final PrivateDataRetrievalService privateDataRetrievalService){
         this.privateDataRetrievalService = privateDataRetrievalService;
@@ -32,6 +36,10 @@ public class OverseasEntitiesDataController {
                                                             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put("Company Number", companyNumber);
+
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException("ROE_UPDATE must be enabled for overseas entity details");
+        }
 
         try {
             ApiLogger.infoContext(requestId, "Calling service to get OE details", logMap);

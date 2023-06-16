@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
@@ -30,6 +31,7 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getOverseasEntityData(companyNumber)).thenReturn(overseasEntityDataApi);
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService);
+        setValidationEnabledFeatureFlag(overseasEntitiesDataController, true);
         var response = overseasEntitiesDataController.getOverseasEntityDetails(companyNumber, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(companyNumber);
@@ -42,9 +44,26 @@ class OverseasEntitiesDataControllerTest {
         Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(companyNumber);
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService);
+        setValidationEnabledFeatureFlag(overseasEntitiesDataController, true);
         var response = overseasEntitiesDataController.getOverseasEntityDetails(companyNumber, ERIC_REQUEST_ID);
 
         assertNull(response.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenUpdateDisabled () throws ServiceException {
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService);
+        setValidationEnabledFeatureFlag(overseasEntitiesDataController, false);
+
+        assertThrows(ServiceException.class,
+                () -> overseasEntitiesDataController.getOverseasEntityDetails(companyNumber,
+                        ERIC_REQUEST_ID));
+    }
+
+    private void setValidationEnabledFeatureFlag(OverseasEntitiesDataController overseasEntitiesDataController, boolean value) {
+        ReflectionTestUtils.setField(overseasEntitiesDataController, "isRoeUpdateEnabled", value);
     }
 }
