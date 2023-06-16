@@ -139,31 +139,31 @@ public class OverseasEntitiesService {
                                                        String userId) throws ServiceException {
         ApiLogger.debugContext(requestId, "Called updateOverseasEntity(...)");
 
-        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-
-        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
-            return ResponseEntity.badRequest().body(String.format(
-                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
-        }
-
-        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
-
-        overseasEntitySubmissionDao.setId(submissionId);
-        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
-        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
-
-        // Update company name set on the transaction, to ensure it matches the value received with this OE submission
-        String entityName = null;
-        if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
-            entityName = overseasEntitySubmissionDto.getEntityName().getName();
-        }
-
-        transaction.setCompanyName(entityName);
-        transactionService.updateTransaction(transaction, requestId);
-
-        ApiLogger.infoContext(requestId, String.format(
-                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %s",
-                transaction.getId(), submissionId, overseasEntitySubmissionDao.getSchemaVersion()));
+//        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+//
+//        if (!transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, submissionUri)) {
+//            return ResponseEntity.badRequest().body(String.format(
+//                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
+//        }
+//
+//        var overseasEntitySubmissionDao = overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto);
+//
+//        overseasEntitySubmissionDao.setId(submissionId);
+//        overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
+//        updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
+//
+//        // Update company name set on the transaction, to ensure it matches the value received with this OE submission
+//        String entityName = null;
+//        if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
+//            entityName = overseasEntitySubmissionDto.getEntityName().getName();
+//        }
+//
+//        transaction.setCompanyName(entityName);
+//        transactionService.updateTransaction(transaction, requestId);
+//
+//        ApiLogger.infoContext(requestId, String.format(
+//                "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %s",
+//                transaction.getId(), submissionId, overseasEntitySubmissionDao.getSchemaVersion()));
 
         return ResponseEntity.ok().build();
     }

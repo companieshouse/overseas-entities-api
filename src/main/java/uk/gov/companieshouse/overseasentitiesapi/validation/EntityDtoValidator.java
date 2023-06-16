@@ -40,7 +40,7 @@ public class EntityDtoValidator {
         } else {
             validateOtherAddressIsNotSupplied(EntityDto.SERVICE_ADDRESS_FIELD, entityDto.getServiceAddress(), errors, loggingContext);
         }
-        validateEmail(entityDto.getEmail(), errors, loggingContext);
+//        validateEmail(entityDto.getEmail(), errors, loggingContext);
         validateLegalForm(entityDto.getLegalForm(), errors, loggingContext);
         validateLawGoverned(entityDto.getLawGoverned(), errors, loggingContext);
 
