@@ -14,7 +14,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
@@ -157,7 +156,7 @@ public class BeneficialOwnerAdditionService {
                         natureOfControls,
                         isOnSanctionsList);
 
-        legalPersonBeneficialOwnerAddition.setCorporateSoleName(bo.getName());
+        legalPersonBeneficialOwnerAddition.setCorporateName(bo.getName());
 
         var identification = new CompanyIdentification();
         identification.setLegalForm(bo.getLegalForm());

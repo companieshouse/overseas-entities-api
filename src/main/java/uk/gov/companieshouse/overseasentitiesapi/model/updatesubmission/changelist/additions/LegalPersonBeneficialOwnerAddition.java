@@ -10,8 +10,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition {
     private static final String APPOINTMENT_TYPE = "OE GPA BO";
 
-    @JsonProperty("corporateSoleName")
-    private String corporateSoleName;
+    @JsonProperty("corporateName")
+    private String corporateName;
 
     @JsonProperty("companyIdentification")
     private CompanyIdentification companyIdentification;
@@ -22,12 +22,12 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
         setAppointmentType(APPOINTMENT_TYPE);
     }
 
-    public String getCorporateSoleName() {
-        return corporateSoleName;
+    public String getCorporateName() {
+        return corporateName;
     }
 
-    public void setCorporateSoleName(String corporateSoleName) {
-        this.corporateSoleName = corporateSoleName;
+    public void setCorporateName(String corporateName) {
+        this.corporateName = corporateName;
     }
 
     public CompanyIdentification getCompanyIdentification() {

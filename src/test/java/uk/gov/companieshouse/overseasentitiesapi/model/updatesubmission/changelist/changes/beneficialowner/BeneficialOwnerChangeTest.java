@@ -92,7 +92,7 @@ class BeneficialOwnerChangeTest {
     assertNotEquals(individualChange1, individualChange2);
     assertNotEquals(individualChange1.hashCode(), individualChange2.hashCode());
 
-    otherChange2.getPsc().setCorporateSoleName("New Corporate Sole Name");
+    otherChange2.getPsc().setCorporateName("New Corporate Sole Name");
     assertNotEquals(otherChange1, otherChange2);
     assertNotEquals(otherChange1.hashCode(), otherChange2.hashCode());
   }

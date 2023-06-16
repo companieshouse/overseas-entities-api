@@ -21,7 +21,6 @@ import java.util.List;
 
 import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
@@ -217,7 +216,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Some country", legalPersonBeneficialOwnerAddition.getResidentialAddress().getCountry());
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(0));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(1));
-        assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateSoleName());
+        assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateName());
         assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
         assertTrue(legalPersonBeneficialOwnerAddition.isOnSanctionsList());
