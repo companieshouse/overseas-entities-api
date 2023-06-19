@@ -100,7 +100,7 @@ public class BeneficialOwnerAdditionService {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
-        var residentialAddress = bo.getPrincipalAddress();
+        var registeredOffice = bo.getPrincipalAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 bo.getTrusteesNatureOfControlTypes(),
@@ -113,7 +113,7 @@ public class BeneficialOwnerAdditionService {
                         actionDate,
                         ceasedDate,
                         addressDtoToAddress(serviceAddress),
-                        addressDtoToAddress(residentialAddress),
+                        addressDtoToAddress(registeredOffice),
                         natureOfControls,
                         isOnSanctionsList);
 
@@ -139,7 +139,7 @@ public class BeneficialOwnerAdditionService {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
-        var residentialAddress = bo.getPrincipalAddress();
+        var registeredOffice = bo.getPrincipalAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 null,
@@ -152,7 +152,7 @@ public class BeneficialOwnerAdditionService {
                         actionDate,
                         ceasedDate,
                         addressDtoToAddress(serviceAddress),
-                        addressDtoToAddress(residentialAddress),
+                        addressDtoToAddress(registeredOffice),
                         natureOfControls,
                         isOnSanctionsList);
 

@@ -16,13 +16,18 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
     @JsonProperty("corporateName")
     private String corporateName;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registeredOffice")
+    private Address registeredOffice;
+
     @JsonProperty("companyIdentification")
     private CompanyIdentification companyIdentification;
 
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                                   Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
-        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionsList);
+        super(actionDate, ceasedDate, residentialAddress, natureOfControls, isOnSanctionsList);
         setAppointmentType(APPOINTMENT_TYPE);
+        this.registeredOffice = residentialAddress;
     }
 
     public String getCorporateName() {
@@ -31,6 +36,12 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
 
     public void setCorporateName(String corporateName) {
         this.corporateName = corporateName;
+    }
+
+    public Address getRegisteredOffice() {return this.registeredOffice; }
+
+    public void setRegisteredOffice(Address registeredOffice) {
+        this.registeredOffice = registeredOffice;
     }
 
     public CompanyIdentification getCompanyIdentification() {
