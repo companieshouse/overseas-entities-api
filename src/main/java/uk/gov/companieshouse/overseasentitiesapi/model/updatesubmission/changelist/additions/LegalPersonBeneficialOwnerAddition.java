@@ -38,7 +38,9 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
         this.corporateName = corporateName;
     }
 
-    public Address getRegisteredOffice() {return this.registeredOffice; }
+    public Address getRegisteredOffice() {
+        return this.registeredOffice;
+    }
 
     public void setRegisteredOffice(Address registeredOffice) {
         this.registeredOffice = registeredOffice;

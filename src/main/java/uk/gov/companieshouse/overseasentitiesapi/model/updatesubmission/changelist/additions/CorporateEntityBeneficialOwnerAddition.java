@@ -25,7 +25,7 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
 
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                                   Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
-        super(actionDate, ceasedDate, residentialAddress, natureOfControls, isOnSanctionsList);
+        super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
         setAppointmentType(APPOINTMENT_TYPE);
         this.registeredOffice = residentialAddress;
     }
@@ -38,7 +38,9 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
         this.corporateName = corporateName;
     }
 
-    public Address getRegisteredOffice() {return this.registeredOffice; }
+    public Address getRegisteredOffice() {
+        return this.registeredOffice;
+    }
 
     public void setRegisteredOffice(Address registeredOffice) {
         this.registeredOffice = registeredOffice;
