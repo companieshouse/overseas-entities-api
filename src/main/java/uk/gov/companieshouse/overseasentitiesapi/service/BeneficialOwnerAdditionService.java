@@ -81,8 +81,8 @@ public class BeneficialOwnerAdditionService {
                 new IndividualBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
