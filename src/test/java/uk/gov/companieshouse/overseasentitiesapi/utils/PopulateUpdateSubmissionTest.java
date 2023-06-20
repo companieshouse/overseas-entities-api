@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
@@ -33,7 +35,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -49,7 +51,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -66,7 +68,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
         assertNotNull(updateSubmission.getPresenter());
@@ -74,6 +76,46 @@ class PopulateUpdateSubmissionTest {
         assertNull(updateSubmission.getBeneficialOwnerStatement());
         assertNotNull(updateSubmission.getFilingForDate());
         assertNull(updateSubmission.getDueDiligence());
+    }
+
+    @Test
+    void testUpdateSubmissionIsPopulatedWithOverseasEntitySubmissionDataWhenIsNoChangeScenario() {
+        final OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setUpdate(UpdateMock.getUpdateDto());
+        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
+        overseasEntitySubmissionDto.setDueDiligence(DueDiligenceMock.getDueDiligenceDto());
+
+        final UpdateSubmission updateSubmission = new UpdateSubmission();
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, true);
+
+        assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+        assertNotNull(updateSubmission.getPresenter());
+        assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+        assertNull(updateSubmission.getBeneficialOwnerStatement());
+        assertNotNull(updateSubmission.getFilingForDate());
+        assertNull(updateSubmission.getDueDiligence());
+    }
+
+    @Test
+    void testUpdateSubmissionIsPopulatedWithNoChangesWhenIsNoChangeScenario() {
+        final OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setUpdate(UpdateMock.getUpdateDto());
+        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
+
+        final UpdateSubmission updateSubmission = new UpdateSubmission();
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, true);
+
+        assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+        assertNotNull(updateSubmission.getPresenter());
+        assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+        assertNull(updateSubmission.getBeneficialOwnerStatement());
+        assertNotNull(updateSubmission.getFilingForDate());
+        assertNull(updateSubmission.getDueDiligence());
+
+
+        assertTrue(updateSubmission.getAdditions().isEmpty());
+        assertTrue(updateSubmission.getChanges().isEmpty());
+        assertTrue(updateSubmission.getCessations().isEmpty());
     }
 
     private void checkPresenterDetailsArePopulated(UpdateSubmission updateSubmission) {
