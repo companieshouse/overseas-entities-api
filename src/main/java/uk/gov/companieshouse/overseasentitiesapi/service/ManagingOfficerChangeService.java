@@ -272,7 +272,7 @@ public class ManagingOfficerChangeService {
         hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
                 managingOfficerCorporateDto.getPublicRegisterName(),
                 IdentificationApi::getPlaceRegistered,
-                CompanyIdentification::setPlaceRegistered);
+                CompanyIdentification::setRegisterLocation);
 
         hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
                 managingOfficerCorporateDto.getRegistrationNumber(),

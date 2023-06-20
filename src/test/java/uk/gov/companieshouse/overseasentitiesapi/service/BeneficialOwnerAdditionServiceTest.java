@@ -187,7 +187,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Corporation name", corporateEntityBeneficialOwnerAddition.getCorporateName());
         assertEquals("Legal form", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
-        assertEquals("Register name", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getPlaceRegistered());
+        assertEquals("Register name", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getRegisterLocation());
         assertEquals("Registration number", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getRegistrationNumber());
         assertTrue(corporateEntityBeneficialOwnerAddition.isOnSanctionsList());
     }
