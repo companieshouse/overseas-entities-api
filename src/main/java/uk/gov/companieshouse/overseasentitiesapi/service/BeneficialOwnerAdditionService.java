@@ -81,8 +81,8 @@ public class BeneficialOwnerAdditionService {
                 new IndividualBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
@@ -112,8 +112,8 @@ public class BeneficialOwnerAdditionService {
                 new CorporateEntityBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(registeredOffice),
+                        addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
@@ -151,8 +151,8 @@ public class BeneficialOwnerAdditionService {
                 new LegalPersonBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(registeredOffice),
+                        addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
