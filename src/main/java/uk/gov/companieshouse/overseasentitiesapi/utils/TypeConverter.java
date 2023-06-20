@@ -25,7 +25,6 @@ public class TypeConverter {
     address.setStreet(addressDto.getLine1());
     address.setArea(addressDto.getLine2());
     address.setPostTown(addressDto.getTown());
-    address.setPostTown(addressDto.getLocality());
     address.setRegion(addressDto.getCounty());
     address.setPostCode(addressDto.getPostcode());
     address.setCountry(addressDto.getCountry());
@@ -44,7 +43,7 @@ public class TypeConverter {
     address.setPoBox(addressApi.getPoBox());
     address.setHouseNameNum(addressApi.getPremises());
     address.setStreet(addressApi.getAddressLine1());
-    address.setArea(addressApi.getRegion());
+    address.setArea(addressApi.getAddressLine2());
     address.setPostTown(addressApi.getLocality());
     address.setRegion(addressApi.getRegion());
     address.setPostCode(addressApi.getPostcode());

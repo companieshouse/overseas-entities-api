@@ -6,22 +6,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LegalPersonBeneficialOwnerCessation extends BeneficialOwnerCessation {
 
-    @JsonProperty("corporateSoleName")
-    private String corporateSoleName;
+    @JsonProperty("corporateName")
+    private String corporateName;
 
     public LegalPersonBeneficialOwnerCessation(String appointmentId,
             LocalDate actionDate,
             String corporateSoleName) {
         super(appointmentId, actionDate);
-        this.corporateSoleName = corporateSoleName;
+        this.corporateName = corporateSoleName;
         setAppointmentType("OE GPA BO");
     }
 
-    public String getCorporateSoleName() {
-        return corporateSoleName;
+    public String getCorporateName() {
+        return corporateName;
     }
 
-    public void setCorporateSoleName(String corporateSoleName) {
-        this.corporateSoleName = corporateSoleName;
+    public void setCorporateName(String corporateName) {
+        this.corporateName = corporateName;
     }
 }

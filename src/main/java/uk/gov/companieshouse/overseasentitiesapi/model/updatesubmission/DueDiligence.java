@@ -2,7 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -14,7 +14,7 @@ public class DueDiligence {
     private String agentName;
 
     @JsonProperty("dueDiligenceCorrespondenceAddress")
-    private AddressDto dueDiligenceCorrespondenceAddress;
+    private Address dueDiligenceCorrespondenceAddress;
 
     @JsonInclude(NON_NULL)
     @JsonProperty("agentAssuranceCode")
@@ -53,11 +53,11 @@ public class DueDiligence {
         this.agentName = agentName;
     }
 
-    public AddressDto getDueDiligenceCorrespondenceAddress() {
+    public Address getDueDiligenceCorrespondenceAddress() {
         return dueDiligenceCorrespondenceAddress;
     }
 
-    public void setDueDiligenceCorrespondenceAddress(AddressDto dueDiligenceCorrespondenceAddress) {
+    public void setDueDiligenceCorrespondenceAddress(Address dueDiligenceCorrespondenceAddress) {
         this.dueDiligenceCorrespondenceAddress = dueDiligenceCorrespondenceAddress;
     }
 

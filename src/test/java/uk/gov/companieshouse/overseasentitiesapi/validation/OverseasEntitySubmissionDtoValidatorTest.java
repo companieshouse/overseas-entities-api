@@ -440,7 +440,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(false);
     }
 
-    @Test
     void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialUpdateValidation() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(true);
@@ -568,7 +567,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    @Test
     void testPartialUpdateValidationWithEntity() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();

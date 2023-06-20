@@ -469,6 +469,6 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("Legal form", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getLegalForm());
         assertEquals("Law governed", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getGoverningLaw());
         assertEquals("1234", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getRegistrationNumber());
-        assertEquals("Public register name", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getPlaceRegistered());
+        assertEquals("Public register name", corporateManagingOfficerChange.getOfficer().getCompanyIdentification().getRegisterLocation());
     }
 }

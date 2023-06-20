@@ -200,7 +200,7 @@ public class BeneficialOwnerChangeService {
     hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
         beneficialOwnerCorporateDto.getPublicRegisterName(),
         Identification::getPlaceRegistered,
-        CompanyIdentification::setPlaceRegistered);
+        CompanyIdentification::setRegisterLocation);
 
     hasChange |= companyIdentificationChangeManager.compareAndBuildRightChange(
         beneficialOwnerCorporateDto.getRegistrationNumber(),
@@ -258,7 +258,7 @@ public class BeneficialOwnerChangeService {
     hasChange |= changeManager.compareAndBuildLeftChange(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getName(),
         PscApi::getName,
-        OtherBeneficialOwnerPsc::setCorporateSoleName);
+        OtherBeneficialOwnerPsc::setCorporateName);
 
     psc.setCompanyIdentification(new CompanyIdentification());
 

@@ -1,14 +1,20 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 public class IndividualBeneficialOwnerPsc extends Psc {
+
+  @JsonInclude(NON_NULL)
   @JsonProperty("personName")
   private PersonName personName;
 
+  @JsonInclude(NON_NULL)
   @JsonProperty("nationalityOther")
   private String nationalityOther;
 
@@ -38,12 +44,14 @@ public class IndividualBeneficialOwnerPsc extends Psc {
   }
 
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("residentialAddress")
   public Address getResidentialAddress() {
     return super.residentialAddress;
   }
 
   @Override
+  @JsonInclude(NON_NULL)
   @JsonProperty("residentialAddress")
   public void setResidentialAddress(Address residentialAddress) {
     super.residentialAddress = residentialAddress;

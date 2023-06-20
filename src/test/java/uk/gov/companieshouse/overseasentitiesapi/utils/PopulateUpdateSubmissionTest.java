@@ -13,10 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 @ExtendWith(MockitoExtension.class)
 class PopulateUpdateSubmissionTest {
@@ -77,13 +78,13 @@ class PopulateUpdateSubmissionTest {
 
     private void checkPresenterDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getPresenter());
-        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getFullName());
         assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
     }
 
     private void checkStatementDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
-        assertEquals("all_identified_all_details", updateSubmission.getBeneficialOwnerStatement());
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, updateSubmission.getBeneficialOwnerStatement());
     }
 
     private void checkFilingForDataDetailsArePopulated(UpdateSubmission updateSubmission) {
@@ -107,15 +108,15 @@ class PopulateUpdateSubmissionTest {
         assertEquals("agreed", dueDiligence.getDiligence());
         assertEquals("agent567", dueDiligence.getAgentAssuranceCode());
 
-        final AddressDto dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
+        final Address dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
         assertNotNull(dueDiligenceCorrespondenceAddress);
-        assertEquals("100", dueDiligenceCorrespondenceAddress.getPropertyNameNumber());
-        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getLine1());
-        assertEquals("", dueDiligenceCorrespondenceAddress.getLine2());
-        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getTown());
-        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getCounty());
+        assertEquals("100", dueDiligenceCorrespondenceAddress.getHouseNameNum());
+        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getStreet());
+        assertEquals("", dueDiligenceCorrespondenceAddress.getArea());
+        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getPostTown());
+        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getRegion());
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
-        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostcode());
+        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
 
     private void checkOverseasEntityDueDiligenceDetailsArePopulated(
@@ -131,15 +132,15 @@ class PopulateUpdateSubmissionTest {
         assertNull(dueDiligence.getAgentAssuranceCode());
         assertEquals("abc123", dueDiligence.getAmlRegistrationNumber());
 
-        final AddressDto dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
+        final Address dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
         assertNotNull(dueDiligenceCorrespondenceAddress);
-        assertEquals("100", dueDiligenceCorrespondenceAddress.getPropertyNameNumber());
-        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getLine1());
-        assertEquals("", dueDiligenceCorrespondenceAddress.getLine2());
-        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getTown());
-        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getCounty());
+        assertEquals("100", dueDiligenceCorrespondenceAddress.getHouseNameNum());
+        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getStreet());
+        assertEquals("", dueDiligenceCorrespondenceAddress.getArea());
+        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getPostTown());
+        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getRegion());
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
-        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostcode());
+        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
 
 }

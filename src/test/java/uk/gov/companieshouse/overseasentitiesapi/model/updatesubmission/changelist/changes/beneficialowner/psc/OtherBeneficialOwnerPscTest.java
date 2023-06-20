@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -25,8 +23,8 @@ class OtherBeneficialOwnerPscTest {
   @Test
   void testSetAndGetCorporateSoleName() {
     String expected = "corporateSoleName";
-    otherBeneficialOwnerPsc.setCorporateSoleName(expected);
-    assertEquals(expected, otherBeneficialOwnerPsc.getCorporateSoleName());
+    otherBeneficialOwnerPsc.setCorporateName(expected);
+    assertEquals(expected, otherBeneficialOwnerPsc.getCorporateName());
   }
 
   @Test
@@ -59,12 +57,12 @@ class OtherBeneficialOwnerPscTest {
   @Test
   void testEqualsAndHashCode() {
     OtherBeneficialOwnerPsc psc1 = new OtherBeneficialOwnerPsc();
-    psc1.setCorporateSoleName("corporateSoleName");
+    psc1.setCorporateName("corporateSoleName");
     CompanyIdentification companyIdentification = new CompanyIdentification();
     psc1.setCompanyIdentification(companyIdentification);
 
     OtherBeneficialOwnerPsc psc2 = new OtherBeneficialOwnerPsc();
-    psc2.setCorporateSoleName("corporateSoleName");
+    psc2.setCorporateName("corporateSoleName");
     psc2.setCompanyIdentification(companyIdentification);
 
     assertTrue(psc1.equals(psc2) && psc2.equals(psc1));

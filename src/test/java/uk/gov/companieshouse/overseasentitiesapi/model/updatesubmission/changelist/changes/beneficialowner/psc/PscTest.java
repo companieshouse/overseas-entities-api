@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +58,7 @@ class PscTest {
     assertEquals(psc1.hashCode(), psc2.hashCode());
 
     var psc3 = createOtherBeneficialOwnerPsc();
-    psc3.setCorporateSoleName("Other Corporate Sole Name");
+    psc3.setCorporateName("Other Corporate Sole Name");
 
     assertNotEquals(psc1, psc3);
     assertNotEquals(psc1.hashCode(), psc3.hashCode());
