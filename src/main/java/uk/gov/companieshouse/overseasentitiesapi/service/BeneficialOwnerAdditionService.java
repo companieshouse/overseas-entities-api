@@ -121,13 +121,13 @@ public class BeneficialOwnerAdditionService {
 
         var legalForm = bo.getLegalForm();
         var governingLaw = bo.getLawGoverned();
-        var placeRegistered = bo.getPublicRegisterName();
+        var registerName = bo.getPublicRegisterName();
         var registrationNumber = bo.getRegistrationNumber();
 
         var identification = new CompanyIdentification();
         identification.setLegalForm(legalForm);
         identification.setGoverningLaw(governingLaw);
-        identification.setPlaceRegistered(placeRegistered);
+        identification.setRegisterLocation(registerName);
         identification.setRegistrationNumber(registrationNumber);
         corporateEntityBeneficialOwnerAddition.setCompanyIdentification(identification);
 

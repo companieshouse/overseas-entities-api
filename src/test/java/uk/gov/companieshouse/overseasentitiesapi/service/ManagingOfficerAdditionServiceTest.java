@@ -164,7 +164,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("Manager", corporateManagingOfficerAddition.getRoleAndResponsibilities());
         assertEquals("Legal form", corporateManagingOfficerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
-        assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getPlaceRegistered());
+        assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getRegisterLocation());
         assertEquals("Registration number", corporateManagingOfficerAddition.getCompanyIdentification().getRegistrationNumber());
     }
 }
