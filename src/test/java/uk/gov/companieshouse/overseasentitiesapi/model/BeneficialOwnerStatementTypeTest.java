@@ -25,5 +25,13 @@ class BeneficialOwnerStatementTypeTest {
         assertNull(type);
     }
 
+    @Test
+    void testBeneficialOwnersStatementTypeGetValue() {
+        var enumBeneficialOwnersStatementType =
+                BeneficialOwnersStatementType.findByBeneficialOwnersStatementTypeString(
+                        "none_identified");
+        assert enumBeneficialOwnersStatementType != null;
+        assertEquals("none_identified", enumBeneficialOwnersStatementType.getValue());
+    }
 
 }

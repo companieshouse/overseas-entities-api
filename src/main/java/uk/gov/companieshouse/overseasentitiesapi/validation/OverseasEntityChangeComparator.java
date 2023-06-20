@@ -5,14 +5,15 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
 
 @Component
 public class OverseasEntityChangeComparator {
     public EntityNameChange compareEntityName(String existing, String updated) {
-        return StringUtils.equals(existing, updated) || updated == null ?
-                null : new EntityNameChange(existing, updated);
+        return StringUtils.equals(existing, updated) || updated == null ? null : new EntityNameChange(updated);
     }
 
     public PrincipalAddressChange comparePrincipalAddress(
@@ -21,11 +22,10 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
-        var updatedAddress = convertAddressDtoToAddressModel(updated);
+        var existingAddress = existing != null ? registeredOfficeAddressApiToAddress(existing) : null;
+        var updatedAddress = addressDtoToAddress(updated);
 
-        return updatedAddress.equals(existingAddress) ?
-                null : new PrincipalAddressChange(existingAddress, updatedAddress);
+        return updatedAddress.equals(existingAddress) ? null : new PrincipalAddressChange(updatedAddress);
     }
 
     public CorrespondenceAddressChange compareCorrespondenceAddress(
@@ -34,53 +34,45 @@ public class OverseasEntityChangeComparator {
             return null;
         }
 
-        var existingAddress = existing != null ? convertRegisteredOfficeAddressApiToAddressModel(existing) : null;
-        var updatedAddress = convertAddressDtoToAddressModel(updated);
+        var existingAddress = existing != null ? registeredOfficeAddressApiToAddress(existing) : null;
+        var updatedAddress = addressDtoToAddress(updated);
 
-        return updatedAddress.equals(existingAddress) ?
-                null : new CorrespondenceAddressChange(existingAddress, updatedAddress);
+        return updatedAddress.equals(existingAddress) ? null : new CorrespondenceAddressChange(updatedAddress);
     }
 
     public CompanyIdentificationChange compareCompanyIdentification(
             CompanyIdentification existing, CompanyIdentification updated) {
-        return existing.equals(updated) || updated == null ? null : new CompanyIdentificationChange(existing, updated);
+        return existing.equals(updated) || updated == null ?
+                null : createCompanyIdentificationChange(existing, updated);
     }
 
     public EntityEmailAddressChange compareEntityEmailAddress(String existing, String updated) {
-        return StringUtils.equals(existing, updated) || updated == null ?
-                null : new EntityEmailAddressChange(existing, updated);
+        return StringUtils.equals(existing, updated) || updated == null ? null : new EntityEmailAddressChange(updated);
     }
 
-    private Address convertRegisteredOfficeAddressApiToAddressModel(
-            RegisteredOfficeAddressApi registeredOfficeAddressApi) {
-        var address = new Address();
+    private CompanyIdentificationChange createCompanyIdentificationChange(
+            CompanyIdentification existing, CompanyIdentification updated){
+        var proposedLegalForm = existing.getLegalForm() != null &&
+                existing.getLegalForm().equals(updated.getLegalForm()) ?
+                null : updated.getLegalForm();
+        var proposedGoverningLaw = existing.getGoverningLaw() != null &&
+                existing.getGoverningLaw().equals(updated.getGoverningLaw()) ?
+                null : updated.getGoverningLaw();
+        var proposedRegisterLocation = existing.getRegisterLocation() != null &&
+                existing.getRegisterLocation().equals(updated.getRegisterLocation()) ?
+                null : updated.getRegisterLocation();
+        var proposedPlaceRegistered = existing.getPlaceRegistered() != null &&
+                existing.getPlaceRegistered().equals(updated.getPlaceRegistered()) ?
+                null : updated.getPlaceRegistered();
+        var proposedRegistrationNumber = existing.getRegistrationNumber() != null &&
+                existing.getRegistrationNumber().equals(updated.getRegistrationNumber()) ?
+                null : updated.getRegistrationNumber();
 
-        address.setHouseNameNum(registeredOfficeAddressApi.getPremises());
-        address.setStreet(registeredOfficeAddressApi.getAddressLine1());
-        address.setArea(registeredOfficeAddressApi.getAddressLine2());
-        address.setPostTown(registeredOfficeAddressApi.getLocality());
-        address.setRegion(registeredOfficeAddressApi.getRegion());
-        address.setCountry(registeredOfficeAddressApi.getCountry());
-        address.setPostCode(registeredOfficeAddressApi.getPostalCode());
-        address.setPoBox(registeredOfficeAddressApi.getPoBox());
-        address.setCareOf(registeredOfficeAddressApi.getCareOf());
-
-        return address;
-    }
-
-    private Address convertAddressDtoToAddressModel(AddressDto addressDto) {
-        var address = new Address();
-
-        address.setHouseNameNum(addressDto.getPropertyNameNumber());
-        address.setStreet(addressDto.getLine1());
-        address.setArea(addressDto.getLine2());
-        address.setPostTown(addressDto.getLocality());
-        address.setRegion(addressDto.getCounty());
-        address.setCountry(addressDto.getCountry());
-        address.setPostCode(addressDto.getPostcode());
-        address.setPoBox(addressDto.getPoBox());
-        address.setCareOf(addressDto.getCareOf());
-
-        return address;
+        return new CompanyIdentificationChange(
+                proposedLegalForm,
+                proposedGoverningLaw,
+                proposedRegisterLocation,
+                proposedPlaceRegistered,
+                proposedRegistrationNumber);
     }
 }

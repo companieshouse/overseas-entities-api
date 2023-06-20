@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -93,7 +94,7 @@ public class OverseasEntitiesController {
                     overseasEntitySubmissionDto,
                     requestId,
                     userId);
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, "Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -132,7 +133,7 @@ public class OverseasEntitiesController {
                     overseasEntitySubmissionDto,
                     requestId,
                     userId);
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, "Error Updating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -179,7 +180,7 @@ public class OverseasEntitiesController {
                     overseasEntitySubmissionDto,
                     requestId,
                     userId);
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, "Error Creating Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -242,9 +243,6 @@ public class OverseasEntitiesController {
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            ApiLogger.errorContext(requestId, "Error getting Overseas Entity Submission", e, logMap);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

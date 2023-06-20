@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
@@ -10,40 +14,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateSubmission {
-    @JsonProperty("type")
+    public static final String UPDATE_TYPE_FIELD = "type";
+    public static final String UPDATE_USER_SUBMISSION_FIELD = "userSubmission";
+    public static final String UPDATE_ENTITY_NUMBER_FIELD = "entityNumber";
+    public static final String UPDATE_DUE_DILIGENCE_FIELD = "dueDiligence";
+    public static final String UPDATE_PRESENTER_FIELD = "presenter";
+    public static final String FILING_FOR_DATE_FIELD = "filingForDate";
+    public static final String NO_CHANGES_IN_FILING_PERIOD_FIELD = "noChangesInFilingPeriodStatement";
+    public static final String ANY_BOS_ADDED_CEASED_FIELD = "anyBOsOrMOsAddedOrCeased";
+    public static final String BENEFICIAL_OWNERS_FIELD = "beneficialOwnerStatement";
+    public static final String CHANGES_FIELD = "changes";
+    public static final String ADDITIONS_FIELD = "additions";
+    public static final String CESSATIONS_FIELD = "cessations";
+
+    @JsonProperty(UPDATE_TYPE_FIELD)
     private String type = "OE02";
 
-    @JsonProperty("userSubmission")
+    @JsonProperty(UPDATE_USER_SUBMISSION_FIELD)
     private OverseasEntitySubmissionDto userSubmission;
 
-    @JsonProperty("entityNumber")
+    @JsonProperty(UPDATE_ENTITY_NUMBER_FIELD)
     private String entityNumber;
 
-    @JsonProperty("dueDiligence")
+    @JsonProperty(UPDATE_DUE_DILIGENCE_FIELD)
     private DueDiligence dueDiligence;
 
-    @JsonProperty("presenter")
+    @JsonProperty(UPDATE_PRESENTER_FIELD)
     private Presenter presenter;
 
-    @JsonProperty("filingForDate")
+    @JsonProperty(FILING_FOR_DATE_FIELD)
     private FilingForDate filingForDate;
 
-    @JsonProperty("noChangesInFilingPeriodStatement")
+    @JsonProperty(NO_CHANGES_IN_FILING_PERIOD_FIELD)
     private Boolean noChangesInFilingPeriodStatement;
 
-    @JsonProperty("anyBOsOrMOsAddedOrCeased")
+    @JsonProperty(ANY_BOS_ADDED_CEASED_FIELD)
     private Boolean anyBOsOrMOsAddedOrCeased;
 
-    @JsonProperty("beneficialOwnerStatement")
-    private String beneficialOwnerStatement;
+    @JsonProperty(BENEFICIAL_OWNERS_FIELD)
+    private BeneficialOwnersStatementType beneficialOwnerStatement;
 
-    @JsonProperty("changes")
+    @JsonInclude(NON_NULL)
+    @JsonProperty(CHANGES_FIELD)
     private List<Change> changes;
 
-    @JsonProperty("additions")
+    @JsonInclude(NON_NULL)
+    @JsonProperty(ADDITIONS_FIELD)
     private List<Addition> additions;
 
-    @JsonProperty("cessations")
+    @JsonInclude(NON_NULL)
+    @JsonProperty(CESSATIONS_FIELD)
     private List<Cessation> cessations;
 
     public UpdateSubmission() {
@@ -116,11 +136,11 @@ public class UpdateSubmission {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
     }
 
-    public String getBeneficialOwnerStatement() {
+    public BeneficialOwnersStatementType getBeneficialOwnerStatement() {
         return beneficialOwnerStatement;
     }
 
-    public void setBeneficialOwnerStatement(String beneficialOwnerStatement) {
+    public void setBeneficialOwnerStatement(BeneficialOwnersStatementType beneficialOwnerStatement) {
         this.beneficialOwnerStatement = beneficialOwnerStatement;
     }
 

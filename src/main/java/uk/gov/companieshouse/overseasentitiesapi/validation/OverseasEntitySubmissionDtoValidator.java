@@ -133,7 +133,8 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            // validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }

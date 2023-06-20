@@ -48,7 +48,6 @@ class OverseasEntitiesControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
     private static final ResponseEntity<Object> UPDATED_SUCCESS_RESPONSE = ResponseEntity.ok().build();
-    private static final ResponseEntity<Object> FAILURE_RESPONSE = ResponseEntity.internalServerError().build();
 
     private static final String REQUEST_ID = "fd4gld5h3jhh";
     private static final String SUBMISSION_ID = "abc123";
@@ -159,7 +158,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
+    void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             setValidationEnabledFeatureFlag(true);
@@ -193,54 +192,6 @@ class OverseasEntitiesControllerTest {
                     times(1)
             );
         }
-    }
-
-    @Test
-    void testCreatingANewSubmissionIsUnSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntity(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
-
-        var response = overseasEntitiesController.createNewSubmission(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
-        assertEquals(FAILURE_RESPONSE, response);
-
-        verify(overseasEntitiesService).createOverseasEntity(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-    }
-
-    @Test
-    void testCreatingANewSubmissionForSaveAndResumeIsUnSuccessful() throws ServiceException {
-        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
-
-        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
-        assertEquals(FAILURE_RESPONSE, response);
-
-        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
     }
 
     @Test
@@ -363,33 +314,6 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testUpdatingAnExistingSubmissionIsUnSuccessful() throws ServiceException {
-        when(overseasEntitiesService.updateOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID)).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
-
-        var response = overseasEntitiesController.updateSubmission(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
-        assertEquals(FAILURE_RESPONSE, response);
-
-        verify(overseasEntitiesService).updateOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-    }
-
-    @Test
     void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledButValidationIsDeterminedToNotBeRequired() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
@@ -493,7 +417,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
+    void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             setValidationEnabledFeatureFlag(true);
@@ -596,7 +520,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() throws ServiceException {
+    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() {
         setValidationEnabledFeatureFlag(true);
 
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
@@ -667,22 +591,6 @@ class OverseasEntitiesControllerTest {
                 REQUEST_ID
         );
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void testGetSubmissionIsNotSuccessfulWhenExceptionIsThrown() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
-        when(overseasEntitiesService.getSavedOverseasEntity(
-                transaction,
-                SUBMISSION_ID,
-                REQUEST_ID
-        )).thenThrow(new RuntimeException("UNEXPECTED ERROR"));
-
-        var response = overseasEntitiesController.getSubmission(
-                transaction,
-                SUBMISSION_ID,
-                REQUEST_ID
-        );
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     private void setValidationEnabledFeatureFlag(boolean value) {
