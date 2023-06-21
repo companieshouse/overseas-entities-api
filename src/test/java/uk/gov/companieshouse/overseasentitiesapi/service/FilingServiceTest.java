@@ -379,6 +379,52 @@ class FilingServiceTest {
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
 
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForNoChangeUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.getUpdate().setNoChange(true);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(0)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
+        verify(beneficialOwnerAdditionService, times(0)).beneficialOwnerAdditions(Mockito.any());
+        verify(managingOfficerAdditionService, times(0)).managingOfficerAdditions(Mockito.any());
+        verify(beneficialOwnerCessationService, times(0)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerCessationService, times(0)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(0)).collateManagingOfficerChanges(Mockito.any(), Mockito.any());
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
+
+        assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("OE02", filing.getData().get("type"));
+
+        assertNotNull(filing.getData().get("userSubmission"));
+        assertNull(filing.getData().get("dueDiligence"));
+        assertNotNull(filing.getData().get("presenter"));
+        assertNotNull(filing.getData().get("filingForDate"));
+        assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
+
+        assertNull(filing.getData().get("changes"));
+        assertNull(filing.getData().get("additions"));
+        assertNull(filing.getData().get("cessations"));
+    }
+
     @Test
     void testFilingGenerationAllowedWhenEntityNameBlockIsNull() throws Exception {
         initTransactionPaymentLinkMocks();
