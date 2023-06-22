@@ -17,6 +17,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingBoPublicPrivateData;
+
 @Service
 public class BeneficialOwnerCessationService {
 
@@ -134,6 +136,10 @@ public class BeneficialOwnerCessationService {
 
     if (publicPrivateBoPairOptional.isEmpty()) {
       ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND,null, logMap);
+      return Optional.empty();
+    }
+
+    if (containsMissingBoPublicPrivateData(publicPrivateBoPairOptional.get(), SERVICE, logMap)) {
       return Optional.empty();
     }
 

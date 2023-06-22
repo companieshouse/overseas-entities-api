@@ -35,10 +35,10 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingBoPublicPrivateData;
+
 @Service
 public class BeneficialOwnerChangeService {
-
-  public static final String NO_PSC_FOUND = "No matching PSC identified in database for BO";
   public static final String SERVICE = "BeneficialOwnerChangeService";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -52,14 +52,15 @@ public class BeneficialOwnerChangeService {
    */
   public List<Change> collateBeneficialOwnerChanges(
       Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo,
-      OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+      OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+      Map<String, Object> logMap) {
     this.publicPrivateBo = publicPrivateBo;
     this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
 
     List<Change> changes = new ArrayList<>();
-    changes.addAll(individualBeneficialOwnerChange());
-    changes.addAll(beneficialOwnerOtherChange());
-    changes.addAll(beneficialOwnerCorporateChange());
+    changes.addAll(individualBeneficialOwnerChange(logMap));
+    changes.addAll(beneficialOwnerOtherChange(logMap));
+    changes.addAll(beneficialOwnerCorporateChange(logMap));
     return changes;
   }
 
@@ -75,12 +76,12 @@ public class BeneficialOwnerChangeService {
    * related to the beneficial owners of 'Individual' type. If no changes are detected, an empty
    * list is returned.
    */
-  private List<Change> individualBeneficialOwnerChange() {
+  private List<Change> individualBeneficialOwnerChange(Map<String, Object> logMap) {
     var beneficialOwnersIndividual = overseasEntitySubmissionDto.getBeneficialOwnersIndividual();
     return beneficialOwnersIndividual
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(this::covertBeneficialOwnerIndividualToChange)
+        .map(individualBO -> covertBeneficialOwnerIndividualToChange(individualBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -97,13 +98,13 @@ public class BeneficialOwnerChangeService {
    * related to the beneficial owners of 'Other' type. If no changes are detected, an empty list is
    * returned.
    */
-  private List<Change> beneficialOwnerOtherChange() {
+  private List<Change> beneficialOwnerOtherChange(Map<String, Object> logMap) {
     var beneficialOwnersGovernmentOrPublicAuthority = overseasEntitySubmissionDto
         .getBeneficialOwnersGovernmentOrPublicAuthority();
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(this::covertBeneficialOwnerOtherChange)
+        .map(otherBO -> covertBeneficialOwnerOtherChange(otherBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -120,13 +121,13 @@ public class BeneficialOwnerChangeService {
    * related to the beneficial owners of 'Corporate' type. If no changes are detected, an empty list
    * is returned.
    */
-  private List<Change> beneficialOwnerCorporateChange() {
+  private List<Change> beneficialOwnerCorporateChange(Map<String, Object> logMap) {
     var beneficialOwnersGovernmentOrPublicAuthority = overseasEntitySubmissionDto
         .getBeneficialOwnersCorporate();
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(this::covertBeneficialOwnerCorporateChange)
+        .map(corporateBO -> covertBeneficialOwnerCorporateChange(corporateBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -141,7 +142,8 @@ public class BeneficialOwnerChangeService {
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
   private BeneficialOwnerChange<CorporateBeneficialOwnerPsc> covertBeneficialOwnerCorporateChange(
-      BeneficialOwnerCorporateDto beneficialOwnerCorporateDto) {
+      BeneficialOwnerCorporateDto beneficialOwnerCorporateDto,
+      Map<String, Object> logMap) {
 
     var beneficialOwnerChange = new CorporateBeneficialOwnerChange();
 
@@ -150,8 +152,7 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerCorporateDto.getChipsReference());
 
-    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
+    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
       return null;
     }
 
@@ -224,7 +225,8 @@ public class BeneficialOwnerChangeService {
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
   private BeneficialOwnerChange<OtherBeneficialOwnerPsc> covertBeneficialOwnerOtherChange(
-      BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto) {
+      BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto,
+      Map<String, Object> logMap) {
     var beneficialOwnerChange = new OtherBeneficialOwnerChange();
 
     var psc = new OtherBeneficialOwnerPsc();
@@ -232,8 +234,7 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
 
-    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
+    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
       return null;
     }
 
@@ -294,7 +295,8 @@ public class BeneficialOwnerChangeService {
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
   private BeneficialOwnerChange<IndividualBeneficialOwnerPsc> covertBeneficialOwnerIndividualToChange(
-      BeneficialOwnerIndividualDto beneficialOwnerIndividualDto) {
+      BeneficialOwnerIndividualDto beneficialOwnerIndividualDto,
+      Map<String, Object> logMap) {
 
     var beneficialOwnerChange = new IndividualBeneficialOwnerChange();
 
@@ -303,8 +305,7 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerIndividualDto.getChipsReference());
 
-    if (publicPrivateBoPair == null || publicPrivateBoPair.getRight() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PSC_FOUND, null);
+    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
       return null;
     }
 

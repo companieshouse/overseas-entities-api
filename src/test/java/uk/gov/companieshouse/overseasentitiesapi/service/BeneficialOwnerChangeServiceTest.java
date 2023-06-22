@@ -10,10 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
@@ -59,6 +56,8 @@ class BeneficialOwnerChangeServiceTest {
 
   @Mock
   Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairRightNull;
+
+  Map<String, Object> logMap = new HashMap<>();
 
   private static AddressDto createDummyAddressDto() {
     AddressDto addressDto = new AddressDto();
@@ -141,7 +140,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerCorporateDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -174,7 +173,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -207,7 +206,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerOtherDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -237,7 +236,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerOtherDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -286,7 +285,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerOtherDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(3, result.size());
     assertNotNull(result);
@@ -331,7 +330,7 @@ class BeneficialOwnerChangeServiceTest {
     System.setOut(new PrintStream(outputStreamCaptor));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     System.setOut(standardOut);
 
@@ -373,8 +372,8 @@ class BeneficialOwnerChangeServiceTest {
 
     String pattern = "\"message\":\"(.*?)\"";
 
-    var result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBo,
-        overseasEntitySubmissionDto);
+    var result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+            publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
     System.setOut(standardOut);
@@ -393,7 +392,7 @@ class BeneficialOwnerChangeServiceTest {
         Collections.emptyList());
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(0, result.size());
     assertTrue(result.isEmpty());
@@ -409,8 +408,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }
@@ -428,8 +426,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -456,8 +453,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerCorporateDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -483,8 +479,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerOtherDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertEquals(1, result.size());
     assertNotNull(result);
@@ -509,8 +504,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }
@@ -526,8 +520,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }
@@ -545,8 +538,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerCorporateDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }
@@ -564,8 +556,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerGovernmentOrPublicAuthorityDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo,
-        overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }
@@ -586,7 +577,7 @@ class BeneficialOwnerChangeServiceTest {
         List.of(beneficialOwnerIndividualDto));
 
     List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto);
+        publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
     assertTrue(result.isEmpty());
   }

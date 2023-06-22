@@ -19,10 +19,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +50,8 @@ class ManagingOfficerChangeServiceTest {
 
     @Mock
     Pair<CompanyOfficerApi, ManagingOfficerDataApi> mockPublicPrivateMoPairRightNull;
+
+    Map<String, Object> logMap = new HashMap<>();
 
     private static AddressDto createDummyAddressDto() {
         AddressDto addressDto = new AddressDto();
@@ -144,7 +143,7 @@ class ManagingOfficerChangeServiceTest {
 
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -171,7 +170,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerCorporateDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -200,7 +199,7 @@ class ManagingOfficerChangeServiceTest {
         System.setOut(new PrintStream(outputStreamCaptor));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         System.setOut(standardOut);
 
@@ -235,7 +234,7 @@ class ManagingOfficerChangeServiceTest {
         String pattern = "\"message\":\"(.*?)\"";
 
         var result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
         System.setOut(standardOut);
@@ -252,7 +251,7 @@ class ManagingOfficerChangeServiceTest {
                 Collections.emptyList());
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertEquals(0, result.size());
         assertTrue(result.isEmpty());
@@ -266,8 +265,7 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo,
-                overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertTrue(result.isEmpty());
     }
@@ -285,7 +283,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -308,7 +306,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerCorporateDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -329,7 +327,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertTrue(result.isEmpty());
     }
@@ -345,7 +343,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertTrue(result.isEmpty());
     }
@@ -361,7 +359,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerCorporateDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertTrue(result.isEmpty());
     }
@@ -381,7 +379,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertTrue(result.isEmpty());
     }
@@ -407,7 +405,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerIndividualDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -451,7 +449,7 @@ class ManagingOfficerChangeServiceTest {
                 List.of(managingOfficerCorporateDto));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
-                publicPrivateMo, overseasEntitySubmissionDto);
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());

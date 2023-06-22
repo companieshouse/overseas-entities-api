@@ -19,6 +19,8 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingMoPublicPrivateData;
+
 @Service
 public class ManagingOfficerCessationService {
 
@@ -82,6 +84,10 @@ public class ManagingOfficerCessationService {
 
     if (publicPrivateMoPairOptional.isEmpty()) {
       ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null, logMap);
+      return Optional.empty();
+    }
+
+    if (containsMissingMoPublicPrivateData(publicPrivateMoPairOptional.get(), SERVICE, logMap)) {
       return Optional.empty();
     }
 

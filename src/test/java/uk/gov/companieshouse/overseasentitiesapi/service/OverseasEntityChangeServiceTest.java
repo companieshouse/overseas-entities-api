@@ -12,6 +12,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntityChangeService;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.*;
@@ -21,6 +24,8 @@ class OverseasEntityChangeServiceTest {
     OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     OverseasEntityChangeService overseasEntityChangeService;
+
+    Map<String, Object> logMap = new HashMap<>();
 
     @BeforeEach
     void init() {
@@ -33,7 +38,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionAllDataDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(5, result.size());
         assertTrue(result.get(0) instanceof EntityNameChange);
@@ -48,7 +53,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(0, result.size());
     }
@@ -58,7 +63,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
         OverseasEntitySubmissionDto updateSubmission = null;
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(0, result.size());
     }
@@ -68,7 +73,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
         OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(0, result.size());
     }
@@ -78,7 +83,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = null;
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(0, result.size());
     }
@@ -88,7 +93,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionEntityNameDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof EntityNameChange);
@@ -99,7 +104,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionPrincipalAddressDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof PrincipalAddressChange);
@@ -111,7 +116,7 @@ class OverseasEntityChangeServiceTest {
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionPrincipalAddressDifferent();
         updateSubmission.getEntity().setServiceAddressSameAsPrincipalAddress(true);
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof PrincipalAddressChange);
@@ -122,7 +127,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionCorrespondenceAddressDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
@@ -133,7 +138,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionCompanyIdentificationDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof CompanyIdentificationChange);
@@ -144,7 +149,7 @@ class OverseasEntityChangeServiceTest {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
         OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionEntityEmailDifferent();
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0) instanceof EntityEmailAddressChange);

@@ -24,13 +24,11 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingMoPublicPrivateData;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 
 @Service
@@ -49,13 +47,14 @@ public class ManagingOfficerChangeService {
      */
     public List<Change> collateManagingOfficerChanges(
             Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo,
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            Map<String, Object> logMap) {
         this.publicPrivateMo = publicPrivateMo;
         this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
 
         List<Change> changes = new ArrayList<>();
-        changes.addAll(getIndividualManagingOfficerChange());
-        changes.addAll(getCorporateManagingOfficerChange());
+        changes.addAll(getIndividualManagingOfficerChange(logMap));
+        changes.addAll(getCorporateManagingOfficerChange(logMap));
         return changes;
     }
 
@@ -72,12 +71,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Individual' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getIndividualManagingOfficerChange() {
+    private List<Change> getIndividualManagingOfficerChange(Map<String, Object> logMap) {
         var individualManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersIndividual();
         return individualManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerIndividualToChange)
+                .map(individualMO -> convertManagingOfficerIndividualToChange(individualMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -95,12 +94,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Corporate' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getCorporateManagingOfficerChange() {
+    private List<Change> getCorporateManagingOfficerChange(Map<String, Object> logMap) {
         var corporateManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersCorporate();
         return corporateManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerCorporateToChange)
+                .map(corporateMO -> convertManagingOfficerCorporateToChange(corporateMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -115,7 +114,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<IndividualManagingOfficer> convertManagingOfficerIndividualToChange(
-            ManagingOfficerIndividualDto managingOfficerIndividualDto) {
+            ManagingOfficerIndividualDto managingOfficerIndividualDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new IndividualManagingOfficerChange();
 
         var officer = new IndividualManagingOfficer();
@@ -123,8 +123,7 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerIndividualDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (containsMissingMoPublicPrivateData(publicPrivateMoPair, SERVICE, logMap)) {
             return null;
         }
 
@@ -198,7 +197,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<CorporateManagingOfficer> convertManagingOfficerCorporateToChange(
-            ManagingOfficerCorporateDto managingOfficerCorporateDto) {
+            ManagingOfficerCorporateDto managingOfficerCorporateDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new CorporateManagingOfficerChange();
 
         var officer = new CorporateManagingOfficer();
@@ -206,8 +206,7 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerCorporateDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (containsMissingMoPublicPrivateData(publicPrivateMoPair, SERVICE, logMap)) {
             return null;
         }
 

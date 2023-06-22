@@ -306,8 +306,13 @@ class FilingServiceTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
-        verify(beneficialOwnerChangeService, times(0)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
+        verify(overseasEntityChangeService, times(0)).collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(0)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerAdditionService, times(0)).beneficialOwnerAdditions(Mockito.any());
+        verify(beneficialOwnerCessationService, times(0)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(0)).collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerAdditionService, times(0)).managingOfficerAdditions(Mockito.any());
+        verify(managingOfficerCessationService, times(0)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
 
 
         verify(localDateSupplier, times(1)).get();
@@ -341,22 +346,22 @@ class FilingServiceTest {
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
-        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
         when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
         when(managingOfficerCessationService.managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_MO_CESSATION);
         when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
         when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
-        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
-        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
 
         FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
-        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any());
-        verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any());
+        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any());
         verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
         verify(managingOfficerAdditionService, times(1)).managingOfficerAdditions(Mockito.any());
         verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
         verify(managingOfficerCessationService, times(1)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
-        verify(managingOfficerChangeService, times(1)).collateManagingOfficerChanges(Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(1)).collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any());
 
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());

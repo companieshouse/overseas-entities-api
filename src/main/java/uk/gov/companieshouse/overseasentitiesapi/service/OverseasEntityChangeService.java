@@ -18,10 +18,14 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChange
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingOePublicPrivateData;
 
 @Service
 public class OverseasEntityChangeService {
+    public static final String SERVICE = "OverseasEntityChangeService";
     private final OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     @Autowired
@@ -31,10 +35,11 @@ public class OverseasEntityChangeService {
 
     public List<Change> collateOverseasEntityChanges(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
-            OverseasEntitySubmissionDto updateSubmission) {
+            OverseasEntitySubmissionDto updateSubmission,
+            Map<String, Object> logMap) {
         List<Change> changes = new ArrayList<>();
 
-        if (existingRegistration != null && updateSubmission != null) {
+        if (!containsMissingOePublicPrivateData(existingRegistration, SERVICE, logMap) && updateSubmission != null) {
             addNonNullChangeToList(changes, retrieveEntityNameChange(existingRegistration, updateSubmission));
             addNonNullChangeToList(changes, retrievePrincipalAddressChange(existingRegistration, updateSubmission));
             addNonNullChangeToList(changes, retrieveCorrespondenceAddressChange(existingRegistration, updateSubmission));

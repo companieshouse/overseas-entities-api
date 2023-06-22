@@ -199,11 +199,11 @@ public class FilingsService {
 
     ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
 
-    updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
-    updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto));
+    updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto, logMap));
+    updateSubmission.getChanges().addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(publicPrivateBoData, submissionDto, logMap));
     updateSubmission.getAdditions().addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
     updateSubmission.getCessations().addAll(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
-    updateSubmission.getChanges().addAll(managingOfficerChangeService.collateManagingOfficerChanges(publicPrivateMoData, submissionDto));
+    updateSubmission.getChanges().addAll(managingOfficerChangeService.collateManagingOfficerChanges(publicPrivateMoData, submissionDto, logMap));
     updateSubmission.getCessations().addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto, publicPrivateMoData, logMap));
     updateSubmission.getAdditions().addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
