@@ -81,8 +81,8 @@ public class BeneficialOwnerAdditionService {
                 new IndividualBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
-                        addressDtoToAddress(serviceAddress),
                         addressDtoToAddress(residentialAddress),
+                        addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
@@ -100,7 +100,7 @@ public class BeneficialOwnerAdditionService {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
-        var residentialAddress = bo.getPrincipalAddress();
+        var registeredOffice = bo.getPrincipalAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 bo.getTrusteesNatureOfControlTypes(),
@@ -112,8 +112,8 @@ public class BeneficialOwnerAdditionService {
                 new CorporateEntityBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
+                        addressDtoToAddress(registeredOffice),
                         addressDtoToAddress(serviceAddress),
-                        addressDtoToAddress(residentialAddress),
                         natureOfControls,
                         isOnSanctionsList);
 
@@ -121,13 +121,13 @@ public class BeneficialOwnerAdditionService {
 
         var legalForm = bo.getLegalForm();
         var governingLaw = bo.getLawGoverned();
-        var placeRegistered = bo.getPublicRegisterName();
+        var registerName = bo.getPublicRegisterName();
         var registrationNumber = bo.getRegistrationNumber();
 
         var identification = new CompanyIdentification();
         identification.setLegalForm(legalForm);
         identification.setGoverningLaw(governingLaw);
-        identification.setPlaceRegistered(placeRegistered);
+        identification.setRegisterLocation(registerName);
         identification.setRegistrationNumber(registrationNumber);
         corporateEntityBeneficialOwnerAddition.setCompanyIdentification(identification);
 
@@ -139,7 +139,7 @@ public class BeneficialOwnerAdditionService {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
         var serviceAddress = bo.getServiceAddress();
-        var residentialAddress = bo.getPrincipalAddress();
+        var registeredOffice = bo.getPrincipalAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 null,
@@ -151,8 +151,8 @@ public class BeneficialOwnerAdditionService {
                 new LegalPersonBeneficialOwnerAddition(
                         actionDate,
                         ceasedDate,
+                        addressDtoToAddress(registeredOffice),
                         addressDtoToAddress(serviceAddress),
-                        addressDtoToAddress(residentialAddress),
                         natureOfControls,
                         isOnSanctionsList);
 

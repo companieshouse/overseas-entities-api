@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
@@ -12,6 +15,10 @@ public class CorporateManagingOfficerAddition extends ManagingOfficerAddition {
 
     @JsonProperty("name")
     private String name;
+
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registeredOffice")
+    private Address registeredOffice;
 
     @JsonProperty("contactName")
     private String contactName;

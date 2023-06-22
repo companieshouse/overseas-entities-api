@@ -180,14 +180,14 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals(LocalDate.of(2020, 1, 1), corporateEntityBeneficialOwnerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), corporateEntityBeneficialOwnerAddition.getCeasedDate());
         assertEquals("Some country", corporateEntityBeneficialOwnerAddition.getServiceAddress().getCountry());
-        assertEquals("Some country", corporateEntityBeneficialOwnerAddition.getResidentialAddress().getCountry());
+        assertEquals("Some country", corporateEntityBeneficialOwnerAddition.getRegisteredOffice().getCountry());
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", corporateEntityBeneficialOwnerAddition.getNatureOfControls().get(0));
         assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", corporateEntityBeneficialOwnerAddition.getNatureOfControls().get(1));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", corporateEntityBeneficialOwnerAddition.getNatureOfControls().get(2));
         assertEquals("Corporation name", corporateEntityBeneficialOwnerAddition.getCorporateName());
         assertEquals("Legal form", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
-        assertEquals("Register name", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getPlaceRegistered());
+        assertEquals("Register name", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getRegisterLocation());
         assertEquals("Registration number", corporateEntityBeneficialOwnerAddition.getCompanyIdentification().getRegistrationNumber());
         assertTrue(corporateEntityBeneficialOwnerAddition.isOnSanctionsList());
     }
@@ -213,7 +213,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals(LocalDate.of(2020, 1, 1), legalPersonBeneficialOwnerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), legalPersonBeneficialOwnerAddition.getCeasedDate());
         assertEquals("Some country", legalPersonBeneficialOwnerAddition.getServiceAddress().getCountry());
-        assertEquals("Some country", legalPersonBeneficialOwnerAddition.getResidentialAddress().getCountry());
+        assertEquals("Some country", legalPersonBeneficialOwnerAddition.getRegisteredOffice().getCountry());
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(0));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(1));
         assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateName());

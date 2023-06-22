@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
@@ -13,13 +16,18 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
     @JsonProperty("corporateName")
     private String corporateName;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("registeredOffice")
+    private Address registeredOffice;
+
     @JsonProperty("companyIdentification")
     private CompanyIdentification companyIdentification;
 
-    public LegalPersonBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
+    public LegalPersonBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address registeredOffice,
                                               Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
-        super(actionDate, ceasedDate, residentialAddress, serviceAddress, natureOfControls, isOnSanctionsList);
+        super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
         setAppointmentType(APPOINTMENT_TYPE);
+        this.registeredOffice = registeredOffice;
     }
 
     public String getCorporateName() {
@@ -28,6 +36,14 @@ public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition 
 
     public void setCorporateName(String corporateName) {
         this.corporateName = corporateName;
+    }
+
+    public Address getRegisteredOffice() {
+        return this.registeredOffice;
+    }
+
+    public void setRegisteredOffice(Address registeredOffice) {
+        this.registeredOffice = registeredOffice;
     }
 
     public CompanyIdentification getCompanyIdentification() {
