@@ -51,12 +51,13 @@ public class OverseasEntitiesDataController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
-        var logMap = new HashMap<String, Object>();
+        final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
-        var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+
+        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
         if (submissionDtoOptional.isPresent()) {
             OverseasEntitySubmissionDto submissionDto = submissionDtoOptional.get();
             if (!submissionDto.isForUpdate()) {
@@ -66,7 +67,7 @@ public class OverseasEntitiesDataController {
                 throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
             }
 
-            String email = submissionDto.getEntity().getEmail();
+            final String email = submissionDto.getEntity().getEmail();
 
             OverseasEntityDataApi overseasEntityDataApi = null;
 
@@ -74,21 +75,26 @@ public class OverseasEntitiesDataController {
                 String companyNumber = submissionDto.getEntityNumber();
 
                 try {
-                    ApiLogger.infoContext(requestId, "Calling service to get OE details", logMap);
+                    ApiLogger.infoContext(requestId, "Calling service to get overseas entity details", logMap);
                     overseasEntityDataApi = privateDataRetrievalService.getOverseasEntityData(companyNumber);
-
+                    if (overseasEntityDataApi == null || StringUtils.isBlank(overseasEntityDataApi.getEmail())) {
+                        final var message = String.format("Could not find overseas entity details for overseas entity %s", overseasEntityId);
+                        ApiLogger.errorContext(requestId, message, null, logMap);
+                        return ResponseEntity.notFound().build();
+                    }
                 } catch (ServiceException e) {
                     ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
                     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } else {
+                overseasEntityDataApi = new OverseasEntityDataApi();
                 overseasEntityDataApi.setEmail(email);
             }
 
             return ResponseEntity.ok(overseasEntityDataApi);
 
         } else {
-            final var message = String.format("Could not find overseas entity submission %s", overseasEntityId);
+            final var message = String.format("Could not find overseas entity submission for overseas entity details %s", overseasEntityId);
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
         }

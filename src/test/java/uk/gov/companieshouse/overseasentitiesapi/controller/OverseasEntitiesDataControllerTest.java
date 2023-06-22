@@ -36,7 +36,7 @@ class OverseasEntitiesDataControllerTest {
     private OverseasEntitiesService overseasEntitiesService;
 
     @Test
-    void testGetOverseasEntityDetailsReturnsSuccessfully () throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsSuccessfully() throws ServiceException {
         OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
         overseasEntityDataApi.setEmail(email);
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(overseasEntityDataApi);
@@ -55,7 +55,29 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenExceptionThrown () throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsSubmissionEmailSuccessfully() throws ServiceException {
+        final var cachedEmail = "alice@test.com";
+        OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
+        overseasEntityDataApi.setEmail(cachedEmail);
+
+        OverseasEntitySubmissionDto submissionDto = createOverseasEntitySubmissionMock();
+        submissionDto.getEntity().setEmail(cachedEmail);
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(submissionDto));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        Transaction transaction = new Transaction();
+        transaction.setId(transactionId);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        verify(privateDataRetrievalService, times(0)).getOverseasEntityData(COMPANY_NUMBER);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(overseasEntityDataApi, response.getBody());
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException {
         Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(COMPANY_NUMBER);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
@@ -72,8 +94,7 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenUpdateDisabled () throws ServiceException {
-
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenUpdateDisabled() {
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
                 privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
@@ -92,11 +113,10 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenRegistration () throws ServiceException {
-
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenRegistration() {
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
                 privateDataRetrievalService, overseasEntitiesService);
-        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = createOverseasEntitySubmissionMock();
         overseasEntitySubmissionDto.setEntityNumber(null);
@@ -111,6 +131,59 @@ class OverseasEntitiesDataControllerTest {
                         transaction,
                         overseasEntityId,
                         ERIC_REQUEST_ID));
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsNotFoundWhenNoSubmissionFound() throws ServiceException {
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.empty());
+
+        Transaction transaction = new Transaction();
+        transaction.setId(transactionId);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(
+                transaction,
+                overseasEntityId,
+                ERIC_REQUEST_ID);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsNotFoundForNoDetails() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(createOverseasEntitySubmissionMock()));
+        when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(null);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        Transaction transaction = new Transaction();
+        transaction.setId(transactionId);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsNotFoundForNoEmailInDetails() throws ServiceException {
+        OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(createOverseasEntitySubmissionMock()));
+        when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(overseasEntityDataApi);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        Transaction transaction = new Transaction();
+        transaction.setId(transactionId);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     private OverseasEntitySubmissionDto createOverseasEntitySubmissionMock() {
