@@ -28,12 +28,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingMoPublicPrivateData;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 
 @Service
 public class ManagingOfficerChangeService {
-    public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
+    public static final String NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND = "No public and no private data found for managing officer";
+    public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer";
+    public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer";
     public static final String SERVICE = "ManagingOfficerChangeService";
     private Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo;
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -123,8 +124,19 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerIndividualDto.getChipsReference());
 
-        if (containsMissingMoPublicPrivateData(publicPrivateMoPair, SERVICE, logMap)) {
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<IndividualManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager = new ChangeManager<>(
@@ -206,8 +218,19 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerCorporateDto.getChipsReference());
 
-        if (containsMissingMoPublicPrivateData(publicPrivateMoPair, SERVICE, logMap)) {
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<CorporateManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager

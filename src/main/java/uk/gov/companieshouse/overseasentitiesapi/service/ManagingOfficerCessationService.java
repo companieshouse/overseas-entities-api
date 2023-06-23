@@ -19,12 +19,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingMoPublicPrivateData;
-
 @Service
 public class ManagingOfficerCessationService {
 
   public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
+  public static final String NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND = "No public and no private data found for managing officer";
+  public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer";
+  public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer";
   public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Managing Officer ID was found in Private Data";
   public static final String SERVICE = "ManagingOfficerCessationService";
 
@@ -87,8 +88,17 @@ public class ManagingOfficerCessationService {
       return Optional.empty();
     }
 
-    if (containsMissingMoPublicPrivateData(publicPrivateMoPairOptional.get(), SERVICE, logMap)) {
-      return Optional.empty();
+    if (publicPrivateMoPairOptional.get() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+    }
+    else {
+      if (publicPrivateMoPairOptional.get().getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateMoPairOptional.get().getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+      }
     }
 
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());
@@ -119,6 +129,19 @@ public class ManagingOfficerCessationService {
     if (publicPrivateMoPairOptional.isEmpty()) {
       ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null, logMap);
       return Optional.empty();
+    }
+
+    if (publicPrivateMoPairOptional.get() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+    }
+    else {
+      if (publicPrivateMoPairOptional.get().getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateMoPairOptional.get().getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+      }
     }
 
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());

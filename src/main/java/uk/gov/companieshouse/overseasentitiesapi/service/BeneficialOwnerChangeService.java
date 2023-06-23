@@ -29,17 +29,14 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc.Psc;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
-import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
-import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
-import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.MissingPublicPrivateDataHandler.containsMissingBoPublicPrivateData;
+import uk.gov.companieshouse.overseasentitiesapi.utils.*;
 
 @Service
 public class BeneficialOwnerChangeService {
   public static final String SERVICE = "BeneficialOwnerChangeService";
+  public static final String NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND = "No public and no private data found for beneficial owner";
+  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner";
+  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
@@ -152,8 +149,19 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerCorporateDto.getChipsReference());
 
-    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
       return null;
+    }
+    else {
+      if (publicPrivateBoPair.getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateBoPair.getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+        return null;
+      }
     }
 
     ChangeManager<CorporateBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
@@ -234,8 +242,20 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerGovernmentOrPublicAuthorityDto.getChipsReference());
 
-    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
+
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
       return null;
+    }
+    else {
+      if (publicPrivateBoPair.getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateBoPair.getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+        return null;
+      }
     }
 
     ChangeManager<OtherBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(
@@ -305,8 +325,19 @@ public class BeneficialOwnerChangeService {
     Pair<PscApi, PrivateBoDataApi> publicPrivateBoPair = publicPrivateBo.get(
         beneficialOwnerIndividualDto.getChipsReference());
 
-    if (containsMissingBoPublicPrivateData(publicPrivateBoPair, SERVICE, logMap)) {
+    if (publicPrivateBoPair == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
       return null;
+    }
+    else {
+      if (publicPrivateBoPair.getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateBoPair.getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+        return null;
+      }
     }
 
     ChangeManager<IndividualBeneficialOwnerPsc, PscApi, PrivateBoDataApi> changeManager = new ChangeManager<>(

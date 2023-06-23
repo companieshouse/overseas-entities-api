@@ -239,7 +239,7 @@ class ManagingOfficerChangeServiceTest {
         List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
         System.setOut(standardOut);
 
-        assertEquals(2, Collections.frequency(matches, "No matching MO was found in the database"));
+        assertEquals(2, Collections.frequency(matches, "No public and no private data found for managing officer"));
         assertEquals(0, result.size());
     }
 
