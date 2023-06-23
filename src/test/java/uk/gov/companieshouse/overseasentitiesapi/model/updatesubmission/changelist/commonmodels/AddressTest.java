@@ -7,8 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 
 class AddressTest {
@@ -136,16 +141,25 @@ class AddressTest {
         }
     }
 
-    @Test
-    void testEqualsSpaceAndNullAreTreatedTheSame() {
+    private static Stream<Arguments> provideTestArguments() {
+        return Stream.of(
+                Arguments.of(null, " "),
+                Arguments.of(null, ""),
+                Arguments.of(" ", "")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestArguments")
+    void testEquality(String value1, String value2) {
         String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
                 "street", "area", "postTown", "region", "postCode", "country"};
         String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
         String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
 
         for (int i = 0; i < addressFields1.length; i++) {
-            addressFields1[i] = null;
-            addressFields2[i] = " ";
+            addressFields1[i] = value1;
+            addressFields2[i] = value2;
 
             Address address1 = createTestAddress(addressFields1);
             Address address2 = createTestAddress(addressFields2);
@@ -155,59 +169,9 @@ class AddressTest {
 
             String fieldDescription = "Field: " + controlAddressFields[i];
             assertEquals(address1, address2,
-                    fieldDescription + " - equals() does not treat null and space the same");
+                    fieldDescription + " - equals() does not treat '" + value1 + "' and '" + value2 + "' the same");
             assertEquals(address1.hashCode(), address2.hashCode(),
-                    fieldDescription + " - hashCode() does not treat null and space the same");
-        }
-    }
-
-    @Test
-    void testEqualsBlankStringAndNullAreTreatedTheSame() {
-        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
-                "street", "area", "postTown", "region", "postCode", "country"};
-        String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-        String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-
-        for (int i = 0; i < addressFields1.length; i++) {
-            addressFields1[i] = null;
-            addressFields2[i] = "";
-
-            Address address1 = createTestAddress(addressFields1);
-            Address address2 = createTestAddress(addressFields2);
-
-            addressFields1[i] = controlAddressFields[i];
-            addressFields2[i] = controlAddressFields[i];
-
-            String fieldDescription = "Field: " + controlAddressFields[i];
-            assertEquals(address1, address2,
-                    fieldDescription + " - equals() does not treat null and blank string the same");
-            assertEquals(address1.hashCode(), address2.hashCode(), fieldDescription
-                    + " - hashCode() does not treat null and blank string the same");
-        }
-    }
-
-    @Test
-    void testEqualsBlankStringAndSpaceAreTreatedTheSame() {
-        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
-                "street", "area", "postTown", "region", "postCode", "country"};
-        String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-        String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-
-        for (int i = 0; i < addressFields1.length; i++) {
-            addressFields1[i] = " ";
-            addressFields2[i] = "";
-
-            Address address1 = createTestAddress(addressFields1);
-            Address address2 = createTestAddress(addressFields2);
-
-            addressFields1[i] = controlAddressFields[i];
-            addressFields2[i] = controlAddressFields[i];
-
-            String fieldDescription = "Field: " + controlAddressFields[i];
-            assertEquals(address1, address2,
-                    fieldDescription + " - equals() does not treat null and blank string the same");
-            assertEquals(address1.hashCode(), address2.hashCode(), fieldDescription
-                    + " - hashCode() does not treat null and blank string the same");
+                    fieldDescription + " - hashCode() does not treat '" + value1 + "' and '" + value2 + "' the same");
         }
     }
 
@@ -264,30 +228,6 @@ class AddressTest {
         }
     }
 
-    @Test
-    void testSerialisation() throws JsonProcessingException {
-        String expectedJson =
-                "{\"careOf\":\"John Smith\"," +
-                        "\"poBox\":\"PO Box 123\"," +
-                        "\"careOfCompany\":\"ABC Company\"," +
-                        "\"houseNameNum\":\"123 Main Street\"," +
-                        "\"street\":\"Apt 4B\"," +
-                        "\"area\":\"Downtown\"," +
-                        "\"postTown\":\"New York\"," +
-                        "\"region\":\"NY\"," +
-                        "\"postCode\":\"10001\"," +
-                        "\"country\":\"United States\"}";
-
-        String[] controlAddressFields = {"John Smith", "PO Box 123", "ABC Company",
-                "123 Main Street", "Apt 4B", "Downtown", "New York", "NY", "10001",
-                "United States"};
-        address = createTestAddress(controlAddressFields);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(address);
-
-        assertEquals(expectedJson, json, "Serialisation failed");
-    }
 
     @Test
     void testSerialisationWithMissingField() throws JsonProcessingException {
@@ -313,10 +253,17 @@ class AddressTest {
         assertEquals(expectedJson, json, "Serialisation failed");
     }
 
-    @Test
-    void testSerialisationBlankStringField() throws JsonProcessingException {
+    @ParameterizedTest
+    @ValueSource(strings = {"John Smith", "", " "})
+    void testSerialisation(String careOf) throws JsonProcessingException {
+        String[] controlAddressFields = {careOf, "PO Box 123", "ABC Company",
+                "123 Main Street", "Apt 4B", "Downtown", "New York", "NY", "10001",
+                "United States"};
+
+        address = createTestAddress(controlAddressFields);
+
         String expectedJson =
-                "{\"careOf\":\"\"," +
+                "{\"careOf\":\"" + careOf + "\"," +
                         "\"poBox\":\"PO Box 123\"," +
                         "\"careOfCompany\":\"ABC Company\"," +
                         "\"houseNameNum\":\"123 Main Street\"," +
@@ -326,36 +273,6 @@ class AddressTest {
                         "\"region\":\"NY\"," +
                         "\"postCode\":\"10001\"," +
                         "\"country\":\"United States\"}";
-
-        String[] controlAddressFields = {"", "PO Box 123", "ABC Company",
-                "123 Main Street", "Apt 4B", "Downtown", "New York", "NY", "10001",
-                "United States"};
-        address = createTestAddress(controlAddressFields);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(address);
-
-        assertEquals(expectedJson, json, "Serialisation failed");
-    }
-
-    @Test
-    void testSerialisationSpaceField() throws JsonProcessingException {
-        String expectedJson =
-                "{\"careOf\":\" \"," +
-                        "\"poBox\":\"PO Box 123\"," +
-                        "\"careOfCompany\":\"ABC Company\"," +
-                        "\"houseNameNum\":\"123 Main Street\"," +
-                        "\"street\":\"Apt 4B\"," +
-                        "\"area\":\"Downtown\"," +
-                        "\"postTown\":\"New York\"," +
-                        "\"region\":\"NY\"," +
-                        "\"postCode\":\"10001\"," +
-                        "\"country\":\"United States\"}";
-
-        String[] controlAddressFields = {" ", "PO Box 123", "ABC Company",
-                "123 Main Street", "Apt 4B", "Downtown", "New York", "NY", "10001",
-                "United States"};
-        address = createTestAddress(controlAddressFields);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(address);
