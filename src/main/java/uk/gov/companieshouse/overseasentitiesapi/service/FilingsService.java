@@ -18,7 +18,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.NO_CHANGES_IN_FILING_PERIOD_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
@@ -244,7 +243,6 @@ public class FilingsService {
     }
     data.put(UPDATE_PRESENTER_FIELD, updateSubmission.getPresenter());
     data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
-    data.put(NO_CHANGES_IN_FILING_PERIOD_FIELD, updateSubmission.getNoChangesInFilingPeriodStatement());
     data.put(ANY_BOS_ADDED_CEASED_FIELD, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
     data.put(BENEFICIAL_OWNERS_FIELD, updateSubmission.getBeneficialOwnerStatement());
     if (!isNoChange) {

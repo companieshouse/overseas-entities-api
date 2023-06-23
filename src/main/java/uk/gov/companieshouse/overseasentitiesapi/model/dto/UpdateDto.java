@@ -86,9 +86,13 @@ public class UpdateDto {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
 
-    public boolean isNoChange() { return noChange; }
+    public boolean isNoChange() {
+        return noChange;
+    }
 
-    public void setNoChange(boolean noChange) { this.noChange = noChange; }
+    public void setNoChange(boolean noChange) {
+        this.noChange = noChange;
+    }
 
     public List<BeneficialOwnerIndividualDto> getReviewBeneficialOwnersIndividual() {
         return reviewBeneficialOwnersIndividual;
