@@ -46,7 +46,7 @@ public class OverseasEntitiesDataController {
     }
 
     @GetMapping("/{overseas_entity_id}")
-    public ResponseEntity<Object> getOverseasEntityDetails (
+    public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
@@ -67,36 +67,46 @@ public class OverseasEntitiesDataController {
                 throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
             }
 
-            final String email = submissionDto.getEntity().getEmail();
-
-            OverseasEntityDataApi overseasEntityDataApi = null;
-
-            if (StringUtils.isBlank(email)) {
-                String companyNumber = submissionDto.getEntityNumber();
-
-                try {
-                    ApiLogger.infoContext(requestId, "Calling service to get overseas entity details", logMap);
-                    overseasEntityDataApi = privateDataRetrievalService.getOverseasEntityData(companyNumber);
-                    if (overseasEntityDataApi == null || StringUtils.isBlank(overseasEntityDataApi.getEmail())) {
-                        final var message = String.format("Could not find overseas entity details for overseas entity %s", overseasEntityId);
-                        ApiLogger.errorContext(requestId, message, null, logMap);
-                        return ResponseEntity.notFound().build();
-                    }
-                } catch (ServiceException e) {
-                    ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
-                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                overseasEntityDataApi = new OverseasEntityDataApi();
-                overseasEntityDataApi.setEmail(email);
-            }
-
-            return ResponseEntity.ok(overseasEntityDataApi);
+            return getOverseasEntityDataResponse(overseasEntityId, requestId, submissionDto, logMap);
 
         } else {
             final var message = String.format("Could not find overseas entity submission for overseas entity details %s", overseasEntityId);
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<OverseasEntityDataApi> getOverseasEntityDataResponse(
+            String overseasEntityId,
+            String requestId,
+            OverseasEntitySubmissionDto submissionDto,
+            HashMap<String, Object> logMap) {
+        final String email = submissionDto.getEntity().getEmail();
+
+        OverseasEntityDataApi overseasEntityDataApi = null;
+
+        if (StringUtils.isBlank(email)) {
+            String companyNumber = submissionDto.getEntityNumber();
+
+            try {
+                ApiLogger.infoContext(requestId, "Calling service to get overseas entity details",
+                        logMap);
+                overseasEntityDataApi = privateDataRetrievalService.getOverseasEntityData(companyNumber);
+                if (overseasEntityDataApi == null || StringUtils.isBlank(overseasEntityDataApi.getEmail())) {
+                    final var message = String.format("Could not find overseas entity details for overseas entity %s",
+                            overseasEntityId);
+                    ApiLogger.errorContext(requestId, message, null, logMap);
+                    return ResponseEntity.notFound().build();
+                }
+            } catch (ServiceException e) {
+                ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            overseasEntityDataApi = new OverseasEntityDataApi();
+            overseasEntityDataApi.setEmail(email);
+        }
+        
+        return ResponseEntity.ok(overseasEntityDataApi);
     }
 }
