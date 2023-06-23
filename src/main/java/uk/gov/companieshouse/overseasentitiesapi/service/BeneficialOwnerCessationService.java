@@ -93,18 +93,7 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
-    if (publicPrivateBoPairOptional.get() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-    }
-    else {
-      if (publicPrivateBoPairOptional.get().getLeft() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
-      }
-
-      if (publicPrivateBoPairOptional.get().getRight() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-      }
-    }
+    logMissingData(publicPrivateBoPairOptional.get(), logMap);
 
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
@@ -132,18 +121,7 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
-    if (publicPrivateBoPairOptional.get() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-    }
-    else {
-      if (publicPrivateBoPairOptional.get().getLeft() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
-      }
-
-      if (publicPrivateBoPairOptional.get().getRight() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-      }
-    }
+    logMissingData(publicPrivateBoPairOptional.get(), logMap);
 
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
@@ -166,18 +144,7 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
-    if (publicPrivateBoPairOptional.get() == null) {
-      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-    }
-    else {
-      if (publicPrivateBoPairOptional.get().getLeft() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
-      }
-
-      if (publicPrivateBoPairOptional.get().getRight() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
-      }
-    }
+    logMissingData(publicPrivateBoPairOptional.get(), logMap);
 
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
@@ -198,5 +165,20 @@ public class BeneficialOwnerCessationService {
   private Optional<Pair<PscApi, PrivateBoDataApi>> getPublicPrivateBoPairOptional(
           String hashedId, Map<String, Pair<PscApi, PrivateBoDataApi>> combinedBoData) {
     return Optional.ofNullable(combinedBoData.get(hashedId));
+  }
+
+  private void logMissingData(Pair<PscApi, PrivateBoDataApi> publicPrivateBoData, Map<String, Object> logMap) {
+    if (publicPrivateBoData == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+    }
+    else {
+      if (publicPrivateBoData.getLeft() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
+      }
+
+      if (publicPrivateBoData.getRight() == null) {
+        ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+      }
+    }
   }
 }
