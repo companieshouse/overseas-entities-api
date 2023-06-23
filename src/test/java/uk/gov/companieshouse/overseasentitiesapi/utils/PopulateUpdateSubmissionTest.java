@@ -136,8 +136,4 @@ class PopulateUpdateSubmissionTest {
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
         assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
-
-    public static String toStringFormat(int localDate){
-        return String.format("%02d", localDate);
-    }
 }
