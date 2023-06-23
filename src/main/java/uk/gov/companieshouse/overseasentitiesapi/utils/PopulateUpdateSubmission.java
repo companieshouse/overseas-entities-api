@@ -139,10 +139,10 @@ public class PopulateUpdateSubmission {
                 .ifPresent(filingDate -> {
                     var filingForDate = new FilingForDate();
                     Optional.of(filingDate).map(LocalDate::getDayOfMonth)
-                            .map(Objects::toString)
+                            .map(value -> String.format("%02d",value))
                             .ifPresent(filingForDate::setDay);
-                    Optional.of(filingDate).map(LocalDate::getMonth)
-                            .map(Objects::toString)
+                    Optional.of(filingDate).map(LocalDate::getMonthValue)
+                            .map(value -> String.format("%02d",value))
                             .ifPresent(filingForDate::setMonth);
                     Optional.of(filingDate).map(LocalDate::getYear)
                             .map(Objects::toString)

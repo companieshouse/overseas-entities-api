@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,8 +20,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 @ExtendWith(MockitoExtension.class)
 class PopulateUpdateSubmissionTest {
-
-    private static final LocalDate LOCAL_DATE_TODAY = LocalDate.now();
 
     @InjectMocks
     private PopulateUpdateSubmission populateUpdateSubmission;
@@ -89,12 +86,9 @@ class PopulateUpdateSubmissionTest {
 
     private void checkFilingForDataDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getFilingForDate());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getDayOfMonth()),
-                updateSubmission.getFilingForDate().getDay());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getMonth()),
-                updateSubmission.getFilingForDate().getMonth());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getYear()),
-                updateSubmission.getFilingForDate().getYear());
+        assertEquals("01", updateSubmission.getFilingForDate().getDay());
+        assertEquals("02", updateSubmission.getFilingForDate().getMonth());
+        assertEquals("2001",updateSubmission.getFilingForDate().getYear());
     }
 
     private void checkDueDiligenceDetailsArePopulated(UpdateSubmission updateSubmission) {
@@ -142,5 +136,4 @@ class PopulateUpdateSubmissionTest {
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
         assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
-
 }
