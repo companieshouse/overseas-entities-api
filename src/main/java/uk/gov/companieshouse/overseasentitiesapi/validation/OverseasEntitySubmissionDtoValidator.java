@@ -147,8 +147,10 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Objects.nonNull(entityDto)) {
             var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address, Needs to change once private data fetch is implemented
-            if (StringUtils.isNotBlank(entityEmail)) {
+            var incorporatingCountry = entityDto.getIncorporationCountry();
+            // Temporary delay to entity validation until both email and public data
+            // (signified by "country formed in" being present) is fetched.
+            if (StringUtils.isNotBlank(entityEmail) && StringUtils.isNotBlank(incorporatingCountry)) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
