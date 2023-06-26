@@ -5,15 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import uk.gov.companieshouse.api.model.common.Address;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcatenation.concatenateFormerNames;
 
 public class ComparisonHelper {
 
@@ -38,7 +34,7 @@ public class ComparisonHelper {
     }
 
     public static boolean equals(AddressDto addressDto,
-                                 uk.gov.companieshouse.api.model.managingofficerdata.AddressApi addressApi) {
+            uk.gov.companieshouse.api.model.managingofficerdata.AddressApi addressApi) {
         var nullValuesCheck = handleNulls(addressDto, addressApi);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
@@ -55,7 +51,8 @@ public class ComparisonHelper {
                 && Objects.equals(addressDto.getPostcode(), addressApi.getPostalCode());
     }
 
-    public static boolean equals(AddressDto addressDto, Address address) {
+    public static boolean equals(AddressDto addressDto,
+            uk.gov.companieshouse.api.model.common.Address address) {
         var nullValuesCheck = handleNulls(addressDto, address);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
@@ -141,7 +138,7 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        var concatenatedFormerNames = concatenateFormerNames(strings);
+        var concatenatedFormerNames = FormerNameConcatenation.concatenateFormerNames(strings);
 
         return string.equals(concatenatedFormerNames);
     }
