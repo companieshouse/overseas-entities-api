@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import java.util.Arrays;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -11,6 +14,7 @@ import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.IdentificationApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.CorporateBeneficialOwnerChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.CorporateManagingOfficerChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.IndividualManagingOfficerChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
@@ -60,7 +64,7 @@ class ManagingOfficerChangeServiceTest {
         addressDto.setLine1("Main Street");
         addressDto.setLine2("Apartment 4B");
         addressDto.setCounty("Countyshire");
-        addressDto.setLocality("Cityville");
+        addressDto.setTown("Cityville");
         addressDto.setCountry("United Kingdom");
         addressDto.setPoBox("98765");
         addressDto.setCareOf("John Doe");
@@ -93,6 +97,10 @@ class ManagingOfficerChangeServiceTest {
             matches.add(match);
         }
         return matches;
+    }
+
+    private static List<Boolean> booleanWrapperValues() {
+        return Arrays.asList(true, false, null);
     }
 
     @BeforeEach
@@ -427,6 +435,78 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("Role", individualManagingOfficerChange.getOfficer().getRoleAndResponsibilities());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getServiceAddress().getHouseNameNum());
         assertEquals("123", individualManagingOfficerChange.getOfficer().getResidentialAddress().getHouseNameNum());
+    }
+
+    @ParameterizedTest
+    @MethodSource("booleanWrapperValues")
+    void testCovertBeneficialOwnerCorporateChangeIsAddressSameFlag(Boolean serviceAddressSameAsPrincipalAddress) {
+
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567890");
+        managingOfficerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
+        managingOfficerIndividualDto.setServiceAddressSameAsUsualResidentialAddress(serviceAddressSameAsPrincipalAddress);
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+
+        if (result.get(0) instanceof IndividualManagingOfficerChange) {
+            IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(0);
+
+            assertEquals(createDummyAddress(), individualManagingOfficerChange.getOfficer().getResidentialAddress());
+
+            if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
+                assertEquals(createDummyAddress(), individualManagingOfficerChange.getOfficer().getServiceAddress());
+            } else {
+                assertNull(individualManagingOfficerChange.getOfficer().getServiceAddress());
+            }
+
+            assertEquals("123", individualManagingOfficerChange.getAppointmentId());
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("booleanWrapperValues")
+    void testConvertManagingOfficerCorporateToChangeIsAddressSameFlag(Boolean serviceAddressSameAsPrincipalAddress) {
+
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+        managingOfficerCorporateDto.setPrincipalAddress(createDummyAddressDto());
+        managingOfficerCorporateDto.setServiceAddressSameAsPrincipalAddress(serviceAddressSameAsPrincipalAddress);
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+
+        if (result.get(0) instanceof CorporateManagingOfficerChange) {
+            CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(0);
+
+            assertEquals(createDummyAddress(), corporateManagingOfficerChange.getOfficer().getRegisteredOffice());
+
+            if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
+                assertEquals(createDummyAddress(), corporateManagingOfficerChange.getOfficer().getServiceAddress());
+            } else {
+                assertNull(corporateManagingOfficerChange.getOfficer().getServiceAddress());
+            }
+
+            assertEquals("123", corporateManagingOfficerChange.getAppointmentId());
+        }
     }
 
     @Test

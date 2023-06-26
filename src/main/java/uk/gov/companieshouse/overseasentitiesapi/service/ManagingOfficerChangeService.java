@@ -1,5 +1,13 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -24,17 +32,9 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
-
 @Service
 public class ManagingOfficerChangeService {
+
     public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
     public static final String SERVICE = "ManagingOfficerChangeService";
     private Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo;
@@ -44,8 +44,8 @@ public class ManagingOfficerChangeService {
      * Gathers all changes in managing officers
      *
      * @return a list of Change objects, encompassing changes in individual and corporate managing
-     * officers. This consolidated list provides a complete overview of all managing officer
-     * changes in the system.
+     * officers. This consolidated list provides a complete overview of all managing officer changes
+     * in the system.
      */
     public List<Change> collateManagingOfficerChanges(
             Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo,
@@ -131,18 +131,24 @@ public class ManagingOfficerChangeService {
         ChangeManager<IndividualManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager = new ChangeManager<>(
                 officer, publicPrivateMoPair);
 
-        managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
+        managingOfficerChange.setAppointmentId(
+                publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
 
-        if (publicPrivateMoPair.getLeft() != null && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
+        if (publicPrivateMoPair.getLeft() != null
+                && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
             officer.setStartDate(managingOfficerIndividualDto.getStartDate());
         }
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerIndividualDto.getServiceAddress(),
-                managingOfficerIndividualDto.getRoleAndResponsibilities());
+                managingOfficerIndividualDto.getUsualResidentialAddress(),
+                managingOfficerIndividualDto.getRoleAndResponsibilities(),
+                managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress()
+        );
 
         PersonName personName = null;
-        if (managingOfficerIndividualDto.getFirstName() != null && managingOfficerIndividualDto.getLastName() != null) {
+        if (managingOfficerIndividualDto.getFirstName() != null
+                && managingOfficerIndividualDto.getLastName() != null) {
             personName = new PersonName(managingOfficerIndividualDto.getFirstName(),
                     managingOfficerIndividualDto.getLastName());
         }
@@ -176,7 +182,8 @@ public class ManagingOfficerChangeService {
                 IndividualManagingOfficer::setOccupation
         );
 
-        var nationalitySubmission = generateNationalityOtherField(managingOfficerIndividualDto.getNationality(),
+        var nationalitySubmission = generateNationalityOtherField(
+                managingOfficerIndividualDto.getNationality(),
                 managingOfficerIndividualDto.getSecondNationality());
         hasChange |= changeManager.compareAndBuildLeftChange(
                 nationalitySubmission,
@@ -214,15 +221,20 @@ public class ManagingOfficerChangeService {
         ChangeManager<CorporateManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager
                 = new ChangeManager<>(officer, publicPrivateMoPair);
 
-        managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
+        managingOfficerChange.setAppointmentId(
+                publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
 
-        if (publicPrivateMoPair.getLeft() != null && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
+        if (publicPrivateMoPair.getLeft() != null
+                && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
             officer.setStartDate(managingOfficerCorporateDto.getStartDate());
         }
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerCorporateDto.getServiceAddress(),
-                managingOfficerCorporateDto.getRoleAndResponsibilities());
+                managingOfficerCorporateDto.getPrincipalAddress(),
+                managingOfficerCorporateDto.getRoleAndResponsibilities(),
+                managingOfficerCorporateDto.getServiceAddressSameAsPrincipalAddress()
+        );
 
         hasChange |= changeManager.compareAndBuildLeftChange(
                 managingOfficerCorporateDto.getName(),
@@ -286,7 +298,15 @@ public class ManagingOfficerChangeService {
     private <P extends Officer> boolean setCommonAttributes(
             ChangeManager<P, CompanyOfficerApi, ManagingOfficerDataApi> changeManager,
             AddressDto serviceAddress,
-            String role) {
+            AddressDto residentialAddress,
+            String role,
+            Boolean addressesAreSameFlag
+    ) {
+
+        if (addressesAreSameFlag != null && addressesAreSameFlag) {
+            serviceAddress = residentialAddress;
+        }
+
         var hasChange = changeManager.compareAndBuildRightChange(
                 serviceAddress,
                 ManagingOfficerDataApi::getPrincipalAddress,
