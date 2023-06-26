@@ -145,7 +145,7 @@ public class ManagingOfficerCessationService {
   private Optional<Pair<CompanyOfficerApi, ManagingOfficerDataApi>> getPublicPrivateMoPairOptional(
       String hashedId,
       Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedMoData) {
-    return Optional.ofNullable(combinedMoData.get(hashedId));
+    return Optional.ofNullable(combinedMoData).map(data -> data.get(hashedId));
   }
 
   private void logMissingPublicPrivateData(Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoData, Map<String, Object> logMap) {

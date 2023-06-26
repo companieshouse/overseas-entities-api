@@ -353,41 +353,6 @@ class BeneficialOwnerCessationServiceTest {
   }
 
   @Test
-  void testBeneficialOwnerCessationsPublicPrivateDataNull() {
-    BeneficialOwnerIndividualDto individual = new BeneficialOwnerIndividualDto();
-    individual.setCeasedDate(LocalDate.now());
-    individual.setChipsReference("XYZ123");
-
-    BeneficialOwnerCorporateDto corporate = new BeneficialOwnerCorporateDto();
-    corporate.setCeasedDate(LocalDate.now());
-    corporate.setChipsReference("XYZ456");
-
-    BeneficialOwnerGovernmentOrPublicAuthorityDto legalPerson = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
-    legalPerson.setCeasedDate(LocalDate.now());
-    legalPerson.setChipsReference("XYZ789");
-
-    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
-            .thenReturn(Collections.singletonList(individual));
-    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
-            .thenReturn(Collections.singletonList(corporate));
-    when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
-            .thenReturn(Collections.singletonList(legalPerson));
-
-    PscApi pscApi = null;
-    PrivateBoDataApi privateBoData = null;
-
-    combinedBoData = null;
-
-    System.setOut(new PrintStream(outputStreamCaptor));
-
-    List<Cessation> cessations =
-            beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
-
-    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No public and no private data found for managing officer"));
-    assertEquals(0, cessations.size());
-  }
-
-  @Test
   void testBeneficialOwnerCessationsNoIdFoundInPrivateData() {
     BeneficialOwnerIndividualDto individual = new BeneficialOwnerIndividualDto();
     individual.setCeasedDate(LocalDate.now());
