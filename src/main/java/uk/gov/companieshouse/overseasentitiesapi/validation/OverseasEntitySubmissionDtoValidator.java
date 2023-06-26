@@ -78,10 +78,30 @@ public class OverseasEntitySubmissionDtoValidator {
         // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
+
+        if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
+            dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
+                    overseasEntitySubmissionDto.getDueDiligence(),
+                    overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                    errors,
+                    loggingContext);
+        }
+
+        // Change when trusts are added:
+        // call validateTrustDetails with (overseasEntitySubmissionDto, errors, loggingContext)
+
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
+                overseasEntitySubmissionDto.getDueDiligence(),
+                overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                errors,
+                loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -99,15 +119,6 @@ public class OverseasEntitySubmissionDtoValidator {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
-
-
-        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
-        dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
-                overseasEntitySubmissionDto.getDueDiligence(),
-                overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
-                errors,
-                loggingContext);
     }
 
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
