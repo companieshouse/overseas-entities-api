@@ -1,13 +1,15 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Objects;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
+
 public class Address {
+
     @JsonInclude(NON_NULL)
     @JsonProperty("careOf")
     private String careOf;
@@ -47,6 +49,15 @@ public class Address {
     @JsonInclude(NON_NULL)
     @JsonProperty("country")
     private String country;
+
+    private static String normalise(String value) {
+        var text = StringUtils.normalizeSpace(value);
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
+        return text;
+    }
+
 
     public String getCareOf() {
         return careOf;
@@ -139,21 +150,36 @@ public class Address {
         }
 
         var address = (Address) o;
-        return Objects.equals(careOf, address.careOf)
-                && Objects.equals(poBox, address.poBox)
-                && Objects.equals(careOfCompany, address.careOfCompany)
-                && Objects.equals(houseNameNum, address.houseNameNum)
-                && Objects.equals(street, address.street)
-                && Objects.equals(area, address.area)
-                && Objects.equals(postTown, address.postTown)
-                && Objects.equals(region, address.region)
-                && Objects.equals(postCode, address.postCode)
-                && Objects.equals(country, address.country);
+
+        return StringUtils.equalsIgnoreCase(normalise(careOf), normalise(address.careOf))
+                && StringUtils.equalsIgnoreCase(normalise(poBox), normalise(address.poBox))
+                && StringUtils.equalsIgnoreCase(normalise(careOfCompany),
+                normalise(address.careOfCompany))
+                && StringUtils.equalsIgnoreCase(normalise(houseNameNum),
+                normalise(address.houseNameNum))
+                && StringUtils.equalsIgnoreCase(normalise(street), normalise(address.street))
+                && StringUtils.equalsIgnoreCase(normalise(area), normalise(address.area))
+                && StringUtils.equalsIgnoreCase(normalise(postTown), normalise(address.postTown))
+                && StringUtils.equalsIgnoreCase(normalise(region), normalise(address.region))
+                && StringUtils.equalsIgnoreCase(normalise(postCode), normalise(address.postCode))
+                && StringUtils.equalsIgnoreCase(normalise(country), normalise(address.country));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(careOf, poBox, careOfCompany, houseNameNum, street,
-                area, postTown, region, postCode, country);
+        return Objects.hash(
+                Optional.ofNullable(normalise(careOf)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(poBox)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(careOfCompany)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(houseNameNum)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(street)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(area)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(postTown)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(region)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(postCode)).map(String::toLowerCase).orElse(null),
+                Optional.ofNullable(normalise(country)).map(String::toLowerCase).orElse(null)
+        );
     }
+
+
 }
