@@ -122,7 +122,8 @@ public class CollatedOverseasEntityDataMock {
 
     public static OverseasEntitySubmissionDto getUpdateSubmissionPrincipalAddressDifferent() {
         OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
-        updateSubmission.getEntity().setPrincipalAddress(
+
+        updateSubmission.getEntity().setServiceAddress(
                 new AddressDto() {{
                     setCountry(UPDATED_ADDRESS_COUNTRY);
                 }});

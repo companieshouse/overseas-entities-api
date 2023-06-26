@@ -102,7 +102,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof PrincipalAddressChange);
+        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
     }
 
     @Test
@@ -114,7 +114,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof PrincipalAddressChange);
+        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
     }
 
     @Test
