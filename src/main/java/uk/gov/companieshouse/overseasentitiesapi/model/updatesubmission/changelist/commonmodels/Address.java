@@ -51,11 +51,8 @@ public class Address {
     private String country;
 
     private static String normalise(String value) {
-        if (value == null) {
-            return null;
-        }
         var text = StringUtils.normalizeSpace(value);
-        if (text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             return null;
         }
         return text;
