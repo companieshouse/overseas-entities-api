@@ -88,6 +88,21 @@ class BeneficialOwnerChangeServiceTest {
         return addressDto;
     }
 
+    private static AddressDto createDummyAddressDto(String... fields) {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setPropertyNameNumber(fields[0]);
+        addressDto.setLine1(fields[1]);
+        addressDto.setLine2(fields[2]);
+        addressDto.setCounty(fields[3]);
+        addressDto.setTown(fields[4]);
+        addressDto.setCountry(fields[5]);
+        addressDto.setPoBox(fields[6]);
+        addressDto.setCareOf(fields[7]);
+        addressDto.setPostcode(fields[8]);
+
+        return addressDto;
+    }
+
     /**
      * Creates an instance of
      * {@code
@@ -115,6 +130,22 @@ class BeneficialOwnerChangeServiceTest {
 
         return address;
     }
+
+    private static Address createDummyAddress(String... fields) {
+        Address address = new Address();
+        address.setCareOf(fields[7]);
+        address.setPoBox(fields[6]);
+        address.setHouseNameNum(fields[0]);
+        address.setStreet(fields[1]);
+        address.setArea(fields[2]);
+        address.setPostTown(fields[4]);
+        address.setRegion(fields[3]);
+        address.setPostCode(fields[8]);
+        address.setCountry(fields[5]);
+
+        return address;
+    }
+
 
     private static List<String> extractMatches(String input, String patternString) {
         List<String> matches = new ArrayList<>();
@@ -223,6 +254,39 @@ class BeneficialOwnerChangeServiceTest {
   }
 
     @Test
+    void testCovertBeneficialOwnerCorporateServiceAddressAndRegistrationAddress() {
+
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
+
+        beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
+        beneficialOwnerCorporateDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+
+
+        when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(List.of(beneficialOwnerCorporateDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
+            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(0);
+
+            assertEquals(createDummyAddress(), corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData), corporateBeneficialOwnerChange.getPsc().getServiceAddress());
+
+            assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
+        }
+    }
+
+    @Test
     void testCovertBeneficialOwnerIndividualToChangeThroughCollateChanges() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
@@ -298,7 +362,38 @@ class BeneficialOwnerChangeServiceTest {
     }
   }
 
+    @Test
+    void testCovertBeneficialOwnerIndividualChangeServiceAddressAndRegistrationAddress() {
 
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567890");
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
+
+        beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
+        beneficialOwnerIndividualDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+
+
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(List.of(beneficialOwnerIndividualDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
+            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(0);
+
+            assertEquals(createDummyAddress(), individualBeneficialOwnerChange.getPsc().getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData), individualBeneficialOwnerChange.getPsc().getServiceAddress());
+
+            assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
+        }
+    }
 
   @Test
     void testCovertBeneficialOwnerOtherChangeThroughCollateChanges() {
@@ -371,6 +466,39 @@ class BeneficialOwnerChangeServiceTest {
 
             assertEquals("123",
                     governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
+        }
+    }
+
+    @Test
+    void testCovertBeneficialOwnerOtherChageServiceAddressAndRegistrationAddress() {
+
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerOtherDto.setChipsReference("1234567890");
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
+
+        beneficialOwnerOtherDto.setPrincipalAddress(createDummyAddressDto());
+        beneficialOwnerOtherDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+
+
+        when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(List.of(beneficialOwnerOtherDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof OtherBeneficialOwnerChange) {
+            OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(0);
+
+            assertEquals(createDummyAddress(), governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData), governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getServiceAddress());
+
+            assertEquals("123", governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
         }
     }
 
