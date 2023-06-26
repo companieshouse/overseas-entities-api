@@ -88,7 +88,7 @@ public class ManagingOfficerCessationService {
       return Optional.empty();
     }
 
-    logMissingData(publicPrivateMoPairOptional.get(), logMap);
+    logMissingPublicPrivateData(publicPrivateMoPairOptional.get(), logMap);
 
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());
     if (officerAppointmentId == null) {
@@ -120,7 +120,7 @@ public class ManagingOfficerCessationService {
       return Optional.empty();
     }
 
-    logMissingData(publicPrivateMoPairOptional.get(), logMap);
+    logMissingPublicPrivateData(publicPrivateMoPairOptional.get(), logMap);
 
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());
     if (officerAppointmentId == null) {
@@ -148,18 +148,13 @@ public class ManagingOfficerCessationService {
     return Optional.ofNullable(combinedMoData.get(hashedId));
   }
 
-  private void logMissingData(Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoData, Map<String, Object> logMap) {
-    if (publicPrivateMoData == null) {
-      ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+  private void logMissingPublicPrivateData(Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoData, Map<String, Object> logMap) {
+    if (publicPrivateMoData.getLeft() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
     }
-    else {
-      if (publicPrivateMoData.getLeft() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
-      }
 
-      if (publicPrivateMoData.getRight() == null) {
-        ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
-      }
+    if (publicPrivateMoData.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
     }
   }
 }

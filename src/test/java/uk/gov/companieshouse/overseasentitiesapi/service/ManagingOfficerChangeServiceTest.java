@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,8 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +53,8 @@ class ManagingOfficerChangeServiceTest {
 
     Map<String, Object> logMap = new HashMap<>();
 
+    ByteArrayOutputStream outputStreamCaptor;
+
     private static AddressDto createDummyAddressDto() {
         AddressDto addressDto = new AddressDto();
         addressDto.setPropertyNameNumber("123");
@@ -83,17 +85,6 @@ class ManagingOfficerChangeServiceTest {
         return address;
     }
 
-    private static List<String> extractMatches(String input, String patternString) {
-        List<String> matches = new ArrayList<>();
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(input);
-        while (matcher.find()) {
-            String match = matcher.group(1);
-            matches.add(match);
-        }
-        return matches;
-    }
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -119,6 +110,14 @@ class ManagingOfficerChangeServiceTest {
         when(mockPublicPrivateMoPairRightNull.getLeft()).thenReturn(mockLeftPart);
 
         managingOfficerChangeService = new ManagingOfficerChangeService();
+
+        outputStreamCaptor = new ByteArrayOutputStream();
+    }
+
+    @AfterEach
+    void tearDown() {
+        outputStreamCaptor.reset();
+        System.setOut(System.out);
     }
 
     @Test
@@ -194,14 +193,10 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
                 List.of(managingOfficerCorporateDto));
 
-        PrintStream standardOut = System.out;
-        ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
-
-        System.setOut(standardOut);
 
         assertEquals("", outputStreamCaptor.toString());
         assertEquals(0, result.size());
@@ -227,19 +222,12 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
                 List.of(managingOfficerCorporateDto));
 
-        PrintStream standardOut = System.out;
-        ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
-
-        String pattern = "\"message\":\"(.*?)\"";
 
         var result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        List<String> matches = extractMatches(outputStreamCaptor.toString(), pattern);
-        System.setOut(standardOut);
-
-        assertEquals(2, Collections.frequency(matches, "No public and no private data found for managing officer"));
+        assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(), "No public and no private data found for managing officer"));
         assertEquals(0, result.size());
     }
 
@@ -260,13 +248,17 @@ class ManagingOfficerChangeServiceTest {
     @Test
     void testCollateManagingOfficerChangesEmptyRightOfPairNull() {
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
 
         when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(mockPublicPrivateMoPairRightNull);
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(List.of(managingOfficerIndividualDto));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
         assertTrue(result.isEmpty());
     }
 
@@ -282,9 +274,12 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
                 List.of(managingOfficerIndividualDto));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
@@ -305,9 +300,12 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
                 List.of(managingOfficerCorporateDto));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
@@ -320,15 +318,18 @@ class ManagingOfficerChangeServiceTest {
     @Test
     void testCollateManagingOfficerChangesEmptyLeftOfPairNull() {
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
 
         when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateMoPairLeftNull);
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
                 List.of(managingOfficerIndividualDto));
+        System.setOut(new PrintStream(outputStreamCaptor));
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
         assertTrue(result.isEmpty());
     }
 
@@ -342,9 +343,12 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
                 List.of(managingOfficerIndividualDto));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
         assertTrue(result.isEmpty());
     }
 
@@ -358,9 +362,12 @@ class ManagingOfficerChangeServiceTest {
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
                 List.of(managingOfficerCorporateDto));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
         assertTrue(result.isEmpty());
     }
 
