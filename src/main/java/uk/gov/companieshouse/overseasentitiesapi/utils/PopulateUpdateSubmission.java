@@ -26,11 +26,15 @@ public class PopulateUpdateSubmission {
     /**
      * Method populates values into UpdateSubmission for JSON output
      */
-    public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-            UpdateSubmission updateSubmission) {
+    public void populate(
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission,
+            boolean isNoChange) {
         updateSubmission.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
-        populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
+        if (!isNoChange) {
+            populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
+        }
         populatePresenter(overseasEntitySubmissionDto, updateSubmission);
         populateStatements(overseasEntitySubmissionDto, updateSubmission);
         populateFilingForDate(overseasEntitySubmissionDto, updateSubmission);
