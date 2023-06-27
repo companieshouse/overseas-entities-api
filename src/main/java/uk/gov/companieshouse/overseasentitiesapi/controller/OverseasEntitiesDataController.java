@@ -47,13 +47,11 @@ public class OverseasEntitiesDataController {
 
     @GetMapping("/{overseas_entity_id}")
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
-            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
 
