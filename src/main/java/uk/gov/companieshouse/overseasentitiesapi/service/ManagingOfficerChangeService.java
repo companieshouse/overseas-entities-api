@@ -303,12 +303,8 @@ public class ManagingOfficerChangeService {
             Boolean addressesAreSameFlag
     ) {
 
-        if (addressesAreSameFlag != null && addressesAreSameFlag) {
-            serviceAddress = residentialAddress;
-        }
-
         var hasChange = changeManager.compareAndBuildRightChange(
-                serviceAddress,
+                Boolean.TRUE.equals(addressesAreSameFlag) ? residentialAddress : serviceAddress,
                 ManagingOfficerDataApi::getPrincipalAddress,
                 TypeConverter::addressDtoToAddress,
                 ComparisonHelper::equals,
