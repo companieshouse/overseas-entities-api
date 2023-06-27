@@ -258,7 +258,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer - changes cannot be created"));
         assertTrue(result.isEmpty());
     }
 
@@ -279,7 +279,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer - continuing with changes"));
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
@@ -305,7 +305,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer - continuing with changes"));
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
@@ -329,7 +329,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No public data found for managing officer - continuing with changes"));
         assertTrue(result.isEmpty());
     }
 
@@ -348,7 +348,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer - changes cannot be created"));
         assertTrue(result.isEmpty());
     }
 
@@ -367,7 +367,7 @@ class ManagingOfficerChangeServiceTest {
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
 
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "No private data found for managing officer - changes cannot be created"));
         assertTrue(result.isEmpty());
     }
 

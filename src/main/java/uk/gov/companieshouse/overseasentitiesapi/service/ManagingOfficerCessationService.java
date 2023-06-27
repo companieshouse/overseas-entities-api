@@ -23,9 +23,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 public class ManagingOfficerCessationService {
 
   public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
-  public static final String NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND = "No public and no private data found for managing officer";
-  public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer";
-  public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer";
+  public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer - continuing with changes";
+  public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer - changes cannot be created";
   public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Managing Officer ID was found in Private Data";
   public static final String SERVICE = "ManagingOfficerCessationService";
 

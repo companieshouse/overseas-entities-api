@@ -21,9 +21,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 public class BeneficialOwnerCessationService {
 
   public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
-  public static final String NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND = "No public and no private data found for beneficial owner";
-  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner";
-  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner";
+  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner - continuing with changes";
+  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner - changes cannot be created";
   public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Beneficial Owner ID was found in Private Data";
   public static final String SERVICE = "BeneficialOwnerCessationService";
 

@@ -35,8 +35,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.*;
 public class BeneficialOwnerChangeService {
   public static final String SERVICE = "BeneficialOwnerChangeService";
   public static final String NO_PUBLIC_AND_NO_PRIVATE_BO_DATA_FOUND = "No public and no private data found for beneficial owner";
-  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner";
-  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner";
+  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner - continuing with changes";
+  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner - changes cannot be created";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
@@ -78,7 +78,7 @@ public class BeneficialOwnerChangeService {
     return beneficialOwnersIndividual
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(individualBO -> covertBeneficialOwnerIndividualToChange(individualBO, logMap))
+        .map(individualBO -> convertBeneficialOwnerIndividualToChange(individualBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -101,7 +101,7 @@ public class BeneficialOwnerChangeService {
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(otherBO -> covertBeneficialOwnerOtherChange(otherBO, logMap))
+        .map(otherBO -> convertBeneficialOwnerOtherChange(otherBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -124,7 +124,7 @@ public class BeneficialOwnerChangeService {
     return beneficialOwnersGovernmentOrPublicAuthority
         .stream()
         .filter(bo -> bo.getChipsReference() != null)
-        .map(corporateBO -> covertBeneficialOwnerCorporateChange(corporateBO, logMap))
+        .map(corporateBO -> convertBeneficialOwnerCorporateChange(corporateBO, logMap))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -138,7 +138,7 @@ public class BeneficialOwnerChangeService {
    * @param beneficialOwnerCorporateDto The BeneficialOwnerCorporateDto object to be converted.
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
-  private BeneficialOwnerChange<CorporateBeneficialOwnerPsc> covertBeneficialOwnerCorporateChange(
+  private BeneficialOwnerChange<CorporateBeneficialOwnerPsc> convertBeneficialOwnerCorporateChange(
       BeneficialOwnerCorporateDto beneficialOwnerCorporateDto,
       Map<String, Object> logMap) {
 
@@ -232,7 +232,7 @@ public class BeneficialOwnerChangeService {
    *                                                      object to be converted.
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
-  private BeneficialOwnerChange<OtherBeneficialOwnerPsc> covertBeneficialOwnerOtherChange(
+  private BeneficialOwnerChange<OtherBeneficialOwnerPsc> convertBeneficialOwnerOtherChange(
       BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto,
       Map<String, Object> logMap) {
     var beneficialOwnerChange = new OtherBeneficialOwnerChange();
@@ -314,7 +314,7 @@ public class BeneficialOwnerChangeService {
    * @param beneficialOwnerIndividualDto The BeneficialOwnerIndividualDto object to be converted.
    * @return A BeneficialOwnerChange object if changes are detected, otherwise null.
    */
-  private BeneficialOwnerChange<IndividualBeneficialOwnerPsc> covertBeneficialOwnerIndividualToChange(
+  private BeneficialOwnerChange<IndividualBeneficialOwnerPsc> convertBeneficialOwnerIndividualToChange(
       BeneficialOwnerIndividualDto beneficialOwnerIndividualDto,
       Map<String, Object> logMap) {
 

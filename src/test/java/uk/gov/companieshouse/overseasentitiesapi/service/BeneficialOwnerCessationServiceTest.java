@@ -271,7 +271,7 @@ class BeneficialOwnerCessationServiceTest {
     List<Cessation> cessations =
             beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
 
-    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for beneficial owner"));
+    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for beneficial owner - continuing with changes"));
     assertEquals(0, cessations.size());
   }
 
@@ -308,7 +308,7 @@ class BeneficialOwnerCessationServiceTest {
     List<Cessation> cessations =
             beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
 
-    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for beneficial owner"));
+    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for beneficial owner - changes cannot be created"));
     assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No Beneficial Owner ID was found in Private Data"));
     assertEquals(0, cessations.size());
   }
@@ -346,8 +346,8 @@ class BeneficialOwnerCessationServiceTest {
     List<Cessation> cessations =
             beneficialOwnerCessationService.beneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap);
 
-    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for beneficial owner"));
-    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for beneficial owner"));
+    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for beneficial owner - continuing with changes"));
+    assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for beneficial owner - changes cannot be created"));
     assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(),"No Beneficial Owner ID was found in Private Data"));
     assertEquals(0, cessations.size());
   }

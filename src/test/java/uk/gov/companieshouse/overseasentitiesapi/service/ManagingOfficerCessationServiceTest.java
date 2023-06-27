@@ -252,7 +252,7 @@ class ManagingOfficerCessationServiceTest {
             managingOfficerCessationService.managingOfficerCessations(
                     overseasEntitySubmissionDto, combinedMoData, logMap);
 
-    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for managing officer"));
+    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for managing officer - changes cannot be created"));
     assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No Managing Officer ID was found in Private Data"));
     assertEquals(0, cessations.size());
   }
@@ -282,7 +282,7 @@ class ManagingOfficerCessationServiceTest {
             managingOfficerCessationService.managingOfficerCessations(
                     overseasEntitySubmissionDto, combinedMoData, logMap);
 
-    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for managing officer"));
+    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for managing officer - continuing with changes"));
     assertEquals(0, cessations.size());
   }
 
@@ -309,8 +309,8 @@ class ManagingOfficerCessationServiceTest {
             managingOfficerCessationService.managingOfficerCessations(
                     overseasEntitySubmissionDto, combinedMoData, logMap);
 
-    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for managing officer"));
-    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for managing officer"));
+    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No public data found for managing officer - continuing with changes"));
+    assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No private data found for managing officer - changes cannot be created"));
     assertEquals(2, StringUtils.countMatches(outputStreamCaptor.toString(),"No Managing Officer ID was found in Private Data"));
     assertEquals(0, cessations.size());
   }
