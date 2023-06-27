@@ -437,6 +437,74 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("123", individualManagingOfficerChange.getOfficer().getResidentialAddress().getHouseNameNum());
     }
 
+
+    @Test
+    void testConvertManagingOfficerIndividualAppointedOn() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567890");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(mockPublicPrivateMoPair);
+        when(mockPublicPrivateMoPair.getLeft().getAppointedOn()).thenReturn(LocalDate.of(2021, 1, 1));
+
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(0);
+        assertNull(individualManagingOfficerChange.getOfficer().getStartDate());
+    }
+
+    @Test
+    void testCollateBeneficialOwnerChangesCorporateAppointedOn() {
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+        managingOfficerCorporateDto.setName("John Doe");
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(mockPublicPrivateMoPair);
+        when(mockPublicPrivateMoPair.getLeft().getAppointedOn()).thenReturn(LocalDate.of(2021, 1, 1));
+
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(0);
+        assertNull(corporateManagingOfficerChange.getOfficer().getStartDate());
+    }
+
+    @Test
+    void testConvertManagingOfficerLastNameNull() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567890");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName(null);
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(mockPublicPrivateMoPair);
+
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto);
+
+        assertEquals(0, result.size());
+    }
+
     @ParameterizedTest
     @MethodSource("booleanWrapperValues")
     void testCovertBeneficialOwnerCorporateChangeIsAddressSameFlag(Boolean serviceAddressSameAsPrincipalAddress) {
