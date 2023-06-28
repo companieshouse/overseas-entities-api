@@ -634,7 +634,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(0)).validateFullDueDiligenceFields(eq(overseasEntitySubmissionDto.getDueDiligence()), any(), any(), any());
+        verify(entityNameValidator, times(0)).validate(eq(entityNameDto), any(), any());
+        verify(entityDtoValidator, times(0)).validate(eq(entityDto), any(), any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
         assertFalse(errors.hasErrors());
     }
