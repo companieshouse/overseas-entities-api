@@ -558,6 +558,54 @@ class ComparisonHelperTest {
     }
 
     @Test
+    void equalsAddressDtoAndAddressApiReturnFalse() {
+
+        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressApiFields = addressDtoFields.clone();
+
+        var output = false;
+
+        for (var i = 0; i < addressDtoFields.length; i++) {
+            addressDtoFields[i] = "Different--" + addressDtoFields[i];
+            if (i < addressDtoFields.length - 1) {
+                addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
+            }
+
+            var addressDto = new AddressDto();
+            addressDto.setPropertyNameNumber(addressDtoFields[0]);
+            addressDto.setLine1(addressDtoFields[1]);
+            addressDto.setLine2(addressDtoFields[2]);
+            addressDto.setTown(addressDtoFields[3]);
+            addressDto.setCounty(addressDtoFields[4]);
+            addressDto.setCountry(addressDtoFields[5]);
+            addressDto.setPoBox(addressDtoFields[6]);
+            addressDto.setCareOf(addressDtoFields[7]);
+            addressDto.setPostcode(addressDtoFields[8]);
+
+            var addressApi = new AddressApi();
+            addressApi.setPremises(addressApiFields[0]);
+            addressApi.setAddressLine1(addressApiFields[1]);
+            addressApi.setAddressLine2(addressApiFields[2]);
+            addressApi.setLocality(addressApiFields[3]);
+            addressApi.setRegion(addressApiFields[4]);
+            addressApi.setCountry(addressApiFields[5]);
+            addressApi.setPoBox(addressApiFields[6]);
+            addressApi.setCareOf(addressApiFields[7]);
+            addressApi.setPostcode(addressApiFields[8]);
+
+            output |= ComparisonHelper.equals(addressDto, addressApi);
+
+            if (i < addressDtoFields.length - 1) {
+                addressDtoFields[i] = addressApiFields[i];
+                addressApiFields[i + 1] = addressDtoFields[i + 1];
+            }
+        }
+
+        assertFalse(output);
+    }
+
+
+    @Test
     void equalsAddressDtoAndMoDataAddressApiWhenNullReturnCorrectResult() {
         var addressDto = new AddressDto();
         addressDto.setPropertyNameNumber("PropertyNameNumber");
