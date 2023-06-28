@@ -9,6 +9,8 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,7 +21,9 @@ import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.api.util.security.Permission.Value;
 import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
+import uk.gov.companieshouse.overseasentitiesapi.service.TransactionService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COMPANY_NUMBER_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -28,6 +32,14 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 
 @Component("RoeUserAuthenticationInterceptor")
 public class UserAuthenticationInterceptor implements HandlerInterceptor {
+
+
+    private final TransactionService transactionService;
+
+    @Autowired
+    public UserAuthenticationInterceptor(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     /**
      * Pre handle method to authorize the request before it reaches the controller.
@@ -52,12 +64,11 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-
         // TokenPermissions should have been set up in the request by TokenPermissionsInterceptor
         final var tokenPermissions = getTokenPermissions(request)
                 .orElseThrow(() -> new IllegalStateException("UserAuthenticationInterceptor - TokenPermissions object not present in request"));
 
-        boolean isRoeUpdateJourneyRequest = isRequestROEUpdate(request);
+        boolean isRoeUpdateJourneyRequest = isRequestROEUpdate(request, transactionId);
 
         // Check the user has the company_incorporation=create permission
         boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
@@ -72,13 +83,19 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOEAnnualUpdateCreatePermission);
         authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
 
-        if (isRoeUpdateJourneyRequest && hasCompanyOEAnnualUpdateCreatePermission) {
+        if (isRoeUpdateJourneyRequest) {
+            if (hasCompanyOEAnnualUpdateCreatePermission) {
                 ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
                         authInfoMap);
                 return true;
+            } else {
+                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey ", null, authInfoMap);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return false;
+            }
         }
 
-        if (hasCompanyIncorporationCreatePermission) {
+        if (hasCompanyIncorporationCreatePermission && ! hasCompanyOEAnnualUpdateCreatePermission) {
             ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_incorporation=create permission",
                     authInfoMap);
             return true;
@@ -93,24 +110,48 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return AuthorisationUtil.getTokenPermissions(request);
     }
 
-    protected boolean isRequestROEUpdate(HttpServletRequest request) {
+    protected boolean isRequestROEUpdate(HttpServletRequest request, String transactionId) {
         final Map<String, List<String>> privileges = getERICTokenPermissions(request);
-        return privileges.containsKey(COMPANY_NUMBER_KEY);
+        String companyInScope;
+        if (privileges.containsKey(COMPANY_NUMBER_KEY)) {
+            companyInScope = privileges.get(COMPANY_NUMBER_KEY).get(0);
+            if (StringUtils.isNotEmpty(companyInScope) && companyInScope.startsWith("OE")) {
+                String companyInTransaction = getCompanyInTransaction(request, transactionId);
+                if (StringUtils.isNotBlank(companyInTransaction)) {
+                    return companyInScope.equalsIgnoreCase(companyInTransaction);
+                }
+            }
+        }
+        return false;
     }
 
     private Map<String, List<String>> getERICTokenPermissions(HttpServletRequest request) {
         String tokenPermissionsHeader = request.getHeader(ERIC_AUTHORISED_TOKEN_PERMISSIONS_HEADER);
-
         Map<String, List<String>> permissions = new HashMap<>();
-
         if (tokenPermissionsHeader != null) {
             for (String pair : tokenPermissionsHeader.split(" ")) {
                 String[] parts = pair.split("=");
                 permissions.put(parts[0], Arrays.asList(parts[1].split(",")));
             }
         }
-
         return permissions;
+    }
+
+    private String getCompanyInTransaction(HttpServletRequest request, String transactionId) {
+        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
+        var logMap = new HashMap<String, Object>();
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        try {
+            final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
+            logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
+            ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
+            return transaction.getCompanyNumber();
+        } catch (Exception e) {
+            ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
+            return null;
+        }
+
     }
 
 }
