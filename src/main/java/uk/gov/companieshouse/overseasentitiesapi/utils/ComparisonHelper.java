@@ -1,10 +1,14 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcatenation.concatenateFormerNames;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
+import uk.gov.companieshouse.api.model.common.Address;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
@@ -16,21 +20,38 @@ public class ComparisonHelper {
     private ComparisonHelper() {
     }
 
+    private static String normalise(String value) {
+        var text = StringUtils.normalizeSpace(value);
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
+        return text;
+    }
+
     public static boolean equals(AddressDto addressDto, AddressApi addressApi) {
         var nullValuesCheck = handleNulls(addressDto, addressApi);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
 
-        return Objects.equals(addressDto.getPropertyNameNumber(), addressApi.getPremises())
-                && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine1())
-                && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine2())
-                && Objects.equals(addressDto.getTown(), addressApi.getLocality())
-                && Objects.equals(addressDto.getCounty(), addressApi.getRegion())
-                && Objects.equals(addressDto.getCountry(), addressApi.getCountry())
-                && Objects.equals(addressDto.getPoBox(), addressApi.getPoBox())
-                && Objects.equals(addressDto.getCareOf(), addressApi.getCareOf())
-                && Objects.equals(addressDto.getPostcode(), addressApi.getPostcode());
+        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
+                normalise(addressApi.getPremises()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
+                normalise(addressApi.getAddressLine1()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
+                normalise(addressApi.getAddressLine2()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
+                normalise(addressApi.getLocality()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()),
+                normalise(addressApi.getRegion()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()),
+                normalise(addressApi.getCountry()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()),
+                normalise(addressApi.getPoBox()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()),
+                normalise(addressApi.getCareOf()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()),
+                normalise(addressApi.getPostcode()));
     }
 
     public static boolean equals(AddressDto addressDto,
@@ -40,15 +61,24 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return Objects.equals(addressDto.getPropertyNameNumber(), addressApi.getPremises())
-                && Objects.equals(addressDto.getLine1(), addressApi.getAddressLine1())
-                && Objects.equals(addressDto.getLine2(), addressApi.getAddressLine2())
-                && Objects.equals(addressDto.getTown(), addressApi.getLocality())
-                && Objects.equals(addressDto.getCounty(), addressApi.getRegion())
-                && Objects.equals(addressDto.getCountry(), addressApi.getCountry())
-                && Objects.equals(addressDto.getPoBox(), addressApi.getPoBox())
-                && Objects.equals(addressDto.getCareOf(), addressApi.getCareOf())
-                && Objects.equals(addressDto.getPostcode(), addressApi.getPostalCode());
+        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
+                normalise(addressApi.getPremises()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
+                normalise(addressApi.getAddressLine1()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
+                normalise(addressApi.getAddressLine2()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
+                normalise(addressApi.getLocality()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()),
+                normalise(addressApi.getRegion()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()),
+                normalise(addressApi.getCountry()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()),
+                normalise(addressApi.getPoBox()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()),
+                normalise(addressApi.getCareOf()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()),
+                normalise(addressApi.getPostalCode()));
     }
 
     public static boolean equals(AddressDto addressDto,

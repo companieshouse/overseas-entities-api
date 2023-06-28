@@ -30,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.psc.Identification;
 import uk.gov.companieshouse.api.model.psc.PscApi;
+import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
@@ -95,17 +96,19 @@ class BeneficialOwnerChangeServiceTest {
         return addressDto;
     }
 
-    private static AddressDto createDummyAddressDto(String... fields) {
+    private AddressDto createDummyAddressDto(String[] fields) {
         AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber(fields[0]);
-        addressDto.setLine1(fields[1]);
-        addressDto.setLine2(fields[2]);
-        addressDto.setCounty(fields[3]);
-        addressDto.setTown(fields[4]);
-        addressDto.setCountry(fields[5]);
-        addressDto.setPoBox(fields[6]);
-        addressDto.setCareOf(fields[7]);
+
+        addressDto.setCareOf(fields[0]);
+        addressDto.setPoBox(fields[1]);
+        addressDto.setCareOf(fields[2]);
+        addressDto.setPropertyNameNumber(fields[3]);
+        addressDto.setLine1(fields[4]);
+        addressDto.setLine2(fields[5]);
+        addressDto.setTown(fields[6]);
+        addressDto.setCounty(fields[7]);
         addressDto.setPostcode(fields[8]);
+        addressDto.setCountry(fields[9]);
 
         return addressDto;
     }
@@ -123,19 +126,21 @@ class BeneficialOwnerChangeServiceTest {
      * {@code
      * uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address}
      */
-    private static Address createDummyAddress() {
-        Address address = new Address();
-        address.setCareOf("John Doe");
-        address.setPoBox("98765");
-        address.setHouseNameNum("123");
-        address.setStreet("Main Street");
-        address.setArea("Apartment 4B");
-        address.setPostTown("Cityville");
-        address.setRegion("Countyshire");
-        address.setPostCode("AB12 3CD");
-        address.setCountry("United Kingdom");
+    private AddressApi createDummyAddressApi(String[] fields) {
+        AddressApi addressApi = new AddressApi();
 
-        return address;
+        addressApi.setCareOf(fields[0]);
+        addressApi.setPoBox(fields[1]);
+        addressApi.setCareOf(fields[2]);
+        addressApi.setPremises(fields[3]);
+        addressApi.setAddressLine1(fields[4]);
+        addressApi.setAddressLine2(fields[5]);
+        addressApi.setLocality(fields[6]);
+        addressApi.setRegion(fields[7]);
+        addressApi.setPostcode(fields[8]);
+        addressApi.setCountry(fields[9]);
+
+        return addressApi;
     }
 
     private static Address createDummyAddress(String... fields) {
@@ -418,7 +423,50 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testConvertBeneficialOwnerOtherChangeThroughCollateChanges() {
+    void testCovertBeneficialOwnerAddressDifferentCasingThroughCollateChanges() {
+        String[] fieldNames = {"careOf", "poBox", "careOfCompany", "houseNameNum",
+                "street", "area", "postTown", "region", "postCode", "country"};
+        String[] fieldNamesUpperCase = Arrays.stream(fieldNames).map(String::toUpperCase)
+                .toArray(String[]::new);
+
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto(fieldNames));
+        beneficialOwnerIndividualDto.setChipsReference("1234567890");
+        beneficialOwnerIndividualDto.setNationality("Bangladeshi");
+        beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
+
+        mockPublicPrivateBoPair.getRight()
+                .setUsualResidentialAddress(createDummyAddressApi(fieldNamesUpperCase));
+        mockPublicPrivateBoPair.getLeft().setNationality("American");
+
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
+
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, new HashMap<>());
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
+            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
+                    0);
+            assertNull(individualBeneficialOwnerChange.getPsc().getResidentialAddress());
+        }
+    }
+
+
+    @Test
+    void testCovertBeneficialOwnerOtherChangeThroughCollateChanges() {
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerOtherDto.setName("John Doe");
         beneficialOwnerOtherDto.setChipsReference("1234567890");
@@ -644,7 +692,7 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testCollateAllBeneficialOwnerChangesProducesLogsIfPairIsNull() throws IOException {
+    void testCollateAllBeneficialOwnerChangesProducesLogsIfPairIsNull() {
         // setup corporate DTO
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
