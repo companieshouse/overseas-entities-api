@@ -14,14 +14,20 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class OverseasEntityChangeService {
+    public static final String SERVICE = "OverseasEntityChangeService";
+    public static final String NO_PUBLIC_AND_NO_PRIVATE_OE_DATA_FOUND = "No public and no private data found for overseas entity";
+    public static final String NO_PUBLIC_OE_DATA_FOUND = "No public data found for overseas entity";
+    public static final String NO_PRIVATE_OE_DATA_FOUND = "No private data found for overseas entity";
     private final OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     @Autowired
@@ -31,8 +37,22 @@ public class OverseasEntityChangeService {
 
     public List<Change> collateOverseasEntityChanges(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
-            OverseasEntitySubmissionDto updateSubmission) {
+            OverseasEntitySubmissionDto updateSubmission,
+            Map<String, Object> logMap) {
         List<Change> changes = new ArrayList<>();
+
+        if (existingRegistration == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_OE_DATA_FOUND, null, logMap);
+        }
+        else {
+            if (existingRegistration.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_OE_DATA_FOUND, null, logMap);
+            }
+
+            if (existingRegistration.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_OE_DATA_FOUND, null, logMap);
+            }
+        }
 
         if (existingRegistration != null && updateSubmission != null) {
             addNonNullChangeToList(changes, retrieveEntityNameChange(existingRegistration, updateSubmission));
