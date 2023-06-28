@@ -348,7 +348,7 @@ class BeneficialOwnerChangeServiceTest {
 
     @ParameterizedTest
     @MethodSource("booleanWrapperValues")
-    void testCovertBeneficialOwnerIndividualChangeIsAddressSameFlag(
+    void testConvertBeneficialOwnerIndividualChangeIsAddressSameFlag(
             Boolean serviceAddressSameAsPrincipalAddress) {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
