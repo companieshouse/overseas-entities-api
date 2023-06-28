@@ -1,14 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.FormerNameConcatenation.concatenateFormerNames;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
-import uk.gov.companieshouse.api.model.common.Address;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
@@ -88,15 +85,15 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return Objects.equals(addressDto.getPropertyNameNumber(), address.getPremises())
-                && Objects.equals(addressDto.getLine1(), address.getAddressLine1())
-                && Objects.equals(addressDto.getLine2(), address.getAddressLine2())
-                && Objects.equals(addressDto.getTown(), address.getLocality())
-                && Objects.equals(addressDto.getCounty(), address.getRegion())
-                && Objects.equals(addressDto.getCountry(), address.getCountry())
-                && Objects.equals(addressDto.getPoBox(), address.getPoBox())
-                && Objects.equals(addressDto.getCareOf(), address.getCareOf())
-                && Objects.equals(addressDto.getPostcode(), address.getPostalCode());
+        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()), normalise(address.getPremises()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()), normalise(address.getAddressLine1()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()), normalise(address.getAddressLine2()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()), normalise(address.getLocality()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()), normalise(address.getRegion()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()), normalise(address.getCountry()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()), normalise(address.getPoBox()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()), normalise(address.getCareOf()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()), normalise(address.getPostalCode()));
     }
 
     public static boolean equals(LocalDate a, String b) {

@@ -72,6 +72,25 @@ class BeneficialOwnerChangeServiceTest {
 
     ByteArrayOutputStream outputStreamCaptor;
 
+    private static final String[] DUMMY_ADDRESS = new String[]{"John Doe", "PO Box 123", "42", "Baker Street", "Westminster", "London", "Greater London", "SW1A 2AA", "UK"};
+
+
+
+    private AddressDto createDummyAddressDto(String[] fields) {
+        AddressDto addressDto = new AddressDto();
+
+        addressDto.setCareOf(fields[0]);
+        addressDto.setPoBox(fields[1]);
+        addressDto.setPropertyNameNumber(fields[2]);
+        addressDto.setLine1(fields[3]);
+        addressDto.setLine2(fields[4]);
+        addressDto.setTown(fields[5]);
+        addressDto.setCounty(fields[6]);
+        addressDto.setPostcode(fields[7]);
+        addressDto.setCountry(fields[8]);
+
+        return addressDto;
+    }
 
     /**
      * Creates and returns a dummy {@code AddressDto} object with pre-defined data.
@@ -81,36 +100,8 @@ class BeneficialOwnerChangeServiceTest {
      *
      * @return a dummy {@code AddressDto} object with pre-defined data
      */
-    private static AddressDto createDummyAddressDto() {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("123");
-        addressDto.setLine1("Main Street");
-        addressDto.setLine2("Apartment 4B");
-        addressDto.setCounty("Countyshire");
-        addressDto.setTown("Cityville");
-        addressDto.setCountry("United Kingdom");
-        addressDto.setPoBox("98765");
-        addressDto.setCareOf("John Doe");
-        addressDto.setPostcode("AB12 3CD");
-
-        return addressDto;
-    }
-
-    private AddressDto createDummyAddressDto(String[] fields) {
-        AddressDto addressDto = new AddressDto();
-
-        addressDto.setCareOf(fields[0]);
-        addressDto.setPoBox(fields[1]);
-        addressDto.setCareOf(fields[2]);
-        addressDto.setPropertyNameNumber(fields[3]);
-        addressDto.setLine1(fields[4]);
-        addressDto.setLine2(fields[5]);
-        addressDto.setTown(fields[6]);
-        addressDto.setCounty(fields[7]);
-        addressDto.setPostcode(fields[8]);
-        addressDto.setCountry(fields[9]);
-
-        return addressDto;
+    private AddressDto createDummyAddressDto() {
+        return createDummyAddressDto(DUMMY_ADDRESS);
     }
 
     /**
@@ -131,31 +122,42 @@ class BeneficialOwnerChangeServiceTest {
 
         addressApi.setCareOf(fields[0]);
         addressApi.setPoBox(fields[1]);
-        addressApi.setCareOf(fields[2]);
-        addressApi.setPremises(fields[3]);
-        addressApi.setAddressLine1(fields[4]);
-        addressApi.setAddressLine2(fields[5]);
-        addressApi.setLocality(fields[6]);
-        addressApi.setRegion(fields[7]);
-        addressApi.setPostcode(fields[8]);
-        addressApi.setCountry(fields[9]);
+        addressApi.setPremises(fields[2]);
+        addressApi.setAddressLine1(fields[3]);
+        addressApi.setAddressLine2(fields[4]);
+        addressApi.setLocality(fields[5]);
+        addressApi.setRegion(fields[6]);
+        addressApi.setPostcode(fields[7]);
+        addressApi.setCountry(fields[8]);
 
         return addressApi;
     }
 
     private static Address createDummyAddress(String... fields) {
         Address address = new Address();
-        address.setCareOf(fields[7]);
-        address.setPoBox(fields[6]);
-        address.setHouseNameNum(fields[0]);
-        address.setStreet(fields[1]);
-        address.setArea(fields[2]);
-        address.setPostTown(fields[4]);
-        address.setRegion(fields[3]);
-        address.setPostCode(fields[8]);
-        address.setCountry(fields[5]);
+        address.setCareOf(fields[0]);
+        address.setPoBox(fields[1]);
+        address.setHouseNameNum(fields[2]);
+        address.setStreet(fields[3]);
+        address.setArea(fields[4]);
+        address.setPostTown(fields[5]);
+        address.setRegion(fields[6]);
+        address.setPostCode(fields[7]);
+        address.setCountry(fields[8]);
 
         return address;
+    }
+
+    /**
+     * Creates and returns a dummy {@code AddressDto} object with pre-defined data.
+     * <p>
+     * This method is equivalent to {@code createDummyAddress()} but returns an instance of
+     * {@code AddressDto}. The set of data is identical to that in {@code createDummyAddress()}.
+     *
+     * @return a dummy {@code AddressDto} object with pre-defined data
+     */
+    private Address createDummyAddress() {
+        return createDummyAddress(DUMMY_ADDRESS);
     }
 
     private static List<Boolean> booleanWrapperValues() {
@@ -390,8 +392,8 @@ class BeneficialOwnerChangeServiceTest {
 
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
-        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview",
-                "Canada", "54321", "Alice Smith", "L4M 2C5"};
+        String[] serviceAddressData = {"careOf", "poBox", "careOfCompany", "houseNameNum",
+                "street", "area", "postTown", "region", "postCode", "country"};
 
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
         beneficialOwnerIndividualDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
