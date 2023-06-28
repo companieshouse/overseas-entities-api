@@ -23,6 +23,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 public class ManagingOfficerCessationService {
 
   public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
+  public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer - continuing with changes";
+  public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer - changes cannot be created";
   public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Managing Officer ID was found in Private Data";
   public static final String SERVICE = "ManagingOfficerCessationService";
 
@@ -85,6 +87,8 @@ public class ManagingOfficerCessationService {
       return Optional.empty();
     }
 
+    logMissingPublicPrivateData(publicPrivateMoPairOptional.get(), logMap);
+
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());
     if (officerAppointmentId == null) {
       ApiLogger.errorContext(SERVICE, NO_ID_FOUND_IN_PRIVATE_DATA, null, logMap);
@@ -115,6 +119,8 @@ public class ManagingOfficerCessationService {
       return Optional.empty();
     }
 
+    logMissingPublicPrivateData(publicPrivateMoPairOptional.get(), logMap);
+
     var officerAppointmentId = getAppointmentId(publicPrivateMoPairOptional.get());
     if (officerAppointmentId == null) {
       ApiLogger.errorContext(SERVICE, NO_ID_FOUND_IN_PRIVATE_DATA, null, logMap);
@@ -138,6 +144,16 @@ public class ManagingOfficerCessationService {
   private Optional<Pair<CompanyOfficerApi, ManagingOfficerDataApi>> getPublicPrivateMoPairOptional(
       String hashedId,
       Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> combinedMoData) {
-    return Optional.ofNullable(combinedMoData.get(hashedId));
+    return Optional.ofNullable(combinedMoData).map(data -> data.get(hashedId));
+  }
+
+  private void logMissingPublicPrivateData(Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoData, Map<String, Object> logMap) {
+    if (publicPrivateMoData.getLeft() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+    }
+
+    if (publicPrivateMoData.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+    }
   }
 }

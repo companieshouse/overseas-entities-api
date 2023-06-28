@@ -1,13 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -32,10 +24,20 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
+
 @Service
 public class ManagingOfficerChangeService {
-
-    public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
+    public static final String NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND = "No public and no private data found for managing officer";
+    public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer - continuing with changes";
+    public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer - changes cannot be created";
     public static final String SERVICE = "ManagingOfficerChangeService";
     private Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo;
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -44,8 +46,8 @@ public class ManagingOfficerChangeService {
      * Gathers all changes in managing officers
      *
      * @return a list of Change objects, encompassing changes in individual and corporate managing
-     * officers. This consolidated list provides a complete overview of all managing officer changes
-     * in the system.
+     * officers. This consolidated list provides a complete overview of all managing officer
+     * changes in the system.
      */
     public List<Change> collateManagingOfficerChanges(
             Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo,
@@ -72,12 +74,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Individual' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getIndividualManagingOfficerChange() {
+    private List<Change> getIndividualManagingOfficerChange(Map<String, Object> logMap) {
         var individualManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersIndividual();
         return individualManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerIndividualToChange)
+                .map(individualMO -> convertManagingOfficerIndividualToChange(individualMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -95,12 +97,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Corporate' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getCorporateManagingOfficerChange() {
+    private List<Change> getCorporateManagingOfficerChange(Map<String, Object> logMap) {
         var corporateManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersCorporate();
         return corporateManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerCorporateToChange)
+                .map(corporateMO -> convertManagingOfficerCorporateToChange(corporateMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -115,7 +117,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<IndividualManagingOfficer> convertManagingOfficerIndividualToChange(
-            ManagingOfficerIndividualDto managingOfficerIndividualDto) {
+            ManagingOfficerIndividualDto managingOfficerIndividualDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new IndividualManagingOfficerChange();
 
         var officer = new IndividualManagingOfficer();
@@ -123,32 +126,36 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerIndividualDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<IndividualManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager = new ChangeManager<>(
                 officer, publicPrivateMoPair);
 
-        managingOfficerChange.setAppointmentId(
-                publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
+        managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
 
-        if (publicPrivateMoPair.getLeft() != null
-                && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
+        if (publicPrivateMoPair.getLeft() != null && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
             officer.setStartDate(managingOfficerIndividualDto.getStartDate());
         }
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerIndividualDto.getServiceAddress(),
-                managingOfficerIndividualDto.getUsualResidentialAddress(),
-                managingOfficerIndividualDto.getRoleAndResponsibilities(),
-                managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress()
-        );
+                managingOfficerIndividualDto.getRoleAndResponsibilities());
 
         PersonName personName = null;
-        if (managingOfficerIndividualDto.getFirstName() != null
-                && managingOfficerIndividualDto.getLastName() != null) {
+        if (managingOfficerIndividualDto.getFirstName() != null && managingOfficerIndividualDto.getLastName() != null) {
             personName = new PersonName(managingOfficerIndividualDto.getFirstName(),
                     managingOfficerIndividualDto.getLastName());
         }
@@ -182,8 +189,7 @@ public class ManagingOfficerChangeService {
                 IndividualManagingOfficer::setOccupation
         );
 
-        var nationalitySubmission = generateNationalityOtherField(
-                managingOfficerIndividualDto.getNationality(),
+        var nationalitySubmission = generateNationalityOtherField(managingOfficerIndividualDto.getNationality(),
                 managingOfficerIndividualDto.getSecondNationality());
         hasChange |= changeManager.compareAndBuildLeftChange(
                 nationalitySubmission,
@@ -205,7 +211,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<CorporateManagingOfficer> convertManagingOfficerCorporateToChange(
-            ManagingOfficerCorporateDto managingOfficerCorporateDto) {
+            ManagingOfficerCorporateDto managingOfficerCorporateDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new CorporateManagingOfficerChange();
 
         var officer = new CorporateManagingOfficer();
@@ -213,19 +220,27 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerCorporateDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<CorporateManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager
                 = new ChangeManager<>(officer, publicPrivateMoPair);
 
-        managingOfficerChange.setAppointmentId(
-                publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
+        managingOfficerChange.setAppointmentId(publicPrivateMoPair.getRight().getManagingOfficerAppointmentId());
 
-        if (publicPrivateMoPair.getLeft() != null
-                && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
+        if (publicPrivateMoPair.getLeft() != null && publicPrivateMoPair.getLeft().getAppointedOn() == null) {
             officer.setStartDate(managingOfficerCorporateDto.getStartDate());
         }
 

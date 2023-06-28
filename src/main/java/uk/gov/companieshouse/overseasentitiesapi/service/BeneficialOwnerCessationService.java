@@ -21,6 +21,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 public class BeneficialOwnerCessationService {
 
   public static final String NO_PAIR_FOUND = "No matching BO was found in the database";
+  public static final String NO_PUBLIC_BO_DATA_FOUND = "No public data found for beneficial owner - continuing with changes";
+  public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner - changes cannot be created";
   public static final String NO_ID_FOUND_IN_PRIVATE_DATA = "No Beneficial Owner ID was found in Private Data";
   public static final String SERVICE = "BeneficialOwnerCessationService";
 
@@ -90,6 +92,8 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
+    logMissingPublicPrivateData(publicPrivateBoPairOptional.get(), logMap);
+
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
       ApiLogger.errorContext(SERVICE, NO_ID_FOUND_IN_PRIVATE_DATA, null, logMap);
@@ -116,6 +120,8 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
+    logMissingPublicPrivateData(publicPrivateBoPairOptional.get(), logMap);
+
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
       ApiLogger.errorContext(SERVICE, NO_ID_FOUND_IN_PRIVATE_DATA, null, logMap);
@@ -137,6 +143,8 @@ public class BeneficialOwnerCessationService {
       return Optional.empty();
     }
 
+    logMissingPublicPrivateData(publicPrivateBoPairOptional.get(), logMap);
+
     var appointmentId = getAppointmentId(publicPrivateBoPairOptional.get());
     if(appointmentId == null){
       ApiLogger.errorContext(SERVICE, NO_ID_FOUND_IN_PRIVATE_DATA, null, logMap);
@@ -155,6 +163,16 @@ public class BeneficialOwnerCessationService {
 
   private Optional<Pair<PscApi, PrivateBoDataApi>> getPublicPrivateBoPairOptional(
           String hashedId, Map<String, Pair<PscApi, PrivateBoDataApi>> combinedBoData) {
-    return Optional.ofNullable(combinedBoData.get(hashedId));
+    return Optional.ofNullable(combinedBoData).map(data -> data.get(hashedId));
+  }
+
+  private void logMissingPublicPrivateData(Pair<PscApi, PrivateBoDataApi> publicPrivateBoData, Map<String, Object> logMap) {
+    if (publicPrivateBoData.getLeft() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PUBLIC_BO_DATA_FOUND, null, logMap);
+    }
+
+    if (publicPrivateBoData.getRight() == null) {
+      ApiLogger.errorContext(SERVICE, NO_PRIVATE_BO_DATA_FOUND, null, logMap);
+    }
   }
 }

@@ -208,10 +208,10 @@ public class FilingsService {
 
       updateSubmission.getChanges()
               .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
-                      submissionDto));
+                      submissionDto, logMap));
       updateSubmission.getChanges()
               .addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-                      publicPrivateBoData, submissionDto));
+                      publicPrivateBoData, submissionDto, logMap));
       updateSubmission.getAdditions()
               .addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
       updateSubmission.getCessations()
@@ -219,7 +219,7 @@ public class FilingsService {
                       publicPrivateBoData, logMap));
       updateSubmission.getChanges()
               .addAll(managingOfficerChangeService.collateManagingOfficerChanges(
-                      publicPrivateMoData, submissionDto));
+                      publicPrivateMoData, submissionDto, logMap));
       updateSubmission.getCessations()
               .addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto,
                       publicPrivateMoData, logMap));
