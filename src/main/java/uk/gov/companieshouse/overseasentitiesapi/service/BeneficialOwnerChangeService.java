@@ -184,7 +184,10 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerCorporateDto.getServiceAddress(),
         beneficialOwnerCorporateDto.getPrincipalAddress(),
-        collectedNatureOfControl, beneficialOwnerCorporateDto.getOnSanctionsList());
+        collectedNatureOfControl,
+        beneficialOwnerCorporateDto.getOnSanctionsList(),
+        beneficialOwnerCorporateDto.getServiceAddressSameAsPrincipalAddress()
+    );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
         beneficialOwnerCorporateDto.getName(),
@@ -277,7 +280,9 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(),
-        collectedNatureOfControl, beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList()
+        collectedNatureOfControl,
+        beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(),
+        beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress()
     );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
@@ -360,7 +365,9 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerIndividualDto.getServiceAddress(),
         beneficialOwnerIndividualDto.getUsualResidentialAddress(),
-        collectedNatureOfControl, beneficialOwnerIndividualDto.getOnSanctionsList());
+        collectedNatureOfControl,
+        beneficialOwnerIndividualDto.getOnSanctionsList(),
+        beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress());
 
     var delimiter = ",";
     var submissionNationalityArray = new String[]{beneficialOwnerIndividualDto.getNationality(), beneficialOwnerIndividualDto.getSecondNationality()};
@@ -411,11 +418,12 @@ public class BeneficialOwnerChangeService {
           AddressDto serviceAddress,
           AddressDto residentialAddress,
           List<String> natureOfControls,
-          Boolean isOnSanctionsList
+          Boolean isOnSanctionsList,
+          Boolean serviceAddressSameAsResidentialAddress
   ) {
 
     var hasChange = changeManager.compareAndBuildRightChange(
-        serviceAddress,
+        serviceAddressSameAsResidentialAddress == Boolean.TRUE ? residentialAddress : serviceAddress,
         PrivateBoDataApi::getPrincipalAddress,
         TypeConverter::addressDtoToAddress,
         ComparisonHelper::equals,

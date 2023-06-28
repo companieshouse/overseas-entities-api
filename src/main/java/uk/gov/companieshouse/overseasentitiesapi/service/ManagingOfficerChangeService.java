@@ -51,13 +51,14 @@ public class ManagingOfficerChangeService {
      */
     public List<Change> collateManagingOfficerChanges(
             Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo,
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            Map<String, Object> logMap) {
         this.publicPrivateMo = publicPrivateMo;
         this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
 
         List<Change> changes = new ArrayList<>();
-        changes.addAll(getIndividualManagingOfficerChange());
-        changes.addAll(getCorporateManagingOfficerChange());
+        changes.addAll(getIndividualManagingOfficerChange(logMap));
+        changes.addAll(getCorporateManagingOfficerChange(logMap));
         return changes;
     }
 
@@ -152,7 +153,10 @@ public class ManagingOfficerChangeService {
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerIndividualDto.getServiceAddress(),
-                managingOfficerIndividualDto.getRoleAndResponsibilities());
+                managingOfficerIndividualDto.getUsualResidentialAddress(),
+                managingOfficerIndividualDto.getRoleAndResponsibilities(),
+                managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress()
+        );
 
         PersonName personName = null;
         if (managingOfficerIndividualDto.getFirstName() != null && managingOfficerIndividualDto.getLastName() != null) {

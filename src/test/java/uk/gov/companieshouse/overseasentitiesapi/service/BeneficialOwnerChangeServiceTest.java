@@ -12,14 +12,11 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
@@ -48,31 +45,31 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 class BeneficialOwnerChangeServiceTest {
 
-  @InjectMocks
-  BeneficialOwnerChangeService beneficialOwnerChangeService;
+    @InjectMocks
+    BeneficialOwnerChangeService beneficialOwnerChangeService;
 
-  @Mock
-  OverseasEntitySubmissionDto overseasEntitySubmissionDto;
+    @Mock
+    OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
-  @Mock
-  Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
+    @Mock
+    Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
 
-  Identification mockedIdentification;
+    Identification mockedIdentification;
 
-  @Mock
-  Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPair;
+    @Mock
+    Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPair;
 
-  @Mock
-  Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairLeftNull;
+    @Mock
+    Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairLeftNull;
 
     @Mock
     Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairRightNull;
-  @Mock
-  Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairBothNull;
+    @Mock
+    Pair<PscApi, PrivateBoDataApi> mockPublicPrivateBoPairBothNull;
 
-  Map<String, Object> logMap = new HashMap<>();
+    Map<String, Object> logMap = new HashMap<>();
 
-  ByteArrayOutputStream outputStreamCaptor;
+    ByteArrayOutputStream outputStreamCaptor;
 
 
     /**
@@ -156,41 +153,46 @@ class BeneficialOwnerChangeServiceTest {
         return address;
     }
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
+    private static List<Boolean> booleanWrapperValues() {
+        return Arrays.asList(true, false, null);
+    }
 
-    mockedIdentification = new Identification();
-    mockedIdentification.setPlaceRegistered("London");
-    mockedIdentification.setLegalAuthority("UK Law");
-    mockedIdentification.setRegistrationNumber("123456");
-    mockedIdentification.setCountryRegistered("UK");
-    mockedIdentification.setLegalForm("Private Limited");
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-    PrivateBoDataApi mockRightPart = new PrivateBoDataApi();
-    mockRightPart.setPscId("123");
-    PscApi mockLeftPart = mock(PscApi.class);
+        mockedIdentification = new Identification();
+        mockedIdentification.setPlaceRegistered("London");
+        mockedIdentification.setLegalAuthority("UK Law");
+        mockedIdentification.setRegistrationNumber("123456");
+        mockedIdentification.setCountryRegistered("UK");
+        mockedIdentification.setLegalForm("Private Limited");
 
-    when(mockPublicPrivateBoPair.getRight()).thenReturn(mockRightPart);
-    when(mockPublicPrivateBoPair.getLeft()).thenReturn(mockLeftPart);
-    when(mockLeftPart.getIdentification()).thenReturn(mockedIdentification);
+        PrivateBoDataApi mockRightPart = new PrivateBoDataApi();
+        mockRightPart.setPscId("123");
+        PscApi mockLeftPart = mock(PscApi.class);
 
-    when(mockPublicPrivateBoPairLeftNull.getRight()).thenReturn(mockRightPart);
-    when(mockPublicPrivateBoPairLeftNull.getLeft()).thenReturn(null);
+        when(mockPublicPrivateBoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateBoPair.getLeft()).thenReturn(mockLeftPart);
+        when(mockLeftPart.getIdentification()).thenReturn(mockedIdentification);
 
-    when(mockPublicPrivateBoPairRightNull.getRight()).thenReturn(null);
-    when(mockPublicPrivateBoPairRightNull.getLeft()).thenReturn(mockLeftPart);
+        when(mockPublicPrivateBoPairLeftNull.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateBoPairLeftNull.getLeft()).thenReturn(null);
+
+        when(mockPublicPrivateBoPairRightNull.getRight()).thenReturn(null);
+        when(mockPublicPrivateBoPairRightNull.getLeft()).thenReturn(mockLeftPart);
 
         when(mockPublicPrivateBoPairBothNull.getRight()).thenReturn(null);
-    when(mockPublicPrivateBoPairBothNull.getLeft()).thenReturn(null);beneficialOwnerChangeService = new BeneficialOwnerChangeService();
-  outputStreamCaptor = new ByteArrayOutputStream();
-  }
+        when(mockPublicPrivateBoPairBothNull.getLeft()).thenReturn(null);
+        beneficialOwnerChangeService = new BeneficialOwnerChangeService();
+        outputStreamCaptor = new ByteArrayOutputStream();
+    }
 
-  @AfterEach
-  void tearDown() {
-    outputStreamCaptor.reset();
-    System.setOut(System.out);
-  }
+    @AfterEach
+    void tearDown() {
+        outputStreamCaptor.reset();
+        System.setOut(System.out);
+    }
 
     @Test
     void testConvertBeneficialOwnerCorporateChangeThroughCollateChanges() {
@@ -198,77 +200,10 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerCorporateDto.setName("John Smith");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
 
-    when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
-        mockPublicPrivateBoPair);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
-        List.of(beneficialOwnerCorporateDto));
-
-        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-                publicPrivateBo, overseasEntitySubmissionDto, logMap);
-
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
-
-        if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
-            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
-                    0);
-            assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
-            assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
-        }
-    }
-
-  @ParameterizedTest
-  @MethodSource("booleanWrapperValues")
-  void testCovertBeneficialOwnerCorporateChangeIsAddressSameFlag(Boolean serviceAddressSameAsPrincipalAddress) {
-
-    BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
-    beneficialOwnerCorporateDto.setChipsReference("1234567890");
-    beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
-    beneficialOwnerCorporateDto.setServiceAddressSameAsPrincipalAddress(serviceAddressSameAsPrincipalAddress);
-
-    when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
-            mockPublicPrivateBoPair);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(List.of(beneficialOwnerCorporateDto));
-
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-            publicPrivateBo, overseasEntitySubmissionDto, logMap);
-
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
-
-    if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
-      CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(0);
-
-      assertEquals(createDummyAddress(), corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
-
-      if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
-        assertEquals(createDummyAddress(), corporateBeneficialOwnerChange.getPsc().getServiceAddress());
-      } else {
-        assertNull(corporateBeneficialOwnerChange.getPsc().getServiceAddress());
-      }
-
-      assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
-    }
-  }
-
-    @Test
-    void testCovertBeneficialOwnerCorporateServiceAddressAndRegistrationAddress() {
-
-        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
-        beneficialOwnerCorporateDto.setChipsReference("1234567890");
-        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
-
-        beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
-        beneficialOwnerCorporateDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
-
-
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
-        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(List.of(beneficialOwnerCorporateDto));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+                List.of(beneficialOwnerCorporateDto));
 
         List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo, overseasEntitySubmissionDto, logMap);
@@ -279,10 +214,87 @@ class BeneficialOwnerChangeServiceTest {
         assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
 
         if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
-            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(0);
+            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
+                    0);
+            assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
+            assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
+        }
+    }
 
-            assertEquals(createDummyAddress(), corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData), corporateBeneficialOwnerChange.getPsc().getServiceAddress());
+    @ParameterizedTest
+    @MethodSource("booleanWrapperValues")
+    void testCovertBeneficialOwnerCorporateChangeIsAddressSameFlag(
+            Boolean serviceAddressSameAsPrincipalAddress) {
+
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
+        beneficialOwnerCorporateDto.setServiceAddressSameAsPrincipalAddress(
+                serviceAddressSameAsPrincipalAddress);
+
+        when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+                List.of(beneficialOwnerCorporateDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
+            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
+                    0);
+
+            assertEquals(createDummyAddress(),
+                    corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
+
+            if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
+                assertEquals(createDummyAddress(),
+                        corporateBeneficialOwnerChange.getPsc().getServiceAddress());
+            } else {
+                assertNull(corporateBeneficialOwnerChange.getPsc().getServiceAddress());
+            }
+
+            assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
+        }
+    }
+
+    @Test
+    void testCovertBeneficialOwnerCorporateServiceAddressAndRegistrationAddress() {
+
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview",
+                "Canada", "54321", "Alice Smith", "L4M 2C5"};
+
+        beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
+        beneficialOwnerCorporateDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+
+        when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+                List.of(beneficialOwnerCorporateDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
+            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
+                    0);
+
+            assertEquals(createDummyAddress(),
+                    corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData),
+                    corporateBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
         }
@@ -327,57 +339,20 @@ class BeneficialOwnerChangeServiceTest {
         }
     }
 
-  @ParameterizedTest
-  @MethodSource("booleanWrapperValues")
-  void testCovertBeneficialOwnerIndividualChangeIsAddressSameFlag(
-          Boolean serviceAddressSameAsPrincipalAddress) {
-    BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567890");
-    beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
-    beneficialOwnerIndividualDto.setServiceAddressSameAsUsualResidentialAddress(serviceAddressSameAsPrincipalAddress);
-
-    when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
-            mockPublicPrivateBoPair);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
-            List.of(beneficialOwnerIndividualDto));
-
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-            publicPrivateBo, overseasEntitySubmissionDto, logMap);
-
-    assertEquals(1, result.size());
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
-    assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
-
-    if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
-      IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(0);
-
-      assertEquals(createDummyAddress(), individualBeneficialOwnerChange.getPsc().getResidentialAddress());
-
-      if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
-        assertEquals(createDummyAddress(), individualBeneficialOwnerChange.getPsc().getServiceAddress());
-      } else {
-        assertNull(individualBeneficialOwnerChange.getPsc().getServiceAddress());
-      }
-
-      assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
-    }
-  }
-
-    @Test
-    void testCovertBeneficialOwnerIndividualChangeServiceAddressAndRegistrationAddress() {
-
+    @ParameterizedTest
+    @MethodSource("booleanWrapperValues")
+    void testCovertBeneficialOwnerIndividualChangeIsAddressSameFlag(
+            Boolean serviceAddressSameAsPrincipalAddress) {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
-        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
-
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
-        beneficialOwnerIndividualDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
-
+        beneficialOwnerIndividualDto.setServiceAddressSameAsUsualResidentialAddress(
+                serviceAddressSameAsPrincipalAddress);
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
-        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(List.of(beneficialOwnerIndividualDto));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
 
         List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo, overseasEntitySubmissionDto, logMap);
@@ -388,16 +363,61 @@ class BeneficialOwnerChangeServiceTest {
         assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
 
         if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
-            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(0);
+            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
+                    0);
 
-            assertEquals(createDummyAddress(), individualBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData), individualBeneficialOwnerChange.getPsc().getServiceAddress());
+            assertEquals(createDummyAddress(),
+                    individualBeneficialOwnerChange.getPsc().getResidentialAddress());
+
+            if (serviceAddressSameAsPrincipalAddress == Boolean.TRUE) {
+                assertEquals(createDummyAddress(),
+                        individualBeneficialOwnerChange.getPsc().getServiceAddress());
+            } else {
+                assertNull(individualBeneficialOwnerChange.getPsc().getServiceAddress());
+            }
 
             assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
         }
     }
 
-  @Test
+    @Test
+    void testCovertBeneficialOwnerIndividualChangeServiceAddressAndRegistrationAddress() {
+
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567890");
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview",
+                "Canada", "54321", "Alice Smith", "L4M 2C5"};
+
+        beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
+        beneficialOwnerIndividualDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
+            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
+                    0);
+
+            assertEquals(createDummyAddress(),
+                    individualBeneficialOwnerChange.getPsc().getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData),
+                    individualBeneficialOwnerChange.getPsc().getServiceAddress());
+
+            assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
+        }
+    }
+
+    @Test
     void testConvertBeneficialOwnerOtherChangeThroughCollateChanges() {
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerOtherDto.setName("John Doe");
@@ -476,15 +496,16 @@ class BeneficialOwnerChangeServiceTest {
 
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerOtherDto.setChipsReference("1234567890");
-        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview", "Canada", "54321", "Alice Smith", "L4M 2C5"};
+        String[] serviceAddressData = {"789", "Crescent Lane", "Unit 3A", "Bloomshire", "Lakeview",
+                "Canada", "54321", "Alice Smith", "L4M 2C5"};
 
         beneficialOwnerOtherDto.setPrincipalAddress(createDummyAddressDto());
         beneficialOwnerOtherDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
 
-
         when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
-        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(List.of(beneficialOwnerOtherDto));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
+                List.of(beneficialOwnerOtherDto));
 
         List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo, overseasEntitySubmissionDto, logMap);
@@ -495,12 +516,17 @@ class BeneficialOwnerChangeServiceTest {
         assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
 
         if (result.get(0) instanceof OtherBeneficialOwnerChange) {
-            OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(0);
+            OtherBeneficialOwnerChange governmentOrPublicAuthorityBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(
+                    0);
 
-            assertEquals(createDummyAddress(), governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData), governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getServiceAddress());
+            assertEquals(createDummyAddress(),
+                    governmentOrPublicAuthorityBeneficialOwnerChange.getPsc()
+                            .getResidentialAddress());
+            assertEquals(createDummyAddress(serviceAddressData),
+                    governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getServiceAddress());
 
-            assertEquals("123", governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
+            assertEquals("123",
+                    governmentOrPublicAuthorityBeneficialOwnerChange.getAppointmentId());
         }
     }
 
@@ -517,8 +543,8 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
                 List.of(beneficialOwnerOtherDto));
 
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-        publicPrivateBo, overseasEntitySubmissionDto, logMap);
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
         assertEquals(1, result.size());
         assertNotNull(result);
@@ -608,7 +634,6 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
                 List.of(beneficialOwnerOtherDto));
 
-
         System.setOut(new PrintStream(outputStreamCaptor));
 
         List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
@@ -647,16 +672,14 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
                 List.of(beneficialOwnerOtherDto));
 
-
         System.setOut(new PrintStream(outputStreamCaptor));
-
-
 
         var result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
         assertEquals(3,
-                StringUtils.countMatches(outputStreamCaptor.toString(), "No public and no private data found for beneficial owner"));
+                StringUtils.countMatches(outputStreamCaptor.toString(),
+                        "No public and no private data found for beneficial owner"));
         assertEquals(0, result.size());
     }
 
@@ -676,23 +699,25 @@ class BeneficialOwnerChangeServiceTest {
         assertTrue(result.isEmpty());
     }
 
-  @Test
-  void testCollateBeneficialOwnerChangesEmptyRightOfPairNull() {
-    BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567891");
+    @Test
+    void testCollateBeneficialOwnerChangesEmptyRightOfPairNull() {
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
-    when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
-        mockPublicPrivateBoPairRightNull);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
-        List.of(beneficialOwnerIndividualDto));
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPairRightNull);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-    assertTrue(outputStreamCaptor.toString().contains("No private data found for beneficial owner - changes cannot be created"));
-    assertTrue(result.isEmpty());
-  }
+        assertTrue(outputStreamCaptor.toString().contains(
+                "No private data found for beneficial owner - changes cannot be created"));
+        assertTrue(result.isEmpty());
+    }
 
     @Test
     void testCollateBeneficialOwnerChangesIndividualLeftOfPairNull() {
@@ -706,11 +731,14 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
                 List.of(beneficialOwnerIndividualDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No public data found for beneficial owner - continuing with changes"));assertEquals(1, result.size());
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public data found for beneficial owner - continuing with changes"));
+        assertEquals(1, result.size());
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
@@ -734,11 +762,14 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
                 List.of(beneficialOwnerCorporateDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No public data found for beneficial owner - continuing with changes"));assertEquals(1, result.size());
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public data found for beneficial owner - continuing with changes"));
+        assertEquals(1, result.size());
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
@@ -762,11 +793,14 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
                 List.of(beneficialOwnerOtherDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No public data found for beneficial owner - continuing with changes"));assertEquals(1, result.size());
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public data found for beneficial owner - continuing with changes"));
+        assertEquals(1, result.size());
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertInstanceOf(OtherBeneficialOwnerChange.class, result.get(0));
@@ -782,18 +816,21 @@ class BeneficialOwnerChangeServiceTest {
     @Test
     void testCollateBeneficialOwnerChangesEmptyLeftOfPairNull() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairLeftNull);
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
                 List.of(beneficialOwnerIndividualDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No public data found for beneficial owner - continuing with changes"));assertTrue(result.isEmpty());
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public data found for beneficial owner - continuing with changes"));
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -806,11 +843,14 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
                 List.of(beneficialOwnerIndividualDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No private data found for beneficial owner - changes cannot be created"));assertTrue(result.isEmpty());
+        assertTrue(outputStreamCaptor.toString().contains(
+                "No private data found for beneficial owner - changes cannot be created"));
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -825,11 +865,13 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
                 List.of(beneficialOwnerCorporateDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No private data found for beneficial owner - changes cannot be created"));
+        assertTrue(outputStreamCaptor.toString().contains(
+                "No private data found for beneficial owner - changes cannot be created"));
         assertTrue(result.isEmpty());
     }
 
@@ -845,49 +887,56 @@ class BeneficialOwnerChangeServiceTest {
         when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
                 List.of(beneficialOwnerGovernmentOrPublicAuthorityDto));
 
-        System.setOut(new PrintStream(outputStreamCaptor));List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+        System.setOut(new PrintStream(outputStreamCaptor));
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                 publicPrivateBo,
                 overseasEntitySubmissionDto, logMap);
 
-        assertTrue(outputStreamCaptor.toString().contains("No private data found for beneficial owner - changes cannot be created"));
+        assertTrue(outputStreamCaptor.toString().contains(
+                "No private data found for beneficial owner - changes cannot be created"));
         assertTrue(result.isEmpty());
-  }
+    }
 
-  @Test
-  void testCollateBeneficialOwnerChangesLeftAndRightOfPairNull() {
-    BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567891");
+    @Test
+    void testCollateBeneficialOwnerChangesLeftAndRightOfPairNull() {
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
-    when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
-            mockPublicPrivateBoPairBothNull);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
-            List.of(beneficialOwnerIndividualDto));
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPairBothNull);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
 
-    System.setOut(new PrintStream(outputStreamCaptor));
+        System.setOut(new PrintStream(outputStreamCaptor));
 
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-            publicPrivateBo, overseasEntitySubmissionDto, logMap);
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
-    assertTrue(outputStreamCaptor.toString().contains("No public data found for beneficial owner - continuing with changes"));
-    assertTrue(outputStreamCaptor.toString().contains("No private data found for beneficial owner - changes cannot be created"));
-    assertTrue(result.isEmpty());
-  }
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public data found for beneficial owner - continuing with changes"));
+        assertTrue(outputStreamCaptor.toString().contains(
+                "No private data found for beneficial owner - changes cannot be created"));
+        assertTrue(result.isEmpty());
+    }
 
-  @Test
-  void testCollateBeneficialOwnerChangesPublicPrivateDataNull() {
-    BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-    beneficialOwnerIndividualDto.setChipsReference("1234567891");
+    @Test
+    void testCollateBeneficialOwnerChangesPublicPrivateDataNull() {
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567891");
 
-    when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(null);
-    when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
-            List.of(beneficialOwnerIndividualDto));
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                null);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
 
-    System.setOut(new PrintStream(outputStreamCaptor));
+        System.setOut(new PrintStream(outputStreamCaptor));
 
-    List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
-            publicPrivateBo, overseasEntitySubmissionDto, logMap);
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
 
-    assertTrue(outputStreamCaptor.toString().contains("No public and no private data found for beneficial owner"));assertTrue(result.isEmpty());
+        assertTrue(outputStreamCaptor.toString()
+                .contains("No public and no private data found for beneficial owner"));
+        assertTrue(result.isEmpty());
     }
 
     @Test
