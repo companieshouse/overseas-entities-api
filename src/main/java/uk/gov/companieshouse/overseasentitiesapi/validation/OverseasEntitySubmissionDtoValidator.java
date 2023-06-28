@@ -71,20 +71,23 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        // Method to be added to as Update journey developed
-        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
-        // Change to Statement Validation once BO/MO Statements are complete
-        // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
+            // Method to be added to as Update journey developed
+            validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+            // Change to Statement Validation once BO/MO Statements are complete
+            // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+
             dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                     overseasEntitySubmissionDto.getDueDiligence(),
                     overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                     errors,
                     loggingContext);
+        }
+        else {
+            validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
         }
 
         // Change when trusts are added:
@@ -202,5 +205,11 @@ public class OverseasEntitySubmissionDtoValidator {
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         return errors;
+    }
+
+    private void validateNoChangeUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
+            presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        }
     }
 }
