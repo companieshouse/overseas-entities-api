@@ -61,6 +61,10 @@ public class OverseasEntitiesService {
         return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
     }
 
+    public boolean isSubmissionARemove(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.REMOVE;
+    }
+
     SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
@@ -69,7 +73,11 @@ public class OverseasEntitiesService {
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();
-        if (submissionOpt.get().isForUpdate()) {
+        if (submissionOpt.get().isRemoveEntity()) {
+            ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
+                    entityNumber));
+            return SubmissionType.REMOVE;
+        } else if (submissionOpt.get().isForUpdate()) {
             ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.UPDATE;
