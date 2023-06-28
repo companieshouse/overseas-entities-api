@@ -24,7 +24,10 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -150,7 +153,10 @@ public class ManagingOfficerChangeService {
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerIndividualDto.getServiceAddress(),
-                managingOfficerIndividualDto.getRoleAndResponsibilities());
+                managingOfficerIndividualDto.getUsualResidentialAddress(),
+                managingOfficerIndividualDto.getRoleAndResponsibilities(),
+                managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress()
+        );
 
         PersonName personName = null;
         if (managingOfficerIndividualDto.getFirstName() != null && managingOfficerIndividualDto.getLastName() != null) {
@@ -244,7 +250,10 @@ public class ManagingOfficerChangeService {
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerCorporateDto.getServiceAddress(),
-                managingOfficerCorporateDto.getRoleAndResponsibilities());
+                managingOfficerCorporateDto.getPrincipalAddress(),
+                managingOfficerCorporateDto.getRoleAndResponsibilities(),
+                managingOfficerCorporateDto.getServiceAddressSameAsPrincipalAddress()
+        );
 
         hasChange |= changeManager.compareAndBuildLeftChange(
                 managingOfficerCorporateDto.getName(),
@@ -308,9 +317,13 @@ public class ManagingOfficerChangeService {
     private <P extends Officer> boolean setCommonAttributes(
             ChangeManager<P, CompanyOfficerApi, ManagingOfficerDataApi> changeManager,
             AddressDto serviceAddress,
-            String role) {
+            AddressDto residentialAddress,
+            String role,
+            Boolean addressesAreSameFlag
+    ) {
+
         var hasChange = changeManager.compareAndBuildRightChange(
-                serviceAddress,
+                Boolean.TRUE.equals(addressesAreSameFlag) ? residentialAddress : serviceAddress,
                 ManagingOfficerDataApi::getPrincipalAddress,
                 TypeConverter::addressDtoToAddress,
                 ComparisonHelper::equals,

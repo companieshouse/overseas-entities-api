@@ -120,18 +120,9 @@ public class CollatedOverseasEntityDataMock {
         return updateSubmission;
     }
 
-    public static OverseasEntitySubmissionDto getUpdateSubmissionPrincipalAddressDifferent() {
-        OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
-        updateSubmission.getEntity().setPrincipalAddress(
-                new AddressDto() {{
-                    setCountry(UPDATED_ADDRESS_COUNTRY);
-                }});
-
-        return updateSubmission;
-    }
-
     public static OverseasEntitySubmissionDto getUpdateSubmissionCorrespondenceAddressDifferent() {
         OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
+
         updateSubmission.getEntity().setServiceAddress(
                 new AddressDto() {{
                     setCountry(UPDATED_ADDRESS_COUNTRY);

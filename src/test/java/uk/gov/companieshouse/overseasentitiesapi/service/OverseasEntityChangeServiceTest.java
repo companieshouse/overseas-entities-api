@@ -118,24 +118,24 @@ class OverseasEntityChangeServiceTest {
     @Test
     void testCollateOverseasEntityChangesOnlyPrincipalAddressChangedReturnsChangeList() {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
-        OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionPrincipalAddressDifferent();
+        OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionCorrespondenceAddressDifferent();
 
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof PrincipalAddressChange);
+        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
     }
 
     @Test
     void testCollateOverseasEntityChangesUpdatedPrincipalAddressSameAsCorrespondenceChangedReturnsChangeList() {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
-        OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionPrincipalAddressDifferent();
+        OverseasEntitySubmissionDto updateSubmission = getUpdateSubmissionCorrespondenceAddressDifferent();
         updateSubmission.getEntity().setServiceAddressSameAsPrincipalAddress(true);
 
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof PrincipalAddressChange);
+        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
     }
 
     @Test

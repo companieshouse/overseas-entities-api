@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,18 +16,23 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.Change;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CompanyIdentificationChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CorrespondenceAddressChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityEmailAddressChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.PrincipalAddressChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class OverseasEntityChangeService {
+
     public static final String SERVICE = "OverseasEntityChangeService";
     public static final String NO_PUBLIC_AND_NO_PRIVATE_OE_DATA_FOUND = "No public and no private data found for overseas entity";
     public static final String NO_PUBLIC_OE_DATA_FOUND = "No public data found for overseas entity";
@@ -31,7 +40,8 @@ public class OverseasEntityChangeService {
     private final OverseasEntityChangeComparator overseasEntityChangeComparator;
 
     @Autowired
-    public OverseasEntityChangeService(OverseasEntityChangeComparator overseasEntityChangeComparator) {
+    public OverseasEntityChangeService(
+            OverseasEntityChangeComparator overseasEntityChangeComparator) {
         this.overseasEntityChangeComparator = overseasEntityChangeComparator;
     }
 
@@ -55,11 +65,16 @@ public class OverseasEntityChangeService {
         }
 
         if (existingRegistration != null && updateSubmission != null) {
-            addNonNullChangeToList(changes, retrieveEntityNameChange(existingRegistration, updateSubmission));
-            addNonNullChangeToList(changes, retrievePrincipalAddressChange(existingRegistration, updateSubmission));
-            addNonNullChangeToList(changes, retrieveCorrespondenceAddressChange(existingRegistration, updateSubmission));
-            addNonNullChangeToList(changes, retrieveCompanyIdentificationChange(existingRegistration, updateSubmission));
-            addNonNullChangeToList(changes, retrieveEmailAddressChange(existingRegistration, updateSubmission));
+            addNonNullChangeToList(changes,
+                    retrieveEntityNameChange(existingRegistration, updateSubmission));
+            addNonNullChangeToList(changes,
+                    retrievePrincipalAddressChange(existingRegistration, updateSubmission));
+            addNonNullChangeToList(changes,
+                    retrieveCorrespondenceAddressChange(existingRegistration, updateSubmission));
+            addNonNullChangeToList(changes,
+                    retrieveCompanyIdentificationChange(existingRegistration, updateSubmission));
+            addNonNullChangeToList(changes,
+                    retrieveEmailAddressChange(existingRegistration, updateSubmission));
         }
 
         return changes;
@@ -87,9 +102,24 @@ public class OverseasEntityChangeService {
     private PrincipalAddressChange retrievePrincipalAddressChange(
             Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
             OverseasEntitySubmissionDto updateSubmission) {
-        RegisteredOfficeAddressApi existingPrincipalAddress = Optional.ofNullable(existingRegistration.getLeft())
+        RegisteredOfficeAddressApi existingPrincipalAddress = Optional.ofNullable(
+                        existingRegistration.getLeft())
                 .map(CompanyProfileApi::getRegisteredOfficeAddress)
                 .orElse(null);
+
+        AddressDto updatedAddress = Optional.ofNullable(updateSubmission)
+                .map(OverseasEntitySubmissionDto::getEntity)
+                .map(EntityDto::getPrincipalAddress)
+                .orElse(null);
+
+        return overseasEntityChangeComparator.comparePrincipalAddress(existingPrincipalAddress,
+                updatedAddress);
+    }
+
+    private CorrespondenceAddressChange retrieveCorrespondenceAddressChange(
+            Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
+            OverseasEntitySubmissionDto updateSubmission) {
+
         var entityDto = Optional.ofNullable(updateSubmission)
                 .map(OverseasEntitySubmissionDto::getEntity)
                 .orElse(null);
@@ -99,28 +129,22 @@ public class OverseasEntityChangeService {
         if (Optional.of(entityDto)
                 .map(EntityDto::getServiceAddressSameAsPrincipalAddress)
                 .orElse(false)) {
-            updatedAddress = Optional.ofNullable(entityDto)
-                    .map(EntityDto::getServiceAddress)
-                    .orElse(null);
-        } else {
+
             updatedAddress = Optional.ofNullable(entityDto)
                     .map(EntityDto::getPrincipalAddress)
                     .orElse(null);
+        } else {
+            updatedAddress = Optional.ofNullable(entityDto)
+                    .map(EntityDto::getServiceAddress)
+                    .orElse(null);
         }
-        return overseasEntityChangeComparator.comparePrincipalAddress(existingPrincipalAddress, updatedAddress);
-    }
 
-    private CorrespondenceAddressChange retrieveCorrespondenceAddressChange(
-            Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration,
-            OverseasEntitySubmissionDto updateSubmission) {
+        var existingCorrespondenceAddress = Optional.ofNullable(existingRegistration.getLeft())
+                .map(CompanyProfileApi::getServiceAddress)
+                .orElse(null);
+
         return overseasEntityChangeComparator.compareCorrespondenceAddress(
-                Optional.ofNullable(existingRegistration.getLeft())
-                        .map(CompanyProfileApi::getServiceAddress)
-                        .orElse(null),
-                Optional.ofNullable(updateSubmission)
-                        .map(OverseasEntitySubmissionDto::getEntity)
-                        .map(EntityDto::getServiceAddress)
-                        .orElse(null));
+                existingCorrespondenceAddress, updatedAddress);
     }
 
     private CompanyIdentificationChange retrieveCompanyIdentificationChange(

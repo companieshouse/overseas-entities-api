@@ -29,7 +29,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.psc.Psc;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
-import uk.gov.companieshouse.overseasentitiesapi.utils.*;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
+import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
 @Service
 public class BeneficialOwnerChangeService {
@@ -180,7 +184,10 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerCorporateDto.getServiceAddress(),
         beneficialOwnerCorporateDto.getPrincipalAddress(),
-        collectedNatureOfControl, beneficialOwnerCorporateDto.getOnSanctionsList());
+        collectedNatureOfControl,
+        beneficialOwnerCorporateDto.getOnSanctionsList(),
+        beneficialOwnerCorporateDto.getServiceAddressSameAsPrincipalAddress()
+    );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
         beneficialOwnerCorporateDto.getName(),
@@ -273,7 +280,9 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(),
-        collectedNatureOfControl, beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList()
+        collectedNatureOfControl,
+        beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(),
+        beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress()
     );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
@@ -356,7 +365,9 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerIndividualDto.getServiceAddress(),
         beneficialOwnerIndividualDto.getUsualResidentialAddress(),
-        collectedNatureOfControl, beneficialOwnerIndividualDto.getOnSanctionsList());
+        collectedNatureOfControl,
+        beneficialOwnerIndividualDto.getOnSanctionsList(),
+        beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress());
 
     var delimiter = ",";
     var submissionNationalityArray = new String[]{beneficialOwnerIndividualDto.getNationality(), beneficialOwnerIndividualDto.getSecondNationality()};
@@ -407,11 +418,12 @@ public class BeneficialOwnerChangeService {
           AddressDto serviceAddress,
           AddressDto residentialAddress,
           List<String> natureOfControls,
-          Boolean isOnSanctionsList
+          Boolean isOnSanctionsList,
+          Boolean serviceAddressSameAsResidentialAddress
   ) {
 
     var hasChange = changeManager.compareAndBuildRightChange(
-        serviceAddress,
+        Boolean.TRUE.equals(serviceAddressSameAsResidentialAddress) ? residentialAddress : serviceAddress,
         PrivateBoDataApi::getPrincipalAddress,
         TypeConverter::addressDtoToAddress,
         ComparisonHelper::equals,
