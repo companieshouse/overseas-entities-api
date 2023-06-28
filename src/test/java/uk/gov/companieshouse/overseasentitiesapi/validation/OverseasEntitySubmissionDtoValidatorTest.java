@@ -391,6 +391,20 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testErrorReportedForMissingPresenterFieldForNoChangeUpdate() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111129");
+        overseasEntitySubmissionDto.getUpdate().setNoChange(true);
+        overseasEntitySubmissionDto.setPresenter(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldName = PRESENTER_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedForMissingPresenterFieldAndOtherBlocksWithValidationErrors() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(null);
