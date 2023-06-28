@@ -76,7 +76,7 @@ class InterceptorConfigTest {
 
         // Transaction interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(transactionInterceptor);
-        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS, InterceptorConfig.FILINGS);
+        inOrder.verify(interceptorRegistration).addPathPatterns(InterceptorConfig.TRANSACTIONS, InterceptorConfig.FILINGS, InterceptorConfig.DETAILS);
 
         // Filing interceptor check
         inOrder.verify(interceptorRegistry).addInterceptor(filingInterceptor);

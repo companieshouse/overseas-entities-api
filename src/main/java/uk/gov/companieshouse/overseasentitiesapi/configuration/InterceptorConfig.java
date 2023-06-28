@@ -22,13 +22,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     static final String FILINGS = "/private/**/filings";
     static final String COSTS = TRANSACTIONS + "/costs";
 
+    static final String DETAILS = "/overseas-entity-details";
+
     static final String[] USER_AUTH_ENDPOINTS = {
-      TRANSACTIONS
+            TRANSACTIONS,
+            DETAILS
     };
 
     static final String[] INTERNAL_AUTH_ENDPOINTS = {
-      FILINGS,
-      COSTS
+            FILINGS,
+            COSTS
     };
 
     @Autowired
@@ -97,7 +100,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
-                .addPathPatterns(TRANSACTIONS, FILINGS);
+                .addPathPatterns(TRANSACTIONS, FILINGS, DETAILS);
     }
 
     /**
