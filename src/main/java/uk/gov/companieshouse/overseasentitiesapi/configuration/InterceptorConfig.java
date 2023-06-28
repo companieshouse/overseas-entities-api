@@ -22,7 +22,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     static final String FILINGS = "/private/**/filings";
     static final String COSTS = TRANSACTIONS + "/costs";
 
-    static final String DETAILS = "/overseas-entity-details";
+    static final String DETAILS = "/overseas-entity-details/**";
 
     static final String[] USER_AUTH_ENDPOINTS = {
             TRANSACTIONS,
