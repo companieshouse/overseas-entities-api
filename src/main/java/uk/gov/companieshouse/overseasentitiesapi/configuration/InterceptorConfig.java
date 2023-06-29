@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -100,7 +101,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
-                .addPathPatterns(TRANSACTIONS, FILINGS, DETAILS);
+                .addPathPatterns(TRANSACTIONS, FILINGS);
     }
 
     /**
