@@ -27,7 +27,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @RestController
-@RequestMapping("/overseas-entity-details")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/details")
 public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
@@ -45,7 +45,7 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping("/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
+    @GetMapping("/overseas-entity")
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
