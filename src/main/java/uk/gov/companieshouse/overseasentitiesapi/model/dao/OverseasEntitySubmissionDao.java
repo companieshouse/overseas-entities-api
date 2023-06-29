@@ -75,6 +75,9 @@ public class OverseasEntitySubmissionDao {
     @Field(SCHEMA_VERSION_FIELD)
     private String schemaVersion;
 
+    @Field("remove_entity")
+    private Boolean removeEntity;
+
     public String getId() {
         return id;
     }
@@ -232,5 +235,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setSchemaVersion(String schemaVersion) {
         this.schemaVersion = schemaVersion;
+    }
+
+    public Boolean getRemoveEntity() {
+        return removeEntity;
+    }
+
+    public void setRemoveEntity(Boolean removeEntity) {
+        this.removeEntity = removeEntity;
     }
 }
