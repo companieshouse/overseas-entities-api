@@ -45,7 +45,7 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping("/overseas-entity")
+    @GetMapping
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
