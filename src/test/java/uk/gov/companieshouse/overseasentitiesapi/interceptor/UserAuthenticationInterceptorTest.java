@@ -191,6 +191,8 @@ class UserAuthenticationInterceptorTest {
         }
         setStubbing(tokenValue);
     }
+
+
     private void setStubbing(String companyNumberToken) {
         when(mockHttpServletRequest.getHeader(ERIC_REQUEST_ID_KEY)).thenReturn(REQ_ID);
         when(mockHttpServletRequest.getHeader(ERIC_IDENTITY_TYPE)).thenReturn(null);
