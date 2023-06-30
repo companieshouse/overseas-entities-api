@@ -133,7 +133,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            // validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
             return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -147,14 +147,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Objects.nonNull(entityDto)) {
             var entityEmail = entityDto.getEmail();
-            var incorporatingCountry = entityDto.getIncorporationCountry();
-            // Temporary delay to entity validation until both email and public data
-            // (signified by "country formed in" being present) is fetched.
-            if (StringUtils.isNotBlank(entityEmail) && StringUtils.isNotBlank(incorporatingCountry)) {
+            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
+            if (StringUtils.isNotBlank(entityEmail)) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey
+        // Temporarily disabling BO/MO validation till it is implemented in Update Journey UAR-711
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
