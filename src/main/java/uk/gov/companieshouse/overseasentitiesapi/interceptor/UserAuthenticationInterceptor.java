@@ -82,7 +82,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             if (hasCompanyOeAnnualUpdateCreatePermission) {
                 return doRoeUpdateJourneyChecks(request, response, reqId, companyNumberInScope, transactionId, authInfoMap);
             }
-        } else {
+        } else if (StringUtils.isEmpty(companyNumberInScope)){
             // Check the user has the company_incorporation=create permission
             boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
             authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
