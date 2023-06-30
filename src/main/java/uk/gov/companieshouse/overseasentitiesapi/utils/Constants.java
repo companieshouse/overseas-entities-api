@@ -12,7 +12,7 @@ public class Constants {
     public static final String ERIC_IDENTITY = "ERIC-identity";
     public static final String ERIC_AUTHORISED_USER = "ERIC-Authorised-User";
 
-    public static final String ERIC_AUTHORISED_TOKEN_PERMISSIONS_HEADER
+    public static final String ERIC_AUTHORISED_TOKEN_PERMISSIONS
             = "ERIC-Authorised-Token-Permissions";
 
     // URI path attributes

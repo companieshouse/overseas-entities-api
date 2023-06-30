@@ -27,14 +27,15 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COMPANY_NUMBER_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_AUTHORISED_TOKEN_PERMISSIONS_HEADER;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
 @Component("RoeUserAuthenticationInterceptor")
 public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
-
     private final TransactionService transactionService;
+
+    private String companyNumberInScope;
 
     @Autowired
     public UserAuthenticationInterceptor(TransactionService transactionService) {
@@ -68,23 +69,20 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         final var tokenPermissions = getTokenPermissions(request)
                 .orElseThrow(() -> new IllegalStateException("UserAuthenticationInterceptor - TokenPermissions object not present in request"));
 
-        boolean isRoeUpdateJourneyRequest = isRequestROEUpdate(request, transactionId);
-
-        // Check the user has the company_incorporation=create permission
-        boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
-
-        // Check the use has the company_oe_annual_update=create permission for ROE Update
-        boolean hasCompanyOEAnnualUpdateCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE);
+        boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(request, transactionId);
 
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
         authInfoMap.put("request_method", request.getMethod());
         authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
-        authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOEAnnualUpdateCreatePermission);
-        authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
 
         if (isRoeUpdateJourneyRequest) {
-            if (hasCompanyOEAnnualUpdateCreatePermission) {
+            boolean doCompanyNumbersMatch = doCompanyNumbersMatch(request, response, transactionId);
+            // Check the user has the company_oe_annual_update=create permission for ROE Update
+            boolean hasCompanyOeAnnualUpdateCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE);
+            authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOeAnnualUpdateCreatePermission);
+            authInfoMap.put("roe_update_journey_company_numbers_match", doCompanyNumbersMatch);
+            if (hasCompanyOeAnnualUpdateCreatePermission && doCompanyNumbersMatch) {
                 ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
                         authInfoMap);
                 return true;
@@ -93,12 +91,15 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
-        }
-
-        if (hasCompanyIncorporationCreatePermission && ! hasCompanyOEAnnualUpdateCreatePermission) {
-            ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_incorporation=create permission",
-                    authInfoMap);
-            return true;
+        } else {
+            // Check the user has the company_incorporation=create permission
+            boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
+            authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
+            if (hasCompanyIncorporationCreatePermission) {
+                ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_incorporation=create permission",
+                        authInfoMap);
+                return true;
+            }
         }
 
         ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised", null, authInfoMap);
@@ -110,23 +111,27 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return AuthorisationUtil.getTokenPermissions(request);
     }
 
-    protected boolean isRequestROEUpdate(HttpServletRequest request, String transactionId) {
+    protected boolean isRequestRoeUpdate(HttpServletRequest request, String transactionId) {
         final Map<String, List<String>> privileges = getERICTokenPermissions(request);
-        String companyInScope;
         if (privileges.containsKey(COMPANY_NUMBER_KEY)) {
-            companyInScope = privileges.get(COMPANY_NUMBER_KEY).get(0);
-            if (StringUtils.isNotEmpty(companyInScope) && companyInScope.startsWith("OE")) {
-                String companyInTransaction = getCompanyInTransaction(request, transactionId);
-                if (StringUtils.isNotBlank(companyInTransaction)) {
-                    return companyInScope.equalsIgnoreCase(companyInTransaction);
+            companyNumberInScope = privileges.get(COMPANY_NUMBER_KEY).get(0);
+            if (StringUtils.isNotEmpty(companyNumberInScope) && companyNumberInScope.startsWith("OE")) {
+                return true;
                 }
             }
+        return false;
+    }
+
+    protected boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String transactionId) {
+        String companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
+        if (StringUtils.isNotBlank(companyNumberInTransaction)) {
+            return companyNumberInTransaction.equalsIgnoreCase(companyNumberInScope);
         }
         return false;
     }
 
     private Map<String, List<String>> getERICTokenPermissions(HttpServletRequest request) {
-        String tokenPermissionsHeader = request.getHeader(ERIC_AUTHORISED_TOKEN_PERMISSIONS_HEADER);
+        String tokenPermissionsHeader = request.getHeader(ERIC_AUTHORISED_TOKEN_PERMISSIONS);
         Map<String, List<String>> permissions = new HashMap<>();
         if (tokenPermissionsHeader != null) {
             for (String pair : tokenPermissionsHeader.split(" ")) {
@@ -137,7 +142,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return permissions;
     }
 
-    private String getCompanyInTransaction(HttpServletRequest request, String transactionId) {
+    private String getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
@@ -149,6 +154,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             return transaction.getCompanyNumber();
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
+            response.setStatus(500);
             return null;
         }
 
