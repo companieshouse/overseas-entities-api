@@ -69,7 +69,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         final var tokenPermissions = getTokenPermissions(request)
                 .orElseThrow(() -> new IllegalStateException("UserAuthenticationInterceptor - TokenPermissions object not present in request"));
 
-        boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(request, transactionId);
+        boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(request);
 
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
@@ -111,13 +111,11 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return AuthorisationUtil.getTokenPermissions(request);
     }
 
-    protected boolean isRequestRoeUpdate(HttpServletRequest request, String transactionId) {
+    protected boolean isRequestRoeUpdate(HttpServletRequest request) {
         final Map<String, List<String>> privileges = getERICTokenPermissions(request);
         if (privileges.containsKey(COMPANY_NUMBER_KEY)) {
             companyNumberInScope = privileges.get(COMPANY_NUMBER_KEY).get(0);
-            if (StringUtils.isNotEmpty(companyNumberInScope) && companyNumberInScope.startsWith("OE")) {
-                return true;
-                }
+            return StringUtils.isNotEmpty(companyNumberInScope) && companyNumberInScope.startsWith("OE");
             }
         return false;
     }

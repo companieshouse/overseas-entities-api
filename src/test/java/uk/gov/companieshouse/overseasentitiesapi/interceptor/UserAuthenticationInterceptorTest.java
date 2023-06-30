@@ -127,6 +127,21 @@ class UserAuthenticationInterceptorTest {
         assertFalse(result);
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
     }
+
+    @Test
+    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumber() throws ServiceException {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+
+        String tokenValue = "company_number=" + INVALID_OE_NUMBER;
+        setStubbing(tokenValue);
+
+        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
+
+        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
+    }
     @Test
     void testInterceptorReturnsTrueWhenRequestHasCorrectRegistrationTokenPermission() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
@@ -141,32 +156,6 @@ class UserAuthenticationInterceptorTest {
         assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
     }
 
-    @Test
-    void testInterceptorReturnsFalseWhenRequestHasInCorrectRegistrationTokenPermission() {
-        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Object mockHandler = new Object();
-        ericTokenSet(false);
-
-        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
-        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_INCORPORATION, Permission.Value.CREATE)).thenReturn(false);
-
-        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-        assertFalse(result);
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, mockHttpServletResponse.getStatus());
-    }
-
-    @Test
-    void testInterceptorReturnsFalseWhenRequestHasBothIncorrectTokenPermission() {
-        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Object mockHandler = new Object();
-        ericTokenSet(false);
-
-        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
-        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_INCORPORATION, Permission.Value.CREATE)).thenReturn(false);
-        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-        assertFalse(result);
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, mockHttpServletResponse.getStatus());
-    }
 
     @Test
     void testInterceptorReturnsTrueWhenAnApiKeyIsUsed() {
@@ -186,8 +175,11 @@ class UserAuthenticationInterceptorTest {
         if (companyExists) {
             tokenValue = "company_number=" + VALID_OE_NUMBER;
         }
+        setStubbing(tokenValue);
+    }
+    private void setStubbing(String companyNumberToken) {
         when(mockHttpServletRequest.getHeader(ERIC_REQUEST_ID_KEY)).thenReturn(REQ_ID);
         when(mockHttpServletRequest.getHeader(ERIC_IDENTITY_TYPE)).thenReturn(null);
-        when(mockHttpServletRequest.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(tokenValue);
+        when(mockHttpServletRequest.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(companyNumberToken);
     }
 }
