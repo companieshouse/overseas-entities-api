@@ -88,7 +88,9 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                     return true;
                 } else {
                     ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers do not match", null, authInfoMap);
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR != response.getStatus()) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
                     return false;
                 }
             } else {
@@ -160,7 +162,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             return transaction.getCompanyNumber();
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return null;
         }
 
