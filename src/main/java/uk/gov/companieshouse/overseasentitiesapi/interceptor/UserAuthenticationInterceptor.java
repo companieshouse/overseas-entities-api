@@ -82,7 +82,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             if (hasCompanyOeAnnualUpdateCreatePermission) {
                 return doRoeUpdateJourneyChecks(request, response, reqId, companyNumberInScope, transactionId, authInfoMap);
             }
-        } else if (StringUtils.isEmpty(companyNumberInScope)){
+        } else {
             // Check the user has the company_incorporation=create permission
             boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
             authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
@@ -104,23 +104,32 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private boolean doRoeUpdateJourneyChecks(HttpServletRequest request, HttpServletResponse response, String reqId, String companyNumberInScope,
                                              String transactionId, Map<String, Object> authInfoMap) {
-        boolean doCompanyNumbersMatch = doCompanyNumbersMatch(request, response, companyNumberInScope, transactionId);
-        authInfoMap.put("roe_update_journey_company_numbers_match", doCompanyNumbersMatch);
-        if (doCompanyNumbersMatch) {
-            ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
+        boolean isValidOeNumber = companyNumberInScope.startsWith("OE");
+        if (isValidOeNumber) {
+            boolean doCompanyNumbersMatch = doCompanyNumbersMatch(request, response, companyNumberInScope, transactionId);
+            authInfoMap.put("roe_update_journey_company_numbers_match", doCompanyNumbersMatch);
+            if (doCompanyNumbersMatch) {
+                ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
                         authInfoMap);
-            return true;
-        } else {
-            ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers do not match", null, authInfoMap);
-            if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR != response.getStatus()) {
+                return true;
+            } else {
+                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers do not match", null, authInfoMap);
+                if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR != response.getStatus()) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+                return false;
             }
+        } else {
+            ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Number is not a valid OE",
+                    authInfoMap);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
     }
 
     private boolean isRequestRoeUpdate(String companyNumberInScope) {
-        return StringUtils.isNotEmpty(companyNumberInScope) && companyNumberInScope.startsWith("OE");
+        // Further check for OE number is done in doRoeUpdateJourneyChecks method
+        return StringUtils.isNotEmpty(companyNumberInScope);
     }
 
     private String getCompanyNumberInScope (HttpServletRequest request) {
