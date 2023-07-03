@@ -1,27 +1,28 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 @Service
 public class BeneficialOwnerAdditionService {
-    public List<Addition> beneficialOwnerAdditions(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+
+    public List<Addition> beneficialOwnerAdditions(
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         List<Addition> additions = new ArrayList<>();
 
         addIndividualBeneficialOwnerAdditions(additions, overseasEntitySubmissionDto);
@@ -68,8 +69,11 @@ public class BeneficialOwnerAdditionService {
             BeneficialOwnerIndividualDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
-        var serviceAddress = bo.getServiceAddress();
         var residentialAddress = bo.getUsualResidentialAddress();
+        var serviceAddress =
+                Boolean.TRUE.equals(bo.getServiceAddressSameAsUsualResidentialAddress())
+                        ? residentialAddress
+                        : bo.getServiceAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 bo.getTrusteesNatureOfControlTypes(),
@@ -86,7 +90,8 @@ public class BeneficialOwnerAdditionService {
                         natureOfControls,
                         isOnSanctionsList);
 
-        individualBeneficialOwnerAddition.setPersonName(new PersonName(bo.getFirstName(), bo.getLastName()));
+        individualBeneficialOwnerAddition.setPersonName(
+                new PersonName(bo.getFirstName(), bo.getLastName()));
         individualBeneficialOwnerAddition.setBirthDate(bo.getDateOfBirth());
 
         individualBeneficialOwnerAddition.setNationalityOther(
@@ -99,8 +104,11 @@ public class BeneficialOwnerAdditionService {
             BeneficialOwnerCorporateDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
-        var serviceAddress = bo.getServiceAddress();
         var registeredOffice = bo.getPrincipalAddress();
+        var serviceAddress =
+                Boolean.TRUE.equals(bo.getServiceAddressSameAsPrincipalAddress())
+                        ? registeredOffice
+                        : bo.getServiceAddress();
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 bo.getTrusteesNatureOfControlTypes(),
@@ -138,8 +146,12 @@ public class BeneficialOwnerAdditionService {
             BeneficialOwnerGovernmentOrPublicAuthorityDto bo) {
         var actionDate = bo.getStartDate();
         var ceasedDate = bo.getCeasedDate();
-        var serviceAddress = bo.getServiceAddress();
         var registeredOffice = bo.getPrincipalAddress();
+        var serviceAddress =
+                Boolean.TRUE.equals(bo.getServiceAddressSameAsPrincipalAddress())
+                        ? registeredOffice
+                        : bo.getServiceAddress();
+
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 null,

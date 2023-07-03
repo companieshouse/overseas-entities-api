@@ -10,6 +10,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateManagingOfficerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
 
@@ -17,7 +18,9 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static com.mongodb.assertions.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +37,11 @@ class ManagingOfficerAdditionServiceTest {
         setCounty("Some county");
         setPostcode("Some Postcode");
     }};
+
+    public static final String[] TEST_SERVICE_ADDRESS = {"1", "PO Box 123", "1234", "Main Street", "Apartment 1A", "Metropolis", "Metro County", "12345", "United States"};
+
+    public static final String[] TEST_RESIDENTIAL_ADDRESS = {"2", "", "5678", "Park Avenue", "Unit 2B", "Cityville", "City County", "67890", "United States"};
+
 
     @BeforeEach
     public void setUp() {
@@ -166,5 +174,89 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("Governing law", corporateManagingOfficerAddition.getCompanyIdentification().getGoverningLaw());
         assertEquals("Register name", corporateManagingOfficerAddition.getCompanyIdentification().getRegisterLocation());
         assertEquals("Registration number", corporateManagingOfficerAddition.getCompanyIdentification().getRegistrationNumber());
+    }
+
+    @Test
+    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+        var corporateManagingOfficers = getCorporateManagingOfficers();
+        corporateManagingOfficers.get(0).setServiceAddress(null);
+        corporateManagingOfficers.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        corporateManagingOfficers.get(0).setServiceAddressSameAsPrincipalAddress(true);
+
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
+                .thenReturn(corporateManagingOfficers);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getResidentialAddress());
+        assertNotNull(corporateManagingOfficerAddition.getServiceAddress());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+        var corporateManagingOfficers = getCorporateManagingOfficers();
+        corporateManagingOfficers.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        corporateManagingOfficers.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        corporateManagingOfficers.get(0).setServiceAddressSameAsPrincipalAddress(false);
+
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
+                .thenReturn(corporateManagingOfficers);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getResidentialAddress());
+        assertNotEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getServiceAddress());
+        assertEquals(AddressUtils.createDummyAddress(TEST_SERVICE_ADDRESS), corporateManagingOfficerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+        var individualManagingOfficers = getIndividualManagingOfficers();
+        individualManagingOfficers.get(0).setServiceAddress(null);
+        individualManagingOfficers.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        individualManagingOfficers.get(0).setServiceAddressSameAsUsualResidentialAddress(true);
+
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual())
+                .thenReturn(individualManagingOfficers);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getResidentialAddress());
+        assertNotNull(individualManagingOfficerAddition.getServiceAddress());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+        var individualManagingOfficers = getIndividualManagingOfficers();
+        individualManagingOfficers.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        individualManagingOfficers.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        individualManagingOfficers.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
+
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual())
+                .thenReturn(individualManagingOfficers);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
+
+        List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
+        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getResidentialAddress());
+        assertNotEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getServiceAddress());
+        assertEquals(AddressUtils.createDummyAddress(TEST_SERVICE_ADDRESS), individualManagingOfficerAddition.getServiceAddress());
     }
 }

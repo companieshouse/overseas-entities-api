@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.psc.Identification;
 import uk.gov.companieshouse.api.model.psc.PscApi;
-import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
@@ -74,24 +72,6 @@ class BeneficialOwnerChangeServiceTest {
 
     private static final String[] DUMMY_ADDRESS = new String[]{"John Doe", "PO Box 123", "42", "Baker Street", "Westminster", "London", "Greater London", "SW1A 2AA", "UK"};
 
-
-
-    private AddressDto createDummyAddressDto(String[] fields) {
-        AddressDto addressDto = new AddressDto();
-
-        addressDto.setCareOf(fields[0]);
-        addressDto.setPoBox(fields[1]);
-        addressDto.setPropertyNameNumber(fields[2]);
-        addressDto.setLine1(fields[3]);
-        addressDto.setLine2(fields[4]);
-        addressDto.setTown(fields[5]);
-        addressDto.setCounty(fields[6]);
-        addressDto.setPostcode(fields[7]);
-        addressDto.setCountry(fields[8]);
-
-        return addressDto;
-    }
-
     /**
      * Creates and returns a dummy {@code AddressDto} object with pre-defined data.
      * <p>
@@ -101,51 +81,7 @@ class BeneficialOwnerChangeServiceTest {
      * @return a dummy {@code AddressDto} object with pre-defined data
      */
     private AddressDto createDummyAddressDto() {
-        return createDummyAddressDto(DUMMY_ADDRESS);
-    }
-
-    /**
-     * Creates an instance of
-     * {@code
-     * uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address}
-     * which is the Address model used in the ChangeList models.
-     * <p>
-     * The data in this model should be the same as the data in the {@code createDummyAddressDto()}
-     * method.
-     *
-     * @return an instance of
-     * {@code
-     * uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address}
-     */
-    private AddressApi createDummyAddressApi(String[] fields) {
-        AddressApi addressApi = new AddressApi();
-
-        addressApi.setCareOf(fields[0]);
-        addressApi.setPoBox(fields[1]);
-        addressApi.setPremises(fields[2]);
-        addressApi.setAddressLine1(fields[3]);
-        addressApi.setAddressLine2(fields[4]);
-        addressApi.setLocality(fields[5]);
-        addressApi.setRegion(fields[6]);
-        addressApi.setPostcode(fields[7]);
-        addressApi.setCountry(fields[8]);
-
-        return addressApi;
-    }
-
-    private static Address createDummyAddress(String... fields) {
-        Address address = new Address();
-        address.setCareOf(fields[0]);
-        address.setPoBox(fields[1]);
-        address.setHouseNameNum(fields[2]);
-        address.setStreet(fields[3]);
-        address.setArea(fields[4]);
-        address.setPostTown(fields[5]);
-        address.setRegion(fields[6]);
-        address.setPostCode(fields[7]);
-        address.setCountry(fields[8]);
-
-        return address;
+        return AddressUtils.createDummyAddressDto(DUMMY_ADDRESS);
     }
 
     /**
@@ -157,7 +93,7 @@ class BeneficialOwnerChangeServiceTest {
      * @return a dummy {@code AddressDto} object with pre-defined data
      */
     private Address createDummyAddress() {
-        return createDummyAddress(DUMMY_ADDRESS);
+        return AddressUtils.createDummyAddress(DUMMY_ADDRESS);
     }
 
     private static List<Boolean> booleanWrapperValues() {
@@ -279,7 +215,7 @@ class BeneficialOwnerChangeServiceTest {
                 "Canada", "54321", "Alice Smith", "L4M 2C5"};
 
         beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
-        beneficialOwnerCorporateDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+        beneficialOwnerCorporateDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -300,7 +236,7 @@ class BeneficialOwnerChangeServiceTest {
 
             assertEquals(createDummyAddress(),
                     corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData),
+            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
                     corporateBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
@@ -396,7 +332,7 @@ class BeneficialOwnerChangeServiceTest {
                 "street", "area", "postTown", "region", "postCode", "country"};
 
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
-        beneficialOwnerIndividualDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+        beneficialOwnerIndividualDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -417,7 +353,7 @@ class BeneficialOwnerChangeServiceTest {
 
             assertEquals(createDummyAddress(),
                     individualBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData),
+            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
                     individualBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
@@ -432,13 +368,13 @@ class BeneficialOwnerChangeServiceTest {
                 .toArray(String[]::new);
 
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-        beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto(fieldNames));
+        beneficialOwnerIndividualDto.setUsualResidentialAddress(AddressUtils.createDummyAddressDto(fieldNames));
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setNationality("Bangladeshi");
         beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
 
         mockPublicPrivateBoPair.getRight()
-                .setUsualResidentialAddress(createDummyAddressApi(fieldNamesUpperCase));
+                .setUsualResidentialAddress(AddressUtils.createDummyAddressApi(fieldNamesUpperCase));
         mockPublicPrivateBoPair.getLeft().setNationality("American");
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
@@ -550,7 +486,7 @@ class BeneficialOwnerChangeServiceTest {
                 "Canada", "54321", "Alice Smith", "L4M 2C5"};
 
         beneficialOwnerOtherDto.setPrincipalAddress(createDummyAddressDto());
-        beneficialOwnerOtherDto.setServiceAddress(createDummyAddressDto(serviceAddressData));
+        beneficialOwnerOtherDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -572,7 +508,7 @@ class BeneficialOwnerChangeServiceTest {
             assertEquals(createDummyAddress(),
                     governmentOrPublicAuthorityBeneficialOwnerChange.getPsc()
                             .getResidentialAddress());
-            assertEquals(createDummyAddress(serviceAddressData),
+            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
                     governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123",
