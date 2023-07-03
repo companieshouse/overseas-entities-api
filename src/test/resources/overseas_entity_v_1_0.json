@@ -340,5 +340,6 @@
   "links" : {
     "self" : "/transactions/040551-775916-764584/overseas-entity/63ecba0100a65d6d4704ac34"
   },
-  "_class" : "uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao"
+  "_class" : "uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao",
+  "remove_entity" : false
 }
