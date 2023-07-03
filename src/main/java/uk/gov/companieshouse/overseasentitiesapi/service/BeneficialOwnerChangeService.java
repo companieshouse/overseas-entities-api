@@ -422,9 +422,9 @@ public class BeneficialOwnerChangeService {
           Boolean serviceAddressSameAsResidentialAddress
   ) {
 
-    var hasChange = changeManager.compareAndBuildRightChange(
+    var hasChange = changeManager.compareAndBuildLeftChange(
         Boolean.TRUE.equals(serviceAddressSameAsResidentialAddress) ? residentialAddress : serviceAddress,
-        PrivateBoDataApi::getPrincipalAddress,
+        PscApi::getPrincipalOfficeAddress,
         TypeConverter::addressDtoToAddress,
         ComparisonHelper::equals,
         Psc::setServiceAddress
