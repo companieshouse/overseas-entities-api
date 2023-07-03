@@ -167,7 +167,7 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumber() {
+    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumberIncorrectPermissions() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -175,11 +175,27 @@ class UserAuthenticationInterceptorTest {
         setStubbing(tokenValue);
 
         when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
-
+        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.CREATE)).thenReturn(false);
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
         assertFalse(result);
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
     }
+
+    @Test
+    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumberCorrectPermissions() {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+
+        String tokenValue = "company_number=" + INVALID_OE_NUMBER;
+        setStubbing(tokenValue);
+
+        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
+        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.CREATE)).thenReturn(true);
+        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
+    }
+
     @Test
     void testInterceptorReturnsTrueWhenRequestHasCorrectRegistrationTokenPermission() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
