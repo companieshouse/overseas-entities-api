@@ -143,7 +143,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         if (companyNumberInTransactionOptional.isEmpty()) {
             return false;
         }
-        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.isPresent() ? companyNumberInTransactionOptional.get() : Optional.empty() ;
+        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.get();
         if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
             return true;
         }
