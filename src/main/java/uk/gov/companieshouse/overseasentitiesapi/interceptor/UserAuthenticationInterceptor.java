@@ -139,11 +139,12 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
-        var companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
-        if (companyNumberInTransaction.isEmpty()) {
+        var companyNumberInTransactionOptional = getCompanyNumberInTransaction(request, response, transactionId);
+        if (companyNumberInTransactionOptional.isEmpty()) {
             return false;
         }
-        if (companyNumberInTransaction.get().isPresent() && companyNumberInTransaction.get().get().equalsIgnoreCase(companyNumberInScope)) {
+        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.isPresent() ? companyNumberInTransactionOptional.get() : Optional.empty() ;
+        if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
             return true;
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
