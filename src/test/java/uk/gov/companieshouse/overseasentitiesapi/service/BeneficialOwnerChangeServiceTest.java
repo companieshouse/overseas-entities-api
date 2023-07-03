@@ -41,6 +41,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.beneficialowner.OtherBeneficialOwnerChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import utils.AddressTestUtils;
 
 class BeneficialOwnerChangeServiceTest {
 
@@ -81,7 +82,7 @@ class BeneficialOwnerChangeServiceTest {
      * @return a dummy {@code AddressDto} object with pre-defined data
      */
     private AddressDto createDummyAddressDto() {
-        return AddressUtils.createDummyAddressDto(DUMMY_ADDRESS);
+        return AddressTestUtils.createDummyAddressDto(DUMMY_ADDRESS);
     }
 
     /**
@@ -93,7 +94,7 @@ class BeneficialOwnerChangeServiceTest {
      * @return a dummy {@code AddressDto} object with pre-defined data
      */
     private Address createDummyAddress() {
-        return AddressUtils.createDummyAddress(DUMMY_ADDRESS);
+        return AddressTestUtils.createDummyAddress(DUMMY_ADDRESS);
     }
 
     private static List<Boolean> booleanWrapperValues() {
@@ -215,7 +216,7 @@ class BeneficialOwnerChangeServiceTest {
                 "Canada", "54321", "Alice Smith", "L4M 2C5"};
 
         beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
-        beneficialOwnerCorporateDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
+        beneficialOwnerCorporateDto.setServiceAddress(AddressTestUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -236,7 +237,7 @@ class BeneficialOwnerChangeServiceTest {
 
             assertEquals(createDummyAddress(),
                     corporateBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
+            assertEquals(AddressTestUtils.createDummyAddress(serviceAddressData),
                     corporateBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
@@ -332,7 +333,7 @@ class BeneficialOwnerChangeServiceTest {
                 "street", "area", "postTown", "region", "postCode", "country"};
 
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
-        beneficialOwnerIndividualDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
+        beneficialOwnerIndividualDto.setServiceAddress(AddressTestUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -353,7 +354,7 @@ class BeneficialOwnerChangeServiceTest {
 
             assertEquals(createDummyAddress(),
                     individualBeneficialOwnerChange.getPsc().getResidentialAddress());
-            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
+            assertEquals(AddressTestUtils.createDummyAddress(serviceAddressData),
                     individualBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
@@ -368,13 +369,13 @@ class BeneficialOwnerChangeServiceTest {
                 .toArray(String[]::new);
 
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
-        beneficialOwnerIndividualDto.setUsualResidentialAddress(AddressUtils.createDummyAddressDto(fieldNames));
+        beneficialOwnerIndividualDto.setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(fieldNames));
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setNationality("Bangladeshi");
         beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
 
         mockPublicPrivateBoPair.getRight()
-                .setUsualResidentialAddress(AddressUtils.createDummyAddressApi(fieldNamesUpperCase));
+                .setUsualResidentialAddress(AddressTestUtils.createDummyModelUtilsAddressApi(fieldNamesUpperCase));
         mockPublicPrivateBoPair.getLeft().setNationality("American");
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
@@ -486,7 +487,7 @@ class BeneficialOwnerChangeServiceTest {
                 "Canada", "54321", "Alice Smith", "L4M 2C5"};
 
         beneficialOwnerOtherDto.setPrincipalAddress(createDummyAddressDto());
-        beneficialOwnerOtherDto.setServiceAddress(AddressUtils.createDummyAddressDto(serviceAddressData));
+        beneficialOwnerOtherDto.setServiceAddress(AddressTestUtils.createDummyAddressDto(serviceAddressData));
 
         when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -508,7 +509,7 @@ class BeneficialOwnerChangeServiceTest {
             assertEquals(createDummyAddress(),
                     governmentOrPublicAuthorityBeneficialOwnerChange.getPsc()
                             .getResidentialAddress());
-            assertEquals(AddressUtils.createDummyAddress(serviceAddressData),
+            assertEquals(AddressTestUtils.createDummyAddress(serviceAddressData),
                     governmentOrPublicAuthorityBeneficialOwnerChange.getPsc().getServiceAddress());
 
             assertEquals("123",

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static utils.AddressTestUtils.createDummyCommonAddress;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -39,6 +40,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.managingofficer.IndividualManagingOfficerChange;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import utils.AddressTestUtils;
 
 class ManagingOfficerChangeServiceTest {
 
@@ -70,78 +72,13 @@ class ManagingOfficerChangeServiceTest {
     ByteArrayOutputStream outputStreamCaptor;
 
     private static AddressDto createDummyAddressDto() {
-        return createDummyAddressDto("John Doe", "98765", "123", "Main Street", "Apartment 4B",
+        return AddressTestUtils.createDummyAddressDto("John Doe", "98765", "123", "Main Street", "Apartment 4B",
                 "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
     }
-
-    private static AddressDto createDummyAddressDto(String... fieldValues) {
-        AddressDto addressDto = new AddressDto();
-
-        addressDto.setCareOf(fieldValues[0]);
-        addressDto.setPoBox(fieldValues[1]);
-        addressDto.setPropertyNameNumber(fieldValues[2]);
-        addressDto.setLine1(fieldValues[3]);
-        addressDto.setLine2(fieldValues[4]);
-        addressDto.setTown(fieldValues[5]);
-        addressDto.setCounty(fieldValues[6]);
-        addressDto.setPostcode(fieldValues[7]);
-        addressDto.setCountry(fieldValues[8]);
-
-        return addressDto;
-    }
-
-    private static uk.gov.companieshouse.api.model.managingofficerdata.AddressApi createDummyAddressApi(
-            String... fieldValues) {
-        uk.gov.companieshouse.api.model.managingofficerdata.AddressApi addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
-
-        addressApi.setCareOf(fieldValues[0]);
-        addressApi.setPoBox(fieldValues[1]);
-        addressApi.setPremises(fieldValues[2]);
-        addressApi.setAddressLine1(fieldValues[3]);
-        addressApi.setAddressLine2(fieldValues[4]);
-        addressApi.setLocality(fieldValues[5]);
-        addressApi.setRegion(fieldValues[6]);
-        addressApi.setPostalCode(fieldValues[7]);
-        addressApi.setCountry(fieldValues[8]);
-
-        return addressApi;
-    }
-
 
     private static Address createDummyAddress() {
-        return createDummyAddress("John Doe", "98765", "123", "Main Street", "Apartment 4B",
+        return AddressTestUtils.createDummyAddress("John Doe", "98765", "123", "Main Street", "Apartment 4B",
                 "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
-    }
-
-    private static Address createDummyAddress(String... fieldValues) {
-        Address address = new Address();
-        address.setCareOf(fieldValues[0]);
-        address.setPoBox(fieldValues[1]);
-        address.setHouseNameNum(fieldValues[2]);
-        address.setStreet(fieldValues[3]);
-        address.setArea(fieldValues[4]);
-        address.setPostTown(fieldValues[5]);
-        address.setRegion(fieldValues[6]);
-        address.setPostCode(fieldValues[7]);
-        address.setCountry(fieldValues[8]);
-        return address;
-    }
-
-    private static uk.gov.companieshouse.api.model.common.Address createDummyCommonAddress(
-            String... fieldValues) {
-        uk.gov.companieshouse.api.model.common.Address address = new uk.gov.companieshouse.api.model.common.Address();
-
-        address.setCareOf(fieldValues[0]);
-        address.setPoBox(fieldValues[1]);
-        address.setPremises(fieldValues[2]);
-        address.setAddressLine1(fieldValues[3]);
-        address.setAddressLine2(fieldValues[4]);
-        address.setLocality(fieldValues[5]);
-        address.setRegion(fieldValues[6]);
-        address.setPostalCode(fieldValues[7]);
-        address.setCountry(fieldValues[8]);
-
-        return address;
     }
 
 
@@ -264,21 +201,21 @@ class ManagingOfficerChangeServiceTest {
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
         managingOfficerIndividualDto.setChipsReference("1234567891");
         managingOfficerIndividualDto.setServiceAddress(
-                createDummyAddressDto(individualServiceAddressArray));
+                AddressTestUtils.createDummyAddressDto(individualServiceAddressArray));
         managingOfficerIndividualDto.setUsualResidentialAddress(
-                createDummyAddressDto(individualResidentialAddressArray));
+                AddressTestUtils.createDummyAddressDto(individualResidentialAddressArray));
 
         ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
         managingOfficerCorporateDto.setChipsReference("1234567890");
         managingOfficerCorporateDto.setServiceAddress(
-                createDummyAddressDto(corporateServiceAddressArray));
+                AddressTestUtils.createDummyAddressDto(corporateServiceAddressArray));
         managingOfficerCorporateDto.setPrincipalAddress(
-                createDummyAddressDto(corporatePrincipalAddressArray));
+                AddressTestUtils.createDummyAddressDto(corporatePrincipalAddressArray));
 
         when(mockPublicPrivateMoPair.getLeft().getAddress()).thenReturn(
                 createDummyCommonAddress(individualServiceAddressArray));
         mockPublicPrivateMoPair.getRight()
-                .setResidentialAddress(createDummyAddressApi(individualResidentialAddressArray));
+                .setResidentialAddress(AddressTestUtils.createDummyManagingOfficerAddressApi(individualResidentialAddressArray));
 
         when(mockPublicPrivateMoPair2.getLeft().getAddress()).thenReturn(
                 createDummyCommonAddress(corporateServiceAddressArray));

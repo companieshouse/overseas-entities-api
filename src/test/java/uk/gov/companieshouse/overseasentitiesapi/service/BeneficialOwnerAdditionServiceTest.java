@@ -12,13 +12,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovern
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateManagingOfficerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import utils.AddressTestUtils;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
@@ -134,7 +134,7 @@ class BeneficialOwnerAdditionServiceTest {
     void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
         var individualBeneficialOwners = getIndividualBeneficialOwners();
         individualBeneficialOwners.get(0).setServiceAddress(null);
-        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
+        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         individualBeneficialOwners.get(0).setServiceAddressSameAsUsualResidentialAddress(true);
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
@@ -147,16 +147,16 @@ class BeneficialOwnerAdditionServiceTest {
         var individualBeneficialOwnerAddition = ((IndividualBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
         assertNotNull(individualBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
     }
 
     @Test
     void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
         var individualBeneficialOwners = getIndividualBeneficialOwners();
-        individualBeneficialOwners.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
-        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
+        individualBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         individualBeneficialOwners.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
         when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
@@ -169,9 +169,9 @@ class BeneficialOwnerAdditionServiceTest {
         var individualBeneficialOwnerAddition = ((IndividualBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
-        assertNotEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_SERVICE_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
     }
 
     private List<BeneficialOwnerIndividualDto> getIndividualBeneficialOwners() {
@@ -231,7 +231,7 @@ class BeneficialOwnerAdditionServiceTest {
     void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
         var corporateBeneficialOwners = getCorporateBeneficialOwners();
         corporateBeneficialOwners.get(0).setServiceAddress(null);
-        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         corporateBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(true);
 
@@ -245,16 +245,16 @@ class BeneficialOwnerAdditionServiceTest {
         var corporateEntityBeneficialOwnerAddition = ((CorporateEntityBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
         assertNotNull(corporateEntityBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
     }
 
     @Test
     void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
         var corporateBeneficialOwners = getCorporateBeneficialOwners();
-        corporateBeneficialOwners.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
-        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+        corporateBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         corporateBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(false);
 
@@ -268,9 +268,9 @@ class BeneficialOwnerAdditionServiceTest {
         var corporateEntityBeneficialOwnerAddition = ((CorporateEntityBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
-        assertNotEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_SERVICE_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
     }
 
     private void assertCorporateBeneficialOwnerDetails(CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition) {
@@ -323,7 +323,7 @@ class BeneficialOwnerAdditionServiceTest {
     void testLegalPersonBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
         var legalPersonBeneficialOwners = getLegalPersonBeneficialOwners();
         legalPersonBeneficialOwners.get(0).setServiceAddress(null);
-        legalPersonBeneficialOwners.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+        legalPersonBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         legalPersonBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(true);
 
@@ -337,16 +337,16 @@ class BeneficialOwnerAdditionServiceTest {
         var legalPersonBeneficialOwnerAddition = ((LegalPersonBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
         assertNotNull(legalPersonBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
     }
 
     @Test
     void testLegalPersonBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
         var legalBeneficialOwners = getLegalPersonBeneficialOwners();
-        legalBeneficialOwners.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
-        legalBeneficialOwners.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
+        legalBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        legalBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
         legalBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(false);
 
@@ -360,8 +360,8 @@ class BeneficialOwnerAdditionServiceTest {
         var legalPersonBeneficialOwnerAddition = ((LegalPersonBeneficialOwnerAddition) additions.get(0));
 
         assertEquals(1, additions.size());
-        assertEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
-        assertNotEquals(AddressUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
-        assertEquals(AddressUtils.createDummyAddress(TEST_SERVICE_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
     }
 }
