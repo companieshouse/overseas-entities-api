@@ -584,11 +584,12 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
     void testPartialUpdateValidationWithEntity() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(0)).validate(any(), any(), any()); // UAR-711
         assertFalse(errors.hasErrors());
     }
 
@@ -602,7 +603,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-
     @Test
     void testPartialUpdateValidationNoEntityEmail() {
         setIsRoeUpdateEnabledFeatureFlag(true);
@@ -613,6 +613,34 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
+    void testPartialUpdateValidationNoDueDiligence() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(null);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testPartialUpdateValidationNoAgentDueDiligence() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setDueDiligence(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+
+    @Test
+    void testPartialUpdateValidationNoOverseasEntityDueDiligence() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
 
     @Test
     void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndUpdateFlagTrue() {

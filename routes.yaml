@@ -6,4 +6,4 @@ routes:
  1: ^/transactions/(.*)/overseas-entity/*
  2: ^/private/transactions/(.*)/overseas-entity/(.*)/filings
  3: ^/overseas-entity/healthcheck
- 4: ^/overseas-entity-details/*
+ 4: ^/private/transactions/(.*)/overseas-entity/(.*)/details

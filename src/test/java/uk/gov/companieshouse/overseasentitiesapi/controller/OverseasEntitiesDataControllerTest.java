@@ -24,8 +24,9 @@ class OverseasEntitiesDataControllerTest {
 
     private static final String ERIC_REQUEST_ID = "XaBcDeF12345";
     private static final String overseasEntityId = "123456778";
-    private static final String transactionId = "abcdef";
     private static final String email = "TEST@MAILINATOR.COM";
+
+    private static final String transactionId = "123456";
 
     private static final String COMPANY_NUMBER = "OE111129";
 
@@ -34,6 +35,7 @@ class OverseasEntitiesDataControllerTest {
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
+
 
     @Test
     void testGetOverseasEntityDetailsReturnsSuccessfully() throws ServiceException {
@@ -45,9 +47,8 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -67,9 +68,8 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(0)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -85,9 +85,8 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
 
         assertNull(response.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
@@ -102,12 +101,9 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
 
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-
         assertThrows(ServiceException.class,
                 () -> overseasEntitiesDataController.getOverseasEntityDetails(
-                        transaction,
+                        transactionId,
                         overseasEntityId,
                         ERIC_REQUEST_ID));
     }
@@ -123,12 +119,9 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
 
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-
         assertThrows(ServiceException.class,
                 () -> overseasEntitiesDataController.getOverseasEntityDetails(
-                        transaction,
+                        transactionId,
                         overseasEntityId,
                         ERIC_REQUEST_ID));
     }
@@ -142,11 +135,8 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.empty());
 
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-
         var response = overseasEntitiesDataController.getOverseasEntityDetails(
-                transaction,
+                transactionId,
                 overseasEntityId,
                 ERIC_REQUEST_ID);
 
@@ -161,9 +151,8 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -178,9 +167,8 @@ class OverseasEntitiesDataControllerTest {
 
         OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
+
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

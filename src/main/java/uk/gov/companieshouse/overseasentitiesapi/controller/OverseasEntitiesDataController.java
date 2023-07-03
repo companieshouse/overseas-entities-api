@@ -27,7 +27,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 @RestController
-@RequestMapping("/overseas-entity-details")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/details")
 public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
@@ -45,15 +45,15 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping("/{overseas_entity_id}")
+    @GetMapping
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
-            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transaction.getId());
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
 

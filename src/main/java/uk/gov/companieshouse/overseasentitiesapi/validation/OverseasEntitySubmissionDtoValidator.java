@@ -150,12 +150,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Objects.nonNull(entityDto)) {
             var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address, Needs to change once private data fetch is implemented
+            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
             if (StringUtils.isNotBlank(entityEmail)) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey
+        // Temporarily disabling BO/MO validation till it is implemented in Update Journey UAR-711
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
