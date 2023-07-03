@@ -114,7 +114,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                         authInfoMap);
                 return true;
             } else {
-                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers do not match", null, authInfoMap);
+                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers inScope and Transaction do not match", null, authInfoMap);
                 return false;
             }
         } else {

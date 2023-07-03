@@ -109,6 +109,44 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
+    void testInterceptorReturnsFalseWhenRequestHasInCorrectRoeUpdateTokenPermission() {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+        Transaction dummyTransaction = new Transaction();
+        dummyTransaction.setId(TX_ID);
+        dummyTransaction.setCompanyNumber(VALID_OE_NUMBER);
+
+        ericTokenSet(true);
+
+        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
+        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.CREATE)).thenReturn(false);
+
+        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
+    }
+
+    @Test
+    void testInterceptorReturnsFalseWhenTransactionHasNullCompanyNumber() throws ServiceException {
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        Object mockHandler = new Object();
+        Transaction dummyTransaction = new Transaction();
+        dummyTransaction.setId(TX_ID);
+        dummyTransaction.setCompanyNumber(null);
+
+        ericTokenSet(true);
+
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+        when(transactionService.getTransaction(eq(TX_ID), eq(PASSTHROUGH_HEADER), any())).thenReturn(dummyTransaction);
+        when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
+        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.CREATE)).thenReturn(true);
+
+        var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
+    }
+
+    @Test
     void testInterceptorReturnsFalseWhenTransactionHasIncorrectOENumber() throws ServiceException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
@@ -129,7 +167,7 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumber() throws ServiceException {
+    void testInterceptorReturnsFalseWhenCompanyInScopeHasInvalidOENumber() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
