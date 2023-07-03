@@ -10,7 +10,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateEntityBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.CorporateManagingOfficerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
 
@@ -177,7 +176,7 @@ class ManagingOfficerAdditionServiceTest {
     }
 
     @Test
-    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+    void testCorporateManagingOfficerAdditionsAddressSameAsFlagTrue() {
         var corporateManagingOfficers = getCorporateManagingOfficers();
         corporateManagingOfficers.get(0).setServiceAddress(null);
         corporateManagingOfficers.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
@@ -198,7 +197,7 @@ class ManagingOfficerAdditionServiceTest {
     }
 
     @Test
-    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+    void testCorporateManagingOfficerAdditionsAddressSameAsFlagFalse() {
         var corporateManagingOfficers = getCorporateManagingOfficers();
         corporateManagingOfficers.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
         corporateManagingOfficers.get(0).setPrincipalAddress(AddressUtils.createDummyAddressDto(
@@ -219,7 +218,7 @@ class ManagingOfficerAdditionServiceTest {
     }
 
     @Test
-    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+    void testIndividualManagingOfficerAdditionsAddressSameAsFlagTrue() {
         var individualManagingOfficers = getIndividualManagingOfficers();
         individualManagingOfficers.get(0).setServiceAddress(null);
         individualManagingOfficers.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
@@ -240,7 +239,7 @@ class ManagingOfficerAdditionServiceTest {
     }
 
     @Test
-    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+    void testIndividualManagingOfficerAdditionsAddressSameAsFlagFalse() {
         var individualManagingOfficers = getIndividualManagingOfficers();
         individualManagingOfficers.get(0).setServiceAddress(AddressUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
         individualManagingOfficers.get(0).setUsualResidentialAddress(AddressUtils.createDummyAddressDto(
