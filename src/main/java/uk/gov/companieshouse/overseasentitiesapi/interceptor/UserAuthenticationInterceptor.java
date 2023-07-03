@@ -35,6 +35,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private final TransactionService transactionService;
 
+    private static final String TRANSACTION_SERVER_ERROR = "ServerError";
+
     @Autowired
     public UserAuthenticationInterceptor(TransactionService transactionService) {
         this.transactionService = transactionService;
@@ -72,10 +74,10 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
         authInfoMap.put("request_method", request.getMethod());
-        authInfoMap.put("company_number_in_scope", companyNumberInScope);
         authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
 
         if (isRoeUpdateJourneyRequest) {
+            authInfoMap.put("company_number_in_scope", companyNumberInScope);
             // Check the user has the company_oe_annual_update=create permission for ROE Update
             boolean hasCompanyOeAnnualUpdateCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE);
             authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOeAnnualUpdateCreatePermission);
@@ -114,9 +116,6 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                 return true;
             } else {
                 ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers do not match", null, authInfoMap);
-                if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR != response.getStatus()) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                }
                 return false;
             }
         } else {
@@ -142,9 +141,13 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
         String companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
-        if (StringUtils.isNotBlank(companyNumberInTransaction)) {
-            return companyNumberInTransaction.equalsIgnoreCase(companyNumberInScope);
+        if (TRANSACTION_SERVER_ERROR.equals(companyNumberInTransaction)) {
+            return false;
         }
+        if (StringUtils.isNotBlank(companyNumberInTransaction) && companyNumberInTransaction.equalsIgnoreCase(companyNumberInScope)) {
+            return true;
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return false;
     }
 
@@ -173,7 +176,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return TRANSACTION_SERVER_ERROR;
         }
 
     }
