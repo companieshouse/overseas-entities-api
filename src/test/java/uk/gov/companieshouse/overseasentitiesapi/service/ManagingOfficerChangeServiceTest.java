@@ -12,14 +12,11 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
@@ -60,6 +57,9 @@ class ManagingOfficerChangeServiceTest {
     Pair<CompanyOfficerApi, ManagingOfficerDataApi> mockPublicPrivateMoPair;
 
     @Mock
+    Pair<CompanyOfficerApi, ManagingOfficerDataApi> mockPublicPrivateMoPair2;
+
+    @Mock
     Pair<CompanyOfficerApi, ManagingOfficerDataApi> mockPublicPrivateMoPairLeftNull;
 
     @Mock
@@ -70,34 +70,80 @@ class ManagingOfficerChangeServiceTest {
     ByteArrayOutputStream outputStreamCaptor;
 
     private static AddressDto createDummyAddressDto() {
+        return createDummyAddressDto("John Doe", "98765", "123", "Main Street", "Apartment 4B",
+                "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
+    }
+
+    private static AddressDto createDummyAddressDto(String... fieldValues) {
         AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("123");
-        addressDto.setLine1("Main Street");
-        addressDto.setLine2("Apartment 4B");
-        addressDto.setCounty("Countyshire");
-        addressDto.setTown("Cityville");
-        addressDto.setCountry("United Kingdom");
-        addressDto.setPoBox("98765");
-        addressDto.setCareOf("John Doe");
-        addressDto.setPostcode("AB12 3CD");
+
+        addressDto.setCareOf(fieldValues[0]);
+        addressDto.setPoBox(fieldValues[1]);
+        addressDto.setPropertyNameNumber(fieldValues[2]);
+        addressDto.setLine1(fieldValues[3]);
+        addressDto.setLine2(fieldValues[4]);
+        addressDto.setTown(fieldValues[5]);
+        addressDto.setCounty(fieldValues[6]);
+        addressDto.setPostcode(fieldValues[7]);
+        addressDto.setCountry(fieldValues[8]);
 
         return addressDto;
     }
 
+    private static uk.gov.companieshouse.api.model.managingofficerdata.AddressApi createDummyAddressApi(
+            String... fieldValues) {
+        uk.gov.companieshouse.api.model.managingofficerdata.AddressApi addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
+
+        addressApi.setCareOf(fieldValues[0]);
+        addressApi.setPoBox(fieldValues[1]);
+        addressApi.setPremises(fieldValues[2]);
+        addressApi.setAddressLine1(fieldValues[3]);
+        addressApi.setAddressLine2(fieldValues[4]);
+        addressApi.setLocality(fieldValues[5]);
+        addressApi.setRegion(fieldValues[6]);
+        addressApi.setPostalCode(fieldValues[7]);
+        addressApi.setCountry(fieldValues[8]);
+
+        return addressApi;
+    }
+
+
     private static Address createDummyAddress() {
+        return createDummyAddress("John Doe", "98765", "123", "Main Street", "Apartment 4B",
+                "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
+    }
+
+    private static Address createDummyAddress(String... fieldValues) {
         Address address = new Address();
-        address.setCareOf("John Doe");
-        address.setPoBox("98765");
-        address.setHouseNameNum("123");
-        address.setStreet("Main Street");
-        address.setArea("Apartment 4B");
-        address.setPostTown("Cityville");
-        address.setRegion("Countyshire");
-        address.setPostCode("AB12 3CD");
-        address.setCountry("United Kingdom");
+        address.setCareOf(fieldValues[0]);
+        address.setPoBox(fieldValues[1]);
+        address.setHouseNameNum(fieldValues[2]);
+        address.setStreet(fieldValues[3]);
+        address.setArea(fieldValues[4]);
+        address.setPostTown(fieldValues[5]);
+        address.setRegion(fieldValues[6]);
+        address.setPostCode(fieldValues[7]);
+        address.setCountry(fieldValues[8]);
+        return address;
+    }
+
+    private static uk.gov.companieshouse.api.model.common.Address createDummyCommonAddress(
+            String... fieldValues) {
+        uk.gov.companieshouse.api.model.common.Address address = new uk.gov.companieshouse.api.model.common.Address();
+
+        address.setCareOf(fieldValues[0]);
+        address.setPoBox(fieldValues[1]);
+        address.setPremises(fieldValues[2]);
+        address.setAddressLine1(fieldValues[3]);
+        address.setAddressLine2(fieldValues[4]);
+        address.setLocality(fieldValues[5]);
+        address.setRegion(fieldValues[6]);
+        address.setPostalCode(fieldValues[7]);
+        address.setCountry(fieldValues[8]);
 
         return address;
     }
+
 
     private static List<Boolean> booleanWrapperValues() {
         return Arrays.asList(true, false, null);
@@ -120,6 +166,13 @@ class ManagingOfficerChangeServiceTest {
         when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
         when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
         when(mockLeftPart.getIdentification()).thenReturn(mockedIdentificationApi);
+
+        CompanyOfficerApi mockLeftPart2 = mock(CompanyOfficerApi.class);
+
+        ManagingOfficerDataApi mockRightPart2 = new ManagingOfficerDataApi();
+        when(mockPublicPrivateMoPair2.getRight()).thenReturn(mockRightPart2);
+        when(mockPublicPrivateMoPair2.getLeft()).thenReturn(mockLeftPart2);
+        when(mockLeftPart2.getIdentification()).thenReturn(mockedIdentificationApi);
 
         when(mockPublicPrivateMoPairLeftNull.getRight()).thenReturn(mockRightPart);
         when(mockPublicPrivateMoPairLeftNull.getLeft()).thenReturn(null);
@@ -180,6 +233,63 @@ class ManagingOfficerChangeServiceTest {
                 mockPublicPrivateMoPair);
         when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateManagingOfficerChangesAddressesTheSame() {
+        String[] individualServiceAddressArray = {"Jane Smith", "54321",
+                "individualServiceAddressArray", "Broadway", "Apartment 2C", "Townsville",
+                "Countyville", "XY98 7ZW", "United Kingdom"};
+        String[] individualResidentialAddressArray = {"Alice Johnson", "12345",
+                "individualResidentialAddressArray", "Oak Street", "Apartment 3D", "Springfield",
+                "Stateville", "98765", "United States"};
+
+        String[] corporateServiceAddressArray = {"ACME Corporation", "7890",
+                "corporateServiceAddressArray", "Corporate Avenue", "Floor 10", "Business City",
+                "Countyshire", "EF34 5GH", "United Kingdom"};
+        String[] corporatePrincipalAddressArray = {"XYZ Corporation", "45678",
+                "corporatePrincipalAddressArray", "Park Avenue", "Floor 25", "Metropolis City",
+                "Countyshire", "AB12 3CD", "United States"};
+
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setServiceAddress(
+                createDummyAddressDto(individualServiceAddressArray));
+        managingOfficerIndividualDto.setUsualResidentialAddress(
+                createDummyAddressDto(individualResidentialAddressArray));
+
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+        managingOfficerCorporateDto.setServiceAddress(
+                createDummyAddressDto(corporateServiceAddressArray));
+        managingOfficerCorporateDto.setPrincipalAddress(
+                createDummyAddressDto(corporatePrincipalAddressArray));
+
+        when(mockPublicPrivateMoPair.getLeft().getAddress()).thenReturn(
+                createDummyCommonAddress(individualServiceAddressArray));
+        mockPublicPrivateMoPair.getRight()
+                .setResidentialAddress(createDummyAddressApi(individualResidentialAddressArray));
+
+        when(mockPublicPrivateMoPair2.getLeft().getAddress()).thenReturn(
+                createDummyCommonAddress(corporateServiceAddressArray));
+        when(mockPublicPrivateMoPair2.getLeft().getPrincipalOfficeAddress()).thenReturn(
+                createDummyCommonAddress(corporatePrincipalAddressArray));
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair2);
+
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
                 List.of(managingOfficerIndividualDto));
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
