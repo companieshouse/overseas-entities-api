@@ -35,7 +35,6 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private final TransactionService transactionService;
 
-    private static final String TRANSACTION_SERVER_ERROR = "ServerError";
 
     @Autowired
     public UserAuthenticationInterceptor(TransactionService transactionService) {
@@ -140,11 +139,11 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
-        String companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
-        if (TRANSACTION_SERVER_ERROR.equals(companyNumberInTransaction)) {
+        var companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
+        if (companyNumberInTransaction.isEmpty()) {
             return false;
         }
-        if (StringUtils.isNotBlank(companyNumberInTransaction) && companyNumberInTransaction.equalsIgnoreCase(companyNumberInScope)) {
+        if (companyNumberInTransaction.get().isPresent() && companyNumberInTransaction.get().get().equalsIgnoreCase(companyNumberInScope)) {
             return true;
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -163,7 +162,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return permissions;
     }
 
-    private String getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
+    private Optional<Optional<String>> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
@@ -172,11 +171,11 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
             logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
-            return transaction.getCompanyNumber();
+            return Optional.of(Optional.ofNullable(transaction.getCompanyNumber()));
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return TRANSACTION_SERVER_ERROR;
+            return Optional.empty();
         }
 
     }
