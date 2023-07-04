@@ -80,7 +80,6 @@ public class CostsService {
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
         cost.setProductType(UPDATE_PRODUCT_TYPE);
-
         return cost;
     }
 
@@ -95,7 +94,6 @@ public class CostsService {
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
         cost.setProductType(REMOVE_PRODUCT_TYPE);
-
         return cost;
     }
 }

@@ -164,7 +164,10 @@ public class FilingsService {
                             String.format("Empty submission returned when generating filing for %s", overseasEntityId)
                     ));
 
-    if (submissionDto.isRemoveEntity()) {
+    if (Boolean.TRUE.equals(submissionDto.isRemoveEntity())) {
+      var updateSubmission = new UpdateSubmission();
+      collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, true, logMap);
+      setUpdateSubmissionData(userSubmission, updateSubmission, true, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_REMOVE);
     } else if (submissionDto.isForUpdate()) {
       boolean isNoChange = submissionDto.getUpdate().isNoChange();

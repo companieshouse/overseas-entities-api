@@ -73,7 +73,7 @@ public class OverseasEntitiesService {
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();
-        if (submissionOpt.get().isRemoveEntity()) {
+        if (Boolean.TRUE.equals(submissionOpt.get().isRemoveEntity())) {
             ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.REMOVE;

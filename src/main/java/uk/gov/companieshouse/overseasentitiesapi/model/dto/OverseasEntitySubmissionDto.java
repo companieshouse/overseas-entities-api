@@ -197,9 +197,6 @@ public class OverseasEntitySubmissionDto {
     }
 
     public Boolean isRemoveEntity() {
-        if (removeEntity == null) {
-            removeEntity = Boolean.FALSE;
-        }
         return removeEntity;
     }
 
