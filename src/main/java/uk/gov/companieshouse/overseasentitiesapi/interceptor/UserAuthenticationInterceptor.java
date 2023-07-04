@@ -141,9 +141,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
         var companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
-        if (companyNumberInTransaction != null) {
-            if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get()
-                    .equalsIgnoreCase(companyNumberInScope)) {
+        if (companyNumberInTransaction.isPresent()) {
+            if (companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
                 return true;
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -175,13 +174,13 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
             if (transaction.getCompanyNumber() == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return null;
+                return Optional.empty();
             }
             return Optional.of(transaction.getCompanyNumber());
         } catch (ServiceException e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Optional.empty();
         }
     }
 
