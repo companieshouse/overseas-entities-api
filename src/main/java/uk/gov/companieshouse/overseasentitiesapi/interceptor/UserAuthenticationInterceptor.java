@@ -177,7 +177,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
             return Optional.of(transaction.getCompanyNumber());
         } catch (Exception e) {
-            ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
+            ApiLogger.errorContext(reqId, "Error retrieving company number for transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return Optional.empty();
         }
