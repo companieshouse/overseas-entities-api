@@ -258,6 +258,8 @@ public class ManagingOfficerChangeService {
         hasChange |= changeManager.compareAndBuildLeftChange(
                 managingOfficerCorporateDto.getName(),
                 CompanyOfficerApi::getName,
+                Function.identity(),
+                ComparisonHelper::equalsIgnoreCase,
                 CorporateManagingOfficer::setName
         );
 

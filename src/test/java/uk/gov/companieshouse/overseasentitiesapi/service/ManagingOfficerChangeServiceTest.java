@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
+import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.IdentificationApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
@@ -156,6 +157,143 @@ class ManagingOfficerChangeServiceTest {
         assertFalse(result.isEmpty());
         assertTrue(result.stream().anyMatch(IndividualManagingOfficerChange.class::isInstance));
         assertTrue(result.stream().anyMatch(CorporateManagingOfficerChange.class::isInstance));
+    }
+
+    @Test
+    void testCollateIndManagingOfficerNameFormerNameNoChange() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+        managingOfficerIndividualDto.setFormerNames("Darryl Jenkins");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("John DOE");
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("DARRYL JENKINS");
+                }}
+        );
+        mockLeftPart.setFormerNames(formerNamesApiList);
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateIndManagingOfficerFormerNameChange() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+        managingOfficerIndividualDto.setFormerNames("Darryl Joe");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("John DOE");
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("DARRYL JENKINS");
+                }}
+        );
+        mockLeftPart.setFormerNames(formerNamesApiList);
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
+                0);
+
+        assertNotNull(result);
+        assertEquals("Darryl Joe",individualManagingOfficerChange.getOfficer().getFormerNames());
+    }
+
+    @Test
+    void testCollateIndManagingOfficerNameChange() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("DOE");
+        managingOfficerIndividualDto.setFormerNames("Darryl Jenkins");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("Jane Doe");
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("DARRYL JENKINS");
+                }}
+        );
+        mockLeftPart.setFormerNames(formerNamesApiList);
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
+                0);
+
+        assertNotNull(result);
+        assertEquals(new PersonName("John", "DOE"),
+                individualManagingOfficerChange.getOfficer().getPersonName());
+    }
+
+    @Test
+    void testCollateCorporateManagingOfficerNameNoChange() {
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
+        managingOfficerCorporateDto.setName("John Smith Corp");
+        managingOfficerCorporateDto.setChipsReference("1234567890");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("JOHN SMITH CORP");
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(
+                List.of(managingOfficerCorporateDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
