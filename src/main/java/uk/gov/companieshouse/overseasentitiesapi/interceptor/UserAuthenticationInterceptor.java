@@ -114,7 +114,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                         authInfoMap);
                 return true;
             } else {
-                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Numbers inScope and Transaction do not match", null, authInfoMap);
+                ApiLogger.errorContext(reqId, "UserAuthenticationInterceptor unauthorised for ROE Update Journey as Company Number in scope does not match that within the transaction", null, authInfoMap);
                 return false;
             }
         } else {
@@ -141,10 +141,13 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
         var companyNumberInTransactionOptional = getCompanyNumberInTransaction(request, response, transactionId);
         if (companyNumberInTransactionOptional.isEmpty()) {
+            var logMap = new HashMap<String, Object>();
+            logMap.put(TRANSACTION_ID_KEY, transactionId);
+            ApiLogger.errorContext(request.getHeader(ERIC_REQUEST_ID_KEY), "Transaction does not contain a company number", null, logMap);
             return false;
         }
-        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.get();
-        if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
+        String companyNumberInTransaction = companyNumberInTransactionOptional.get();
+        if (companyNumberInTransaction.equalsIgnoreCase(companyNumberInScope)) {
             return true;
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -163,7 +166,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return permissions;
     }
 
-    private Optional<Optional<String>> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
+    private Optional<String> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
@@ -172,7 +175,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
             logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
-            return Optional.of(Optional.ofNullable(transaction.getCompanyNumber()));
+            return Optional.of(transaction.getCompanyNumber());
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

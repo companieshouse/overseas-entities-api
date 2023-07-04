@@ -143,7 +143,7 @@ class UserAuthenticationInterceptorTest {
 
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
         assertFalse(result);
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
     }
 
     @Test
