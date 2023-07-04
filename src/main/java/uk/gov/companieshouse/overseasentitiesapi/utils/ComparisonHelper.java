@@ -129,7 +129,16 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return personName.toString().equals(string);
+        return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
+    }
+
+    public static boolean equals(String corporateName, String string) {
+        var nullValuesCheck = handleNulls(corporateName, string);
+        if (nullValuesCheck != null) {
+            return nullValuesCheck;
+        }
+
+        return StringUtils.equalsIgnoreCase(normalise(corporateName),normalise(string));
     }
 
     public static boolean equals(Boolean b, boolean b2) {
@@ -167,7 +176,7 @@ public class ComparisonHelper {
 
         var concatenatedFormerNames = FormerNameConcatenation.concatenateFormerNames(strings);
 
-        return string.equals(concatenatedFormerNames);
+        return StringUtils.equalsIgnoreCase(normalise(string),normalise(concatenatedFormerNames));
     }
 
     private static Boolean handleNulls(Object a, Object b) {
