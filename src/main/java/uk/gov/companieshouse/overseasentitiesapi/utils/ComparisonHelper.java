@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
@@ -132,13 +132,13 @@ public class ComparisonHelper {
         return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
     }
 
-    public static boolean equals(String corporateName, String string) {
-        var nullValuesCheck = handleNulls(corporateName, string);
+    public static boolean equalsIgnoreCase(String string, String other) {
+        var nullValuesCheck = handleNulls(string, other);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(corporateName),normalise(string));
+        return StringUtils.equalsIgnoreCase(normalise(string),normalise(other));
     }
 
     public static boolean equals(Boolean b, boolean b2) {

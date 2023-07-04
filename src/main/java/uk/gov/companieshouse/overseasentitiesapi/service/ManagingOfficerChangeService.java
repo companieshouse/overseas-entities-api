@@ -259,7 +259,7 @@ public class ManagingOfficerChangeService {
                 managingOfficerCorporateDto.getName(),
                 CompanyOfficerApi::getName,
                 Function.identity(),
-                ComparisonHelper::equals,
+                ComparisonHelper::equalsIgnoreCase,
                 CorporateManagingOfficer::setName
         );
 
