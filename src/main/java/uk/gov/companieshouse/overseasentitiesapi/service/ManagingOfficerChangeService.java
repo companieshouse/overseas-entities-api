@@ -35,7 +35,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMa
 
 @Service
 public class ManagingOfficerChangeService {
-    public static final String NO_PAIR_FOUND = "No matching MO was found in the database";
+    public static final String NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND = "No public and no private data found for managing officer";
+    public static final String NO_PUBLIC_MO_DATA_FOUND = "No public data found for managing officer - continuing with changes";
+    public static final String NO_PRIVATE_MO_DATA_FOUND = "No private data found for managing officer - changes cannot be created";
     public static final String SERVICE = "ManagingOfficerChangeService";
     private Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo;
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
@@ -49,13 +51,14 @@ public class ManagingOfficerChangeService {
      */
     public List<Change> collateManagingOfficerChanges(
             Map<String, Pair<CompanyOfficerApi, ManagingOfficerDataApi>> publicPrivateMo,
-            OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            Map<String, Object> logMap) {
         this.publicPrivateMo = publicPrivateMo;
         this.overseasEntitySubmissionDto = overseasEntitySubmissionDto;
 
         List<Change> changes = new ArrayList<>();
-        changes.addAll(getIndividualManagingOfficerChange());
-        changes.addAll(getCorporateManagingOfficerChange());
+        changes.addAll(getIndividualManagingOfficerChange(logMap));
+        changes.addAll(getCorporateManagingOfficerChange(logMap));
         return changes;
     }
 
@@ -72,12 +75,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Individual' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getIndividualManagingOfficerChange() {
+    private List<Change> getIndividualManagingOfficerChange(Map<String, Object> logMap) {
         var individualManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersIndividual();
         return individualManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerIndividualToChange)
+                .map(individualMO -> convertManagingOfficerIndividualToChange(individualMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -95,12 +98,12 @@ public class ManagingOfficerChangeService {
      * related to the managing officers of 'Corporate' type. If no changes are detected, an empty
      * list is returned.
      */
-    private List<Change> getCorporateManagingOfficerChange() {
+    private List<Change> getCorporateManagingOfficerChange(Map<String, Object> logMap) {
         var corporateManagingOfficers = overseasEntitySubmissionDto.getManagingOfficersCorporate();
         return corporateManagingOfficers
                 .stream()
                 .filter(mo -> mo.getChipsReference() != null)
-                .map(this::convertManagingOfficerCorporateToChange)
+                .map(corporateMO -> convertManagingOfficerCorporateToChange(corporateMO, logMap))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -115,7 +118,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<IndividualManagingOfficer> convertManagingOfficerIndividualToChange(
-            ManagingOfficerIndividualDto managingOfficerIndividualDto) {
+            ManagingOfficerIndividualDto managingOfficerIndividualDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new IndividualManagingOfficerChange();
 
         var officer = new IndividualManagingOfficer();
@@ -123,9 +127,19 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerIndividualDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<IndividualManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager = new ChangeManager<>(
@@ -139,7 +153,10 @@ public class ManagingOfficerChangeService {
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerIndividualDto.getServiceAddress(),
-                managingOfficerIndividualDto.getRoleAndResponsibilities());
+                managingOfficerIndividualDto.getUsualResidentialAddress(),
+                managingOfficerIndividualDto.getRoleAndResponsibilities(),
+                managingOfficerIndividualDto.getServiceAddressSameAsUsualResidentialAddress()
+        );
 
         PersonName personName = null;
         if (managingOfficerIndividualDto.getFirstName() != null && managingOfficerIndividualDto.getLastName() != null) {
@@ -198,7 +215,8 @@ public class ManagingOfficerChangeService {
      * @return A ManagingOfficerChange object if changes are detected, otherwise null.
      */
     private ManagingOfficerChange<CorporateManagingOfficer> convertManagingOfficerCorporateToChange(
-            ManagingOfficerCorporateDto managingOfficerCorporateDto) {
+            ManagingOfficerCorporateDto managingOfficerCorporateDto,
+            Map<String, Object> logMap) {
         var managingOfficerChange = new CorporateManagingOfficerChange();
 
         var officer = new CorporateManagingOfficer();
@@ -206,9 +224,19 @@ public class ManagingOfficerChangeService {
         Pair<CompanyOfficerApi, ManagingOfficerDataApi> publicPrivateMoPair = publicPrivateMo.get(
                 managingOfficerCorporateDto.getChipsReference());
 
-        if (publicPrivateMoPair == null || publicPrivateMoPair.getRight() == null) {
-            ApiLogger.errorContext(SERVICE, NO_PAIR_FOUND, null);
+        if (publicPrivateMoPair == null) {
+            ApiLogger.errorContext(SERVICE, NO_PUBLIC_AND_NO_PRIVATE_MO_DATA_FOUND, null, logMap);
             return null;
+        }
+        else {
+            if (publicPrivateMoPair.getLeft() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PUBLIC_MO_DATA_FOUND, null, logMap);
+            }
+
+            if (publicPrivateMoPair.getRight() == null) {
+                ApiLogger.errorContext(SERVICE, NO_PRIVATE_MO_DATA_FOUND, null, logMap);
+                return null;
+            }
         }
 
         ChangeManager<CorporateManagingOfficer, CompanyOfficerApi, ManagingOfficerDataApi> changeManager
@@ -222,7 +250,10 @@ public class ManagingOfficerChangeService {
 
         boolean hasChange = setCommonAttributes(changeManager,
                 managingOfficerCorporateDto.getServiceAddress(),
-                managingOfficerCorporateDto.getRoleAndResponsibilities());
+                managingOfficerCorporateDto.getPrincipalAddress(),
+                managingOfficerCorporateDto.getRoleAndResponsibilities(),
+                managingOfficerCorporateDto.getServiceAddressSameAsPrincipalAddress()
+        );
 
         hasChange |= changeManager.compareAndBuildLeftChange(
                 managingOfficerCorporateDto.getName(),
@@ -286,10 +317,14 @@ public class ManagingOfficerChangeService {
     private <P extends Officer> boolean setCommonAttributes(
             ChangeManager<P, CompanyOfficerApi, ManagingOfficerDataApi> changeManager,
             AddressDto serviceAddress,
-            String role) {
-        var hasChange = changeManager.compareAndBuildRightChange(
-                serviceAddress,
-                ManagingOfficerDataApi::getPrincipalAddress,
+            AddressDto residentialAddress,
+            String role,
+            Boolean addressesAreSameFlag
+    ) {
+
+        var hasChange = changeManager.compareAndBuildLeftChange(
+                Boolean.TRUE.equals(addressesAreSameFlag) ? residentialAddress : serviceAddress,
+                CompanyOfficerApi::getAddress,
                 TypeConverter::addressDtoToAddress,
                 ComparisonHelper::equals,
                 Officer::setServiceAddress

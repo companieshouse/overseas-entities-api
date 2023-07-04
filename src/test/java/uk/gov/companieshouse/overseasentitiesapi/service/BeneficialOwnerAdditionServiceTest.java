@@ -18,9 +18,12 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import utils.AddressTestUtils;
 
+import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
@@ -40,6 +43,10 @@ class BeneficialOwnerAdditionServiceTest {
         setCounty("Some county");
         setPostcode("Some Postcode");
     }};
+
+    public static final String[] TEST_SERVICE_ADDRESS = {"1", "PO Box 123", "1234", "Main Street", "Apartment 1A", "Metropolis", "Metro County", "12345", "United States"};
+
+    public static final String[] TEST_RESIDENTIAL_ADDRESS = {"2", "", "5678", "Park Avenue", "Unit 2B", "Cityville", "City County", "67890", "United States"};
 
 
     @BeforeEach
@@ -123,6 +130,50 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Irish", ((IndividualBeneficialOwnerAddition) additions.get(0)).getNationalityOther());
     }
 
+    @Test
+    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+        var individualBeneficialOwners = getIndividualBeneficialOwners();
+        individualBeneficialOwners.get(0).setServiceAddress(null);
+        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        individualBeneficialOwners.get(0).setServiceAddressSameAsUsualResidentialAddress(true);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(individualBeneficialOwners);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var individualBeneficialOwnerAddition = ((IndividualBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
+        assertNotNull(individualBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testIndividualBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+        var individualBeneficialOwners = getIndividualBeneficialOwners();
+        individualBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        individualBeneficialOwners.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        individualBeneficialOwners.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(individualBeneficialOwners);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var individualBeneficialOwnerAddition = ((IndividualBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getResidentialAddress());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), individualBeneficialOwnerAddition.getServiceAddress());
+    }
+
     private List<BeneficialOwnerIndividualDto> getIndividualBeneficialOwners() {
         var individualBeneficialOwner = new BeneficialOwnerIndividualDto();
         individualBeneficialOwner.setStartDate(LocalDate.of(2020, 1, 1));
@@ -176,6 +227,52 @@ class BeneficialOwnerAdditionServiceTest {
         return List.of(corporateBeneficialOwner);
     }
 
+    @Test
+    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+        var corporateBeneficialOwners = getCorporateBeneficialOwners();
+        corporateBeneficialOwners.get(0).setServiceAddress(null);
+        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        corporateBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(true);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(corporateBeneficialOwners);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var corporateEntityBeneficialOwnerAddition = ((CorporateEntityBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotNull(corporateEntityBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testCorporateBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+        var corporateBeneficialOwners = getCorporateBeneficialOwners();
+        corporateBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        corporateBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        corporateBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(false);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(corporateBeneficialOwners);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(Collections.emptyList());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var corporateEntityBeneficialOwnerAddition = ((CorporateEntityBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), corporateEntityBeneficialOwnerAddition.getServiceAddress());
+    }
+
     private void assertCorporateBeneficialOwnerDetails(CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition) {
         assertEquals(LocalDate.of(2020, 1, 1), corporateEntityBeneficialOwnerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), corporateEntityBeneficialOwnerAddition.getCeasedDate());
@@ -220,5 +317,51 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());
         assertTrue(legalPersonBeneficialOwnerAddition.isOnSanctionsList());
+    }
+
+    @Test
+    void testLegalPersonBeneficialOwnerAdditionsAddressSameAsFlagTrue() {
+        var legalPersonBeneficialOwners = getLegalPersonBeneficialOwners();
+        legalPersonBeneficialOwners.get(0).setServiceAddress(null);
+        legalPersonBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        legalPersonBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(true);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(legalPersonBeneficialOwners);
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var legalPersonBeneficialOwnerAddition = ((LegalPersonBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotNull(legalPersonBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
+    }
+
+    @Test
+    void testLegalPersonBeneficialOwnerAdditionsAddressSameAsFlagFalse() {
+        var legalBeneficialOwners = getLegalPersonBeneficialOwners();
+        legalBeneficialOwners.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        legalBeneficialOwners.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+                TEST_RESIDENTIAL_ADDRESS));
+        legalBeneficialOwners.get(0).setServiceAddressSameAsPrincipalAddress(false);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(Collections.emptyList());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(legalBeneficialOwners);
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+        var legalPersonBeneficialOwnerAddition = ((LegalPersonBeneficialOwnerAddition) additions.get(0));
+
+        assertEquals(1, additions.size());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getRegisteredOffice());
+        assertNotEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
+        assertEquals(AddressTestUtils.createDummyAddress(TEST_SERVICE_ADDRESS), legalPersonBeneficialOwnerAddition.getServiceAddress());
     }
 }

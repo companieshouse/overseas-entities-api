@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 public class TypeConverter {
 
@@ -13,11 +12,11 @@ public class TypeConverter {
     throw new IllegalAccessError("Use the static methods instead of instantiating Converters");
   }
 
-  public static Address addressDtoToAddress(AddressDto addressDto) {
+  public static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address addressDtoToAddress(AddressDto addressDto) {
     if (addressDto == null) {
       return null;
     }
-    var address = new Address();
+    var address = new uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address();
 
     address.setCareOf(addressDto.getCareOf());
     address.setPoBox(addressDto.getPoBox());
@@ -32,12 +31,12 @@ public class TypeConverter {
     return address;
   }
 
-  public static Address addressApiToAddress(AddressApi addressApi) {
+  public static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address addressApiToAddress(AddressApi addressApi) {
     if (addressApi == null) {
       return null;
     }
 
-    var address = new Address();
+    var address = new uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address();
 
     address.setCareOf(addressApi.getCareOf());
     address.setPoBox(addressApi.getPoBox());
@@ -60,13 +59,13 @@ public class TypeConverter {
     return LocalDate.parse(dateStr, formatter);
   }
 
-  public static Address registeredOfficeAddressApiToAddress(
+  public static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address registeredOfficeAddressApiToAddress(
       RegisteredOfficeAddressApi registeredOfficeAddressApi) {
     if (registeredOfficeAddressApi == null) {
       return null;
     }
 
-    var address = new Address();
+    var address = new uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address();
     address.setHouseNameNum(registeredOfficeAddressApi.getPremises());
     address.setStreet(registeredOfficeAddressApi.getAddressLine1());
     address.setArea(registeredOfficeAddressApi.getAddressLine2());

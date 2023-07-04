@@ -41,7 +41,10 @@ public class ManagingOfficerAdditionService {
     private IndividualManagingOfficerAddition getIndividualManagingOfficerAddition(ManagingOfficerIndividualDto mo) {
         var actionDate = mo.getStartDate();
         var residentialAddress = mo.getUsualResidentialAddress();
-        var serviceAddress = mo.getServiceAddress();
+
+        var serviceAddress = Boolean.TRUE.equals(mo.getServiceAddressSameAsUsualResidentialAddress())
+                ? residentialAddress
+                : mo.getServiceAddress();
         var resignedOn = mo.getResignedOn();
 
         var individualManagingOfficerAddition =
@@ -77,7 +80,9 @@ public class ManagingOfficerAdditionService {
     private CorporateManagingOfficerAddition getCorporateManagingOfficerAddition(ManagingOfficerCorporateDto mo) {
         var actionDate = mo.getStartDate();
         var residentialAddress = mo.getPrincipalAddress();
-        var serviceAddress = mo.getServiceAddress();
+        var serviceAddress = Boolean.TRUE.equals(mo.getServiceAddressSameAsPrincipalAddress())
+                ? residentialAddress
+                : mo.getServiceAddress();
         var resignedOn = mo.getResignedOn();
 
         var corporateManagingOfficerAddition =
