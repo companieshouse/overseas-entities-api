@@ -278,7 +278,7 @@ class BeneficialOwnerChangeServiceTest {
                     individualBeneficialOwnerChange.getPsc().getNationalityOther());
             assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
                     individualBeneficialOwnerChange.getPsc().getNatureOfControls());
-            assertTrue(individualBeneficialOwnerChange.getPsc().isOnSanctionsList());
+            assertTrue(individualBeneficialOwnerChange.getPsc().getIsOnSanctionsList());
             assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
         }
     }

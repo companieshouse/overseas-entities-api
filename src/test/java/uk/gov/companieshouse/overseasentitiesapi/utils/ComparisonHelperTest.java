@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +20,67 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 class ComparisonHelperTest {
+
+    private static Stream<Arguments> provideTestDataForNatureOfControlsEquals() {
+        return Stream.of(
+                Arguments.of(List.of("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON"),
+                        new String[]{
+                                "voting-rights-more-than-25-percent-registered-overseas-entity",
+                                "ownership-of-shares-more-than-25-percent-registered-overseas-entity"},
+                        true),
+                Arguments.of(null,
+                        new String[]{
+                                "voting-rights-more-than-25-percent-registered-overseas-entity",
+                                "ownership-of-shares-more-than-25-percent-registered-overseas-entity"},
+                        false),
+                Arguments.of(List.of("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON"),
+                        null,
+                        false),
+                Arguments.of(List.of("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON"),
+                        new String[]{
+                                "right-to-appoint-and-remove-directors-registered-overseas-entity",
+                                "significant-influence-or-control-registered-overseas-entity"},
+                        false),
+                Arguments.of(List.of("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON"),
+                        new String[]{
+                                "voting-rights-more-than-25-percent-registered-overseas-entity",
+                                "ownership-of-shares-more-than-25-percent-registered-overseas-entity"},
+                        true),
+                Arguments.of(List.of(
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON",
+                                "OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_PERSON",
+                                "OE_SIGINFLUENCECONTROL_AS_PERSON",
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_TRUST",
+                                "OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_TRUST",
+                                "OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST",
+                                "OE_SIGINFLUENCECONTROL_AS_TRUST",
+                                "OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_FIRM",
+                                "OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM",
+                                "OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM",
+                                "OE_SIGINFLUENCECONTROL_AS_FIRM"
+                        ),
+                        new String[]{
+                                "ownership-of-shares-more-than-25-percent-registered-overseas-entity",
+                                "voting-rights-more-than-25-percent-registered-overseas-entity",
+                                "right-to-appoint-and-remove-directors-registered-overseas-entity",
+                                "significant-influence-or-control-registered-overseas-entity",
+                                "ownership-of-shares-more-than-25-percent-as-trust-registered-overseas-entity",
+                                "voting-rights-more-than-25-percent-as-trust-registered-overseas-entity",
+                                "right-to-appoint-and-remove-directors-as-trust-registered-overseas-entity",
+                                "significant-influence-or-control-as-trust-registered-overseas-entity",
+                                "ownership-of-shares-more-than-25-percent-as-firm-registered-overseas-entity",
+                                "voting-rights-more-than-25-percent-as-firm-registered-overseas-entity",
+                                "right-to-appoint-and-remove-directors-as-firm-registered-overseas-entity",
+                                "significant-influence-or-control-as-firm-registered-overseas-entity"
+                        },
+                        true)
+        );
+    }
 
     @Test
     void equalsAddressDtoAndAddressApiReturnCorrectResult() {
@@ -94,6 +154,14 @@ class ComparisonHelperTest {
         assertFalse(output);
     }
 
+    private static Stream<Arguments> provideTestArguments() {
+        return Stream.of(
+                Arguments.of(null, " "),
+                Arguments.of(null, ""),
+                Arguments.of(" ", "")
+        );
+    }
+
     @Test
     void equalsAddressDtoAndAddressApiReturnFalseWhenOneFieldDiffers() {
         AddressDto addressDto = new AddressDto();
@@ -121,14 +189,6 @@ class ComparisonHelperTest {
         assertFalse(ComparisonHelper.equals(addressDto, addressApi));
     }
 
-    private static Stream<Arguments> provideTestArguments() {
-        return Stream.of(
-                Arguments.of(null, " "),
-                Arguments.of(null, ""),
-                Arguments.of(" ", "")
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("provideTestArguments")
     void testEquality(String value1, String value2) {
@@ -151,8 +211,12 @@ class ComparisonHelperTest {
             addressFields2[i] = controlAddressFields[i];
 
             String fieldDescription = "Field: " + controlAddressFields[i];
-            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1), fieldDescription + " - equals() does not treat '" + value1 + "' and '" + value2 + "' the same");
-            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2), fieldDescription + " - equals() does not treat '" + value1 + "' and '" + value2 + "' the same");
+            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1),
+                    fieldDescription + " - equals() does not treat '" + value1 + "' and '" + value2
+                            + "' the same");
+            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2),
+                    fieldDescription + " - equals() does not treat '" + value1 + "' and '" + value2
+                            + "' the same");
         }
     }
 
@@ -181,35 +245,12 @@ class ComparisonHelperTest {
             }
             String fieldDescription = "Field: " + fieldNames[i];
 
-            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1), fieldDescription + " - equals() does not treat '" + addressFields1[i] + "' and '" + addressFields2[i] + "' the same");
-            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2), fieldDescription + " - equals() does not treat '" + addressFields1[i] + "' and '" + addressFields2[i] + "' the same");
-        }
-    }
-
-    @Test
-    void testAddressEqualsCasingIsIgnoredOnEquals() {
-        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
-                "street", "area", "postTown", "region", "postCode", "country"};
-        String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-        String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
-
-        for (int i = 0; i < addressFields1.length; i++) {
-            addressFields1[i] = addressFields1[i].toUpperCase();
-            addressFields2[i] = addressFields2[i].toLowerCase();
-
-            AddressDto addressDto1 = createTestAddressDto(addressFields1);
-            AddressApi addressApi1 = createTestAddressApi(addressFields1);
-
-            AddressDto addressDto2 = createTestAddressDto(addressFields2);
-            AddressApi addressApi2 = createTestAddressApi(addressFields2);
-
-            addressFields1[i] = controlAddressFields[i];
-            addressFields2[i] = controlAddressFields[i];
-
-            String fieldDescription = "Field: " + controlAddressFields[i];
-
-            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1), fieldDescription + " - equals() does not treat '" + addressFields1[i] + "' and '" + addressFields2[i] + "' the same");
-            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2), fieldDescription + " - equals() does not treat '" + addressFields1[i] + "' and '" + addressFields2[i] + "' the same");
+            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1),
+                    fieldDescription + " - equals() does not treat '" + addressFields1[i]
+                            + "' and '" + addressFields2[i] + "' the same");
+            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2),
+                    fieldDescription + " - equals() does not treat '" + addressFields1[i]
+                            + "' and '" + addressFields2[i] + "' the same");
         }
     }
 
@@ -247,6 +288,36 @@ class ComparisonHelperTest {
         return addressApi;
     }
 
+    @Test
+    void testAddressEqualsCasingIsIgnoredOnEquals() {
+        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
+                "street", "area", "postTown", "region", "postCode", "country"};
+        String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
+        String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
+
+        for (int i = 0; i < addressFields1.length; i++) {
+            addressFields1[i] = addressFields1[i].toUpperCase();
+            addressFields2[i] = addressFields2[i].toLowerCase();
+
+            AddressDto addressDto1 = createTestAddressDto(addressFields1);
+            AddressApi addressApi1 = createTestAddressApi(addressFields1);
+
+            AddressDto addressDto2 = createTestAddressDto(addressFields2);
+            AddressApi addressApi2 = createTestAddressApi(addressFields2);
+
+            addressFields1[i] = controlAddressFields[i];
+            addressFields2[i] = controlAddressFields[i];
+
+            String fieldDescription = "Field: " + controlAddressFields[i];
+
+            assertTrue(ComparisonHelper.equals(addressDto1, addressApi1),
+                    fieldDescription + " - equals() does not treat '" + addressFields1[i]
+                            + "' and '" + addressFields2[i] + "' the same");
+            assertTrue(ComparisonHelper.equals(addressDto2, addressApi2),
+                    fieldDescription + " - equals() does not treat '" + addressFields1[i]
+                            + "' and '" + addressFields2[i] + "' the same");
+        }
+    }
 
     @Test
     void equalsAddressDtoAndAddressApiReturnFalseWhenMultipleFieldsDiffer() {
@@ -309,38 +380,12 @@ class ComparisonHelperTest {
         assertFalse(ComparisonHelper.equals(localDate, null));
     }
 
-    @Test
-    void equalsListAndArrayReturnCorrectResult() {
-        List<String> list = Arrays.asList("element1", "element2", "element3");
-        String[] array = {"element1", "element2", "element3"};
-
-        assertTrue(ComparisonHelper.equals(list, array));
-    }
-
-    @Test
-    void equalsListAndArrayWithSameElementsReturnCorrectResult() {
-        List<String> list = Arrays.asList("element2", "element1", "element3");
-        String[] array = {"element1", "element2", "element3"};
-
-        assertTrue(ComparisonHelper.equals(list, array));
-    }
-
-    @Test
-    void equalsListAndArrayWithDifferentElementsReturnCorrectResult() {
-        List<String> list = Arrays.asList("element2", "element1", "element3");
-        String[] array = {"element1", "element2"};
-
-        assertFalse(ComparisonHelper.equals(list, array));
-    }
-
-    @Test
-    void equalsListAndArrayWhenNullReturnCorrectResult() {
-        List<String> list = Arrays.asList("element1", "element2", "element3");
-        String[] array = new String[]{"element1", "element2", "element3"};
-
-        assertFalse(ComparisonHelper.equals((List<String>) null, array));
-        assertFalse(ComparisonHelper.equals(list, null));
-        assertTrue(ComparisonHelper.equals((List<String>) null, null));
+    @ParameterizedTest
+    @MethodSource("provideTestDataForNatureOfControlsEquals")
+    void testNatureOfControlsEquals(List<String> chipsFormatList, String[] publicDataFormat,
+            boolean expectedResult) {
+        assertEquals(expectedResult,
+                ComparisonHelper.natureOfControlsEquals(chipsFormatList, publicDataFormat));
     }
 
     @Test
@@ -629,9 +674,11 @@ class ComparisonHelperTest {
         addressApi.setCareOf("CareOf");
         addressApi.setPostalCode("Postcode");
 
-        assertTrue(ComparisonHelper.equals(null, (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
+        assertTrue(ComparisonHelper.equals(null,
+                (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
         assertFalse(ComparisonHelper.equals(null, addressApi));
-        assertFalse(ComparisonHelper.equals(addressDto, (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
+        assertFalse(ComparisonHelper.equals(addressDto,
+                (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
     }
 
     @Test
