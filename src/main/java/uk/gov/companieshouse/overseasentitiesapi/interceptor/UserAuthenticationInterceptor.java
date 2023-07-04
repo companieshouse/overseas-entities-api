@@ -139,15 +139,14 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
-        var companyNumberInTransactionOptional = getCompanyNumberInTransaction(request, response, transactionId);
-        if (companyNumberInTransactionOptional.isEmpty()) {
-            return false;
+        var companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
+        if (companyNumberInTransaction.isPresent()) {
+            if (companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
+                return true;
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
         }
-        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.get();
-        if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
-            return true;
-        }
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return false;
     }
 
@@ -163,7 +162,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return permissions;
     }
 
-    private Optional<Optional<String>> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
+    private Optional<String> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
@@ -172,7 +171,11 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
             logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
-            return Optional.of(Optional.ofNullable(transaction.getCompanyNumber()));
+            if (StringUtils.isEmpty(transaction.getCompanyNumber())) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return Optional.empty();
+            }
+            return Optional.of(transaction.getCompanyNumber());
         } catch (Exception e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
