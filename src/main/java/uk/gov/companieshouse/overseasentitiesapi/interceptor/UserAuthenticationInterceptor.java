@@ -21,6 +21,7 @@ import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.api.util.security.Permission.Value;
 import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.service.TransactionService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
@@ -139,15 +140,15 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private boolean doCompanyNumbersMatch(HttpServletRequest request, HttpServletResponse response, String companyNumberInScope, String transactionId) {
-        var companyNumberInTransactionOptional = getCompanyNumberInTransaction(request, response, transactionId);
-        if (companyNumberInTransactionOptional.isEmpty()) {
-            return false;
+        var companyNumberInTransaction = getCompanyNumberInTransaction(request, response, transactionId);
+        if (companyNumberInTransaction != null) {
+            if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get()
+                    .equalsIgnoreCase(companyNumberInScope)) {
+                return true;
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
         }
-        Optional<String> companyNumberInTransaction = companyNumberInTransactionOptional.get();
-        if (companyNumberInTransaction.isPresent() && companyNumberInTransaction.get().equalsIgnoreCase(companyNumberInScope)) {
-            return true;
-        }
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return false;
     }
 
@@ -163,7 +164,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return permissions;
     }
 
-    private Optional<Optional<String>> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
+    private Optional<String> getCompanyNumberInTransaction(HttpServletRequest request, HttpServletResponse response, String transactionId) {
         String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
@@ -172,13 +173,16 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
             logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
             ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
-            return Optional.of(Optional.ofNullable(transaction.getCompanyNumber()));
-        } catch (Exception e) {
+            if (transaction.getCompanyNumber() == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return null;
+            }
+            return Optional.of(transaction.getCompanyNumber());
+        } catch (ServiceException e) {
             ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return Optional.empty();
+            return null;
         }
-
     }
 
 }

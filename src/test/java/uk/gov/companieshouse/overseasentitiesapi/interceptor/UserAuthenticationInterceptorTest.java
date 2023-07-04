@@ -211,19 +211,18 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturns500StatusWhenTransactionCallFails() {
+    void testInterceptorReturns500StatusWhenTransactionCallFails() throws ServiceException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
         ericTokenSet(true);
 
         when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
         when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.CREATE)).thenReturn(true);
-
+        when(transactionService.getTransaction(any(), any(), any())).thenThrow(new ServiceException("Transaction Service Mock"));
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
         assertFalse(result);
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
     }
-
 
     @Test
     void testInterceptorReturnsTrueWhenAnApiKeyIsUsed() {
