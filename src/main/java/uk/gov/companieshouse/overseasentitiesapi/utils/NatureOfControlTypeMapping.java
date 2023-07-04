@@ -18,6 +18,21 @@ public class NatureOfControlTypeMapping {
   static final Map<NatureOfControlType, String> OVERSEAS_ENTITIES_TRUST_MAP;
   static final Map<NatureOfControlType, String> OVERSEAS_ENTITIES_FIRM_MAP;
 
+  public static final Map<String, String> CHIPS_FORMAT_TO_PUBLIC_FORMAT = Map.ofEntries(
+          Map.entry("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", "ownership-of-shares-more-than-25-percent-registered-overseas-entity"),
+          Map.entry("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON", "voting-rights-more-than-25-percent-registered-overseas-entity"),
+          Map.entry("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_PERSON", "right-to-appoint-and-remove-directors-registered-overseas-entity"),
+          Map.entry("OE_SIGINFLUENCECONTROL_AS_PERSON", "significant-influence-or-control-registered-overseas-entity"),
+          Map.entry("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_TRUST", "ownership-of-shares-more-than-25-percent-as-trust-registered-overseas-entity"),
+          Map.entry("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_TRUST", "voting-rights-more-than-25-percent-as-trust-registered-overseas-entity"),
+          Map.entry("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", "right-to-appoint-and-remove-directors-as-trust-registered-overseas-entity"),
+          Map.entry("OE_SIGINFLUENCECONTROL_AS_TRUST", "significant-influence-or-control-as-trust-registered-overseas-entity"),
+          Map.entry("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_FIRM", "ownership-of-shares-more-than-25-percent-as-firm-registered-overseas-entity"),
+          Map.entry("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", "voting-rights-more-than-25-percent-as-firm-registered-overseas-entity"),
+          Map.entry("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM", "right-to-appoint-and-remove-directors-as-firm-registered-overseas-entity"),
+          Map.entry("OE_SIGINFLUENCECONTROL_AS_FIRM", "significant-influence-or-control-as-firm-registered-overseas-entity")
+  );
+
   static {
     OVERSEAS_ENTITIES_PERSON_MAP = new EnumMap<>(NatureOfControlType.class);
     OVERSEAS_ENTITIES_PERSON_MAP.put(OVER_25_PERCENT_OF_SHARES,

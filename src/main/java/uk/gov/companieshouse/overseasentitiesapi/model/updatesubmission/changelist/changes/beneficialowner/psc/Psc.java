@@ -59,7 +59,7 @@ public abstract class Psc {
     this.natureOfControls.addAll(natureOfControls);
   }
 
-  public Boolean isOnSanctionsList() {
+  public Boolean getIsOnSanctionsList() {
     return isOnSanctionsList;
   }
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.psc.Identification;
 import uk.gov.companieshouse.api.model.psc.PscApi;
+import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -184,6 +185,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerCorporateDto.getServiceAddress(),
         beneficialOwnerCorporateDto.getPrincipalAddress(),
+        PrivateBoDataApi::getPrincipalAddress,
         collectedNatureOfControl,
         beneficialOwnerCorporateDto.getOnSanctionsList(),
         beneficialOwnerCorporateDto.getServiceAddressSameAsPrincipalAddress()
@@ -280,6 +282,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getPrincipalAddress(),
+        PrivateBoDataApi::getPrincipalAddress,
         collectedNatureOfControl,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(),
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddressSameAsPrincipalAddress()
@@ -365,6 +368,7 @@ public class BeneficialOwnerChangeService {
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerIndividualDto.getServiceAddress(),
         beneficialOwnerIndividualDto.getUsualResidentialAddress(),
+        PrivateBoDataApi::getUsualResidentialAddress,
         collectedNatureOfControl,
         beneficialOwnerIndividualDto.getOnSanctionsList(),
         beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress());
@@ -417,6 +421,7 @@ public class BeneficialOwnerChangeService {
           ChangeManager<P, PscApi, PrivateBoDataApi> changeManager,
           AddressDto serviceAddress,
           AddressDto residentialAddress,
+          Function<PrivateBoDataApi, AddressApi> residentialAddressGetter,
           List<String> natureOfControls,
           Boolean isOnSanctionsList,
           Boolean serviceAddressSameAsResidentialAddress
@@ -432,7 +437,7 @@ public class BeneficialOwnerChangeService {
 
     hasChange |= changeManager.compareAndBuildRightChange(
         residentialAddress,
-        PrivateBoDataApi::getUsualResidentialAddress,
+        residentialAddressGetter,
         TypeConverter::addressDtoToAddress,
         ComparisonHelper::equals,
         Psc::setResidentialAddress
@@ -442,7 +447,7 @@ public class BeneficialOwnerChangeService {
         natureOfControls,
         PscApi::getNaturesOfControl,
         Function.identity(),
-        ComparisonHelper::equals,
+        ComparisonHelper::natureOfControlsEquals,
         Psc::addNatureOfControlTypes);
 
     hasChange |= changeManager.compareAndBuildLeftChange(

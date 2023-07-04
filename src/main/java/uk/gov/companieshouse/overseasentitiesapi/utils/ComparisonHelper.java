@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
@@ -111,16 +112,22 @@ public class ComparisonHelper {
         return a.equals(localDate);
     }
 
-    public static boolean equals(List<String> list, String[] array) {
-        var nullValuesCheck = handleNulls(list, array);
+    public static boolean natureOfControlsEquals(List<String> chipsFormatList, String[] publicDataFormat) {
+        var nullValuesCheck = handleNulls(chipsFormatList, publicDataFormat);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
 
-        var arrayFromList = list.toArray();
+        var arrayFromList = chipsFormatList
+                .stream()
+                .map(NatureOfControlTypeMapping.CHIPS_FORMAT_TO_PUBLIC_FORMAT::get)
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
+
         Arrays.sort(arrayFromList);
-        Arrays.sort(array);
-        return Arrays.equals(arrayFromList, array);
+        Arrays.sort(publicDataFormat);
+
+        return Arrays.equals(arrayFromList, publicDataFormat);
     }
 
     public static boolean equals(PersonName personName, String string) {
