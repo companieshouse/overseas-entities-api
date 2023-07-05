@@ -338,9 +338,9 @@ public class ManagingOfficerChangeService {
 
         hasChange |= changeManager.compareAndBuildLeftChange(
                 role,
-                CompanyOfficerApi::getOfficerRole,
+                CompanyOfficerApi::getResponsibilities,
                 Function.identity(),
-                ComparisonHelper::equals,
+                ComparisonHelper::equalsIgnoreCase,
                 Officer::setRoleAndResponsibilities
         );
 
