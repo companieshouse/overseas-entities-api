@@ -198,6 +198,8 @@ public class ManagingOfficerChangeService {
         hasChange |= changeManager.compareAndBuildLeftChange(
                 nationalitySubmission,
                 CompanyOfficerApi::getNationality,
+                Function.identity(),
+                ComparisonHelper::equalsIndividualNationality,
                 IndividualManagingOfficer::setNationalityOther
         );
 

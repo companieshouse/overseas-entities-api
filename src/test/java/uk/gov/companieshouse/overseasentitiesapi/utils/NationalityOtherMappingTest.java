@@ -53,7 +53,7 @@ class NationalityOtherMappingTest {
 
         var result = generateMoNationalityOtherField(nationality, secondNationality);
 
-        assertEquals("Irish,", result);
+        assertEquals("Irish", result);
     }
 
     @Test
@@ -63,6 +63,6 @@ class NationalityOtherMappingTest {
 
         var result = generateMoNationalityOtherField(nationality, secondNationality);
 
-        assertEquals("Irish,", result);
+        assertEquals("Irish", result);
     }
 }

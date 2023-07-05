@@ -17,7 +17,7 @@ public class NationalityOtherMapping {
 
     public static String generateMoNationalityOtherField(String nationality, String secondNationality) {
         if (StringUtils.isEmpty(secondNationality)) {
-            return nationality != null ? nationality.concat(","): nationality;
+            return nationality;
         } else {
             return String.format("%s,%s", nationality, secondNationality);
         }
