@@ -32,6 +32,7 @@ import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataAp
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.IdentificationApi;
+import uk.gov.companieshouse.api.model.common.ContactDetails;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
@@ -170,7 +171,7 @@ class ManagingOfficerChangeServiceTest {
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
         mockRightPart.setManagingOfficerAppointmentId("123");
         CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
-        mockLeftPart.setName("John DOE");
+        mockLeftPart.setName("DOE, John");
         List<FormerNamesApi> formerNamesApiList = List.of(
                 new FormerNamesApi() {{
                     setForenames("DARRYL JENKINS");
@@ -205,7 +206,7 @@ class ManagingOfficerChangeServiceTest {
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
         mockRightPart.setManagingOfficerAppointmentId("123");
         CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
-        mockLeftPart.setName("John DOE");
+        mockLeftPart.setName("DOE, John");
         List<FormerNamesApi> formerNamesApiList = List.of(
                 new FormerNamesApi() {{
                     setForenames("DARRYL JENKINS");
@@ -242,7 +243,7 @@ class ManagingOfficerChangeServiceTest {
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
         mockRightPart.setManagingOfficerAppointmentId("123");
         CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
-        mockLeftPart.setName("Jane Doe");
+        mockLeftPart.setName("DOE, Jane");
         List<FormerNamesApi> formerNamesApiList = List.of(
                 new FormerNamesApi() {{
                     setForenames("DARRYL JENKINS");
@@ -274,11 +275,19 @@ class ManagingOfficerChangeServiceTest {
         ManagingOfficerCorporateDto managingOfficerCorporateDto = new ManagingOfficerCorporateDto();
         managingOfficerCorporateDto.setName("John Smith Corp");
         managingOfficerCorporateDto.setChipsReference("1234567890");
+        managingOfficerCorporateDto.setContactEmail("test@mail.com");
+        managingOfficerCorporateDto.setContactFullName("John Smith");
 
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
         mockRightPart.setManagingOfficerAppointmentId("123");
+        mockRightPart.setContactNameFull("JOHN SMITH");
+        mockRightPart.setContactEmailAddress("TEST@MAIL.COM");
+
         CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
         mockLeftPart.setName("JOHN SMITH CORP");
+        ContactDetails contactDetails = new ContactDetails();
+        contactDetails.setContactName("JOHN SMITH");
+        mockLeftPart.setContactDetails(contactDetails);
 
         when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
         when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);

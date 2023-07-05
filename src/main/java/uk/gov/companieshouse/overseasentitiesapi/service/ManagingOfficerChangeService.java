@@ -167,7 +167,7 @@ public class ManagingOfficerChangeService {
                 personName,
                 CompanyOfficerApi::getName,
                 Function.identity(),
-                ComparisonHelper::equals,
+                ComparisonHelper::equalsIndividualMO,
                 IndividualManagingOfficer::setPersonName
         );
 
@@ -274,12 +274,16 @@ public class ManagingOfficerChangeService {
         hasChange |= changeManager.compareAndBuildRightChange(
                 managingOfficerCorporateDto.getContactFullName(),
                 ManagingOfficerDataApi::getContactNameFull,
+                Function.identity(),
+                ComparisonHelper::equalsIgnoreCase,
                 CorporateManagingOfficer::setContactName
         );
 
         hasChange |= changeManager.compareAndBuildRightChange(
                 managingOfficerCorporateDto.getContactEmail(),
                 ManagingOfficerDataApi::getContactEmailAddress,
+                Function.identity(),
+                ComparisonHelper::equalsIgnoreCase,
                 CorporateManagingOfficer::setEmail
         );
 
