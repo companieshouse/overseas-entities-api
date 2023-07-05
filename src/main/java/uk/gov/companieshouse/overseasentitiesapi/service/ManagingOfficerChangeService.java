@@ -167,7 +167,7 @@ public class ManagingOfficerChangeService {
                 personName,
                 CompanyOfficerApi::getName,
                 Function.identity(),
-                ComparisonHelper::equalsIndividualMO,
+                ComparisonHelper::equalsIndividualMOName,
                 IndividualManagingOfficer::setPersonName
         );
 

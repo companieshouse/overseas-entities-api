@@ -139,7 +139,7 @@ public class ComparisonHelper {
         return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
     }
 
-    public static boolean equalsIndividualMO(PersonName personName, String string) {
+    public static boolean equalsIndividualMOName(PersonName personName, String string) {
         var nullValuesCheck = handleNulls(personName, string);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
