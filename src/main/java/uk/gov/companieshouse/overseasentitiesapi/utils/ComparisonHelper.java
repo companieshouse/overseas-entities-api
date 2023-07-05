@@ -139,6 +139,15 @@ public class ComparisonHelper {
         return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
     }
 
+    public static boolean equalsIndividualMOName(PersonName personName, String string) {
+        var nullValuesCheck = handleNulls(personName, string);
+        if (nullValuesCheck != null) {
+            return nullValuesCheck;
+        }
+        String individualMoFormat = personName.getSurname().concat(", ").concat(personName.getForename());
+        return StringUtils.equalsIgnoreCase(normalise(individualMoFormat),normalise(string));
+    }
+
     public static boolean equalsIgnoreCase(String string, String other) {
         var nullValuesCheck = handleNulls(string, other);
         if (nullValuesCheck != null) {
