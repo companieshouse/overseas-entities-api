@@ -649,7 +649,7 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("123", individualManagingOfficerChange.getAppointmentId());
         assertEquals(new PersonName("John", "Doe"),
                 individualManagingOfficerChange.getOfficer().getPersonName());
-        assertEquals("Bangladeshi, Indonesian",
+        assertEquals("Bangladeshi,Indonesian",
                 individualManagingOfficerChange.getOfficer().getNationalityOther());
         assertEquals("2022-01-01",
                 individualManagingOfficerChange.getOfficer().getStartDate().toString());

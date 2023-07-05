@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateMoNationalityOtherField;
 
 @Service
 public class ManagingOfficerChangeService {
@@ -193,7 +193,7 @@ public class ManagingOfficerChangeService {
                 IndividualManagingOfficer::setOccupation
         );
 
-        var nationalitySubmission = generateNationalityOtherField(managingOfficerIndividualDto.getNationality(),
+        var nationalitySubmission = generateMoNationalityOtherField(managingOfficerIndividualDto.getNationality(),
                 managingOfficerIndividualDto.getSecondNationality());
         hasChange |= changeManager.compareAndBuildLeftChange(
                 nationalitySubmission,
