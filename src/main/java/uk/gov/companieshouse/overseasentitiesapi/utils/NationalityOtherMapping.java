@@ -15,7 +15,7 @@ public class NationalityOtherMapping {
         }
     }
 
-    public static String generateMoNationalityOtherField(String nationality, String secondNationality) {
+    public static String generateNationalityOtherChangeField(String nationality, String secondNationality) {
         if (StringUtils.isEmpty(secondNationality)) {
             return nationality;
         } else {

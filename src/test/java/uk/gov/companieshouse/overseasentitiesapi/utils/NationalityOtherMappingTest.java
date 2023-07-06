@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateMoNationalityOtherField;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherChangeField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 
 class NationalityOtherMappingTest {
@@ -41,7 +41,7 @@ class NationalityOtherMappingTest {
         String nationality = "Irish";
         String secondNationality = "Spanish";
 
-        var result = generateMoNationalityOtherField(nationality, secondNationality);
+        var result = generateNationalityOtherChangeField(nationality, secondNationality);
 
         assertEquals("Irish,Spanish", result);
     }
@@ -51,7 +51,7 @@ class NationalityOtherMappingTest {
         String nationality = "Irish";
         String secondNationality = StringUtils.EMPTY;
 
-        var result = generateMoNationalityOtherField(nationality, secondNationality);
+        var result = generateNationalityOtherChangeField(nationality, secondNationality);
 
         assertEquals("Irish", result);
     }
@@ -61,7 +61,7 @@ class NationalityOtherMappingTest {
         String nationality = "Irish";
         String secondNationality = null;
 
-        var result = generateMoNationalityOtherField(nationality, secondNationality);
+        var result = generateNationalityOtherChangeField(nationality, secondNationality);
 
         assertEquals("Irish", result);
     }
