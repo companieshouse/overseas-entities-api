@@ -203,4 +203,13 @@ public class ComparisonHelper {
 
         return bool;
     }
+
+    public static boolean equalsIndividualNationality(String string, String other) {
+        var nullValuesCheck = handleNulls(string, other);
+        if (nullValuesCheck != null) {
+            return nullValuesCheck;
+        }
+        String normalisedNationality = other.endsWith(",") ? other.substring(0, other.length()-1): other;
+        return StringUtils.equalsIgnoreCase(normalise(string),normalise(normalisedNationality));
+    }
 }

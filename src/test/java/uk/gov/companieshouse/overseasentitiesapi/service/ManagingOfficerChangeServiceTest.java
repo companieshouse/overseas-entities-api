@@ -167,11 +167,13 @@ class ManagingOfficerChangeServiceTest {
         managingOfficerIndividualDto.setFirstName("John");
         managingOfficerIndividualDto.setLastName("Doe");
         managingOfficerIndividualDto.setFormerNames("Darryl Jenkins");
+        managingOfficerIndividualDto.setNationality("Irish");
 
         ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
         mockRightPart.setManagingOfficerAppointmentId("123");
         CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
         mockLeftPart.setName("DOE, John");
+        mockLeftPart.setNationality("Irish,");
         List<FormerNamesApi> formerNamesApiList = List.of(
                 new FormerNamesApi() {{
                     setForenames("DARRYL JENKINS");
@@ -193,6 +195,78 @@ class ManagingOfficerChangeServiceTest {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateIndManagingOfficerNationalityNoChange() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+        managingOfficerIndividualDto.setFormerNames("Darryl Jenkins");
+        managingOfficerIndividualDto.setNationality("Irish");
+        managingOfficerIndividualDto.setSecondNationality("Danish");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("DOE, John");
+        mockLeftPart.setNationality("Irish,Danish");
+        List<FormerNamesApi> formerNamesApiList = List.of(
+                new FormerNamesApi() {{
+                    setForenames("DARRYL JENKINS");
+                }}
+        );
+        mockLeftPart.setFormerNames(formerNamesApiList);
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCollateIndManagingOfficerNationalityChange() {
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
+        managingOfficerIndividualDto.setChipsReference("1234567891");
+        managingOfficerIndividualDto.setFirstName("John");
+        managingOfficerIndividualDto.setLastName("Doe");
+        managingOfficerIndividualDto.setNationality("German");
+        managingOfficerIndividualDto.setSecondNationality("Irish");
+
+        ManagingOfficerDataApi mockRightPart = new ManagingOfficerDataApi();
+        mockRightPart.setManagingOfficerAppointmentId("123");
+        CompanyOfficerApi mockLeftPart = new CompanyOfficerApi();
+        mockLeftPart.setName("DOE, John");
+        mockLeftPart.setNationality("Polish,Italian");
+
+
+        when(mockPublicPrivateMoPair.getRight()).thenReturn(mockRightPart);
+        when(mockPublicPrivateMoPair.getLeft()).thenReturn(mockLeftPart);
+
+
+        when(publicPrivateMo.get(managingOfficerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateMoPair);
+        when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(
+                List.of(managingOfficerIndividualDto));
+
+        List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
+                publicPrivateMo, overseasEntitySubmissionDto, logMap);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
+                0);
+
+        assertNotNull(result);
+        assertEquals("German,Irish",individualManagingOfficerChange.getOfficer().getNationalityOther());
     }
 
     @Test
@@ -649,7 +723,7 @@ class ManagingOfficerChangeServiceTest {
         assertEquals("123", individualManagingOfficerChange.getAppointmentId());
         assertEquals(new PersonName("John", "Doe"),
                 individualManagingOfficerChange.getOfficer().getPersonName());
-        assertEquals("Bangladeshi, Indonesian",
+        assertEquals("Bangladeshi,Indonesian",
                 individualManagingOfficerChange.getOfficer().getNationalityOther());
         assertEquals("2022-01-01",
                 individualManagingOfficerChange.getOfficer().getStartDate().toString());

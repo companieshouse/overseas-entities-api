@@ -14,4 +14,12 @@ public class NationalityOtherMapping {
             return String.format("%s, %s", nationality, secondNationality);
         }
     }
+
+    public static String generateNationalityOtherChangeField(String nationality, String secondNationality) {
+        if (StringUtils.isEmpty(secondNationality)) {
+            return nationality;
+        } else {
+            return String.format("%s,%s", nationality, secondNationality);
+        }
+    }
 }
