@@ -83,7 +83,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
         authInfoMap.put("request_method", request.getMethod());
-        boolean isRoeUpdateJourneyRequest = false;
+        var isRoeUpdateJourneyRequest = false;
         if (companyNumberInTransactionOptional.isPresent()) {
             authInfoMap.put("company_number_in_scope", companyNumberInScope);
             authInfoMap.put("company_number_in_transaction", companyNumberInTransactionOptional.get());
