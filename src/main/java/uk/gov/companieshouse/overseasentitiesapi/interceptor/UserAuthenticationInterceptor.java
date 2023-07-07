@@ -68,41 +68,23 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         // TokenPermissions should have been set up in the request by TokenPermissionsInterceptor
         final var tokenPermissions = getTokenPermissions(request)
                 .orElseThrow(() -> new IllegalStateException("UserAuthenticationInterceptor - TokenPermissions object not present in request"));
-        String companyNumberInScope = getCompanyNumberInScope(request);
-        Optional<String> companyNumberInTransactionOptional = Optional.empty();
-        if (StringUtils.isNotEmpty(companyNumberInScope)) {
-            try {
+
+        Optional<String> companyNumberInTransactionOptional;
+
+        try {
                 companyNumberInTransactionOptional = getCompanyNumberInTransaction(request, transactionId);
             } catch (ServiceException e) {
                 ApiLogger.errorContext(reqId, "Error retrieving transaction " + transactionId, e, logMap);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return false;
-            }
         }
-
+        String companyNumberInScope = getCompanyNumberInScope(request);
+        boolean isRoeRegistrationJourneyRequest = isRequestRoeRegistration(companyNumberInTransactionOptional);
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
         authInfoMap.put("request_method", request.getMethod());
-        var isRoeUpdateJourneyRequest = false;
-        if (companyNumberInTransactionOptional.isPresent()) {
-            authInfoMap.put("company_number_in_scope", companyNumberInScope);
-            authInfoMap.put("company_number_in_transaction", companyNumberInTransactionOptional.get());
-            isRoeUpdateJourneyRequest = isRequestRoeUpdate(companyNumberInScope, companyNumberInTransactionOptional.get());
-        }
-
-        authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
-
-        if (isRoeUpdateJourneyRequest) {
-
-            // Check the user has the company_oe_annual_update=create permission for ROE Update
-            boolean hasCompanyOeAnnualUpdateCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE);
-            authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOeAnnualUpdateCreatePermission);
-            if (hasCompanyOeAnnualUpdateCreatePermission) {
-                ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
-                        authInfoMap);
-                return true;
-            }
-        } else {
+        authInfoMap.put("company_number_in_scope", getNotNull(companyNumberInScope));
+        if (isRoeRegistrationJourneyRequest) {
             // Check the user has the company_incorporation=create permission
             boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
             authInfoMap.put("has_company_incorporation_create_permission", hasCompanyIncorporationCreatePermission);
@@ -110,6 +92,19 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                 ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_incorporation=create permission",
                         authInfoMap);
                 return true;
+            }
+        } else {
+            boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(companyNumberInScope, companyNumberInTransactionOptional);
+            authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
+            if (isRoeUpdateJourneyRequest) {
+                // Check the user has the company_oe_annual_update=create permission for ROE Update
+                boolean hasCompanyOeAnnualUpdateCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE);
+                authInfoMap.put("has_company_oe_annual_update_create_permission", hasCompanyOeAnnualUpdateCreatePermission);
+                if (hasCompanyOeAnnualUpdateCreatePermission) {
+                    ApiLogger.debugContext(reqId, "UserAuthenticationInterceptor authorised with company_oe_annual_update=create permission",
+                            authInfoMap);
+                    return true;
+                }
             }
         }
 
@@ -122,12 +117,18 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return AuthorisationUtil.getTokenPermissions(request);
     }
 
+    private boolean isRequestRoeRegistration(Optional<String> companyNumberInTransaction) {
+        return companyNumberInTransaction.isEmpty();
+    }
 
-    private boolean isRequestRoeUpdate(String companyNumberInScope, String companyNumberInTransaction) {
+    private boolean isRequestRoeUpdate(String companyNumberInScope, Optional<String> companyNumberInTransaction) {
         boolean isValidOeNumberInScope = isValidOeNumber(companyNumberInScope);
-        boolean isValidOeNumberInTransaction = isValidOeNumber(companyNumberInTransaction);
+        var isValidOeNumberInTransaction = false;
+        if (companyNumberInTransaction.isPresent()) {
+            isValidOeNumberInTransaction = isValidOeNumber(companyNumberInTransaction.get());
+        }
         if (isValidOeNumberInScope && isValidOeNumberInTransaction) {
-            return companyNumberInScope.equalsIgnoreCase(companyNumberInTransaction);
+            return companyNumberInScope.equalsIgnoreCase(companyNumberInTransaction.get());
         }
         return false;
     }
@@ -167,10 +168,18 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         if (transaction == null) {
             return Optional.empty();
         }
-        logMap.put(COMPANY_NUMBER_KEY, transaction.getCompanyNumber());
+        logMap.put("company_number_in_transaction", getNotNull(transaction.getCompanyNumber()));
         ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
         return Optional.ofNullable(transaction.getCompanyNumber());
 
+    }
+
+    private String getNotNull(String aString) {
+        if (StringUtils.isNotEmpty(aString)) {
+            return aString;
+        } else {
+            return "";
+        }
     }
 
 }
