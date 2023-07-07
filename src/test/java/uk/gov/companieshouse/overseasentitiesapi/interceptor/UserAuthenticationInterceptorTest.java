@@ -69,8 +69,9 @@ class UserAuthenticationInterceptorTest {
         Transaction dummyTransaction = new Transaction();
         dummyTransaction.setId(TX_ID);
         dummyTransaction.setCompanyNumber(null);
-        ericTokenSet(true);
 
+        when(mockHttpServletRequest.getHeader(ERIC_REQUEST_ID_KEY)).thenReturn(REQ_ID);
+        when(mockHttpServletRequest.getHeader(ERIC_IDENTITY_TYPE)).thenReturn(null);
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
         when(transactionService.getTransaction(eq(TX_ID), eq(PASSTHROUGH_HEADER), any())).thenReturn(dummyTransaction);
 
@@ -90,8 +91,9 @@ class UserAuthenticationInterceptorTest {
         dummyTransaction.setId(TX_ID);
         dummyTransaction.setCompanyNumber(null);
 
-        ericTokenSet(true);
 
+        when(mockHttpServletRequest.getHeader(ERIC_REQUEST_ID_KEY)).thenReturn(REQ_ID);
+        when(mockHttpServletRequest.getHeader(ERIC_IDENTITY_TYPE)).thenReturn(null);
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
         when(transactionService.getTransaction(eq(TX_ID), eq(PASSTHROUGH_HEADER), any())).thenReturn(dummyTransaction);
         when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
@@ -144,23 +146,23 @@ class UserAuthenticationInterceptorTest {
 
 
     @Test
-    void testInterceptorReturnsTrueWhenCompanyInScopeNullCorrectRegPermissions() throws ServiceException {
+    void testInterceptorReturnsFalseWhenCompanyInScopeNullCorrectUpdatePermissions() throws ServiceException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
         Transaction dummyTransaction = new Transaction();
         dummyTransaction.setId(TX_ID);
-        dummyTransaction.setCompanyNumber(null);
+        dummyTransaction.setCompanyNumber(VALID_OE_NUMBER);
 
         ericTokenSet(false);
 
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
         when(transactionService.getTransaction(eq(TX_ID), eq(PASSTHROUGH_HEADER), any())).thenReturn(dummyTransaction);
         when(mockHttpServletRequest.getAttribute(TOKEN_PERMISSIONS)).thenReturn(mockTokenPermissions);
-        when(mockTokenPermissions.hasPermission(Permission.Key.COMPANY_INCORPORATION, Permission.Value.CREATE)).thenReturn(true);
+
 
         var result = userAuthenticationInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-        assertTrue(result);
-        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
+        assertFalse(result);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED,  mockHttpServletResponse.getStatus());
     }
 
     @Test

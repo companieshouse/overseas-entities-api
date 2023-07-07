@@ -29,6 +29,7 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COMPANY_NUMBER_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_COMPANY_NUMBER_PREFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
 
 @Component("RoeUserAuthenticationInterceptor")
@@ -78,12 +79,12 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return false;
         }
-        String companyNumberInScope = getCompanyNumberInScope(request);
+
         boolean isRoeRegistrationJourneyRequest = isRequestRoeRegistration(companyNumberInTransactionOptional);
         var authInfoMap = new HashMap<String, Object>();
         authInfoMap.put(TRANSACTION_ID_KEY, transactionId);
         authInfoMap.put("request_method", request.getMethod());
-        authInfoMap.put("company_number_in_scope", getNotNull(companyNumberInScope));
+
         if (isRoeRegistrationJourneyRequest) {
             // Check the user has the company_incorporation=create permission
             boolean hasCompanyIncorporationCreatePermission = tokenPermissions.hasPermission(Key.COMPANY_INCORPORATION, Value.CREATE);
@@ -94,6 +95,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
                 return true;
             }
         } else {
+            String companyNumberInScope = getCompanyNumberInScope(request);
+            authInfoMap.put("company_number_in_scope", getNotNull(companyNumberInScope));
             boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(companyNumberInScope, companyNumberInTransactionOptional);
             authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
             if (isRoeUpdateJourneyRequest) {
@@ -134,7 +137,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private boolean isValidOeNumber(String oeNumber) {
-        return StringUtils.isNotEmpty(oeNumber) && oeNumber.startsWith("OE");
+        return StringUtils.isNotEmpty(oeNumber) && oeNumber.startsWith(OVERSEAS_ENTITY_COMPANY_NUMBER_PREFIX);
     }
 
     private String getCompanyNumberInScope (HttpServletRequest request) {
@@ -166,6 +169,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
         final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
         if (transaction == null) {
+            ApiLogger.debugContext(reqId, "Call to Transaction Service returned null transaction object " + transactionId, logMap);
             return Optional.empty();
         }
         logMap.put("company_number_in_transaction", getNotNull(transaction.getCompanyNumber()));
