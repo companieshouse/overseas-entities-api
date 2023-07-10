@@ -20,6 +20,8 @@ public class Constants {
 
     public static final String COMPANY_NUMBER_KEY = "company_number";
 
+    public static final String OVERSEAS_ENTITY_COMPANY_NUMBER_PREFIX = "OE";
+
     public static final String OVERSEAS_ENTITY_ID_KEY = "overseas_entity_id";
 
     // Request attribute names
