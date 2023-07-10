@@ -1,9 +1,9 @@
-package uk.gov.companieshouse.overseasentitiesapi.service.changelist;
+package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 class PersonNameTest {
 

@@ -4,24 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.DueDiligence;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 
 @ExtendWith(MockitoExtension.class)
 class PopulateUpdateSubmissionTest {
-
-    private static final LocalDate LOCAL_DATE_TODAY = LocalDate.now();
 
     @InjectMocks
     private PopulateUpdateSubmission populateUpdateSubmission;
@@ -32,7 +32,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -48,7 +48,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setDueDiligence(null);
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
 
@@ -65,7 +65,7 @@ class PopulateUpdateSubmissionTest {
         overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
 
         final UpdateSubmission updateSubmission = new UpdateSubmission();
-        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission);
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, false);
 
         assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
         assertNotNull(updateSubmission.getPresenter());
@@ -75,25 +75,62 @@ class PopulateUpdateSubmissionTest {
         assertNull(updateSubmission.getDueDiligence());
     }
 
+    @Test
+    void testUpdateSubmissionIsPopulatedWithOverseasEntitySubmissionDataWhenIsNoChangeScenario() {
+        final OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setUpdate(UpdateMock.getUpdateDto());
+        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
+        overseasEntitySubmissionDto.setDueDiligence(DueDiligenceMock.getDueDiligenceDto());
+
+        final UpdateSubmission updateSubmission = new UpdateSubmission();
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, true);
+
+        assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+        assertNotNull(updateSubmission.getPresenter());
+        assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+        assertNull(updateSubmission.getBeneficialOwnerStatement());
+        assertNotNull(updateSubmission.getFilingForDate());
+        assertNull(updateSubmission.getDueDiligence());
+    }
+
+    @Test
+    void testUpdateSubmissionIsPopulatedWithNoChangesWhenIsNoChangeScenario() {
+        final OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setUpdate(UpdateMock.getUpdateDto());
+        overseasEntitySubmissionDto.setPresenter(PresenterMock.getPresenterDto());
+
+        final UpdateSubmission updateSubmission = new UpdateSubmission();
+        populateUpdateSubmission.populate(overseasEntitySubmissionDto, updateSubmission, true);
+
+        assertEquals(overseasEntitySubmissionDto, updateSubmission.getUserSubmission());
+        assertNotNull(updateSubmission.getPresenter());
+        assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
+        assertNull(updateSubmission.getBeneficialOwnerStatement());
+        assertNotNull(updateSubmission.getFilingForDate());
+        assertNull(updateSubmission.getDueDiligence());
+
+
+        assertTrue(updateSubmission.getAdditions().isEmpty());
+        assertTrue(updateSubmission.getChanges().isEmpty());
+        assertTrue(updateSubmission.getCessations().isEmpty());
+    }
+
     private void checkPresenterDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getPresenter());
-        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getName());
+        assertEquals("Joe Bloggs", updateSubmission.getPresenter().getFullName());
         assertEquals("user@domain.roe", updateSubmission.getPresenter().getEmail());
     }
 
     private void checkStatementDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
-        assertEquals("all_identified_all_details", updateSubmission.getBeneficialOwnerStatement());
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, updateSubmission.getBeneficialOwnerStatement());
     }
 
     private void checkFilingForDataDetailsArePopulated(UpdateSubmission updateSubmission) {
         assertNotNull(updateSubmission.getFilingForDate());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getDayOfMonth()),
-                updateSubmission.getFilingForDate().getDay());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getMonth()),
-                updateSubmission.getFilingForDate().getMonth());
-        assertEquals(String.valueOf(LOCAL_DATE_TODAY.getYear()),
-                updateSubmission.getFilingForDate().getYear());
+        assertEquals("01", updateSubmission.getFilingForDate().getDay());
+        assertEquals("02", updateSubmission.getFilingForDate().getMonth());
+        assertEquals("2001",updateSubmission.getFilingForDate().getYear());
     }
 
     private void checkDueDiligenceDetailsArePopulated(UpdateSubmission updateSubmission) {
@@ -107,15 +144,15 @@ class PopulateUpdateSubmissionTest {
         assertEquals("agreed", dueDiligence.getDiligence());
         assertEquals("agent567", dueDiligence.getAgentAssuranceCode());
 
-        final AddressDto dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
+        final Address dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
         assertNotNull(dueDiligenceCorrespondenceAddress);
-        assertEquals("100", dueDiligenceCorrespondenceAddress.getPropertyNameNumber());
-        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getLine1());
-        assertEquals("", dueDiligenceCorrespondenceAddress.getLine2());
-        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getTown());
-        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getCounty());
+        assertEquals("100", dueDiligenceCorrespondenceAddress.getHouseNameNum());
+        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getStreet());
+        assertEquals("", dueDiligenceCorrespondenceAddress.getArea());
+        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getPostTown());
+        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getRegion());
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
-        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostcode());
+        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
 
     private void checkOverseasEntityDueDiligenceDetailsArePopulated(
@@ -131,15 +168,14 @@ class PopulateUpdateSubmissionTest {
         assertNull(dueDiligence.getAgentAssuranceCode());
         assertEquals("abc123", dueDiligence.getAmlRegistrationNumber());
 
-        final AddressDto dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
+        final Address dueDiligenceCorrespondenceAddress = dueDiligence.getDueDiligenceCorrespondenceAddress();
         assertNotNull(dueDiligenceCorrespondenceAddress);
-        assertEquals("100", dueDiligenceCorrespondenceAddress.getPropertyNameNumber());
-        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getLine1());
-        assertEquals("", dueDiligenceCorrespondenceAddress.getLine2());
-        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getTown());
-        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getCounty());
+        assertEquals("100", dueDiligenceCorrespondenceAddress.getHouseNameNum());
+        assertEquals("No Street", dueDiligenceCorrespondenceAddress.getStreet());
+        assertEquals("", dueDiligenceCorrespondenceAddress.getArea());
+        assertEquals("Notown", dueDiligenceCorrespondenceAddress.getPostTown());
+        assertEquals("Noshire", dueDiligenceCorrespondenceAddress.getRegion());
         assertEquals("France", dueDiligenceCorrespondenceAddress.getCountry());
-        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostcode());
+        assertEquals("NOW 3RE", dueDiligenceCorrespondenceAddress.getPostCode());
     }
-
 }

@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
@@ -19,7 +20,6 @@ public class UpdateSubmission {
     public static final String UPDATE_DUE_DILIGENCE_FIELD = "dueDiligence";
     public static final String UPDATE_PRESENTER_FIELD = "presenter";
     public static final String FILING_FOR_DATE_FIELD = "filingForDate";
-    public static final String NO_CHANGES_IN_FILING_PERIOD_FIELD = "noChangesInFilingPeriodStatement";
     public static final String ANY_BOS_ADDED_CEASED_FIELD = "anyBOsOrMOsAddedOrCeased";
     public static final String BENEFICIAL_OWNERS_FIELD = "beneficialOwnerStatement";
     public static final String CHANGES_FIELD = "changes";
@@ -44,14 +44,11 @@ public class UpdateSubmission {
     @JsonProperty(FILING_FOR_DATE_FIELD)
     private FilingForDate filingForDate;
 
-    @JsonProperty(NO_CHANGES_IN_FILING_PERIOD_FIELD)
-    private Boolean noChangesInFilingPeriodStatement;
-
     @JsonProperty(ANY_BOS_ADDED_CEASED_FIELD)
     private Boolean anyBOsOrMOsAddedOrCeased;
 
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
-    private String beneficialOwnerStatement;
+    private BeneficialOwnersStatementType beneficialOwnerStatement;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
@@ -119,14 +116,6 @@ public class UpdateSubmission {
         this.filingForDate = filingForDate;
     }
 
-    public Boolean getNoChangesInFilingPeriodStatement() {
-        return noChangesInFilingPeriodStatement;
-    }
-
-    public void setNoChangesInFilingPeriodStatement(Boolean noChangesInFilingPeriodStatement) {
-        this.noChangesInFilingPeriodStatement = noChangesInFilingPeriodStatement;
-    }
-
     public Boolean getAnyBOsOrMOsAddedOrCeased() {
         return anyBOsOrMOsAddedOrCeased;
     }
@@ -135,11 +124,11 @@ public class UpdateSubmission {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
     }
 
-    public String getBeneficialOwnerStatement() {
+    public BeneficialOwnersStatementType getBeneficialOwnerStatement() {
         return beneficialOwnerStatement;
     }
 
-    public void setBeneficialOwnerStatement(String beneficialOwnerStatement) {
+    public void setBeneficialOwnerStatement(BeneficialOwnersStatementType beneficialOwnerStatement) {
         this.beneficialOwnerStatement = beneficialOwnerStatement;
     }
 

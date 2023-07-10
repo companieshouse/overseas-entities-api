@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -27,10 +26,15 @@ public class PopulateUpdateSubmission {
     /**
      * Method populates values into UpdateSubmission for JSON output
      */
-    public void populate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-            UpdateSubmission updateSubmission) {
+    public void populate(
+            OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+            UpdateSubmission updateSubmission,
+            boolean isNoChange) {
+        updateSubmission.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
         updateSubmission.setUserSubmission(overseasEntitySubmissionDto);
-        populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
+        if (!isNoChange) {
+            populateDueDiligence(overseasEntitySubmissionDto, updateSubmission);
+        }
         populatePresenter(overseasEntitySubmissionDto, updateSubmission);
         populateStatements(overseasEntitySubmissionDto, updateSubmission);
         populateFilingForDate(overseasEntitySubmissionDto, updateSubmission);
@@ -95,7 +99,7 @@ public class PopulateUpdateSubmission {
         Optional.ofNullable(name)
                 .ifPresent(submissionDueDiligence::setAgentName);
         Optional.ofNullable(address)
-                .ifPresent(submissionDueDiligence::setDueDiligenceCorrespondenceAddress);
+                .ifPresent(addressDto -> submissionDueDiligence.setDueDiligenceCorrespondenceAddress(TypeConverter.addressDtoToAddress(addressDto)));
         Optional.ofNullable(supervisoryName)
                 .ifPresent(submissionDueDiligence::setSupervisoryBody);
         Optional.ofNullable(partnerName)
@@ -116,7 +120,7 @@ public class PopulateUpdateSubmission {
                             .ifPresent(presenter::setEmail);
                     Optional.of(presenterDto).
                             map(PresenterDto::getFullName)
-                            .ifPresent(presenter::setName);
+                            .ifPresent(presenter::setFullName);
                     Optional.of(presenter)
                             .ifPresent(updateSubmission::setPresenter);
                 });
@@ -126,7 +130,6 @@ public class PopulateUpdateSubmission {
             UpdateSubmission updateSubmission) {
 
         Optional.ofNullable(overseasEntitySubmissionDto.getBeneficialOwnersStatement())
-                .map(BeneficialOwnersStatementType::getValue)
                 .ifPresent(updateSubmission::setBeneficialOwnerStatement);
 
         Optional.of(overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner())
@@ -140,10 +143,10 @@ public class PopulateUpdateSubmission {
                 .ifPresent(filingDate -> {
                     var filingForDate = new FilingForDate();
                     Optional.of(filingDate).map(LocalDate::getDayOfMonth)
-                            .map(Objects::toString)
+                            .map(value -> String.format("%02d",value))
                             .ifPresent(filingForDate::setDay);
-                    Optional.of(filingDate).map(LocalDate::getMonth)
-                            .map(Objects::toString)
+                    Optional.of(filingDate).map(LocalDate::getMonthValue)
+                            .map(value -> String.format("%02d",value))
                             .ifPresent(filingForDate::setMonth);
                     Optional.of(filingDate).map(LocalDate::getYear)
                             .map(Objects::toString)

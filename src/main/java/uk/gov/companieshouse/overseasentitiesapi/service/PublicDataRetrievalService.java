@@ -17,38 +17,14 @@ import java.util.HashMap;
 @Component
 public class PublicDataRetrievalService {
     public static final String COMPANY_NUMBER = "company_number";
-    public static final String OFFICER_NAME = "officer_name";
-    public static final String PSCS_NAME = "pscs_name";
 
     private final ApiClientService apiClientService;
-
-    private CompanyProfileApi companyProfile;
-    private OfficersApi officers;
-    private PscsApi pscs;
 
     public PublicDataRetrievalService(ApiClientService apiClientService) {
         this.apiClientService = apiClientService;
     }
 
-    public OfficersApi getOfficers() {
-        return officers;
-    }
-
-    public PscsApi getPscs() {
-        return pscs;
-    }
-
-    public CompanyProfileApi getCompanyProfile() {
-        return companyProfile;
-    }
-
-    public void initialisePublicData(String companyNumber, String passThroughTokenHeader) throws ServiceException {
-        this.companyProfile = getCompanyProfile(companyNumber, passThroughTokenHeader);
-        this.officers = getOfficers(companyNumber, passThroughTokenHeader);
-        this.pscs = getPSCs(companyNumber, passThroughTokenHeader);
-    }
-
-    private CompanyProfileApi getCompanyProfile(String companyNumber, String passThroughTokenHeader) throws ServiceException {
+    public CompanyProfileApi getCompanyProfile(String companyNumber, String passThroughTokenHeader) throws ServiceException {
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
@@ -67,7 +43,7 @@ public class PublicDataRetrievalService {
         }
     }
 
-    private OfficersApi getOfficers(String companyNumber, String passThroughTokenHeader) throws ServiceException {
+    public OfficersApi getOfficers(String companyNumber, String passThroughTokenHeader) throws ServiceException {
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
@@ -94,7 +70,7 @@ public class PublicDataRetrievalService {
         }
     }
 
-    private PscsApi getPSCs(String companyNumber, String passthroughTokenHeader) throws ServiceException{
+    public PscsApi getPSCs(String companyNumber, String passThroughTokenHeader) throws ServiceException{
         var logMap = new HashMap<String, Object>();
 
         logMap.put(COMPANY_NUMBER, companyNumber);
@@ -102,7 +78,7 @@ public class PublicDataRetrievalService {
 
         try {
             return apiClientService
-                    .getOauthAuthenticatedClient(passthroughTokenHeader)
+                    .getOauthAuthenticatedClient(passThroughTokenHeader)
                     .pscs()
                     .list("/company/" + companyNumber + "/persons-with-significant-control")
                     .execute()

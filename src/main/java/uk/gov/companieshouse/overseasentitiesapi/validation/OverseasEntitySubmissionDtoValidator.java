@@ -77,10 +77,39 @@ public class OverseasEntitySubmissionDtoValidator {
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
+
+        if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
+            // Method to be added to as Update journey developed
+            validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+            // Change to Statement Validation once BO/MO Statements are complete
+            // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+
+            dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
+                    overseasEntitySubmissionDto.getDueDiligence(),
+                    overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                    errors,
+                    loggingContext);
+        }
+        else {
+            validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
+        }
+
+        // Change when trusts are added:
+        // call validateTrustDetails with (overseasEntitySubmissionDto, errors, loggingContext)
+
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
+                overseasEntitySubmissionDto.getDueDiligence(),
+                overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
+                errors,
+                loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -98,15 +127,6 @@ public class OverseasEntitySubmissionDtoValidator {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
         }
-
-
-        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
-        dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
-                overseasEntitySubmissionDto.getDueDiligence(),
-                overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
-                errors,
-                loggingContext);
     }
 
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -121,7 +141,8 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            // validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -134,16 +155,12 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Objects.nonNull(entityDto)) {
             var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address, Needs to change once private data fetch is implemented
+            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
             if (StringUtils.isNotBlank(entityEmail)) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
-
-        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-
+        
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
                     loggingContext);
@@ -191,5 +208,11 @@ public class OverseasEntitySubmissionDtoValidator {
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         return errors;
+    }
+
+    private void validateNoChangeUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
+            presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        }
     }
 }

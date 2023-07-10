@@ -20,6 +20,9 @@ public class UpdateDao {
     @Field("registrable_beneficial_owner")
     private boolean registrableBeneficialOwner;
 
+    @Field("no_change")
+    private boolean noChange;
+
     @Field("review_beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> reviewBeneficialOwnersIndividual;
 
@@ -65,6 +68,13 @@ public class UpdateDao {
 
     public void setRegistrableBeneficialOwner(boolean registrableBeneficialOwner) {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
+    }
+    public boolean isNoChange() {
+        return noChange;
+    }
+
+    public void setNoChange(boolean noChange) {
+        this.noChange = noChange;
     }
 
     public List<BeneficialOwnerIndividualDao> getBeneficialOwnersIndividual() {

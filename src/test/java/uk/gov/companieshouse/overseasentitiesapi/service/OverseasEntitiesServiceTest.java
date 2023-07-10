@@ -164,6 +164,7 @@ class OverseasEntitiesServiceTest {
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
         assertEquals(entityName, transactionSent.getCompanyName());
+        assertNull(transactionSent.getCompanyNumber());
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
@@ -243,6 +244,7 @@ class OverseasEntitiesServiceTest {
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
         assertEquals(entityName, transactionSent.getCompanyName());
+        assertEquals(overseasEntitySubmissionDto.getEntityNumber(), transactionSent.getCompanyNumber());
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));

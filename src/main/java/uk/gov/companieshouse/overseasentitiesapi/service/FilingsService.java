@@ -18,7 +18,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.NO_CHANGES_IN_FILING_PERIOD_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
@@ -91,7 +90,12 @@ public class FilingsService {
   private final ObjectMapper objectMapper;
   private final PublicDataRetrievalService publicDataRetrievalService;
   private final PrivateDataRetrievalService privateDataRetrievalService;
+  private final BeneficialOwnerChangeService beneficialOwnerChangeService;
+  private final BeneficialOwnerAdditionService beneficialOwnerAdditionService;
   private final BeneficialOwnerCessationService beneficialOwnerCessationService;
+  private final ManagingOfficerChangeService managingOfficerChangeService;
+  private final ManagingOfficerAdditionService managingOfficerAdditionService;
+  private final ManagingOfficerCessationService managingOfficerCessationService;
   private final OverseasEntityChangeService overseasEntityChangeService;
 
   @Autowired
@@ -102,15 +106,26 @@ public class FilingsService {
           ObjectMapper objectMapper,
           PrivateDataRetrievalService privateDataRetrievalService,
           PublicDataRetrievalService publicDataRetrievalService,
+          BeneficialOwnerChangeService beneficialOwnerChangeService,
+          BeneficialOwnerAdditionService beneficialOwnerAdditionService,
           BeneficialOwnerCessationService beneficialOwnerCessationService,
-          OverseasEntityChangeService overseasEntityChangeService) {
+          ManagingOfficerChangeService managingOfficerChangeService,
+          ManagingOfficerAdditionService managingOfficerAdditionService,
+          ManagingOfficerCessationService managingOfficerCessationService,
+          OverseasEntityChangeService overseasEntityChangeService
+  ) {
     this.overseasEntitiesService = overseasEntitiesService;
     this.apiClientService = apiClientService;
     this.dateNowSupplier = dateNowSupplier;
     this.objectMapper = objectMapper;
     this.privateDataRetrievalService = privateDataRetrievalService;
     this.publicDataRetrievalService = publicDataRetrievalService;
+    this.beneficialOwnerChangeService = beneficialOwnerChangeService;
+    this.beneficialOwnerAdditionService = beneficialOwnerAdditionService;
     this.beneficialOwnerCessationService = beneficialOwnerCessationService;
+    this.managingOfficerChangeService = managingOfficerChangeService;
+    this.managingOfficerCessationService = managingOfficerCessationService;
+    this.managingOfficerAdditionService = managingOfficerAdditionService;
     this.overseasEntityChangeService = overseasEntityChangeService;
   }
 
@@ -146,10 +161,10 @@ public class FilingsService {
                     ));
 
     if (submissionDto.isForUpdate()) {
+      boolean isNoChange = submissionDto.getUpdate().isNoChange();
       var updateSubmission = new UpdateSubmission();
-      getPublicAndPrivateData(submissionDto.getEntityNumber(), passThroughTokenHeader);
-      collectUpdateSubmissionData(updateSubmission, submissionDto, logMap);
-      setUpdateSubmissionData(userSubmission, updateSubmission, logMap);
+      collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
+      setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
@@ -167,45 +182,74 @@ public class FilingsService {
     setDescriptionFields(filing, submissionDto.isForUpdate());
   }
 
-  private void getPublicAndPrivateData(String entityNumber, String passThroughTokenHeader) throws ServiceException {
-    publicDataRetrievalService.initialisePublicData(entityNumber, passThroughTokenHeader);
-    privateDataRetrievalService.initialisePrivateData(entityNumber);
-  }
-
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,
                                        OverseasEntitySubmissionDto submissionDto,
+                                       String passThroughTokenHeader,
+                                       boolean isNoChange,
                                        Map<String, Object> logMap) throws ServiceException {
 
     var populateUpdateSubmission = new PopulateUpdateSubmission();
-    populateUpdateSubmission.populate(submissionDto, updateSubmission);
+    populateUpdateSubmission.populate(submissionDto, updateSubmission, isNoChange);
 
-    var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService, privateDataRetrievalService, salt);
-    var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair();
-    var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap();
-    publicPrivateDataCombiner.buildMergedManagingOfficerDataMap();
-    ApiLogger.infoContext("PublicPrivateDataCombiner", publicPrivateDataCombiner.logCollatedData());
+    if (!isNoChange) {
+      var companyNumber = submissionDto.getEntityNumber();
 
-    updateSubmission.setCessations(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto, publicPrivateBoData, logMap));
-    updateSubmission.setEntityNumber(submissionDto.getEntityNumber());
-    updateSubmission.getChanges().addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData, submissionDto));
+      var publicPrivateDataCombiner = new PublicPrivateDataCombiner(publicDataRetrievalService,
+              privateDataRetrievalService, salt);
+      var publicPrivateOeData = publicPrivateDataCombiner.buildMergedOverseasEntityDataPair(
+              companyNumber, passThroughTokenHeader);
+      var publicPrivateBoData = publicPrivateDataCombiner.buildMergedBeneficialOwnerDataMap(
+              companyNumber, passThroughTokenHeader);
+      var publicPrivateMoData = publicPrivateDataCombiner.buildMergedManagingOfficerDataMap(
+              companyNumber, passThroughTokenHeader);
 
-    ApiLogger.debug("Updates have been collected", logMap);
+      ApiLogger.infoContext("PublicPrivateDataCombiner",
+              publicPrivateDataCombiner.logCollatedData());
+
+      updateSubmission.getChanges()
+              .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
+                      submissionDto, logMap));
+      updateSubmission.getChanges()
+              .addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                      publicPrivateBoData, submissionDto, logMap));
+      updateSubmission.getAdditions()
+              .addAll(beneficialOwnerAdditionService.beneficialOwnerAdditions(submissionDto));
+      updateSubmission.getCessations()
+              .addAll(beneficialOwnerCessationService.beneficialOwnerCessations(submissionDto,
+                      publicPrivateBoData, logMap));
+      updateSubmission.getChanges()
+              .addAll(managingOfficerChangeService.collateManagingOfficerChanges(
+                      publicPrivateMoData, submissionDto, logMap));
+      updateSubmission.getCessations()
+              .addAll(managingOfficerCessationService.managingOfficerCessations(submissionDto,
+                      publicPrivateMoData, logMap));
+      updateSubmission.getAdditions()
+              .addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
+
+      ApiLogger.debug("Updates have been collected", logMap);
+    }
   }
 
   private void setUpdateSubmissionData(
-          Map<String, Object> data, UpdateSubmission updateSubmission, Map<String, Object> logMap) {
+          Map<String, Object> data,
+          UpdateSubmission updateSubmission,
+          boolean isNoChange,
+          Map<String, Object> logMap) {
     data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
     data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
-    data.put(UPDATE_DUE_DILIGENCE_FIELD, updateSubmission.getDueDiligence());
+    if (!isNoChange) {
+      data.put(UPDATE_DUE_DILIGENCE_FIELD, updateSubmission.getDueDiligence());
+    }
     data.put(UPDATE_PRESENTER_FIELD, updateSubmission.getPresenter());
     data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
-    data.put(NO_CHANGES_IN_FILING_PERIOD_FIELD, updateSubmission.getNoChangesInFilingPeriodStatement());
     data.put(ANY_BOS_ADDED_CEASED_FIELD, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
     data.put(BENEFICIAL_OWNERS_FIELD, updateSubmission.getBeneficialOwnerStatement());
-    data.put(CHANGES_FIELD, updateSubmission.getChanges());
-    data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
-    data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+    if (!isNoChange) {
+      data.put(CHANGES_FIELD, updateSubmission.getChanges());
+      data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
+      data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+    }
 
     ApiLogger.debug("Update submission data has been set on filing", logMap);
   }
