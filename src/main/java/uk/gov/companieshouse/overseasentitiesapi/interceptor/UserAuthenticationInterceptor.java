@@ -126,7 +126,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private boolean isValidRoeUpdateRequest(String companyNumberInScope, Optional<String> companyNumberInTransaction) {
         boolean isValidOeNumberInScope = isValidOeNumber(companyNumberInScope);
-        var isValidOeNumberInTransaction = companyNumberInTransaction.isPresent() ? isValidOeNumber(companyNumberInTransaction.get()) : false;
+        var isValidOeNumberInTransaction = companyNumberInTransaction.isPresent() && isValidOeNumber(companyNumberInTransaction.get());
 
         if (isValidOeNumberInScope && isValidOeNumberInTransaction) {
             return companyNumberInScope.equalsIgnoreCase(companyNumberInTransaction.get());
