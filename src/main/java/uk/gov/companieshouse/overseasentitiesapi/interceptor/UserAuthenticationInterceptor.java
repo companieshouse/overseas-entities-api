@@ -96,8 +96,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             }
         } else {
             String companyNumberInScope = getCompanyNumberInScope(request);
-            authInfoMap.put("company_number_in_scope", getNotNull(companyNumberInScope));
-            boolean isRoeUpdateJourneyRequest = isRequestRoeUpdate(companyNumberInScope, companyNumberInTransactionOptional);
+            authInfoMap.put("company_number_in_scope", convertNullValuesForLogMapOutput(companyNumberInScope));
+            boolean isRoeUpdateJourneyRequest = isValidRoeUpdateRequest(companyNumberInScope, companyNumberInTransactionOptional);
             authInfoMap.put("is_roe_update_journey_request", isRoeUpdateJourneyRequest);
             if (isRoeUpdateJourneyRequest) {
                 // Check the user has the company_oe_annual_update=create permission for ROE Update
@@ -124,12 +124,10 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return companyNumberInTransaction.isEmpty();
     }
 
-    private boolean isRequestRoeUpdate(String companyNumberInScope, Optional<String> companyNumberInTransaction) {
+    private boolean isValidRoeUpdateRequest(String companyNumberInScope, Optional<String> companyNumberInTransaction) {
         boolean isValidOeNumberInScope = isValidOeNumber(companyNumberInScope);
-        var isValidOeNumberInTransaction = false;
-        if (companyNumberInTransaction.isPresent()) {
-            isValidOeNumberInTransaction = isValidOeNumber(companyNumberInTransaction.get());
-        }
+        var isValidOeNumberInTransaction = companyNumberInTransaction.isPresent() ? isValidOeNumber(companyNumberInTransaction.get()) : false;
+
         if (isValidOeNumberInScope && isValidOeNumberInTransaction) {
             return companyNumberInScope.equalsIgnoreCase(companyNumberInTransaction.get());
         }
@@ -172,17 +170,17 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
             ApiLogger.debugContext(reqId, "Call to Transaction Service returned null transaction object " + transactionId, logMap);
             return Optional.empty();
         }
-        logMap.put("company_number_in_transaction", getNotNull(transaction.getCompanyNumber()));
+        logMap.put("company_number_in_transaction", convertNullValuesForLogMapOutput(transaction.getCompanyNumber()));
         ApiLogger.debugContext(reqId, "Transaction successfully retrieved " + transactionId, logMap);
         return Optional.ofNullable(transaction.getCompanyNumber());
 
     }
 
-    private String getNotNull(String aString) {
+    private String convertNullValuesForLogMapOutput(String aString) {
         if (StringUtils.isNotEmpty(aString)) {
             return aString;
         } else {
-            return "";
+            return "NULL";
         }
     }
 

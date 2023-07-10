@@ -125,7 +125,7 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenRequestHasInCorrectRoeUpdateTokenPermission() throws ServiceException {
+    void testInterceptorReturnsFalseWhenRequestHasIncorrectRoeUpdateTokenPermission() throws ServiceException {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
         Transaction dummyTransaction = new Transaction();
