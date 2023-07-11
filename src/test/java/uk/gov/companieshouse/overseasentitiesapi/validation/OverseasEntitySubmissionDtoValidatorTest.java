@@ -146,7 +146,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private void verifyValidateFull(boolean isRegistration) {
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), eq(!isRegistration), any(), any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
                 eq(overseasEntitySubmissionDto.getDueDiligence()),
@@ -563,14 +563,14 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), eq(true), any(), any());
         verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
                     eq(overseasEntitySubmissionDto.getDueDiligence()),
                     eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                     any(),
                     any());
-        verify(ownersAndOfficersDataBlockValidator, times(0)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
         assertFalse(errors.hasErrors());
     }
 
@@ -647,7 +647,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verifyValidateFull(false);
+        verifyValidateFull(true);
         assertFalse(errors.hasErrors());
     }
 
@@ -657,7 +657,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verifyValidateFull(false);
+        verifyValidateFull(true);
         assertFalse(errors.hasErrors());
     }
 

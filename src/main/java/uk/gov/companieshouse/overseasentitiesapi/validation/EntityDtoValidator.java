@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -32,21 +33,33 @@ public class EntityDtoValidator {
     }
 
     public Errors validate(EntityDto entityDto, Errors errors, String loggingContext) {
+        return validate(entityDto, false, errors, loggingContext);
+    }
+
+    public Errors validate(EntityDto entityDto, boolean isUpdate, Errors errors, String loggingContext) {
         validateIncorporationCountry(entityDto.getIncorporationCountry(), errors, loggingContext);
         validateAddress(EntityDto.PRINCIPAL_ADDRESS_FIELD, entityDto.getPrincipalAddress(), errors, loggingContext);
         boolean sameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(entityDto.getServiceAddressSameAsPrincipalAddress(), errors, loggingContext);
         if (sameAddressFlagValid && Boolean.FALSE.equals(entityDto.getServiceAddressSameAsPrincipalAddress())) {
             validateAddress(EntityDto.SERVICE_ADDRESS_FIELD, entityDto.getServiceAddress(), errors, loggingContext);
         } else {
-            validateOtherAddressIsNotSupplied(EntityDto.SERVICE_ADDRESS_FIELD, entityDto.getServiceAddress(), errors, loggingContext);
+            if (!isUpdate) {
+                validateOtherAddressIsNotSupplied(EntityDto.SERVICE_ADDRESS_FIELD,
+                        entityDto.getServiceAddress(), errors, loggingContext);
+            }
         }
-        validateEmail(entityDto.getEmail(), errors, loggingContext);
+        if (!isUpdate || StringUtils.isNotBlank(entityDto.getEmail())) {
+            validateEmail(entityDto.getEmail(), errors, loggingContext);
+        }
         validateLegalForm(entityDto.getLegalForm(), errors, loggingContext);
         validateLawGoverned(entityDto.getLawGoverned(), errors, loggingContext);
 
         if (entityDto.isOnRegisterInCountryFormedIn()) {
             validatePublicRegisterName(entityDto.getPublicRegisterName(), entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
-            validatePublicRegisterJurisdiction(entityDto.getPublicRegisterName(), entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
+            if (!isUpdate || StringUtils.isNotBlank(entityDto.getPublicRegisterJurisdiction())) {
+                validatePublicRegisterJurisdiction(entityDto.getPublicRegisterName(),
+                        entityDto.getPublicRegisterJurisdiction(), errors, loggingContext);
+            }
             validateRegistrationNumber(entityDto.getRegistrationNumber(), errors, loggingContext);
         } else {
             validatePublicRegisterNameIsNotSupplied(entityDto.getPublicRegisterName(), errors, loggingContext);

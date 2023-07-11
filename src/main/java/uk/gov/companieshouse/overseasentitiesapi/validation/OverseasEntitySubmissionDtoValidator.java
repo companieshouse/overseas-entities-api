@@ -1,9 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -74,11 +70,9 @@ public class OverseasEntitySubmissionDtoValidator {
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
-            // Method to be added to as Update journey developed
-            validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateFullCommonDetails(overseasEntitySubmissionDto, true, errors, loggingContext);
 
-            // Change to Statement Validation once BO/MO Statements are complete
-            // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
             dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                     overseasEntitySubmissionDto.getDueDiligence(),
@@ -96,7 +90,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        validateFullCommonDetails(overseasEntitySubmissionDto, false, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -110,13 +104,13 @@ public class OverseasEntitySubmissionDtoValidator {
 
     }
 
-    private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, boolean isUpdate, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntityName(), OverseasEntitySubmissionDto.ENTITY_NAME_FIELD, errors, loggingContext)) {
             entityNameValidator.validate(overseasEntitySubmissionDto.getEntityName(), errors, loggingContext);
         }
 
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getEntity(), OverseasEntitySubmissionDto.ENTITY_FIELD, errors, loggingContext)) {
-            entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), errors, loggingContext);
+            entityDtoValidator.validate(overseasEntitySubmissionDto.getEntity(), isUpdate, errors, loggingContext);
         }
 
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
@@ -136,7 +130,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            // validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
             return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -149,13 +143,9 @@ public class OverseasEntitySubmissionDtoValidator {
         var entityDto = overseasEntitySubmissionDto.getEntity();
 
         if (Objects.nonNull(entityDto)) {
-            var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
-            if (StringUtils.isNotBlank(entityEmail)) {
-                entityDtoValidator.validate(entityDto, errors, loggingContext);
-            }
+            entityDtoValidator.validate(entityDto, true, errors, loggingContext);
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey UAR-711
+
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
@@ -200,7 +190,6 @@ public class OverseasEntitySubmissionDtoValidator {
                     errors,
                     loggingContext);
         }
-
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
