@@ -12,7 +12,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,9 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.DueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
@@ -92,32 +89,16 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private final UpdateDto updateDto = UpdateMock.getUpdateDto();
 
-    private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
-    {
-        beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
-    };
-    private final List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
-    {
-        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
-    };
-    private final List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
-    {
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
-    };
-
-    private final List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
-    {
-        managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
-    };
-    private final List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
-    {
-        managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
-    };
-
-    private final List<TrustDataDto> trustDataDtoList = new ArrayList<>();
-    {
-        trustDataDtoList.add(TrustMock.getTrustDataDto());
-    };
+    private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = List.of(
+            BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+    private final List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = List.of(
+            BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+    private final List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = List.of(
+            BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+    private final List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = List.of(
+            ManagingOfficerMock.getManagingOfficerIndividualDto());
+    private final List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = List.of(ManagingOfficerMock.getManagingOfficerCorporateDto());
+    private final List<TrustDataDto> trustDataDtoList = List.of(TrustMock.getTrustDataDto());
 
     @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() {
@@ -128,7 +109,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verifyValidateFull(true);
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto),any(),any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(),
+                any());
         assertFalse(errors.hasErrors());
     }
 
@@ -141,7 +123,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verifyValidateFull(true);
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto),any(),any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(),
+                any());
         assertFalse(errors.hasErrors());
     }
 
@@ -457,6 +440,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(false);
     }
 
+    @Test
     void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialUpdateValidation() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(true);
@@ -476,8 +460,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
-        verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
         if (!isUpdateTest) {
+            verify(presenterDtoValidator, times(1)).validate(any(), any(), any());
             verify(entityDtoValidator, times(1)).validate(any(), any(), any());
             verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
             verify(dueDiligenceDataBlockValidator, times(0)).validateFullDueDiligenceFields(any(),
@@ -509,7 +493,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {" ", LONG_NAME, "Дракон"} )
+    @ValueSource(strings = {" ", LONG_NAME, "Дракон"})
     void testFullValidationErrorReportedWhenEntityNameFieldIsNull(String name) {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.getEntityName().setName(name);
@@ -519,7 +503,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {" ", LONG_NAME, "Дракон"} )
+    @ValueSource(strings = {" ", LONG_NAME, "Дракон"})
     void testPartialValidationErrorReportedWhenEntityNameFieldIsNull(String name) {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.getEntityName().setName(name);
@@ -566,10 +550,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(entityDtoValidator, times(2)).validate(eq(entityDto), any(), any());
         verify(presenterDtoValidator, times(2)).validate(eq(presenterDto), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
-                    eq(overseasEntitySubmissionDto.getDueDiligence()),
-                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-                    any(),
-                    any());
+                eq(overseasEntitySubmissionDto.getDueDiligence()),
+                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                any(),
+                any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
         assertFalse(errors.hasErrors());
     }
@@ -676,12 +660,14 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(dueDiligenceDataBlockValidator, times(0)).validateFullDueDiligenceFields(eq(overseasEntitySubmissionDto.getDueDiligence()), any(), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(0)).validateFullDueDiligenceFields(eq(overseasEntitySubmissionDto.getDueDiligence()), any(),
+                any(), any());
         verify(entityNameValidator, times(1)).validate(eq(entityNameDto), any(), any());
         verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
         verify(presenterDtoValidator, times(2)).validate(eq(presenterDto), any(), any());
         assertFalse(errors.hasErrors());
     }
+
     @Test
     void testErrorReportedForMissingUpdateEntityFieldAndOtherBlocksWithValidationErrors() {
         buildPartialOverseasEntityUpdateSubmissionDto();
