@@ -74,8 +74,6 @@ public class OverseasEntitySubmissionDtoValidator {
         // Method to be added to as Update journey developed
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
@@ -160,6 +158,8 @@ public class OverseasEntitySubmissionDtoValidator {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
+
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
         
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
@@ -193,6 +193,7 @@ public class OverseasEntitySubmissionDtoValidator {
         if (Objects.nonNull(presenterDto)) {
             presenterDtoValidator.validate(presenterDto, errors, loggingContext);
         }
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         var dueDiligenceDto = overseasEntitySubmissionDto.getDueDiligence();
         var overseasEntityDueDiligenceDto = overseasEntitySubmissionDto.getOverseasEntityDueDiligence();
