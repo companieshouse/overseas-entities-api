@@ -85,6 +85,8 @@ public class OverseasEntitySubmissionDtoValidator {
                     overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                     errors,
                     loggingContext);
+
+            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
         }
         else {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
