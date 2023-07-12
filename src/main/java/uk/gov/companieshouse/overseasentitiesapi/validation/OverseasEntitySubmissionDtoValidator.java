@@ -170,8 +170,6 @@ public class OverseasEntitySubmissionDtoValidator {
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-
         return errors;
     }
 
@@ -190,6 +188,8 @@ public class OverseasEntitySubmissionDtoValidator {
                     errors,
                     loggingContext);
         }
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
