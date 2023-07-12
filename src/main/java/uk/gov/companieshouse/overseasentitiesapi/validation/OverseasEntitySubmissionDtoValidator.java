@@ -79,6 +79,8 @@ public class OverseasEntitySubmissionDtoValidator {
                     overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                     errors,
                     loggingContext);
+
+            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
         }
         else {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
@@ -101,7 +103,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, boolean isUpdate, Errors errors, String loggingContext) {
