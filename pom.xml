@@ -22,6 +22,7 @@
         <log4j.version>2.17.2</log4j.version>
         <org.mapstruct.version>1.5.0.RC1</org.mapstruct.version>
         <rest-service-common-library-version>0.0.5</rest-service-common-library-version>
+        <dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
     </properties>
     <profiles>
         <profile>
@@ -180,6 +181,23 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-plugin.version}</version>
+                <configuration>
+                    <suppressionFiles>
+                        <suppressionFile>suppress.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
