@@ -497,6 +497,79 @@ class EntityDtoValidatorTest {
         assertError(EntityDto.REGISTRATION_NUMBER_FIELD, ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE.replace("%s",  getQualifiedFieldName(EntityDto.REGISTRATION_NUMBER_FIELD)), errors);
     }
 
+    @Test
+    void testNoErrorReportedWhenUpdate() {
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasEMail() {
+        entityDto.setEmail("tester@test.com");
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasNoEMail() {
+        entityDto.setEmail(null);
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasRegisterJurisdiction() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName("British Cycling Race License");
+        entityDto.setRegistrationNumber("123456");
+        entityDto.setPublicRegisterJurisdiction("United Kingdom");
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasNoRegisterJurisdiction() {
+        entityDto.setOnRegisterInCountryFormedIn(true);
+        entityDto.setPublicRegisterName("British Cycling Race License");
+        entityDto.setRegistrationNumber("123456");
+        entityDto.setPublicRegisterJurisdiction(null);
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasTwoDifferentAddresses() {
+        entityDto.setServiceAddressSameAsPrincipalAddress(false);
+        var principleAddress = new AddressDto();
+        principleAddress.setPropertyNameNumber("1");
+        principleAddress.setLine1("Broadway");
+        principleAddress.setTown("New York");
+        principleAddress.setCountry("United States");
+        entityDto.setPrincipalAddress(principleAddress);
+        var serviceAddress = new AddressDto();
+        serviceAddress.setPropertyNameNumber("1");
+        serviceAddress.setLine1("Maximilianstrasse");
+        serviceAddress.setTown("Munich");
+        serviceAddress.setCountry("Germany");
+        entityDto.setServiceAddress(serviceAddress);
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenUpdateHasTwoAddressesThatAreTheSame() {
+        entityDto.setServiceAddressSameAsPrincipalAddress(true);
+        var principleAddress = new AddressDto();
+        principleAddress.setPropertyNameNumber("1");
+        principleAddress.setLine1("Broadway");
+        principleAddress.setTown("New York");
+        principleAddress.setCountry("United States");
+        entityDto.setPrincipalAddress(principleAddress);
+        entityDto.setServiceAddress(principleAddress);
+        Errors errors = entityDtoValidator.validate(entityDto, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
     private void assertError(String fieldName, String message, Errors errors) {
         String qualifiedFieldName = ENTITY_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
