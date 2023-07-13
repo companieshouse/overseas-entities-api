@@ -72,7 +72,7 @@ public class OverseasEntitySubmissionDtoValidator {
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
             validateFullCommonDetails(overseasEntitySubmissionDto, true, errors, loggingContext);
 
-            // Change to  ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement once UI statement validation complete.
+            // Change to ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement once UI statement validation complete.
             ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
             dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
