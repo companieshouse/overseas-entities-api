@@ -75,11 +75,11 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() throws ServiceException {
-        when(overseasEntitySubmissionDtoValidator.validateFull(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -93,7 +93,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -103,12 +103,11 @@ class OverseasEntitiesControllerTest {
     @Test
     void testCreatingANewUpdateSubmissionIsSuccessfulWithValidation() throws ServiceException {
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
-        when(overseasEntitySubmissionDtoValidator.validateFull(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -122,7 +121,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -131,12 +130,12 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
-        when(overseasEntitySubmissionDtoValidator.validateFull(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
 
-        when(overseasEntitiesService.createOverseasEntity(
+        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -150,7 +149,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntity(
+        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -165,7 +164,7 @@ class OverseasEntitiesControllerTest {
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
             Errors errors = new Errors(err);
-            when(overseasEntitySubmissionDtoValidator.validateFull(
+            when(overseasEntitySubmissionDtoValidator.validatePartial(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
                     eq(REQUEST_ID)
@@ -198,7 +197,7 @@ class OverseasEntitiesControllerTest {
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
-        when(overseasEntitySubmissionDtoValidator.validateFull(
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID)
@@ -489,56 +488,6 @@ class OverseasEntitiesControllerTest {
         assertEquals(2, responseErrors.size());
         assertTrue(responseErrors.containsError(errName));
         assertTrue(responseErrors.containsError(errAddress));
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-    }
-
-    @Test
-    void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
-        when(overseasEntitySubmissionDtoValidator.validatePartial(
-                eq(overseasEntitySubmissionDto),
-                any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
-        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
-        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
-        assertEquals(CREATED_SUCCESS_RESPONSE, response);
-
-        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-    }
-
-    @Test
-    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() {
-
-        overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
-        overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
-
-        Err err = Err.invalidBodyBuilderWithLocation("Any").withError("Any").build();
-
-        when(overseasEntitySubmissionDtoValidator.validatePartial(
-                eq(overseasEntitySubmissionDto),
-                any(Errors.class),
-                eq(REQUEST_ID)
-        )).thenReturn(new Errors(err));
-
-        var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
-                transaction,
-                overseasEntitySubmissionDto,
-                REQUEST_ID,
-                USER_ID);
-
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
 
