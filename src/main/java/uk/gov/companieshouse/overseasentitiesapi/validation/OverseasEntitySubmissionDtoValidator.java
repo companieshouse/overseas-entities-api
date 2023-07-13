@@ -78,7 +78,7 @@ public class OverseasEntitySubmissionDtoValidator {
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
             // Change to Statement Validation once BO/MO Statements are complete
-            // ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
             dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                     overseasEntitySubmissionDto.getDueDiligence(),
