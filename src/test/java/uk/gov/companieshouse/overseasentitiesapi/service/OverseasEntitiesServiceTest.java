@@ -88,21 +88,16 @@ class OverseasEntitiesServiceTest {
     private Object responseBody;
 
     @Test
-    void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
-        testSubmissionCreation(true, ENTITY_NAME);
-    }
-
-    @Test
-    void testOverseasEntitySubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException {
-        testSubmissionCreation(false, ENTITY_NAME);
+    void testOverseasEntitySubmissionCreatedSuccessfully() throws ServiceException {
+        testSubmissionCreation(ENTITY_NAME);
     }
 
     @Test
     void testOverseasEntitySubmissionCanBeCreatedWhenEntityNameIsNull() throws ServiceException {
-        testSubmissionCreation(false, null);
+        testSubmissionCreation(null);
     }
 
-    private void testSubmissionCreation(boolean isResumeLinkExpected, String entityName) throws ServiceException {
+    private void testSubmissionCreation(String entityName) throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
         Transaction transaction = buildTransaction();
@@ -130,22 +125,11 @@ class OverseasEntitiesServiceTest {
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
 
-        ResponseEntity<Object> response;
-
-        // make the call to test
-        if (isResumeLinkExpected) {
-            response = overseasEntitiesService.createOverseasEntityWithResumeLink(
+        ResponseEntity<Object> response = overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
                     USER_ID);
-        } else {
-            response = overseasEntitiesService.createOverseasEntity(
-                    transaction,
-                    overseasEntitySubmissionDto,
-                    REQUEST_ID,
-                    USER_ID);
-        }
 
         verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         verify(localDateTimeSupplier, times(1)).get();
@@ -168,12 +152,7 @@ class OverseasEntitiesServiceTest {
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
-
-        if (isResumeLinkExpected) {
-            assertEquals(String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
-        } else {
-            assertNull(transactionSent.getResumeJourneyUri());
-        }
+        assertEquals(String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
 
         // assert response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -183,21 +162,16 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException  {
-        testUpdateSubmissionCreation(true, ENTITY_NAME);
-    }
-
-    @Test
-    void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException  {
-        testUpdateSubmissionCreation(false, ENTITY_NAME);
+    void testOverseasEntityUpdateSubmissionCreatedSuccessfully() throws ServiceException  {
+        testUpdateSubmissionCreation(ENTITY_NAME);
     }
 
     @Test
     void testOverseasEntityUpdateSubmissionCanBeCreatedWhenEntityNameIsNull() throws ServiceException {
-        testUpdateSubmissionCreation(false, null);
+        testUpdateSubmissionCreation(null);
     }
 
-    private void testUpdateSubmissionCreation(boolean isResumeLinkExpected, String entityName) throws ServiceException {
+    private void testUpdateSubmissionCreation(String entityName) throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
         Transaction transaction = buildTransaction();
@@ -216,22 +190,11 @@ class OverseasEntitiesServiceTest {
         when(overseasEntitySubmissionsRepository.insert(overseasEntitySubmissionDao)).thenReturn(overseasEntitySubmissionDao);
         when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
 
-        ResponseEntity<Object> response;
-
-        // make the call to test
-        if (isResumeLinkExpected) {
-            response = overseasEntitiesService.createOverseasEntityWithResumeLink(
+        ResponseEntity<Object> response = overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
                     USER_ID);
-        } else {
-            response = overseasEntitiesService.createOverseasEntity(
-                    transaction,
-                    overseasEntitySubmissionDto,
-                    REQUEST_ID,
-                    USER_ID);
-        }
 
         verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         verify(localDateTimeSupplier, times(1)).get();
@@ -248,12 +211,7 @@ class OverseasEntitiesServiceTest {
         assertEquals(submissionUri, transactionSent.getResources().get(submissionUri).getLinks().get("resource"));
         assertEquals(submissionUri + "/validation-status", transactionSent.getResources().get(submissionUri).getLinks().get("validation_status"));
         assertEquals(submissionUri + "/costs", transactionSent.getResources().get(submissionUri).getLinks().get("costs"));
-
-        if (isResumeLinkExpected) {
-            assertEquals(String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
-        } else {
-            assertNull(transactionSent.getResumeJourneyUri());
-        }
+        assertEquals(String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), overseasEntitySubmissionDao.getId()), transactionSent.getResumeJourneyUri());
 
         // assert response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
