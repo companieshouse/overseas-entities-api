@@ -9,7 +9,6 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -79,7 +78,7 @@ class OverseasEntitiesControllerTest {
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
+        when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -93,7 +92,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
+        verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -107,7 +106,7 @@ class OverseasEntitiesControllerTest {
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
+        when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -121,7 +120,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
+        verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -135,7 +134,7 @@ class OverseasEntitiesControllerTest {
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
 
-        when(overseasEntitiesService.createOverseasEntityWithResumeLink(
+        when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
@@ -149,7 +148,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
-        verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
+        verify(overseasEntitiesService).createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,

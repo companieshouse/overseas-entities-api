@@ -85,7 +85,7 @@ public class OverseasEntitiesController {
                 return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
             }
 
-            return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
+            return this.overseasEntitiesService.createOverseasEntity(
                     transaction,
                     overseasEntitySubmissionDto,
                     requestId,
