@@ -149,14 +149,16 @@ public class OverseasEntitySubmissionDtoValidator {
         var entityDto = overseasEntitySubmissionDto.getEntity();
 
         if (Objects.nonNull(entityDto)) {
-            var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
-            if (StringUtils.isNotBlank(entityEmail)) {
+            // Delay until the user has updated Entity details.
+            var principalAddress = entityDto.getPrincipalAddress();
+            if (principalAddress != null && StringUtils.isNotBlank(principalAddress.getPropertyNameNumber())) {
                 entityDtoValidator.validate(entityDto, errors, loggingContext);
             }
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey UAR-711
+
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
