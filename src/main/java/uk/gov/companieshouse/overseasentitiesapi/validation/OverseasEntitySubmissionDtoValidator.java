@@ -146,16 +146,6 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        var entityDto = overseasEntitySubmissionDto.getEntity();
-
-        if (Objects.nonNull(entityDto)) {
-            // Delay until the user has updated Entity details.
-            var principalAddress = entityDto.getPrincipalAddress();
-            if (principalAddress != null && StringUtils.isNotBlank(principalAddress.getPropertyNameNumber())) {
-                entityDtoValidator.validate(entityDto, errors, loggingContext);
-            }
-        }
-
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
