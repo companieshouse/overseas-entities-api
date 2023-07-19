@@ -26,6 +26,10 @@ public class IndividualBeneficialOwnerAddition extends BeneficialOwnerAddition {
     @JsonProperty("birthDate")
     private LocalDate birthDate;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("addedTrustIds")
+    private List<String> trustIds;
+
     public IndividualBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                              Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
         super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
@@ -63,5 +67,13 @@ public class IndividualBeneficialOwnerAddition extends BeneficialOwnerAddition {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public List<String> getTrustIds() {
+        return this.trustIds;
+    }
+    
+    public void setTrustIds(List<String> trustIds) {
+        this.trustIds = trustIds;
     }
 }

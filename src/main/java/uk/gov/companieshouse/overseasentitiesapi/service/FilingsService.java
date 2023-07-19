@@ -226,6 +226,10 @@ public class FilingsService {
       updateSubmission.getAdditions()
               .addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
+      if (!submissionDto.getTrusts().isEmpty() && submissionDto.getTrusts() != null) {
+        updateSubmission.setTrustAdditions(submissionDto.getTrusts());
+      }
+
       ApiLogger.debug("Updates have been collected", logMap);
     }
   }
@@ -249,6 +253,7 @@ public class FilingsService {
       data.put(CHANGES_FIELD, updateSubmission.getChanges());
       data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
       data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+      data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
 
     ApiLogger.debug("Update submission data has been set on filing", logMap);
