@@ -11,57 +11,73 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class IndividualBeneficialOwnerAddition extends BeneficialOwnerAddition {
-    private static final String APPOINTMENT_TYPE = "OE INDIVIDUAL BO";
+  private static final String APPOINTMENT_TYPE = "OE INDIVIDUAL BO";
 
-    @JsonProperty("personName")
-    private PersonName personName;
+  @JsonProperty("personName")
+  private PersonName personName;
 
-    @JsonInclude(NON_NULL)
-    @JsonProperty("residentialAddress")
-    private Address residentialAddress;
+  @JsonInclude(NON_NULL)
+  @JsonProperty("residentialAddress")
+  private Address residentialAddress;
 
-    @JsonProperty("nationalityOther")
-    private String nationalityOther;
+  @JsonProperty("nationalityOther")
+  private String nationalityOther;
 
-    @JsonProperty("birthDate")
-    private LocalDate birthDate;
+  @JsonProperty("birthDate")
+  private LocalDate birthDate;
 
-    public IndividualBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
-                                             Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
-        super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
-        setAppointmentType(APPOINTMENT_TYPE);
-        this.residentialAddress = residentialAddress;
-    }
+  @JsonProperty("addedTrustIds")
+  private List<String> trustIds;
 
-    public PersonName getPersonName() {
-        return personName;
-    }
+  public IndividualBeneficialOwnerAddition(
+      LocalDate actionDate,
+      LocalDate ceasedDate,
+      Address residentialAddress,
+      Address serviceAddress,
+      List<String> natureOfControls,
+      boolean isOnSanctionsList) {
+    super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
+    setAppointmentType(APPOINTMENT_TYPE);
+    this.residentialAddress = residentialAddress;
+  }
 
-    public void setPersonName(PersonName personName) {
-        this.personName = personName;
-    }
+  public PersonName getPersonName() {
+    return personName;
+  }
 
-    public Address getResidentialAddress() {
-        return residentialAddress;
-    }
+  public void setPersonName(PersonName personName) {
+    this.personName = personName;
+  }
 
-    public void setResidentialAddress(Address residentialAddress) {
-        this.residentialAddress = residentialAddress;
-    }
+  public Address getResidentialAddress() {
+    return residentialAddress;
+  }
 
-    public String getNationalityOther() {
-        return nationalityOther;
-    }
+  public void setResidentialAddress(Address residentialAddress) {
+    this.residentialAddress = residentialAddress;
+  }
 
-    public void setNationalityOther(String nationalityOther) {
-        this.nationalityOther = nationalityOther;
-    }
+  public String getNationalityOther() {
+    return nationalityOther;
+  }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
+  public void setNationalityOther(String nationalityOther) {
+    this.nationalityOther = nationalityOther;
+  }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+  public LocalDate getBirthDate() {
+    return birthDate;
+  }
+
+  public void setBirthDate(LocalDate birthDate) {
+    this.birthDate = birthDate;
+  }
+
+  public List<String> getTrustIds() {
+    return this.trustIds;
+  }
+
+  public void setTrustIds(List<String> trustIds) {
+    this.trustIds = trustIds;
+  }
 }

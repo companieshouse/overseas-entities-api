@@ -11,46 +11,51 @@ import java.util.List;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 
 public class LegalPersonBeneficialOwnerAddition extends BeneficialOwnerAddition {
-    private static final String APPOINTMENT_TYPE = "OE GPA BO";
+  private static final String APPOINTMENT_TYPE = "OE GPA BO";
 
-    @JsonProperty("corporateName")
-    private String corporateName;
+  @JsonProperty("corporateName")
+  private String corporateName;
 
-    @JsonInclude(NON_NULL)
-    @JsonProperty("registeredOffice")
-    private Address registeredOffice;
+  @JsonInclude(NON_NULL)
+  @JsonProperty("registeredOffice")
+  private Address registeredOffice;
 
-    @JsonProperty("companyIdentification")
-    private CompanyIdentification companyIdentification;
+  @JsonProperty("companyIdentification")
+  private CompanyIdentification companyIdentification;
 
-    public LegalPersonBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address registeredOffice,
-                                              Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
-        super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
-        setAppointmentType(APPOINTMENT_TYPE);
-        this.registeredOffice = registeredOffice;
-    }
+  public LegalPersonBeneficialOwnerAddition(
+      LocalDate actionDate,
+      LocalDate ceasedDate,
+      Address registeredOffice,
+      Address serviceAddress,
+      List<String> natureOfControls,
+      boolean isOnSanctionsList) {
+    super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
+    setAppointmentType(APPOINTMENT_TYPE);
+    this.registeredOffice = registeredOffice;
+  }
 
-    public String getCorporateName() {
-        return corporateName;
-    }
+  public String getCorporateName() {
+    return corporateName;
+  }
 
-    public void setCorporateName(String corporateName) {
-        this.corporateName = corporateName;
-    }
+  public void setCorporateName(String corporateName) {
+    this.corporateName = corporateName;
+  }
 
-    public Address getRegisteredOffice() {
-        return this.registeredOffice;
-    }
+  public Address getRegisteredOffice() {
+    return this.registeredOffice;
+  }
 
-    public void setRegisteredOffice(Address registeredOffice) {
-        this.registeredOffice = registeredOffice;
-    }
+  public void setRegisteredOffice(Address registeredOffice) {
+    this.registeredOffice = registeredOffice;
+  }
 
-    public CompanyIdentification getCompanyIdentification() {
-        return companyIdentification;
-    }
+  public CompanyIdentification getCompanyIdentification() {
+    return companyIdentification;
+  }
 
-    public void setCompanyIdentification(CompanyIdentification companyIdentification) {
-        this.companyIdentification = companyIdentification;
-    }
+  public void setCompanyIdentification(CompanyIdentification companyIdentification) {
+    this.companyIdentification = companyIdentification;
+  }
 }

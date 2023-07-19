@@ -4,6 +4,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
@@ -18,6 +20,9 @@ public class CorporateBeneficialOwnerPsc extends Psc {
 
   @JsonProperty("companyIdentification")
   private CompanyIdentification companyIdentification;
+
+  @JsonProperty("addedTrustIds")
+  private List<String> trustIds;
 
   public String getCorporateName() {
     return corporateName;
@@ -34,6 +39,14 @@ public class CorporateBeneficialOwnerPsc extends Psc {
   public void setCompanyIdentification(
       CompanyIdentification companyIdentification) {
     this.companyIdentification = companyIdentification;
+  }
+
+  public List<String> getTrustIds() {
+    return this.trustIds;
+  }
+
+  public void setTrustIds(List<String> trustIds) {
+    this.trustIds = trustIds;
   }
 
   @Override

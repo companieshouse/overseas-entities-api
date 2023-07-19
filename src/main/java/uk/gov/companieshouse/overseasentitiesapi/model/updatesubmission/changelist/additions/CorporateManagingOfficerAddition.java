@@ -30,9 +30,9 @@ public class CorporateManagingOfficerAddition extends ManagingOfficerAddition {
     private CompanyIdentification companyIdentification;
 
     public CorporateManagingOfficerAddition(LocalDate actionDate,
-                                            Address residentialAddress,
-                                            Address serviceAddress,
-                                            LocalDate resignedOn) {
+            Address residentialAddress,
+            Address serviceAddress,
+            LocalDate resignedOn) {
         super(actionDate, residentialAddress, serviceAddress, resignedOn, CORPORATE_MANAGING_OFFICER);
     }
 

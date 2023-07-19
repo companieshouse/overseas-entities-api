@@ -249,6 +249,7 @@ public class FilingsService {
       data.put(CHANGES_FIELD, updateSubmission.getChanges());
       data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
       data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+      data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
 
     ApiLogger.debug("Update submission data has been set on filing", logMap);
