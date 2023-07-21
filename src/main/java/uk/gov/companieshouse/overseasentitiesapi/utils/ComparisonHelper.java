@@ -6,11 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import java.util.Objects;
+import java.util.StringJoiner;
+
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 public class ComparisonHelper {
@@ -95,6 +98,21 @@ public class ComparisonHelper {
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()), normalise(address.getPoBox()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()), normalise(address.getCareOf()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()), normalise(address.getPostalCode()));
+    }
+
+    public static boolean equals(CompanyIdentification existing, CompanyIdentification updated) {
+        var nullValuesCheck = handleNulls(existing, updated);
+        if (nullValuesCheck != null) {
+            return nullValuesCheck;
+        }
+
+        var format = new StringJoiner(",");
+        var registerInformationFormat = format.add(updated.getPlaceRegistered()).add(updated.getPlaceRegisteredJurisdiction());
+        return StringUtils.equalsIgnoreCase(normalise(existing.getLegalForm()), normalise(updated.getLegalForm()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getGoverningLaw()), normalise(updated.getGoverningLaw()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getRegisterLocation()), normalise(updated.getRegisterLocation()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getPlaceRegistered()), normalise(registerInformationFormat.toString()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getRegistrationNumber()), normalise(updated.getRegistrationNumber()));
     }
 
     public static boolean equals(LocalDate a, String b) {

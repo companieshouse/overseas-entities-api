@@ -15,21 +15,24 @@ class CompanyIdentificationTest {
     String governingLaw = "Some Law";
     String registerLocation = "Some Location";
     String placeRegistered = "Some Place";
+    String registerJurisdiction = "Jurisdiction";
     String registrationNumber = "123456789";
 
     CompanyIdentification companyIdentification = new CompanyIdentification(legalForm, governingLaw,
-        registerLocation, placeRegistered, registrationNumber);
+        registerLocation, placeRegistered,registerJurisdiction, registrationNumber);
 
     String actualLegalForm = companyIdentification.getLegalForm();
     String actualGoverningLaw = companyIdentification.getGoverningLaw();
     String actualRegisterLocation = companyIdentification.getRegisterLocation();
     String actualPlaceRegistered = companyIdentification.getPlaceRegistered();
+    String actualRegisterJurisdiction = companyIdentification.getPlaceRegisteredJurisdiction();
     String actualRegistrationNumber = companyIdentification.getRegistrationNumber();
 
     assertEquals(legalForm, actualLegalForm);
     assertEquals(governingLaw, actualGoverningLaw);
     assertEquals(registerLocation, actualRegisterLocation);
     assertEquals(placeRegistered, actualPlaceRegistered);
+    assertEquals(registerJurisdiction, actualRegisterJurisdiction);
     assertEquals(registrationNumber, actualRegistrationNumber);
 
     String newLegalForm = "Corporation";
@@ -58,14 +61,15 @@ class CompanyIdentificationTest {
     String governingLaw = "Some Law";
     String registerLocation = "Some Location";
     String placeRegistered = "Some Place";
+    String registerJurisdiction = "Jurisdiction";
     String registrationNumber = "123456789";
 
     CompanyIdentification companyIdentification1 = new CompanyIdentification(legalForm,
         governingLaw,
-        registerLocation, placeRegistered, registrationNumber);
+        registerLocation, placeRegistered, registerJurisdiction, registrationNumber);
     CompanyIdentification companyIdentification2 = new CompanyIdentification(legalForm,
         governingLaw,
-        registerLocation, placeRegistered, registrationNumber);
+        registerLocation, placeRegistered, registerJurisdiction, registrationNumber);
 
     assertEquals(companyIdentification1, companyIdentification2);
     assertEquals(companyIdentification1.hashCode(), companyIdentification2.hashCode());
