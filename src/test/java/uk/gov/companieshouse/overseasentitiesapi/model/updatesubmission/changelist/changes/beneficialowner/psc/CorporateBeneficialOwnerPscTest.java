@@ -67,6 +67,6 @@ class CorporateBeneficialOwnerPscTest {
 
   private CompanyIdentification createCompanyIdentification() {
     return new CompanyIdentification("legalForm", "governingLaw",
-        "registerLocation", "placeRegistered", "registrationNumber");
+        "registerLocation", "placeRegistered", "registerJurisdiction","registrationNumber");
   }
 }

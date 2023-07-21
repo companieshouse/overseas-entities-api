@@ -25,16 +25,21 @@ public class CompanyIdentification {
     private String placeRegistered;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("placeRegisteredJurisdiction")
+    private String placeRegisteredJurisdiction;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("registrationNumber")
     private String registrationNumber;
 
     public CompanyIdentification() {}
 
-    public CompanyIdentification(String legalForm, String governingLaw, String registerLocation, String placeRegistered, String registrationNumber) {
+    public CompanyIdentification(String legalForm, String governingLaw, String registerLocation, String placeRegistered, String placeRegisteredJurisdiction, String registrationNumber) {
         this.legalForm = legalForm;
         this.governingLaw = governingLaw;
         this.registerLocation = registerLocation;
         this.placeRegistered = placeRegistered;
+        this.placeRegisteredJurisdiction = placeRegisteredJurisdiction;
         this.registrationNumber = registrationNumber;
     }
 
@@ -70,6 +75,14 @@ public class CompanyIdentification {
         this.placeRegistered = placeRegistered;
     }
 
+    public String getPlaceRegisteredJurisdiction() {
+        return placeRegisteredJurisdiction;
+    }
+
+    public void setPlaceRegisteredJurisdiction(String placeRegisteredJurisdiction) {
+        this.placeRegisteredJurisdiction = placeRegisteredJurisdiction;
+    }
+
     public String getRegistrationNumber() {
         return registrationNumber;
     }
@@ -87,11 +100,13 @@ public class CompanyIdentification {
                 && Objects.equals(governingLaw, that.governingLaw)
                 && Objects.equals(registerLocation, that.registerLocation)
                 && Objects.equals(placeRegistered, that.placeRegistered)
+                && Objects.equals(placeRegisteredJurisdiction, that.placeRegisteredJurisdiction)
                 && Objects.equals(registrationNumber, that.registrationNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(legalForm, governingLaw, registerLocation, placeRegistered, registrationNumber);
+        return Objects.hash(legalForm, governingLaw, registerLocation, placeRegistered, placeRegisteredJurisdiction, registrationNumber);
     }
+
 }
