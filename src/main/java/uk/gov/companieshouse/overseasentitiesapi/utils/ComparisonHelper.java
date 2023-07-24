@@ -4,10 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.Objects;
 import java.util.StringJoiner;
-
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
@@ -35,8 +33,10 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
-        String addressLine1 = combineAddressLines(addressApi.getPremises(), addressApi.getAddressLine1());
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
+        String addressLine1 = combineAddressLines(addressApi.getPremises(),
+                addressApi.getAddressLine1());
 
         return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1),
                 normalise(addressLine1))
@@ -63,8 +63,10 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
-        String addressLine1 = combineAddressLines(addressApi.getPremises(), addressApi.getAddressLine1());
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
+        String addressLine1 = combineAddressLines(addressApi.getPremises(),
+                addressApi.getAddressLine1());
 
         return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1), normalise(addressLine1))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
@@ -90,17 +92,25 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
         String addressLine1 = combineAddressLines(address.getPremises(), address.getAddressLine1());
 
         return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1), normalise(addressLine1))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()), normalise(address.getAddressLine2()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()), normalise(address.getLocality()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()), normalise(address.getRegion()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()), normalise(address.getCountry()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()), normalise(address.getPoBox()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()), normalise(address.getCareOf()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()), normalise(address.getPostalCode()));
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
+                normalise(address.getAddressLine2()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
+                normalise(address.getLocality()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()),
+                normalise(address.getRegion()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()),
+                normalise(address.getCountry()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()),
+                normalise(address.getPoBox()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()),
+                normalise(address.getCareOf()))
+                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()),
+                normalise(address.getPostalCode()));
     }
 
     public static boolean equals(CompanyIdentification existing, CompanyIdentification updated) {
@@ -110,12 +120,18 @@ public class ComparisonHelper {
         }
 
         var format = new StringJoiner(",");
-        var registerInformationFormat = format.add(updated.getPlaceRegistered()).add(updated.getPlaceRegisteredJurisdiction());
-        return StringUtils.equalsIgnoreCase(normalise(existing.getLegalForm()), normalise(updated.getLegalForm()))
-                && StringUtils.equalsIgnoreCase(normalise(existing.getGoverningLaw()), normalise(updated.getGoverningLaw()))
-                && StringUtils.equalsIgnoreCase(normalise(existing.getRegisterLocation()), normalise(updated.getRegisterLocation()))
-                && StringUtils.equalsIgnoreCase(normalise(existing.getPlaceRegistered()), normalise(registerInformationFormat.toString()))
-                && StringUtils.equalsIgnoreCase(normalise(existing.getRegistrationNumber()), normalise(updated.getRegistrationNumber()));
+        var registerInformationFormat = format.add(updated.getPlaceRegistered())
+                .add(updated.getPlaceRegisteredJurisdiction());
+        return StringUtils.equalsIgnoreCase(normalise(existing.getLegalForm()),
+                normalise(updated.getLegalForm()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getGoverningLaw()),
+                normalise(updated.getGoverningLaw()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getRegisterLocation()),
+                normalise(updated.getRegisterLocation()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getPlaceRegistered()),
+                normalise(registerInformationFormat.toString()))
+                && StringUtils.equalsIgnoreCase(normalise(existing.getRegistrationNumber()),
+                normalise(updated.getRegistrationNumber()));
     }
 
     public static boolean equals(LocalDate a, String b) {
@@ -133,7 +149,8 @@ public class ComparisonHelper {
         return a.equals(localDate);
     }
 
-    public static boolean natureOfControlsEquals(List<String> chipsFormatList, String[] publicDataFormat) {
+    public static boolean natureOfControlsEquals(List<String> chipsFormatList,
+            String[] publicDataFormat) {
         var nullValuesCheck = handleNulls(chipsFormatList, publicDataFormat);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
@@ -157,7 +174,7 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
+        return StringUtils.equalsIgnoreCase(normalise(personName.toString()), normalise(string));
     }
 
     public static boolean equalsIndividualMOName(PersonName personName, String string) {
@@ -165,8 +182,9 @@ public class ComparisonHelper {
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
-        String individualMoFormat = personName.getSurname().concat(", ").concat(personName.getForename());
-        return StringUtils.equalsIgnoreCase(normalise(individualMoFormat),normalise(string));
+        String individualMoFormat = personName.getSurname().concat(", ")
+                .concat(personName.getForename());
+        return StringUtils.equalsIgnoreCase(normalise(individualMoFormat), normalise(string));
     }
 
     public static boolean equalsIgnoreCase(String string, String other) {
@@ -175,7 +193,7 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(other));
+        return StringUtils.equalsIgnoreCase(normalise(string), normalise(other));
     }
 
     public static boolean equals(Boolean b, boolean b2) {
@@ -213,7 +231,7 @@ public class ComparisonHelper {
 
         var concatenatedFormerNames = FormerNameConcatenation.concatenateFormerNames(strings);
 
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(concatenatedFormerNames));
+        return StringUtils.equalsIgnoreCase(normalise(string), normalise(concatenatedFormerNames));
     }
 
     private static Boolean handleNulls(Object a, Object b) {
@@ -242,7 +260,8 @@ public class ComparisonHelper {
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
-        String normalisedNationality = other.endsWith(",") ? other.substring(0, other.length()-1): other;
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(normalisedNationality));
+        String normalisedNationality =
+                other.endsWith(",") ? other.substring(0, other.length() - 1) : other;
+        return StringUtils.equalsIgnoreCase(normalise(string), normalise(normalisedNationality));
     }
 }
