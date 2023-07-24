@@ -35,10 +35,11 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
-                normalise(addressApi.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
-                normalise(addressApi.getAddressLine1()))
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
+        String addressLine1 = combineAddressLines(addressApi.getPremises(), addressApi.getAddressLine1());
+
+        return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1),
+                normalise(addressLine1))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
                 normalise(addressApi.getAddressLine2()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
@@ -62,10 +63,10 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
-                normalise(addressApi.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
-                normalise(addressApi.getAddressLine1()))
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
+        String addressLine1 = combineAddressLines(addressApi.getPremises(), addressApi.getAddressLine1());
+
+        return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1), normalise(addressLine1))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
                 normalise(addressApi.getAddressLine2()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
@@ -89,8 +90,10 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()), normalise(address.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()), normalise(address.getAddressLine1()))
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(), addressDto.getLine1());
+        String addressLine1 = combineAddressLines(address.getPremises(), address.getAddressLine1());
+
+        return StringUtils.equalsIgnoreCase(normalise(addressDtoLine1), normalise(addressLine1))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()), normalise(address.getAddressLine2()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()), normalise(address.getLocality()))
                 && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()), normalise(address.getRegion()))
@@ -220,6 +223,18 @@ public class ComparisonHelper {
         }
 
         return bool;
+    }
+
+    private static String combineAddressLines(String... lines) {
+        StringJoiner joiner = new StringJoiner(" ");
+
+        for (String line : lines) {
+            if (line != null) {
+                joiner.add(line);
+            }
+        }
+
+        return joiner.toString();
     }
 
     public static boolean equalsIndividualNationality(String string, String other) {
