@@ -107,7 +107,6 @@ class OverseasEntitiesControllerTest {
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
