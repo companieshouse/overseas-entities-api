@@ -18,8 +18,15 @@ import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import utils.AddressTestUtils;
 
 class ComparisonHelperTest {
+
+    private static final String[] ADDRESS_FIELD_NAMES = {"CareOf", "PoBox", "PropertyNameNumber",
+            "Line1", "Line2", "Town", "County", "Postcode", "Country"};
+
+    private static final String[] ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE = {"CareOf", "PoBox",
+            "PropertyNameNumber Line1", null, "Line2", "Town", "County", "Postcode", "Country"};
 
     private static Stream<Arguments> provideTestDataForNatureOfControlsEquals() {
         return Stream.of(
@@ -82,36 +89,27 @@ class ComparisonHelperTest {
         );
     }
 
+    private static Stream<Arguments> provideTestArguments() {
+        return Stream.of(
+                Arguments.of(null, " "),
+                Arguments.of(null, ""),
+                Arguments.of(" ", "")
+        );
+    }
+
     @Test
     void equalsAddressDtoAndAddressApiReturnCorrectResult() {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+        String[] addressFields = ADDRESS_FIELD_NAMES;
 
-        AddressApi addressApi = new AddressApi();
-        addressApi.setPremises("PropertyNameNumber");
-        addressApi.setAddressLine1("Line1");
-        addressApi.setAddressLine2("Line2");
-        addressApi.setLocality("Town");
-        addressApi.setRegion("County");
-        addressApi.setCountry("Country");
-        addressApi.setPoBox("PoBox");
-        addressApi.setCareOf("CareOf");
-        addressApi.setPostcode("Postcode");
+        AddressDto addressDto = AddressTestUtils.createDummyAddressDto(addressFields);
+        AddressApi addressApi = AddressTestUtils.createDummyModelUtilsAddressApi(addressFields);
 
         assertTrue(ComparisonHelper.equals(addressDto, addressApi));
     }
 
     @Test
     void equalsAddressDtoAndAddressApiCompleteFalseTest() {
-        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressDtoFields = ADDRESS_FIELD_NAMES;
         String[] addressApiFields = addressDtoFields.clone();
 
         var output = false;
@@ -122,27 +120,8 @@ class ComparisonHelperTest {
                 addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
             }
 
-            AddressDto addressDto = new AddressDto();
-            addressDto.setPropertyNameNumber(addressDtoFields[0]);
-            addressDto.setLine1(addressDtoFields[1]);
-            addressDto.setLine2(addressDtoFields[2]);
-            addressDto.setTown(addressDtoFields[3]);
-            addressDto.setCounty(addressDtoFields[4]);
-            addressDto.setCountry(addressDtoFields[5]);
-            addressDto.setPoBox(addressDtoFields[6]);
-            addressDto.setCareOf(addressDtoFields[7]);
-            addressDto.setPostcode(addressDtoFields[8]);
-
-            AddressApi addressApi = new AddressApi();
-            addressApi.setPremises(addressApiFields[0]);
-            addressApi.setAddressLine2(addressApiFields[1]);
-            addressApi.setAddressLine1(addressApiFields[2]);
-            addressApi.setLocality(addressApiFields[3]);
-            addressApi.setRegion(addressApiFields[4]);
-            addressApi.setCountry(addressApiFields[5]);
-            addressApi.setPoBox(addressApiFields[6]);
-            addressApi.setCareOf(addressApiFields[7]);
-            addressApi.setPostcode(addressApiFields[8]);
+            AddressDto addressDto = AddressTestUtils.createDummyAddressDto(addressDtoFields);
+            AddressApi addressApi = AddressTestUtils.createDummyModelUtilsAddressApi(addressApiFields);
 
             output |= ComparisonHelper.equals(addressDto, addressApi);
 
@@ -154,46 +133,10 @@ class ComparisonHelperTest {
         assertFalse(output);
     }
 
-    private static Stream<Arguments> provideTestArguments() {
-        return Stream.of(
-                Arguments.of(null, " "),
-                Arguments.of(null, ""),
-                Arguments.of(" ", "")
-        );
-    }
-
-    @Test
-    void equalsAddressDtoAndAddressApiReturnFalseWhenOneFieldDiffers() {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
-
-        AddressApi addressApi = new AddressApi();
-        addressApi.setPremises("PropertyNameNumber");
-        addressApi.setAddressLine2("Line1");
-        addressApi.setAddressLine1("Line2");
-        addressApi.setLocality("Town");
-        addressApi.setRegion("County");
-        addressApi.setCountry("DifferentCountry");
-        addressApi.setPoBox("PoBox");
-        addressApi.setCareOf("CareOf");
-        addressApi.setPostcode("Postcode");
-
-        assertFalse(ComparisonHelper.equals(addressDto, addressApi));
-    }
-
     @ParameterizedTest
     @MethodSource("provideTestArguments")
     void testEquality(String value1, String value2) {
-        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
-                "street", "area", "postTown", "region", "postCode", "country"};
+        String[] controlAddressFields = ADDRESS_FIELD_NAMES;
         String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
         String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
 
@@ -201,11 +144,13 @@ class ComparisonHelperTest {
             addressFields1[i] = value1;
             addressFields2[i] = value2;
 
-            AddressDto addressDto1 = createTestAddressDto(addressFields1);
-            AddressApi addressApi1 = createTestAddressApi(addressFields1);
+            AddressDto addressDto1 = AddressTestUtils.createDummyAddressDto(addressFields1);
+            AddressApi addressApi1 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields1);
 
-            AddressDto addressDto2 = createTestAddressDto(addressFields2);
-            AddressApi addressApi2 = createTestAddressApi(addressFields2);
+            AddressDto addressDto2 = AddressTestUtils.createDummyAddressDto(addressFields2);
+            AddressApi addressApi2 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields2);
 
             addressFields1[i] = controlAddressFields[i];
             addressFields2[i] = controlAddressFields[i];
@@ -222,10 +167,10 @@ class ComparisonHelperTest {
 
     @Test
     void testEqualsNonNormalSpacesHasNoEffect() {
-        String[] fieldNames = {"careOf", "poBox", "careOfCompany", "houseNameNum", "street", "area",
-                "postTown", "region", "postCode", "country"};
-        String[] addressFields1 = {"Care Of", "Po Box", "Care Of Company", "House Name Num",
-                "The Street", "The Area", "Post Town", "Region", "Post Code", "The Country"};
+        String[] fieldNames = ADDRESS_FIELD_NAMES;
+
+        String[] addressFields1 = {"Care Of", "Po Box", "House Name Num", "The Street", "The Area", "Post Town",
+                "Region", "The Country", "Post Code"};
         String[] addressFields2 = Arrays.copyOf(addressFields1, addressFields1.length);
 
         for (int i = 0; i < addressFields1.length; i++) {
@@ -233,11 +178,13 @@ class ComparisonHelperTest {
             if (i < addressFields1.length - 1) {
                 addressFields2[i + 1] = addressFields2[i + 1].replace(" ", "   ");
             }
-            AddressDto addressDto1 = createTestAddressDto(addressFields1);
-            AddressApi addressApi1 = createTestAddressApi(addressFields1);
+            AddressDto addressDto1 = AddressTestUtils.createDummyAddressDto(addressFields1);
+            AddressApi addressApi1 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields1);
 
-            AddressDto addressDto2 = createTestAddressDto(addressFields2);
-            AddressApi addressApi2 = createTestAddressApi(addressFields2);
+            AddressDto addressDto2 = AddressTestUtils.createDummyAddressDto(addressFields2);
+            AddressApi addressApi2 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields2);
 
             addressFields1[i] = addressFields2[i];
             if (i < addressFields1.length - 1) {
@@ -254,44 +201,9 @@ class ComparisonHelperTest {
         }
     }
 
-    private AddressDto createTestAddressDto(String[] fields) {
-        AddressDto addressDto = new AddressDto();
-
-        addressDto.setCareOf(fields[0]);
-        addressDto.setPoBox(fields[1]);
-        addressDto.setCareOf(fields[2]);
-        addressDto.setPropertyNameNumber(fields[3]);
-        addressDto.setLine1(fields[4]);
-        addressDto.setLine2(fields[5]);
-        addressDto.setTown(fields[6]);
-        addressDto.setCounty(fields[7]);
-        addressDto.setPostcode(fields[8]);
-        addressDto.setCountry(fields[9]);
-
-        return addressDto;
-    }
-
-    private AddressApi createTestAddressApi(String[] fields) {
-        AddressApi addressApi = new AddressApi();
-
-        addressApi.setCareOf(fields[0]);
-        addressApi.setPoBox(fields[1]);
-        addressApi.setCareOf(fields[2]);
-        addressApi.setPremises(fields[3]);
-        addressApi.setAddressLine1(fields[4]);
-        addressApi.setAddressLine2(fields[5]);
-        addressApi.setLocality(fields[6]);
-        addressApi.setRegion(fields[7]);
-        addressApi.setPostcode(fields[8]);
-        addressApi.setCountry(fields[9]);
-
-        return addressApi;
-    }
-
     @Test
     void testAddressEqualsCasingIsIgnoredOnEquals() {
-        String[] controlAddressFields = {"careOf", "poBox", "careOfCompany", "houseNameNum",
-                "street", "area", "postTown", "region", "postCode", "country"};
+        String[] controlAddressFields = ADDRESS_FIELD_NAMES;
         String[] addressFields1 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
         String[] addressFields2 = Arrays.copyOf(controlAddressFields, controlAddressFields.length);
 
@@ -299,11 +211,13 @@ class ComparisonHelperTest {
             addressFields1[i] = addressFields1[i].toUpperCase();
             addressFields2[i] = addressFields2[i].toLowerCase();
 
-            AddressDto addressDto1 = createTestAddressDto(addressFields1);
-            AddressApi addressApi1 = createTestAddressApi(addressFields1);
+            AddressDto addressDto1 = AddressTestUtils.createDummyAddressDto(addressFields1);
+            AddressApi addressApi1 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields1);
 
-            AddressDto addressDto2 = createTestAddressDto(addressFields2);
-            AddressApi addressApi2 = createTestAddressApi(addressFields2);
+            AddressDto addressDto2 = AddressTestUtils.createDummyAddressDto(addressFields2);
+            AddressApi addressApi2 = AddressTestUtils.createDummyModelUtilsAddressApi(
+                    addressFields2);
 
             addressFields1[i] = controlAddressFields[i];
             addressFields2[i] = controlAddressFields[i];
@@ -320,30 +234,58 @@ class ComparisonHelperTest {
     }
 
     @Test
-    void equalsAddressDtoAndAddressApiReturnFalseWhenMultipleFieldsDiffer() {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+    void equalsAddressWhenPremisesAndLineOneAreConcatenatedWithAddressDtoAndModelUtilsAddressApi() {
+        assertTrue(ComparisonHelper.equals(
+                AddressTestUtils.createDummyAddressDto(
+                        ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE),
+                AddressTestUtils.createDummyModelUtilsAddressApi(ADDRESS_FIELD_NAMES)));
+    }
 
-        AddressApi addressApi = new AddressApi();
-        addressApi.setPremises("DifferentPropertyNameNumber");
-        addressApi.setAddressLine2("DifferentLine1");
-        addressApi.setAddressLine1("Line2");
-        addressApi.setLocality("Town");
-        addressApi.setRegion("County");
-        addressApi.setCountry("Country");
-        addressApi.setPoBox("DifferentPoBox");
-        addressApi.setCareOf("CareOf");
-        addressApi.setPostcode("Postcode");
+    @Test
+    void equalsAddressWhenPremisesAndLineOneAreConcatenatedWithAddressDtoAndMOAddressApi() {
+        assertTrue(ComparisonHelper.equals(
+                AddressTestUtils.createDummyAddressDto(
+                        ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE),
+                AddressTestUtils.createDummyManagingOfficerAddressApi(ADDRESS_FIELD_NAMES)));
+    }
 
-        assertFalse(ComparisonHelper.equals(addressDto, addressApi));
+    @Test
+    void equalsAddressWhenPremisesAndLineOneAreConcatenatedWithAddressDtoAndCommonAddress() {
+        assertTrue(ComparisonHelper.equals(
+                AddressTestUtils.createDummyAddressDto(
+                        ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE),
+                AddressTestUtils.createDummyCommonAddress(ADDRESS_FIELD_NAMES)));
+    }
+
+    @Test
+    void equalsAddressWhenAddressesAreNotEqualWithAddressDtoAndCommonAddress() {
+        String[] addressDtoFields = ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE.clone();
+        addressDtoFields[2] = "Different" + addressDtoFields[2];
+        String[] addressApiFields = ADDRESS_FIELD_NAMES;
+        assertFalse(
+                ComparisonHelper.equals(
+                        AddressTestUtils.createDummyAddressDto(addressDtoFields),
+                        AddressTestUtils.createDummyCommonAddress(addressApiFields)));
+    }
+
+    @Test
+    void equalsAddressWhenAddressesAreNotEqualWithAddressDtoAndManagingOfficerAddressApi() {
+        String[] addressDtoFields = ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE.clone();
+        addressDtoFields[2] = "Different" + addressDtoFields[2];
+        String[] addressApiFields = ADDRESS_FIELD_NAMES;
+        assertFalse(
+                ComparisonHelper.equals(AddressTestUtils.createDummyAddressDto(addressDtoFields),
+                        AddressTestUtils.createDummyManagingOfficerAddressApi(addressApiFields)));
+    }
+
+    @Test
+    void equalsAddressWhenAddressesAreNotEqualWithAddressDtoAndMOAddressApi() {
+        String[] addressDtoFields = ADDRESS_FIELD_VALUES_CONCATENATED_FIRST_LINE.clone();
+        addressDtoFields[2] = "Different" + addressDtoFields[2];
+        String[] addressApiFields = ADDRESS_FIELD_NAMES;
+        assertFalse(
+                ComparisonHelper.equals(AddressTestUtils.createDummyAddressDto(addressDtoFields),
+                        AddressTestUtils.createDummyManagingOfficerAddressApi(addressApiFields)));
     }
 
     @Test
@@ -444,7 +386,7 @@ class ComparisonHelperTest {
         String string = "managing-officer";
         var officerRoleApi = OfficerRoleApi.MANAGING_OFFICER;
 
-        assertTrue(ComparisonHelper.equals((String) null, (OfficerRoleApi) null));
+        assertTrue(ComparisonHelper.equals(null, (OfficerRoleApi) null));
         assertFalse(ComparisonHelper.equals(null, officerRoleApi));
         assertFalse(ComparisonHelper.equals(string, (OfficerRoleApi) null));
     }
@@ -470,8 +412,8 @@ class ComparisonHelperTest {
         String string = "test1 test2";
         String[] strings = {"test1", "test2"};
 
-        assertTrue(ComparisonHelper.equals((String) null, (String[]) null));
-        assertFalse(ComparisonHelper.equals((String) null, strings));
+        assertTrue(ComparisonHelper.equals(null, (String[]) null));
+        assertFalse(ComparisonHelper.equals(null, strings));
         assertFalse(ComparisonHelper.equals(string, (String[]) null));
     }
 
@@ -530,35 +472,17 @@ class ComparisonHelperTest {
 
     @Test
     void equalsAddressDtoAndMoDataAddressApiReturnCorrectResult() {
-        var addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+        String[] addressFields = ADDRESS_FIELD_NAMES;
 
-        var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
-        addressApi.setPremises("PropertyNameNumber");
-        addressApi.setAddressLine1("Line1");
-        addressApi.setAddressLine2("Line2");
-        addressApi.setLocality("Town");
-        addressApi.setRegion("County");
-        addressApi.setCountry("Country");
-        addressApi.setPoBox("PoBox");
-        addressApi.setCareOf("CareOf");
-        addressApi.setPostalCode("Postcode");
+        var addressDto = AddressTestUtils.createDummyAddressDto(addressFields);
+        var addressApi = AddressTestUtils.createDummyManagingOfficerAddressApi(addressFields);
 
         assertTrue(ComparisonHelper.equals(addressDto, addressApi));
     }
 
     @Test
     void equalsAddressDtoAndMoDataAddressApiReturnFalse() {
-
-        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressDtoFields = ADDRESS_FIELD_NAMES.clone();
         String[] addressApiFields = addressDtoFields.clone();
 
         var output = false;
@@ -569,27 +493,9 @@ class ComparisonHelperTest {
                 addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
             }
 
-            var addressDto = new AddressDto();
-            addressDto.setPropertyNameNumber(addressDtoFields[0]);
-            addressDto.setLine1(addressDtoFields[1]);
-            addressDto.setLine2(addressDtoFields[2]);
-            addressDto.setTown(addressDtoFields[3]);
-            addressDto.setCounty(addressDtoFields[4]);
-            addressDto.setCountry(addressDtoFields[5]);
-            addressDto.setPoBox(addressDtoFields[6]);
-            addressDto.setCareOf(addressDtoFields[7]);
-            addressDto.setPostcode(addressDtoFields[8]);
-
-            var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
-            addressApi.setPremises(addressApiFields[0]);
-            addressApi.setAddressLine1(addressApiFields[1]);
-            addressApi.setAddressLine2(addressApiFields[2]);
-            addressApi.setLocality(addressApiFields[3]);
-            addressApi.setRegion(addressApiFields[4]);
-            addressApi.setCountry(addressApiFields[5]);
-            addressApi.setPoBox(addressApiFields[6]);
-            addressApi.setCareOf(addressApiFields[7]);
-            addressApi.setPostalCode(addressApiFields[8]);
+            var addressDto = AddressTestUtils.createDummyAddressDto(addressDtoFields);
+            var addressApi = AddressTestUtils.createDummyManagingOfficerAddressApi(
+                    addressApiFields);
 
             output |= ComparisonHelper.equals(addressDto, addressApi);
 
@@ -605,7 +511,7 @@ class ComparisonHelperTest {
     @Test
     void equalsAddressDtoAndAddressApiReturnFalse() {
 
-        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressDtoFields = ADDRESS_FIELD_NAMES.clone();
         String[] addressApiFields = addressDtoFields.clone();
 
         var output = false;
@@ -616,27 +522,8 @@ class ComparisonHelperTest {
                 addressApiFields[i + 1] = "Different--" + addressApiFields[i + 1];
             }
 
-            var addressDto = new AddressDto();
-            addressDto.setPropertyNameNumber(addressDtoFields[0]);
-            addressDto.setLine1(addressDtoFields[1]);
-            addressDto.setLine2(addressDtoFields[2]);
-            addressDto.setTown(addressDtoFields[3]);
-            addressDto.setCounty(addressDtoFields[4]);
-            addressDto.setCountry(addressDtoFields[5]);
-            addressDto.setPoBox(addressDtoFields[6]);
-            addressDto.setCareOf(addressDtoFields[7]);
-            addressDto.setPostcode(addressDtoFields[8]);
-
-            var addressApi = new AddressApi();
-            addressApi.setPremises(addressApiFields[0]);
-            addressApi.setAddressLine1(addressApiFields[1]);
-            addressApi.setAddressLine2(addressApiFields[2]);
-            addressApi.setLocality(addressApiFields[3]);
-            addressApi.setRegion(addressApiFields[4]);
-            addressApi.setCountry(addressApiFields[5]);
-            addressApi.setPoBox(addressApiFields[6]);
-            addressApi.setCareOf(addressApiFields[7]);
-            addressApi.setPostcode(addressApiFields[8]);
+            var addressDto = AddressTestUtils.createDummyAddressDto(addressDtoFields);
+            var addressApi = AddressTestUtils.createDummyModelUtilsAddressApi(addressApiFields);
 
             output |= ComparisonHelper.equals(addressDto, addressApi);
 
@@ -652,27 +539,10 @@ class ComparisonHelperTest {
 
     @Test
     void equalsAddressDtoAndMoDataAddressApiWhenNullReturnCorrectResult() {
-        var addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+        String[] addressFields = ADDRESS_FIELD_NAMES;
 
-        var addressApi = new uk.gov.companieshouse.api.model.managingofficerdata.AddressApi();
-        addressApi.setPremises("PropertyNameNumber");
-        addressApi.setAddressLine1("Line1");
-        addressApi.setAddressLine2("Line2");
-        addressApi.setLocality("Town");
-        addressApi.setRegion("County");
-        addressApi.setCountry("Country");
-        addressApi.setPoBox("PoBox");
-        addressApi.setCareOf("CareOf");
-        addressApi.setPostalCode("Postcode");
+        var addressDto = AddressTestUtils.createDummyAddressDto(addressFields);
+        var addressApi = AddressTestUtils.createDummyManagingOfficerAddressApi(addressFields);
 
         assertTrue(ComparisonHelper.equals(null,
                 (uk.gov.companieshouse.api.model.managingofficerdata.AddressApi) null));
@@ -683,27 +553,10 @@ class ComparisonHelperTest {
 
     @Test
     void equalsAddressDtoAndAddressReturnCorrectResult() {
-        var addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+        String[] addressFields = ADDRESS_FIELD_NAMES;
 
-        var address = new Address();
-        address.setPremises("PropertyNameNumber");
-        address.setAddressLine1("Line1");
-        address.setAddressLine2("Line2");
-        address.setLocality("Town");
-        address.setRegion("County");
-        address.setCountry("Country");
-        address.setPoBox("PoBox");
-        address.setCareOf("CareOf");
-        address.setPostalCode("Postcode");
+        var addressDto = AddressTestUtils.createDummyAddressDto(addressFields);
+        var address = AddressTestUtils.createDummyCommonAddress(addressFields);
 
         assertTrue(ComparisonHelper.equals(addressDto, address));
     }
@@ -711,7 +564,7 @@ class ComparisonHelperTest {
     @Test
     void equalsAddressDtoAndAddressReturnFalse() {
 
-        String[] addressDtoFields = {"PropertyNameNumber", "Line1", "Line2", "Town", "County", "Country", "PoBox", "CareOf", "Postcode"};
+        String[] addressDtoFields = ADDRESS_FIELD_NAMES.clone();
         String[] addressFields = addressDtoFields.clone();
 
         var output = false;
@@ -722,27 +575,8 @@ class ComparisonHelperTest {
                 addressFields[i + 1] = "Different--" + addressFields[i + 1];
             }
 
-            var addressDto = new AddressDto();
-            addressDto.setPropertyNameNumber(addressDtoFields[0]);
-            addressDto.setLine1(addressDtoFields[1]);
-            addressDto.setLine2(addressDtoFields[2]);
-            addressDto.setTown(addressDtoFields[3]);
-            addressDto.setCounty(addressDtoFields[4]);
-            addressDto.setCountry(addressDtoFields[5]);
-            addressDto.setPoBox(addressDtoFields[6]);
-            addressDto.setCareOf(addressDtoFields[7]);
-            addressDto.setPostcode(addressDtoFields[8]);
-
-            var address = new Address();
-            address.setPremises(addressFields[0]);
-            address.setAddressLine1(addressFields[1]);
-            address.setAddressLine2(addressFields[2]);
-            address.setLocality(addressFields[3]);
-            address.setRegion(addressFields[4]);
-            address.setCountry(addressFields[5]);
-            address.setPoBox(addressFields[6]);
-            address.setCareOf(addressFields[7]);
-            address.setPostalCode(addressFields[8]);
+            var addressDto = AddressTestUtils.createDummyAddressDto(addressDtoFields);
+            var address = AddressTestUtils.createDummyCommonAddress(addressFields);
 
             output |= ComparisonHelper.equals(addressDto, address);
 
@@ -757,27 +591,10 @@ class ComparisonHelperTest {
 
     @Test
     void equalsAddressDtoAndAddressWhenNullReturnCorrectResult() {
-        var addressDto = new AddressDto();
-        addressDto.setPropertyNameNumber("PropertyNameNumber");
-        addressDto.setLine1("Line1");
-        addressDto.setLine2("Line2");
-        addressDto.setTown("Town");
-        addressDto.setCounty("County");
-        addressDto.setCountry("Country");
-        addressDto.setPoBox("PoBox");
-        addressDto.setCareOf("CareOf");
-        addressDto.setPostcode("Postcode");
+        String[] addressFields = ADDRESS_FIELD_NAMES;
 
-        var address = new Address();
-        address.setPremises("PropertyNameNumber");
-        address.setAddressLine1("Line1");
-        address.setAddressLine2("Line2");
-        address.setLocality("Town");
-        address.setRegion("County");
-        address.setCountry("Country");
-        address.setPoBox("PoBox");
-        address.setCareOf("CareOf");
-        address.setPostalCode("Postcode");
+        var addressDto = AddressTestUtils.createDummyAddressDto(addressFields);
+        var address = AddressTestUtils.createDummyCommonAddress(addressFields);
 
         assertTrue(ComparisonHelper.equals(null, (Address) null));
         assertFalse(ComparisonHelper.equals(null, address));
@@ -805,7 +622,7 @@ class ComparisonHelperTest {
         var personName = new PersonName("John", "Doe");
         var string = "John Doe";
 
-        assertTrue(ComparisonHelper.equals((PersonName) null, (String) null));
+        assertTrue(ComparisonHelper.equals((PersonName) null, null));
         assertFalse(ComparisonHelper.equals((PersonName) null, string));
         assertFalse(ComparisonHelper.equals(personName, null));
     }
