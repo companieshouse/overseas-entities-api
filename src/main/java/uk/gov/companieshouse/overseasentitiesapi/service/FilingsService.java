@@ -51,6 +51,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
@@ -209,6 +210,11 @@ public class FilingsService {
       updateSubmission.getChanges()
               .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
                       submissionDto, logMap));
+
+      var existingCompanyName = new EntityNameDto();
+        existingCompanyName.setName(publicPrivateOeData.getLeft().getCompanyName());
+        updateSubmission.getUserSubmission().setEntityName(existingCompanyName);
+
       updateSubmission.getChanges()
               .addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                       publicPrivateBoData, submissionDto, logMap));
