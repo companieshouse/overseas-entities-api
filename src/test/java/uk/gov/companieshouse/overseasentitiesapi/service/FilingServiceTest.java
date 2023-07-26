@@ -45,6 +45,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -76,12 +77,14 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.EntityNameDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -90,6 +93,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualManagingOfficerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
@@ -370,6 +374,13 @@ class FilingServiceTest {
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
         assertEquals("OE02", filing.getData().get("type"));
+
+        final OverseasEntitySubmissionDto submissionDto = (OverseasEntitySubmissionDto)filing.getData().get("userSubmission");
+        assertEquals("Test Public Company", submissionDto.getEntityName().getName());
+
+        final List<Change> changesList = (List<Change>)filing.getData().get("changes");
+        final EntityNameChange entityNameChange = (EntityNameChange)changesList.get(0);
+        assertEquals("New name", entityNameChange.getProposedCorporateBodyName());
 
         assertNotNull(filing.getData().get("userSubmission"));
         assertNotNull(filing.getData().get("dueDiligence"));
