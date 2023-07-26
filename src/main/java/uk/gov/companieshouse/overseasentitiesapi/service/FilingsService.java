@@ -20,6 +20,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.EXISTING_ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_TYPE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
@@ -207,13 +208,11 @@ public class FilingsService {
       ApiLogger.infoContext("PublicPrivateDataCombiner",
               publicPrivateDataCombiner.logCollatedData());
 
+      updateSubmission.setExistingEntityName(publicPrivateOeData.getLeft().getCompanyName());
+
       updateSubmission.getChanges()
               .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
                       submissionDto, logMap));
-
-      var existingCompanyName = new EntityNameDto();
-        existingCompanyName.setName(publicPrivateOeData.getLeft().getCompanyName());
-        updateSubmission.getUserSubmission().setEntityName(existingCompanyName);
 
       updateSubmission.getChanges()
               .addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(
@@ -242,6 +241,7 @@ public class FilingsService {
           boolean isNoChange,
           Map<String, Object> logMap) {
     data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
+    data.put(EXISTING_ENTITY_NAME_FIELD, updateSubmission.getExistingEntityName());
     data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
     if (!isNoChange) {
