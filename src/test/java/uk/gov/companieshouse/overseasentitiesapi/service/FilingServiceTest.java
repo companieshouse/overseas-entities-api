@@ -378,7 +378,7 @@ class FilingServiceTest {
         final List<Change> changesList = (List<Change>)filing.getData().get("changes");
         final EntityNameChange entityNameChange = (EntityNameChange)changesList.get(0);
         assertEquals("New name", entityNameChange.getProposedCorporateBodyName());
-        assertEquals("Joe Bloggs Ltd", updateSubmission.getExistingEntityName());
+        assertEquals("Joe Bloggs Ltd", updateSubmission.getEntityName());
 
         assertNotNull(filing.getData().get("userSubmission"));
         assertNotNull(filing.getData().get("dueDiligence"));

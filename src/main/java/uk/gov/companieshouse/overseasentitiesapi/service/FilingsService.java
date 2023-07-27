@@ -52,7 +52,6 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
@@ -208,7 +207,7 @@ public class FilingsService {
       ApiLogger.infoContext("PublicPrivateDataCombiner",
               publicPrivateDataCombiner.logCollatedData());
 
-      updateSubmission.setExistingEntityName(publicPrivateOeData.getLeft().getCompanyName());
+      updateSubmission.setEntityName(publicPrivateOeData.getLeft().getCompanyName());
 
       updateSubmission.getChanges()
               .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
@@ -241,7 +240,7 @@ public class FilingsService {
           boolean isNoChange,
           Map<String, Object> logMap) {
     data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
-    data.put(EXISTING_ENTITY_NAME_FIELD, updateSubmission.getExistingEntityName());
+    data.put(EXISTING_ENTITY_NAME_FIELD, updateSubmission.getEntityName());
     data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
     if (!isNoChange) {

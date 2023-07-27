@@ -5,7 +5,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSu
 public class UpdateSubmissionMock {
     public static UpdateSubmission getUpdateSubmissionMock(){
         UpdateSubmission updateSubmissionMock = new UpdateSubmission();
-        updateSubmissionMock.setExistingEntityName("Joe Bloggs Ltd");
+        updateSubmissionMock.setEntityName("Joe Bloggs Ltd");
         return updateSubmissionMock;
     }
 }
