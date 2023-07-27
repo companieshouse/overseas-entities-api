@@ -3,6 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -239,7 +240,20 @@ public class ComparisonHelper {
         return StringUtils.equalsIgnoreCase(normalise(string), normalise(normalisedNationality));
     }
 
-    private static boolean fuzzyStringEqual(String field1, String field2){
-        return StringUtils.equalsIgnoreCase(normalise(field1), normalise(field2));
+    private static boolean fuzzyStringEqual(String field1, String field2) {
+        var output = StringUtils.equalsIgnoreCase(normalise(field1), normalise(field2));
+        if (!output) {
+            var dataMap = new HashMap<String, Object>();
+            dataMap.put("Normalised Field 1", normalise(field1));
+            dataMap.put("Normalised Field 2", normalise(field2));
+            dataMap.put("Field 1", field1);
+            dataMap.put("Field 2", field2);
+            dataMap.put("Line of ComparisonHelper",
+                    Thread.currentThread().getStackTrace()[2].getLineNumber());
+            dataMap.put("Full Stack Trace", Thread.currentThread().getStackTrace());
+
+            ApiLogger.debugContext("fuzzyStringEqual", "Calling from ComparisonHelper to see which lines do not match", dataMap);
+        }
+        return output;
     }
 }
