@@ -337,6 +337,7 @@ class FilingServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
