@@ -107,6 +107,63 @@ class OverseasEntityChangeComparatorTest {
         assertNull(result);
     }
 
+
+    @Test
+    void testComparePrincipleAddressChangeAddressLineWithExistingPremisesValueJoinedReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises("123");
+        existing.setAddressLine1("School lane");
+        updated.setPropertyNameNumber("");
+        updated.setLine1("123 School lane");
+
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testComparePrincipalAddressChangeAddressLineWithUpdatePremisesValueJoinedReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises(null);
+        existing.setAddressLine1("123 School lane");
+        updated.setPropertyNameNumber("123");
+        updated.setLine1("School lane");
+
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testComparePrincipalAddressChangeAddressLineWithUpdatePremisesValueJoinedButDifferentReturnsChange() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises("123");
+        existing.setAddressLine1("School lane");
+        updated.setPropertyNameNumber("");
+        updated.setLine1("100 School lane");
+
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testComparePrincipalAddressChangeAddressLineWithExistingPremisesValueJoinedButDifferentReturnsChange() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises(null);
+        existing.setAddressLine1("123 School lane");
+        updated.setPropertyNameNumber("100");
+        updated.setLine1("School lane");
+
+        var result = overseasEntityChangeComparator.comparePrincipalAddress(existing, updated);
+
+        assertNotNull(result);
+    }
+
     @Test
     void testCompareCorrespondenceAddressChangeDifferentValueReturnsObject() {
         var existing = new RegisteredOfficeAddressApi();
@@ -152,6 +209,62 @@ class OverseasEntityChangeComparatorTest {
         assertNotNull(result);
         assertEquals(CHANGE_CORRESPONDENCE_ADDRESS, result.getChangeName());
         assertEquals("Ireland", result.getProposedServiceAddress().getCountry());
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeAddressLineWithExistingPremisesValueJoinedReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises("123");
+        existing.setAddressLine1("School lane");
+        updated.setPropertyNameNumber("");
+        updated.setLine1("123 School lane");
+
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeAddressLineWithUpdatePremisesValueJoinedReturnsNull() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises(null);
+        existing.setAddressLine1("123 School lane");
+        updated.setPropertyNameNumber("123");
+        updated.setLine1("School lane");
+
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeAddressLineWithUpdatePremisesValueJoinedButDifferentReturnsChange() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises("123");
+        existing.setAddressLine1("School lane");
+        updated.setPropertyNameNumber("");
+        updated.setLine1("100 School lane");
+
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testCompareCorrespondenceAddressChangeAddressLineWithExistingPremisesValueJoinedButDifferentReturnsChange() {
+        var existing = new RegisteredOfficeAddressApi();
+        var updated = new AddressDto();
+        existing.setPremises(null);
+        existing.setAddressLine1("123 School lane");
+        updated.setPropertyNameNumber("100");
+        updated.setLine1("School lane");
+
+        var result = overseasEntityChangeComparator.compareCorrespondenceAddress(existing, updated);
+
+        assertNotNull(result);
     }
 
     @Test

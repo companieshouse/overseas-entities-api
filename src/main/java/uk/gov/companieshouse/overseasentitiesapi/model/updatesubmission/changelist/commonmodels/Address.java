@@ -155,14 +155,23 @@ public class Address {
                 && StringUtils.equalsIgnoreCase(normalise(poBox), normalise(address.poBox))
                 && StringUtils.equalsIgnoreCase(normalise(careOfCompany),
                 normalise(address.careOfCompany))
-                && StringUtils.equalsIgnoreCase(normalise(houseNameNum),
-                normalise(address.houseNameNum))
-                && StringUtils.equalsIgnoreCase(normalise(street), normalise(address.street))
+                && StringUtils.equalsIgnoreCase(normalise(
+                getPremisesAndStreet()), normalise(address.getPremisesAndStreet()))
                 && StringUtils.equalsIgnoreCase(normalise(area), normalise(address.area))
                 && StringUtils.equalsIgnoreCase(normalise(postTown), normalise(address.postTown))
                 && StringUtils.equalsIgnoreCase(normalise(region), normalise(address.region))
                 && StringUtils.equalsIgnoreCase(normalise(postCode), normalise(address.postCode))
                 && StringUtils.equalsIgnoreCase(normalise(country), normalise(address.country));
+    }
+
+    private String getPremisesAndStreet() {
+        if (StringUtils.isBlank(houseNameNum)) {
+            return street;
+        }
+        if (StringUtils.isBlank(street)) {
+            return houseNameNum;
+        }
+        return houseNameNum + " " + street;
     }
 
     @Override
