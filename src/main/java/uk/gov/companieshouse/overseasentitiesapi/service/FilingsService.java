@@ -231,6 +231,8 @@ public class FilingsService {
               .addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
       ApiLogger.debug("Updates have been collected", logMap);
+    } else {
+      updateSubmission.setEntityName(submissionDto.getEntityName().getName());
     }
   }
 
