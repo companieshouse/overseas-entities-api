@@ -84,6 +84,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovern
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -348,6 +349,7 @@ class FilingServiceTest {
         UpdateSubmission updateSubmission = UpdateSubmissionMock.getUpdateSubmissionMock();
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -374,6 +376,7 @@ class FilingServiceTest {
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("Test Public Company", filing.getData().get("entityName"));
         assertEquals("OE02", filing.getData().get("type"));
 
         final List<Change> changesList = (List<Change>)filing.getData().get("changes");
@@ -406,6 +409,8 @@ class FilingServiceTest {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.getUpdate().setNoChange(true);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setEntityName(new EntityNameDto());
+        overseasEntitySubmissionDto.getEntityName().setName("Test OE");
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -425,6 +430,7 @@ class FilingServiceTest {
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("Test OE", filing.getData().get("entityName"));
         assertEquals("OE02", filing.getData().get("type"));
 
         assertNotNull(filing.getData().get("userSubmission"));
