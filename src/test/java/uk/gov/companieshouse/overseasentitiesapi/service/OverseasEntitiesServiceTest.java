@@ -427,6 +427,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber("OE123456");
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
 
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
@@ -468,6 +469,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber("OE123456");
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
 
         transaction.setCompanyNumber("OE123456");
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
@@ -507,6 +509,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber("OE123456");
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
 
         transaction.setCompanyNumber("OE654321");
 
@@ -550,6 +553,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber(null);
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
 
         transaction.setCompanyNumber("OE65432121");
 
@@ -593,6 +597,7 @@ class OverseasEntitiesServiceTest {
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber(null);
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
 
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
