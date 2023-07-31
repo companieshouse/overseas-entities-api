@@ -2,7 +2,6 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -384,10 +383,8 @@ class FilingServiceTest {
         assertEquals("New name", entityNameChange.getProposedCorporateBodyName());
         assertEquals("Joe Bloggs Ltd", updateSubmission.getEntityName());
 
-        assertNotNull(filing.getData().get("userSubmission"));
-        assertNotNull(filing.getData().get("dueDiligence"));
-        assertNotNull(filing.getData().get("presenter"));
-        assertNotNull(filing.getData().get("filingForDate"));
+        testHaveFilingData(filing, true);
+
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
@@ -397,6 +394,16 @@ class FilingServiceTest {
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
 
+    private static void testHaveFilingData(FilingApi filing, boolean withDueDiligence) {
+        assertNotNull(filing.getData().get("userSubmission"));
+        if (withDueDiligence) {
+            assertNotNull(filing.getData().get("dueDiligence"));
+        } else {
+            assertNull(filing.getData().get("dueDiligence"));
+        }
+        assertNotNull(filing.getData().get("presenter"));
+        assertNotNull(filing.getData().get("filingForDate"));
+    }
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForNoChangeUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
@@ -433,10 +440,8 @@ class FilingServiceTest {
         assertEquals("Test OE", filing.getData().get("entityName"));
         assertEquals("OE02", filing.getData().get("type"));
 
-        assertNotNull(filing.getData().get("userSubmission"));
-        assertNull(filing.getData().get("dueDiligence"));
-        assertNotNull(filing.getData().get("presenter"));
-        assertNotNull(filing.getData().get("filingForDate"));
+        testHaveFilingData(filing, false);
+
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
