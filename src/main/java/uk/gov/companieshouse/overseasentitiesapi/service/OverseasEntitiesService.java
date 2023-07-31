@@ -156,7 +156,7 @@ public class OverseasEntitiesService {
             // Switching to another OE number requires the transaction to be updated with the new OE number & name.
             // Relies on an updateOverseasEntity call being done before the company name can be changed by the user in UI.
             String entityNumber = overseasEntitySubmissionDto.getEntityNumber();
-            if (entityNumber != null && !entityNumber.equals(transaction.getCompanyNumber())) {
+            if (!entityNumber.equals(transaction.getCompanyNumber())) {
                 transaction.setCompanyNumber(entityNumber);
                 transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
                 transactionService.updateTransaction(transaction, requestId);
