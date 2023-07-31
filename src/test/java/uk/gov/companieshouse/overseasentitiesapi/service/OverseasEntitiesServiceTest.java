@@ -315,6 +315,20 @@ class OverseasEntitiesServiceTest {
         verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
         var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
 
+        verifySubmissionDao(overseasEntitySubmissionDao, savedSubmission);
+
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        // assert transaction resources are updated to point to submission
+        Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
+
+        // assert response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    private static void verifySubmissionDao(OverseasEntitySubmissionDao overseasEntitySubmissionDao,
+            OverseasEntitySubmissionDao savedSubmission) {
         // assert expected version is present
         assertEquals(SchemaVersion.VERSION_3_1.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
 
@@ -326,6 +340,120 @@ class OverseasEntitiesServiceTest {
 
         assertEquals(DUMMY_TIME_STAMP, savedSubmission.getCreatedOn());
         assertEquals(USER_ID, savedSubmission.getCreatedByUserId());
+    }
+
+    @Test
+    void testOverseasEntitySubmissionUpdatedSuccessfullyForUpdate() throws ServiceException {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName(ENTITY_NAME);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE123456");
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        // ensure DAO id is null before we use it in the test
+        assertNull(overseasEntitySubmissionDao.getId());
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
+        var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        verifySubmissionDao(overseasEntitySubmissionDao, savedSubmission);
+
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        // assert transaction resources are updated to point to submission
+        Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
+
+        // assert response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testOverseasEntitySubmissionUpdatedSuccessfullyForUpdateSameEntityNumber() throws ServiceException {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName(ENTITY_NAME);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE123456");
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+
+        transaction.setCompanyNumber("OE123456");
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        // ensure DAO id is null before we use it in the test
+        assertNull(overseasEntitySubmissionDao.getId());
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
+        var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        verifySubmissionDao(overseasEntitySubmissionDao, savedSubmission);
+
+        verify(transactionService, times(0)).updateTransaction(transactionApiCaptor.capture(), any());
+
+        // assert response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testOverseasEntitySubmissionUpdatedSuccessfullyForUpdateDifferentEntityNumber() throws ServiceException {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName(ENTITY_NAME);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE123456");
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+
+        transaction.setCompanyNumber("OE65432121");
+
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        // ensure DAO id is null before we use it in the test
+        assertNull(overseasEntitySubmissionDao.getId());
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
+        var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        verifySubmissionDao(overseasEntitySubmissionDao, savedSubmission);
 
         verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
         // assert transaction resources are updated to point to submission
