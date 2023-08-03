@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,6 +32,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping;
 import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
@@ -373,10 +373,10 @@ public class BeneficialOwnerChangeService {
         beneficialOwnerIndividualDto.getOnSanctionsList(),
         beneficialOwnerIndividualDto.getServiceAddressSameAsUsualResidentialAddress());
 
-    var delimiter = ",";
-    var submissionNationalityArray = new String[]{beneficialOwnerIndividualDto.getNationality(), beneficialOwnerIndividualDto.getSecondNationality()};
-    var submissionNationality = Arrays.stream(submissionNationalityArray).filter(Objects::nonNull)
-        .collect(Collectors.joining(delimiter));
+    var submissionNationality = NationalityOtherMapping.generateNationalityOtherField(
+            beneficialOwnerIndividualDto.getNationality(),
+            beneficialOwnerIndividualDto.getSecondNationality()
+    );
 
     hasChange |= changeManager.compareAndBuildLeftChange(
         submissionNationality,

@@ -1,68 +1,34 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherChangeField;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherField;
 
 class NationalityOtherMappingTest {
-    @Test
-    void testGenerateNationalityOtherField() {
-        String nationality = "Irish";
-        String secondNationality = "Spanish";
-
+    @ParameterizedTest
+    @MethodSource("provideTestCases")
+    void testGenerateNationalityOtherField(String nationality, String secondNationality, String expected) {
         var result = generateNationalityOtherField(nationality, secondNationality);
-
-        assertEquals("Irish, Spanish", result);
-    }
-    @Test
-    void testGenerateNationalityOtherFieldSecondNationalityNull() {
-        String nationality = "Irish";
-        String secondNationality = null;
-
-        var result = generateNationalityOtherField(nationality, secondNationality);
-
-        assertEquals("Irish", result);
-    }
-    @Test
-    void testGenerateNationalityOtherFieldSecondNationalityEmptyString() {
-        String nationality = "Irish";
-        String secondNationality = StringUtils.EMPTY;
-
-        var result = generateNationalityOtherField(nationality, secondNationality);
-
-        assertEquals("Irish", result);
+        assertEquals(expected, result);
     }
 
-    @Test
-    void testGenerateMoNationalityOtherField() {
-        String nationality = "Irish";
-        String secondNationality = "Spanish";
-
-        var result = generateNationalityOtherChangeField(nationality, secondNationality);
-
-        assertEquals("Irish,Spanish", result);
-    }
-
-    @Test
-    void testGenerateMoNationalitySecondNationalityEmpty() {
-        String nationality = "Irish";
-        String secondNationality = StringUtils.EMPTY;
-
-        var result = generateNationalityOtherChangeField(nationality, secondNationality);
-
-        assertEquals("Irish", result);
-    }
-
-    @Test
-    void testGenerateMoNationalitySecondNationalityNull() {
-        String nationality = "Irish";
-        String secondNationality = null;
-
-        var result = generateNationalityOtherChangeField(nationality, secondNationality);
-
-        assertEquals("Irish", result);
+    private static Stream<Arguments> provideTestCases() {
+        return Stream.of(
+                Arguments.of("Irish", "Spanish", "Irish,Spanish"),
+                Arguments.of("Irish", "Spanish,", "Irish,Spanish"),
+                Arguments.of("Irish,", "Spanish,", "Irish,Spanish"),
+                Arguments.of("Irish,", "Spanish,,,", "Irish,Spanish"),
+                Arguments.of("Irish", "Spanish,", "Irish,Spanish"),
+                Arguments.of("Irish", ",Spanish", "Irish,Spanish"),
+                Arguments.of("Irish", ", Spanish", "Irish,Spanish"),
+                Arguments.of("Irish", null, "Irish"),
+                Arguments.of("Irish", StringUtils.EMPTY, "Irish")
+        );
     }
 }
