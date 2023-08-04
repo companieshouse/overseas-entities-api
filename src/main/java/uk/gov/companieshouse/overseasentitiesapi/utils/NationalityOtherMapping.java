@@ -18,7 +18,6 @@ public class NationalityOtherMapping {
     public static String generateNationalityOtherField(String... nationality) {
         return Arrays.stream(nationality)
                 .filter(StringUtils::isNotBlank)
-                .map(String::trim)
                 .map(s -> s.replace(",", ""))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
