@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
@@ -17,11 +18,10 @@ public class NationalityOtherMapping {
      */
     public static String generateNationalityOtherField(String... nationality) {
         return Arrays.stream(nationality)
-                .filter(StringUtils::isNotBlank)
+                .filter(Objects::nonNull)
                 .map(s -> s.replace(",", ""))
                 .map(String::trim)
-                .filter(StringUtils::isNotBlank)
+                .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(","));
-
     }
 }
