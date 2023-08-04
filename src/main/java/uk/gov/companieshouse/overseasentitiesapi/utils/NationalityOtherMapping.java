@@ -19,7 +19,7 @@ public class NationalityOtherMapping {
         return Arrays.stream(nationality)
                 .filter(StringUtils::isNotBlank)
                 .map(String::trim)
-                .map(s -> s.replaceAll(",{0,5}$|^,{0,5}", ""))
+                .map(s -> s.replace(",", ""))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(","));
