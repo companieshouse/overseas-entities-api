@@ -626,4 +626,27 @@ class ComparisonHelperTest {
         assertFalse(ComparisonHelper.equals((PersonName) null, string));
         assertFalse(ComparisonHelper.equals(personName, null));
     }
+
+    private static Stream<Arguments> provideTestCasesForEqualsIndividualNationality() {
+        return Stream.of(
+                Arguments.of("American", "American", true),
+                Arguments.of("American,British", "American,British", true),
+                Arguments.of("American , British", "American,British", true),
+                Arguments.of("American,British,", "American,British", true),
+                Arguments.of("American,British", "American, British,", true),
+                Arguments.of("American,British", "American ,British", true),
+                Arguments.of("American", "British", false),
+                Arguments.of("American,French", "American,British", false),
+                Arguments.of("American , French", "American,British", false),
+                Arguments.of("American, French", "American,British ", false),
+                Arguments.of("American,French", "French,American ", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestCasesForEqualsIndividualNationality")
+    void testEqualsIndividualNationality(String nationality1, String nationality2, boolean expectedOutcome) {
+        assertEquals(expectedOutcome, ComparisonHelper.equalsIndividualNationality(nationality1, nationality2));
+    }
+
 }

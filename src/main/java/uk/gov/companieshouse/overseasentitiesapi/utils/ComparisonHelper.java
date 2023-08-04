@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
@@ -229,14 +230,27 @@ public class ComparisonHelper {
         return joiner.toString();
     }
 
-    public static boolean equalsIndividualNationality(String string, String other) {
-        var nullValuesCheck = handleNulls(string, other);
+    public static boolean equalsIndividualNationality(String str, String other) {
+        var nullValuesCheck = handleNulls(str, other);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
-        String normalisedNationality =
-                other.endsWith(",") ? other.substring(0, other.length() - 1) : other;
-        return StringUtils.equalsIgnoreCase(normalise(string), normalise(normalisedNationality));
+
+        var normalisedStr = normaliseCommaSeparatedList(str);
+        var normalisedOther = normaliseCommaSeparatedList(other);
+
+        return StringUtils.equalsIgnoreCase(normalisedStr, normalisedOther);
+    }
+
+    private static String normaliseCommaSeparatedList(String list){
+        if(list.contains(",")){
+            return Arrays.stream(list.split(","))
+                    .map(ComparisonHelper::normalise)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(","));
+        } else {
+            return normalise(list);
+        }
     }
 
     private static boolean fuzzyStringEqual(String field1, String field2){
