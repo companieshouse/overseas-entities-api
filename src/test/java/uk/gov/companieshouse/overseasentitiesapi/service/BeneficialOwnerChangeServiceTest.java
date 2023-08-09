@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ class BeneficialOwnerChangeServiceTest {
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -175,6 +177,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
         beneficialOwnerCorporateDto.setServiceAddressSameAsPrincipalAddress(
                 serviceAddressSameAsPrincipalAddress);
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -217,6 +220,7 @@ class BeneficialOwnerChangeServiceTest {
 
         beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
         beneficialOwnerCorporateDto.setServiceAddress(AddressTestUtils.createDummyAddressDto(serviceAddressData));
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -252,6 +256,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setLastName("Doe");
         beneficialOwnerIndividualDto.setNationality("Bangladeshi");
         beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
         beneficialOwnerIndividualDto.setNonLegalFirmMembersNatureOfControlTypes(
                 List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
         beneficialOwnerIndividualDto.setOnSanctionsList(true);
@@ -290,6 +295,7 @@ class BeneficialOwnerChangeServiceTest {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
         beneficialOwnerIndividualDto.setServiceAddressSameAsUsualResidentialAddress(
                 serviceAddressSameAsPrincipalAddress);
 
@@ -334,6 +340,7 @@ class BeneficialOwnerChangeServiceTest {
 
         beneficialOwnerIndividualDto.setUsualResidentialAddress(createDummyAddressDto());
         beneficialOwnerIndividualDto.setServiceAddress(AddressTestUtils.createDummyAddressDto(serviceAddressData));
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -373,6 +380,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setNationality("Bangladeshi");
         beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         mockPublicPrivateBoPair.getRight()
                 .setUsualResidentialAddress(AddressTestUtils.createDummyModelUtilsAddressApi(fieldNamesUpperCase));
@@ -550,16 +558,19 @@ class BeneficialOwnerChangeServiceTest {
 
     @Test
     void testCollateAllBeneficialOwnerChanges() {
+        List<String> trustIds = List.of("1","2","3");
         // setup corporate DTO
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(trustIds);
 
         // setup individual DTO
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
         beneficialOwnerIndividualDto.setFirstName("John");
         beneficialOwnerIndividualDto.setLastName("Doe");
+        beneficialOwnerIndividualDto.setTrustIds(trustIds);
 
         // setup other DTO
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
@@ -589,6 +600,14 @@ class BeneficialOwnerChangeServiceTest {
         assertTrue(result.stream().anyMatch(CorporateBeneficialOwnerChange.class::isInstance));
         assertTrue(result.stream().anyMatch(IndividualBeneficialOwnerChange.class::isInstance));
         assertTrue(result.stream().anyMatch(OtherBeneficialOwnerChange.class::isInstance));
+        if (result.get(0) instanceof IndividualBeneficialOwnerChange ) {
+                IndividualBeneficialOwnerChange corporateBeneficialOwnerChange =  (IndividualBeneficialOwnerChange) result.get(0);
+                assertEquals(corporateBeneficialOwnerChange.getPsc().getAddedTrustIds(), trustIds);
+        }
+        if (result.get(2) instanceof CorporateBeneficialOwnerChange ) {
+                CorporateBeneficialOwnerChange corporateBeneficialOwnerChange =  (CorporateBeneficialOwnerChange) result.get(2);
+                assertEquals(corporateBeneficialOwnerChange.getPsc().getAddedTrustIds(), trustIds);
+        }
     }
 
     @Test
@@ -596,11 +615,13 @@ class BeneficialOwnerChangeServiceTest {
         // setup corporate DTO
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         // setup individual DTO
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setFirstName("John");
         beneficialOwnerIndividualDto.setLastName("Doe");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         // setup other DTO
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
@@ -636,12 +657,15 @@ class BeneficialOwnerChangeServiceTest {
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         // setup individual DTO
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
         beneficialOwnerIndividualDto.setFirstName("John");
         beneficialOwnerIndividualDto.setLastName("Doe");
+        
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         // setup other DTO
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
@@ -712,6 +736,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setFirstName("John");
         beneficialOwnerIndividualDto.setLastName("Smith");
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setTrustIds(null);
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairLeftNull);
@@ -743,6 +768,7 @@ class BeneficialOwnerChangeServiceTest {
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith Corp");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(null);
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairLeftNull);
@@ -804,6 +830,7 @@ class BeneficialOwnerChangeServiceTest {
     void testCollateBeneficialOwnerChangesEmptyLeftOfPairNull() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairLeftNull);
@@ -824,6 +851,7 @@ class BeneficialOwnerChangeServiceTest {
     void testCollateBeneficialOwnerChangesIndividualRightOfPairNull() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairRightNull);
@@ -844,6 +872,7 @@ class BeneficialOwnerChangeServiceTest {
     void testCollateBeneficialOwnerChangesCorporateRightOfPairNull() {
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
 
         beneficialOwnerCorporateDto.setPrincipalAddress(createDummyAddressDto());
 
@@ -888,6 +917,7 @@ class BeneficialOwnerChangeServiceTest {
     void testCollateBeneficialOwnerChangesLeftAndRightOfPairNull() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPairBothNull);
@@ -910,6 +940,7 @@ class BeneficialOwnerChangeServiceTest {
     void testCollateBeneficialOwnerChangesPublicPrivateDataNull() {
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
                 null);
@@ -932,6 +963,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setFirstName(null);
         beneficialOwnerIndividualDto.setLastName(null);
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         mockPublicPrivateBoPair.getLeft().setName("John Doe");
         mockPublicPrivateBoPair.getLeft().setSanctioned(true);

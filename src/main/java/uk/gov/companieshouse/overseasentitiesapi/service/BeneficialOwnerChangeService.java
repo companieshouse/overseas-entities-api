@@ -225,6 +225,11 @@ public class BeneficialOwnerChangeService {
         Identification::getRegistrationNumber,
         CompanyIdentification::setRegistrationNumber);
 
+    if (beneficialOwnerCorporateDto.getTrustIds() != null && !beneficialOwnerCorporateDto.getTrustIds().isEmpty()) {
+        psc.setAddedTrustIds(beneficialOwnerCorporateDto.getTrustIds());
+        hasChange = true;
+    }
+
     beneficialOwnerChange.setPsc(psc);
     return hasChange ? beneficialOwnerChange : null;
   }
@@ -396,6 +401,11 @@ public class BeneficialOwnerChangeService {
         ComparisonHelper::equals,
         IndividualBeneficialOwnerPsc::setPersonName
     );
+
+    if (beneficialOwnerIndividualDto.getTrustIds() != null && !beneficialOwnerIndividualDto.getTrustIds().isEmpty()) {
+        psc.setAddedTrustIds(beneficialOwnerIndividualDto.getTrustIds());
+        hasChange = true;
+    }
 
     beneficialOwnerChange.setPsc(psc);
     return hasChange ? beneficialOwnerChange : null;
