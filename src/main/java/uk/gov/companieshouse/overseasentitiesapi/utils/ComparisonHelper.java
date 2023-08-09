@@ -4,13 +4,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.OfficerRoleApi;
 import uk.gov.companieshouse.api.model.utils.AddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 
 public class ComparisonHelper {
@@ -32,24 +34,19 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
-                normalise(addressApi.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
-                normalise(addressApi.getAddressLine1()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
-                normalise(addressApi.getAddressLine2()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
-                normalise(addressApi.getLocality()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()),
-                normalise(addressApi.getRegion()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()),
-                normalise(addressApi.getCountry()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()),
-                normalise(addressApi.getPoBox()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()),
-                normalise(addressApi.getCareOf()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()),
-                normalise(addressApi.getPostcode()));
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
+        String addressApiLine1 = combineAddressLines(addressApi.getPremises(),
+                addressApi.getAddressLine1());
+
+        return fuzzyStringEqual(addressDto.getCareOf(), addressApi.getCareOf())
+                && fuzzyStringEqual(addressDto.getPoBox(), addressApi.getPoBox())
+                && fuzzyStringEqual(addressDtoLine1, addressApiLine1)
+                && fuzzyStringEqual(addressDto.getLine2(), addressApi.getAddressLine2())
+                && fuzzyStringEqual(addressDto.getTown(), addressApi.getLocality())
+                && fuzzyStringEqual(addressDto.getCounty(), addressApi.getRegion())
+                && fuzzyStringEqual(addressDto.getPostcode(), addressApi.getPostcode())
+                && fuzzyStringEqual(addressDto.getCountry(), addressApi.getCountry());
     }
 
     public static boolean equals(AddressDto addressDto,
@@ -59,24 +56,19 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()),
-                normalise(addressApi.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()),
-                normalise(addressApi.getAddressLine1()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()),
-                normalise(addressApi.getAddressLine2()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()),
-                normalise(addressApi.getLocality()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()),
-                normalise(addressApi.getRegion()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()),
-                normalise(addressApi.getCountry()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()),
-                normalise(addressApi.getPoBox()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()),
-                normalise(addressApi.getCareOf()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()),
-                normalise(addressApi.getPostalCode()));
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
+        String addressLine1 = combineAddressLines(addressApi.getPremises(),
+                addressApi.getAddressLine1());
+
+        return fuzzyStringEqual(addressDto.getCareOf(), addressApi.getCareOf())
+                && fuzzyStringEqual(addressDto.getPoBox(), addressApi.getPoBox())
+                && fuzzyStringEqual(addressDtoLine1, addressLine1)
+                && fuzzyStringEqual(addressDto.getLine2(), addressApi.getAddressLine2())
+                && fuzzyStringEqual(addressDto.getTown(), addressApi.getLocality())
+                && fuzzyStringEqual(addressDto.getCounty(), addressApi.getRegion())
+                && fuzzyStringEqual(addressDto.getPostcode(), addressApi.getPostalCode())
+                && fuzzyStringEqual(addressDto.getCountry(), addressApi.getCountry());
     }
 
     public static boolean equals(AddressDto addressDto,
@@ -86,15 +78,35 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(addressDto.getPropertyNameNumber()), normalise(address.getPremises()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine1()), normalise(address.getAddressLine1()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getLine2()), normalise(address.getAddressLine2()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getTown()), normalise(address.getLocality()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCounty()), normalise(address.getRegion()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCountry()), normalise(address.getCountry()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPoBox()), normalise(address.getPoBox()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getCareOf()), normalise(address.getCareOf()))
-                && StringUtils.equalsIgnoreCase(normalise(addressDto.getPostcode()), normalise(address.getPostalCode()));
+        String addressDtoLine1 = combineAddressLines(addressDto.getPropertyNameNumber(),
+                addressDto.getLine1());
+        String addressLine1 = combineAddressLines(address.getPremises(), address.getAddressLine1());
+
+        return fuzzyStringEqual(addressDto.getCareOf(), address.getCareOf())
+                && fuzzyStringEqual(addressDto.getPoBox(), address.getPoBox())
+                && fuzzyStringEqual(addressDtoLine1, addressLine1)
+                && fuzzyStringEqual(addressDto.getLine2(), address.getAddressLine2())
+                && fuzzyStringEqual(addressDto.getTown(), address.getLocality())
+                && fuzzyStringEqual(addressDto.getCounty(), address.getRegion())
+                && fuzzyStringEqual(addressDto.getPostcode(), address.getPostalCode())
+                && fuzzyStringEqual(addressDto.getCountry(), address.getCountry());
+    }
+
+    public static boolean equals(CompanyIdentification existing, CompanyIdentification updated) {
+        var nullValuesCheck = handleNulls(existing, updated);
+        if (nullValuesCheck != null) {
+            return nullValuesCheck;
+        }
+
+        var format = new StringJoiner(",");
+        var registerInformationFormat = format.add(updated.getPlaceRegistered())
+                .add(updated.getPlaceRegisteredJurisdiction());
+
+        return fuzzyStringEqual(existing.getLegalForm(), updated.getLegalForm())
+                && fuzzyStringEqual(existing.getGoverningLaw(), updated.getGoverningLaw())
+                && fuzzyStringEqual(existing.getRegisterLocation(), updated.getRegisterLocation())
+                && fuzzyStringEqual(existing.getPlaceRegistered(), registerInformationFormat.toString())
+                && fuzzyStringEqual(existing.getRegistrationNumber(), updated.getRegistrationNumber());
     }
 
     public static boolean equals(LocalDate a, String b) {
@@ -112,7 +124,8 @@ public class ComparisonHelper {
         return a.equals(localDate);
     }
 
-    public static boolean natureOfControlsEquals(List<String> chipsFormatList, String[] publicDataFormat) {
+    public static boolean natureOfControlsEquals(List<String> chipsFormatList,
+            String[] publicDataFormat) {
         var nullValuesCheck = handleNulls(chipsFormatList, publicDataFormat);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
@@ -136,7 +149,7 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(personName.toString()),normalise(string));
+        return StringUtils.equalsIgnoreCase(normalise(personName.toString()), normalise(string));
     }
 
     public static boolean equalsIndividualMOName(PersonName personName, String string) {
@@ -144,8 +157,9 @@ public class ComparisonHelper {
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
-        String individualMoFormat = personName.getSurname().concat(", ").concat(personName.getForename());
-        return StringUtils.equalsIgnoreCase(normalise(individualMoFormat),normalise(string));
+        String individualMoFormat = personName.getSurname().concat(", ")
+                .concat(personName.getForename());
+        return StringUtils.equalsIgnoreCase(normalise(individualMoFormat), normalise(string));
     }
 
     public static boolean equalsIgnoreCase(String string, String other) {
@@ -154,7 +168,7 @@ public class ComparisonHelper {
             return nullValuesCheck;
         }
 
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(other));
+        return StringUtils.equalsIgnoreCase(normalise(string), normalise(other));
     }
 
     public static boolean equals(Boolean b, boolean b2) {
@@ -192,7 +206,7 @@ public class ComparisonHelper {
 
         var concatenatedFormerNames = FormerNameConcatenation.concatenateFormerNames(strings);
 
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(concatenatedFormerNames));
+        return StringUtils.equalsIgnoreCase(normalise(string), normalise(concatenatedFormerNames));
     }
 
     private static Boolean handleNulls(Object a, Object b) {
@@ -204,12 +218,42 @@ public class ComparisonHelper {
         return bool;
     }
 
-    public static boolean equalsIndividualNationality(String string, String other) {
-        var nullValuesCheck = handleNulls(string, other);
+    private static String combineAddressLines(String... lines) {
+        var joiner = new StringJoiner(" ");
+
+        for (String line : lines) {
+            if (line != null) {
+                joiner.add(line);
+            }
+        }
+
+        return joiner.toString();
+    }
+
+    public static boolean equalsIndividualNationality(String str, String other) {
+        var nullValuesCheck = handleNulls(str, other);
         if (nullValuesCheck != null) {
             return nullValuesCheck;
         }
-        String normalisedNationality = other.endsWith(",") ? other.substring(0, other.length()-1): other;
-        return StringUtils.equalsIgnoreCase(normalise(string),normalise(normalisedNationality));
+
+        var normalisedStr = normaliseCommaSeparatedList(str);
+        var normalisedOther = normaliseCommaSeparatedList(other);
+
+        return StringUtils.equalsIgnoreCase(normalisedStr, normalisedOther);
+    }
+
+    private static String normaliseCommaSeparatedList(String list){
+        if(list.contains(",")){
+            return Arrays.stream(list.split(","))
+                    .map(ComparisonHelper::normalise)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(","));
+        } else {
+            return normalise(list);
+        }
+    }
+
+    private static boolean fuzzyStringEqual(String field1, String field2){
+        return StringUtils.equalsIgnoreCase(normalise(field1), normalise(field2));
     }
 }

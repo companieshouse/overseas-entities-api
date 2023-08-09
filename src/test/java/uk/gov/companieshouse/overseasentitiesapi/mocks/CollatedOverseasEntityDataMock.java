@@ -18,7 +18,9 @@ public class CollatedOverseasEntityDataMock {
     private static final String EXISTING_SERVICE_ADDRESS_COUNTRY = "Existing Country (Service)";
     private static final String EXISTING_LEGAL_FORM = "Existing legal form";
     private static final String EXISTING_GOVERNED_BY = "Existing governed by";
-    private static final String EXISTING_REGISTRY_NAME = "Existing registry name";
+    private static final String EXISTING_REGISTRY_NAME = "Existing registry name,Existing Jurisdiction";
+    private static final String EXISTING_SUBMISSION_REGISTRY_NAME = "Existing registry name";
+    private static final String EXISTING_SUBMISSION_JURISDICTION = "Existing Jurisdiction";
     private static final String EXISTING_REGISTRATION_NUMBER = "Existing registration number";
     private static final String EXISTING_INCORPORATION_COUNTRY = "Incorporation country";
     private static final String EXISTING_EMAIL = "Existing email";
@@ -80,7 +82,8 @@ public class CollatedOverseasEntityDataMock {
                 setLegalForm(EXISTING_LEGAL_FORM);
                 setLawGoverned(EXISTING_GOVERNED_BY);
                 setIncorporationCountry(EXISTING_INCORPORATION_COUNTRY);
-                setPublicRegisterName(EXISTING_REGISTRY_NAME);
+                setPublicRegisterName(EXISTING_SUBMISSION_REGISTRY_NAME);
+                setPublicRegisterJurisdiction(EXISTING_SUBMISSION_JURISDICTION);
                 setRegistrationNumber(EXISTING_REGISTRATION_NUMBER);
                 setEmail(EXISTING_EMAIL);
             }});

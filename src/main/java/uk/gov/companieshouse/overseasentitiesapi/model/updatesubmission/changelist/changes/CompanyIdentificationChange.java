@@ -25,6 +25,10 @@ public class CompanyIdentificationChange extends Change {
     private String proposedPlaceRegistered;
 
     @JsonInclude(NON_NULL)
+    @JsonProperty("proposedRegisterJurisdiction")
+    private String proposedRegisterJurisdiction;
+
+    @JsonInclude(NON_NULL)
     @JsonProperty("proposedRegistrationNumber")
     private String proposedRegistrationNumber;
 
@@ -32,12 +36,14 @@ public class CompanyIdentificationChange extends Change {
                                        String proposedGoverningLaw,
                                        String proposedRegisterLocation,
                                        String proposedPlaceRegistered,
+                                       String proposedRegisterJurisdiction,
                                        String proposedRegistrationNumber) {
         super.setChangeName(CHANGE_NAME);
         this.proposedLegalForm = proposedLegalForm;
         this.proposedGoverningLaw = proposedGoverningLaw;
         this.proposedRegisterLocation = proposedRegisterLocation;
         this.proposedPlaceRegistered = proposedPlaceRegistered;
+        this.proposedRegisterJurisdiction = proposedRegisterJurisdiction;
         this.proposedRegistrationNumber = proposedRegistrationNumber;
     }
 
@@ -71,6 +77,14 @@ public class CompanyIdentificationChange extends Change {
 
     public void setProposedPlaceRegistered(String proposedPlaceRegistered) {
         this.proposedPlaceRegistered = proposedPlaceRegistered;
+    }
+
+    public String getProposedRegisterJurisdiction() {
+        return proposedRegisterJurisdiction;
+    }
+
+    public void setProposedRegisterJurisdiction(String proposedRegisterJurisdiction) {
+        this.proposedRegisterJurisdiction = proposedRegisterJurisdiction;
     }
 
     public String getProposedRegistrationNumber() {

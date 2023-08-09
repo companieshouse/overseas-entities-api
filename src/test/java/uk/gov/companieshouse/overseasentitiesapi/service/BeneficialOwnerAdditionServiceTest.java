@@ -257,7 +257,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("John", individualBeneficialOwnerAddition.getPersonName().getForename());
         assertEquals("Doe", individualBeneficialOwnerAddition.getPersonName().getSurname());
         assertEquals(LocalDate.of(1990, 5, 15), individualBeneficialOwnerAddition.getBirthDate());
-        assertEquals("Irish, Spanish", individualBeneficialOwnerAddition.getNationalityOther());
+        assertEquals("Irish,Spanish", individualBeneficialOwnerAddition.getNationalityOther());
         assertTrue(individualBeneficialOwnerAddition.isOnSanctionsList());
     }
 

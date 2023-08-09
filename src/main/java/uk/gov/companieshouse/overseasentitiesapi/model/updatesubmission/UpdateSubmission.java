@@ -18,6 +18,7 @@ public class UpdateSubmission {
     public static final String UPDATE_TYPE_FIELD = "type";
     public static final String UPDATE_USER_SUBMISSION_FIELD = "userSubmission";
     public static final String UPDATE_ENTITY_NUMBER_FIELD = "entityNumber";
+    public static final String UPDATE_ENTITY_NAME_FIELD = "entityName";
     public static final String UPDATE_DUE_DILIGENCE_FIELD = "dueDiligence";
     public static final String UPDATE_PRESENTER_FIELD = "presenter";
     public static final String FILING_FOR_DATE_FIELD = "filingForDate";
@@ -36,6 +37,9 @@ public class UpdateSubmission {
 
     @JsonProperty(UPDATE_ENTITY_NUMBER_FIELD)
     private String entityNumber;
+
+    @JsonProperty(UPDATE_ENTITY_NAME_FIELD)
+    private String entityName;
 
     @JsonProperty(UPDATE_DUE_DILIGENCE_FIELD)
     private DueDiligence dueDiligence;
@@ -96,6 +100,14 @@ public class UpdateSubmission {
 
     public void setEntityNumber(String entityNumber) {
         this.entityNumber = entityNumber;
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
     public DueDiligence getDueDiligence() {
