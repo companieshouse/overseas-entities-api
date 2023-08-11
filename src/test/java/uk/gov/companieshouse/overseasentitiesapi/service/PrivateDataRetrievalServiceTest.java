@@ -373,17 +373,28 @@ class PrivateDataRetrievalServiceTest {
     }
 
     @Test
-    void testServiceExceptionThrownWhenGetOverseasEntitiesPrivateDataThrowsIOException()
-        throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsNon404Error()
+            throws IOException, URIValidationException {
 
-      when(privateOverseasEntityDataGet.execute())
-          .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+      when(privateOverseasEntityDataGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException()));
 
       assertThrows(
-          ServiceException.class,
-          () -> {
-            privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
-          });
+              ServiceException.class,
+              () -> {
+                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
+              });
+    }
+
+    @Test
+    void testNoEmailWhenGetOverseasEntitiesPrivateDataThrowsApiResponseError404Exception()
+        throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+      when(privateOverseasEntityDataGet.execute())
+          .thenThrow(FourHundredAndFourException);
+
+      OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
+
+      assertNull(result.getEmail());
     }
   }
 
