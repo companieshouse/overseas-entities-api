@@ -3,31 +3,24 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import java.util.HashMap;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
+import java.util.HashMap;
+import java.util.Optional;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
 @RestController
-@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/details")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
 public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
@@ -45,7 +38,7 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping
+    @GetMapping("/details")
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
@@ -63,9 +56,7 @@ public class OverseasEntitiesDataController {
             if (!submissionDto.isForUpdate()) {
                 throw new ServiceException("Submission for overseas entity details must be for update");
             }
-            if (!isRoeUpdateEnabled) {
-                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
-            }
+            isRoeUpdateFlagEnabled();
 
             return getOverseasEntityDataResponse(overseasEntityId, requestId, submissionDto, logMap);
 
@@ -73,6 +64,12 @@ public class OverseasEntitiesDataController {
             final var message = String.format("Could not find overseas entity submission for overseas entity details %s", overseasEntityId);
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    private void isRoeUpdateFlagEnabled() throws ServiceException {
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
         }
     }
 
@@ -108,5 +105,39 @@ public class OverseasEntitiesDataController {
         }
         
         return ResponseEntity.ok(overseasEntityDataApi);
+    }
+
+    @GetMapping("/beneficial-owners")
+    public ResponseEntity getOverseasEntityBeneficialOwners(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+
+        final var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        ApiLogger.infoContext(requestId, "Calling service to retrieve submitted beneficial owner information", logMap);
+
+        PrivateBoDataListApi privateBeneficialOwnersData =  null;
+
+        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissinDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+
+        isRoeUpdateFlagEnabled();
+        if(overseasEntitySubmissinDto.get().getEntityNumber() != null){
+            String entityNumber = overseasEntitySubmissinDto.get().getEntityNumber();
+            privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+            if(privateBeneficialOwnersData == null){
+                final var message = String.format("Beneficial owner private data not found for overseas entity %s",
+                        overseasEntityId);
+                ApiLogger.errorContext(requestId, message, null, logMap);
+                return ResponseEntity.notFound().build();
+            }
+        }
+        else{
+            final var message = String.format("Could not retrieve private data for the overseas entity with id %s", overseasEntityId);
+            ApiLogger.errorContext(requestId, message, null, logMap);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(privateBeneficialOwnersData);
     }
 }
