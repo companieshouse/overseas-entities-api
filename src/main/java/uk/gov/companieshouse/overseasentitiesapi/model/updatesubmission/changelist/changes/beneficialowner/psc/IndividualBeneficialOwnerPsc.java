@@ -4,6 +4,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 import java.util.Objects;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.Address;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
@@ -18,8 +20,11 @@ public class IndividualBeneficialOwnerPsc extends Psc {
   @JsonProperty("nationalityOther")
   private String nationalityOther;
 
-  private static final String APPOINTMENT_TYPE = "OE INDIVIDUAL BO";
+  @JsonInclude(NON_NULL)
+  @JsonProperty("addedTrustIds")
+  private List<String> addedTrustIds;
 
+  private static final String APPOINTMENT_TYPE = "OE INDIVIDUAL BO";
 
   public PersonName getPersonName() {
     return personName;
@@ -36,6 +41,14 @@ public class IndividualBeneficialOwnerPsc extends Psc {
 
   public void setNationalityOther(String nationalityOther) {
     this.nationalityOther = nationalityOther;
+  }
+
+  public List<String> getAddedTrustIds() {
+    return addedTrustIds;
+  }
+
+  public void setAddedTrustIds(List<String> addedTrustIds) {
+    this.addedTrustIds = addedTrustIds;
   }
 
   @Override
