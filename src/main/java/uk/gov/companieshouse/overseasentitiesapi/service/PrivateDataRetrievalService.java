@@ -76,7 +76,7 @@ public class PrivateDataRetrievalService {
       return overseasEntityDataApi;
     } catch (ApiErrorResponseException e) {
       if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-        ApiLogger.info("No overseas entity data for Company Number "+companyNumber, logMap);
+        ApiLogger.info("No overseas entity data for Company Number " + companyNumber, logMap);
         return new OverseasEntityDataApi();
       }
       throw new ServiceException(e.getStatusMessage(), e);
