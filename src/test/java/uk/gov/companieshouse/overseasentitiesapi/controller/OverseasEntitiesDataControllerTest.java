@@ -18,7 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.utils.MockData;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
 import java.util.Optional;
 
@@ -183,7 +183,7 @@ class OverseasEntitiesDataControllerTest {
     @Test
     void testGetPrivateBeneficialOwnerDetailsSuccessfully() throws ServiceException, JsonProcessingException {
         var objectMapper = new ObjectMapper();
-        var boDataListApi = objectMapper.readValue(MockData.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+        var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
         PrivateBoDataListApi privateBoDataListApi = new PrivateBoDataListApi(boDataListApi.getBoPrivateData());
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
@@ -218,7 +218,7 @@ class OverseasEntitiesDataControllerTest {
                             eq(ERIC_REQUEST_ID),
                             eq("Beneficial owner private data not found for overseas entity " + overseasEntityId),
                             eq(null),
-                            anyMap()),
+                            any()),
                     times(1)
             );
         }
@@ -254,7 +254,7 @@ class OverseasEntitiesDataControllerTest {
                             eq(ERIC_REQUEST_ID),
                             eq("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity " + overseasEntityId),
                             eq(null),
-                            anyMap()),
+                            any()),
                     times(1)
             );
         }

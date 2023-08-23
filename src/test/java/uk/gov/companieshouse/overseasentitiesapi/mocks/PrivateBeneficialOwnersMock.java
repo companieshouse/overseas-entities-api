@@ -1,6 +1,6 @@
-package uk.gov.companieshouse.overseasentitiesapi.utils;
+package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
-public class MockData {
+public class PrivateBeneficialOwnersMock {
 
     public static final String jsonBeneficialOwnerString = "["
             + "{"

@@ -38,7 +38,7 @@ import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDa
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.utils.MockData;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
 @ExtendWith(MockitoExtension.class)
 class PrivateDataRetrievalServiceTest {
@@ -421,7 +421,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(MockData.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
@@ -446,7 +446,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(MockData.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
@@ -470,7 +470,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(MockData.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
