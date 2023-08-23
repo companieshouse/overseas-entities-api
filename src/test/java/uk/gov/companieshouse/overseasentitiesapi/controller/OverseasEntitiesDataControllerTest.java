@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.MockData;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -201,14 +202,26 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoBoData() throws ServiceException {
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
-                Optional.of(createOverseasEntitySubmissionMock()));
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
-        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
-        assertNull(response.getBody());
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+            when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                    Optional.of(createOverseasEntitySubmissionMock()));
+            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+
+            setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            assertNull(response.getBody());
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            eq(ERIC_REQUEST_ID),
+                            eq("Beneficial owner private data not found for overseas entity " + overseasEntityId),
+                            eq(null),
+                            anyMap()),
+                    times(1)
+            );
+        }
     }
 
     @Test
@@ -225,10 +238,31 @@ class OverseasEntitiesDataControllerTest {
                         ERIC_REQUEST_ID));
     }
 
+    @Test
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException {
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
+
+            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+
+            setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            assertNull(response.getBody());
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            eq(ERIC_REQUEST_ID),
+                            eq("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity " + overseasEntityId),
+                            eq(null),
+                            anyMap()),
+                    times(1)
+            );
+        }
+    }
+
     private OverseasEntitySubmissionDto createOverseasEntitySubmissionMock() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber(COMPANY_NUMBER);
-        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(List.of());
         EntityDto entityDto = new EntityDto();
         overseasEntitySubmissionDto.setEntity(entityDto);
         return overseasEntitySubmissionDto;
