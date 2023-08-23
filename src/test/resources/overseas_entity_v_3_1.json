@@ -9,6 +9,7 @@
   "entity_name" : {
     "name" : "ARMS DIRECT"
   },
+  "entity_number" : "OE123456",
   "presenter" : {
     "full_name" : "Vlad Jones",
     "email" : "vlad@dark-net.com"
@@ -110,12 +111,18 @@
         "OVER_25_PERCENT_OF_SHARES"
       ],
       "trustees_nature_of_control_types" : [
-
+        "OVER_25_PERCENT_OF_SHARES"
       ],
       "non_legal_firm_members_nature_of_control_types" : [
-
+        "OVER_25_PERCENT_OF_SHARES"
       ],
-      "is_on_sanctions_list" : false
+      "is_on_sanctions_list" : false,
+      "trust_ids" : [
+        "1",
+        "2"
+      ],
+      "ceased_date" : "2022-04-06",
+      "ch_reference" : "app"
     }
   ],
   "beneficial_owners_corporate" : [
@@ -150,12 +157,18 @@
         "OVER_25_PERCENT_OF_SHARES"
       ],
       "trustees_nature_of_control_types" : [
-
+        "OVER_25_PERCENT_OF_SHARES"
       ],
       "non_legal_firm_members_nature_of_control_types" : [
-
+        "OVER_25_PERCENT_OF_SHARES"
       ],
-      "is_on_sanctions_list" : true
+      "is_on_sanctions_list" : true,
+      "trust_ids" : [
+        "1",
+        "2"
+      ],
+      "ceased_date" : "2022-04-06",
+      "ch_reference" : "app"
     }
   ],
   "beneficial_owners_government_or_public_authority" : [
@@ -187,9 +200,14 @@
         "OVER_25_PERCENT_OF_SHARES"
       ],
       "non_legal_firm_members_nature_of_control_types" : [
-
+        "OVER_25_PERCENT_OF_SHARES"
       ],
-      "is_on_sanctions_list" : false
+      "is_on_sanctions_list" : false,
+      "trust_ids" : [
+        "1",
+        "2"
+      ],
+      "ceased_date" : "2022-04-06"
     }
   ],
   "managing_officers_individual" : [
@@ -221,7 +239,10 @@
       },
       "is_service_address_same_as_usual_residential_address" : false,
       "occupation" : "GGGG",
-      "role_and_responsibilities" : "DESC"
+      "role_and_responsibilities" : "DESC",
+      "start_date" : "1999-08-01",
+      "resigned_on" : "2009-08-01",
+      "ch_reference" : "app"
     }
   ],
   "managing_officers_corporate" : [
@@ -253,9 +274,238 @@
       "registration_number" : "WE",
       "role_and_responsibilities" : "SDSDSD",
       "contact_full_name" : "DDFDF DFDFDF",
-      "contact_email" : "WW@SOME.COM"
+      "contact_email" : "WW@SOME.COM",
+      "start_date" : "1999-08-01",
+      "resigned_on" : "2009-08-01",
+      "ch_reference" : "app"
     }
   ],
+  "update" : {
+    "date_of_creation" : "2021-08-31",
+    "filing_date" : "2023-06-11",
+    "bo_mo_data_fetched" : true,
+    "registrable_beneficial_owner" : false,
+    "no_change" : true,
+    "review_beneficial_owners_individual" : [
+      {
+        "first_name" : "Bob",
+        "last_name" : "Smith",
+        "date_of_birth" : "1990-08-31",
+        "nationality" : "Algerian",
+        "second_nationality" : "American",
+        "usual_residential_address" : {
+          "property_name_number" : "CCC",
+          "line_1" : "DDD",
+          "line_2" : "EEE",
+          "town" : "FFF",
+          "county" : "GGG",
+          "country" : "Azerbaijan",
+          "postcode" : "HHH"
+        },
+        "service_address" : {
+          "property_name_number" : "Companies House",
+          "line_1" : "Crown Way",
+          "town" : "Limavady",
+          "country" : "Wales",
+          "postcode" : "CF14 3UZ"
+        },
+        "is_service_address_same_as_usual_residential_address" : false,
+        "start_date" : "2022-04-06",
+        "beneficial_owner_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "trustees_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "non_legal_firm_members_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_VOTING_RIGHTS"
+        ],
+        "is_on_sanctions_list" : true,
+        "trust_ids" : [
+          "1",
+          "2"
+        ],
+        "ceased_date" : "2022-04-06",
+        "ch_reference" : "RandomBoOther6789"
+      }
+    ],
+    "review_beneficial_owners_corporate" : [
+      {
+        "name" : "Mr Random Notreal No2BoOther",
+        "principal_address" : {
+          "property_name_number" : "CCC",
+          "line_1" : "DDD",
+          "line_2" : "EEE",
+          "town" : "FFF",
+          "county" : "GGG",
+          "country" : "Azerbaijan",
+          "postcode" : "HHH"
+        },
+        "service_address" : {
+          "property_name_number" : "Companies House",
+          "line_1" : "Crown Way",
+          "town" : "Limavady",
+          "country" : "Wales",
+          "postcode" : "CF14 3UZ"
+        },
+        "is_service_address_same_as_principal_address" : false,
+        "legal_form" : "my form",
+        "law_governed" : "my law",
+        "is_on_register_in_country_formed_in" : false,
+        "public_register_name" : "reg name",
+        "registration_number" : "123",
+        "start_date" : "2022-04-06",
+        "beneficial_owner_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "trustees_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "non_legal_firm_members_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_VOTING_RIGHTS"
+        ],
+        "is_on_sanctions_list" : true,
+        "trust_ids" : [
+          "1",
+          "2"
+        ],
+        "ceased_date" : "2022-04-06",
+        "ch_reference" : "RandomBoOther6789"
+      },
+      {
+        "name" : "Mr Random Notreal no1BoOther",
+        "principal_address" : {
+
+        },
+        "service_address" : {
+          "property_name_number" : "Companies House",
+          "line_1" : "Crown Way",
+          "town" : "Limavady",
+          "country" : "Wales",
+          "postcode" : "CF14 3UZ"
+        },
+        "is_on_register_in_country_formed_in" : false,
+        "start_date" : "2021-04-06",
+        "beneficial_owner_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES",
+          "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS"
+        ],
+        "trustees_nature_of_control_types" : [
+
+        ],
+        "non_legal_firm_members_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_VOTING_RIGHTS",
+          "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS"
+        ],
+        "is_on_sanctions_list" : false,
+        "ch_reference" : "RandomBoOther12345"
+      }
+    ],
+    "review_beneficial_owners_government_or_public_authority" : [
+      {
+        "name" : "Mr Random Notreal No2BoOther",
+        "principal_address" : {
+          "property_name_number" : "CCC",
+          "line_1" : "DDD",
+          "line_2" : "EEE",
+          "town" : "FFF",
+          "county" : "GGG",
+          "country" : "Azerbaijan",
+          "postcode" : "HHH"
+        },
+        "service_address" : {
+          "property_name_number" : "Companies House",
+          "line_1" : "Crown Way",
+          "town" : "Limavady",
+          "country" : "Wales",
+          "postcode" : "CF14 3UZ"
+        },
+        "is_service_address_same_as_principal_address": false,
+        "legal_form": "form1",
+        "law_governed" : "some law",
+        "start_date" : "2022-04-06",
+        "beneficial_owner_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "non_legal_firm_members_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_VOTING_RIGHTS"
+        ],
+        "is_on_sanctions_list" : false,
+        "trust_ids" : [
+          "1",
+          "2"
+        ],
+        "ceased_date" : "2022-04-06",
+        "ch_reference" : "RandomBoGov6789"
+      }
+    ],
+    "review_managing_officers_individual" : [
+      {
+        "first_name" : "Tim Bill",
+        "last_name" : "JONES",
+        "has_former_names" : false,
+        "former_names" : "name name",
+        "date_of_birth" : "1988-08-01",
+        "nationality" : "British",
+        "second_nationality" : "American",
+        "usual_residential_address" : {
+          "property_name_number" : "CCC",
+          "line_1" : "DDD",
+          "line_2" : "EEE",
+          "town" : "FFF",
+          "county" : "GGG",
+          "country" : "Azerbaijan",
+          "postcode" : "HHH"
+        },
+        "service_address" : {
+          "line_1" : "Cerney House",
+          "line_2" : "North Cerney",
+          "town" : "Cirencester",
+          "county" : "Gloucestershire",
+          "postcode" : "GL7 7BX"
+        },
+        "is_service_address_same_as_usual_residential_address" : false,
+        "occupation" : "Chairman Unilever",
+        "role_and_responsibilities" : "roles",
+        "start_date" : "1999-08-01",
+        "resigned_on" : "2009-08-01",
+        "ch_reference" : "app4"
+      }
+    ],
+    "review_managing_officers_corporate" : [
+      {
+        "name" : "JONES, Sarah Corporate MO Officer",
+        "principal_address" : {
+          "property_name_number" : "Saron House",
+          "line_1" : "Line 1",
+          "line_2" : "Line 2",
+          "town" : "Town",
+          "county" : "County",
+          "country" : "Aland Islands",
+          "postcode" : "ED1"
+        },
+        "service_address" : {
+          "line_1" : "Cerney House",
+          "line_2" : "North Cerney",
+          "town" : "Cirencester",
+          "county" : "Gloucestershire",
+          "postcode" : "GL7 7BX"
+        },
+        "is_service_address_same_as_principal_address" : false,
+        "legal_form" : "Partnership",
+        "law_governed" : "A legal authority",
+        "is_on_register_in_country_formed_in" : true,
+        "public_register_name" : "Irish register",
+        "registration_number" : "NB1234",
+        "role_and_responsibilities" : "roles",
+        "contact_full_name" : "John Smith",
+        "contact_email" : "js@email.com",
+        "start_date" : "1999-08-01",
+        "resigned_on" : "2009-08-01",
+        "ch_reference" : "MOcorp1"
+      }
+    ]
+  },
   "trusts" : [
     {
       "_id" : "string",
