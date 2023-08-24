@@ -23,6 +23,10 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
     @JsonProperty("companyIdentification")
     private CompanyIdentification companyIdentification;
 
+    @JsonInclude(NON_NULL)
+    @JsonProperty("addedTrustIds")
+    private List<String> trustIds;
+
     public CorporateEntityBeneficialOwnerAddition(LocalDate actionDate, LocalDate ceasedDate, Address residentialAddress,
                                                   Address serviceAddress, List<String> natureOfControls, boolean isOnSanctionsList) {
         super(actionDate, ceasedDate, serviceAddress, natureOfControls, isOnSanctionsList);
@@ -52,5 +56,13 @@ public class CorporateEntityBeneficialOwnerAddition extends BeneficialOwnerAddit
 
     public void setCompanyIdentification(CompanyIdentification companyIdentification) {
         this.companyIdentification = companyIdentification;
+    }
+
+    public List<String> getTrustIds() {
+        return this.trustIds;
+    }
+    
+    public void setTrustIds(List<String> trustIds) {
+        this.trustIds = trustIds;
     }
 }

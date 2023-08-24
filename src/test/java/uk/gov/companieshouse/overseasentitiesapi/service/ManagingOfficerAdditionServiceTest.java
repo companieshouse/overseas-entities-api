@@ -137,7 +137,7 @@ class ManagingOfficerAdditionServiceTest {
         assertEquals("Doe", individualManagingOfficerAddition.getPersonName().getSurname());
         assertEquals("Some other name", individualManagingOfficerAddition.getFormerNames());
         assertEquals(LocalDate.of(1990, 5, 15), individualManagingOfficerAddition.getBirthDate());
-        assertEquals("Irish, Spanish", individualManagingOfficerAddition.getNationalityOther());
+        assertEquals("Irish,Spanish", individualManagingOfficerAddition.getNationalityOther());
         assertEquals("Self employed", individualManagingOfficerAddition.getOccupation());
         assertEquals("Owner", individualManagingOfficerAddition.getRoleAndResponsibilities());
     }

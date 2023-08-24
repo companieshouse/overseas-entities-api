@@ -22,6 +22,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
+import uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
 import java.util.ArrayList;
@@ -30,8 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping.generateNationalityOtherChangeField;
 
 @Service
 public class ManagingOfficerChangeService {
@@ -193,8 +192,10 @@ public class ManagingOfficerChangeService {
                 IndividualManagingOfficer::setOccupation
         );
 
-        var nationalitySubmission = generateNationalityOtherChangeField(managingOfficerIndividualDto.getNationality(),
-                managingOfficerIndividualDto.getSecondNationality());
+        var nationalitySubmission = NationalityOtherMapping.generateNationalityOtherField(
+                managingOfficerIndividualDto.getNationality(),
+                managingOfficerIndividualDto.getSecondNationality()
+        );
         hasChange |= changeManager.compareAndBuildLeftChange(
                 nationalitySubmission,
                 CompanyOfficerApi::getNationality,

@@ -16,6 +16,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import utils.AddressTestUtils;
@@ -48,7 +49,6 @@ class BeneficialOwnerAdditionServiceTest {
 
     public static final String[] TEST_RESIDENTIAL_ADDRESS = {"2", "", "5678", "Park Avenue", "Unit 2B", "Cityville", "City County", "67890", "United States"};
 
-
     @BeforeEach
     public void setUp() {
         beneficialOwnerAdditionService = new BeneficialOwnerAdditionService();
@@ -69,6 +69,57 @@ class BeneficialOwnerAdditionServiceTest {
         assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
         assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
         assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+    }
+
+    @Test
+    void testBeneficialOwnerAdditionWithTrustsAdded() {
+        List<String> trustIds = List.of("1","2","3");
+        List<BeneficialOwnerIndividualDto> individualBoWithAddedTrusts = getIndividualBeneficialOwners();
+        individualBoWithAddedTrusts.get(0).setTrustIds(trustIds);
+        List<BeneficialOwnerCorporateDto> corporateBoWithAddedTrusts = getCorporateBeneficialOwners();
+        corporateBoWithAddedTrusts.get(0).setTrustIds(trustIds);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(individualBoWithAddedTrusts);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(corporateBoWithAddedTrusts);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(getLegalPersonBeneficialOwners());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(3, additions.size());
+        assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
+        assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+        IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition = (IndividualBeneficialOwnerAddition) additions.get(0);
+        assertEquals(trustIds, individualBeneficialOwnerAddition.getTrustIds());
+        CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition = (CorporateEntityBeneficialOwnerAddition) additions.get(1);
+        assertEquals(trustIds, corporateEntityBeneficialOwnerAddition.getTrustIds());
+    }
+
+    @Test
+    void testBeneficialOwnerAdditionWithNullTrusts() {
+        List<BeneficialOwnerIndividualDto> individualBoWithAddedTrusts = getIndividualBeneficialOwners();
+        individualBoWithAddedTrusts.get(0).setTrustIds(null);
+        List<BeneficialOwnerCorporateDto> corporateBoWithAddedTrusts = getCorporateBeneficialOwners();
+        corporateBoWithAddedTrusts.get(0).setTrustIds(null);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(individualBoWithAddedTrusts);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(corporateBoWithAddedTrusts);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(getLegalPersonBeneficialOwners());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(3, additions.size());
+        assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
+        assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+        IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition = (IndividualBeneficialOwnerAddition) additions.get(0);
+        assertEquals(null, individualBeneficialOwnerAddition.getTrustIds());
+        CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition = (CorporateEntityBeneficialOwnerAddition) additions.get(1);
+        assertEquals(null, corporateEntityBeneficialOwnerAddition.getTrustIds());
     }
 
     @Test
@@ -189,9 +240,11 @@ class BeneficialOwnerAdditionServiceTest {
         individualBeneficialOwner.setNationality("Irish");
         individualBeneficialOwner.setSecondNationality("Spanish");
         individualBeneficialOwner.setOnSanctionsList(true);
-
+        individualBeneficialOwner.setTrustIds(new ArrayList<>());
         return List.of(individualBeneficialOwner);
     }
+
+    
 
     private void assertIndividualBeneficialOwnerDetails(IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition) {
         assertEquals(LocalDate.of(2020, 1, 1), individualBeneficialOwnerAddition.getActionDate());
@@ -204,7 +257,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals("John", individualBeneficialOwnerAddition.getPersonName().getForename());
         assertEquals("Doe", individualBeneficialOwnerAddition.getPersonName().getSurname());
         assertEquals(LocalDate.of(1990, 5, 15), individualBeneficialOwnerAddition.getBirthDate());
-        assertEquals("Irish, Spanish", individualBeneficialOwnerAddition.getNationalityOther());
+        assertEquals("Irish,Spanish", individualBeneficialOwnerAddition.getNationalityOther());
         assertTrue(individualBeneficialOwnerAddition.isOnSanctionsList());
     }
 
@@ -223,7 +276,7 @@ class BeneficialOwnerAdditionServiceTest {
         corporateBeneficialOwner.setPublicRegisterName("Register name");
         corporateBeneficialOwner.setRegistrationNumber("Registration number");
         corporateBeneficialOwner.setOnSanctionsList(true);
-
+        corporateBeneficialOwner.setTrustIds(new ArrayList<>());
         return List.of(corporateBeneficialOwner);
     }
 
