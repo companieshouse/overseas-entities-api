@@ -3,31 +3,23 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+
 import java.util.HashMap;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
 @RestController
-@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/details")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
 public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
@@ -45,15 +37,13 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping
+    @GetMapping("/details")
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
-        final var logMap = new HashMap<String, Object>();
-        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
 
@@ -81,6 +71,7 @@ public class OverseasEntitiesDataController {
             String requestId,
             OverseasEntitySubmissionDto submissionDto,
             HashMap<String, Object> logMap) {
+
         final String email = submissionDto.getEntity().getEmail();
 
         OverseasEntityDataApi overseasEntityDataApi = null;
@@ -106,7 +97,57 @@ public class OverseasEntitiesDataController {
             overseasEntityDataApi = new OverseasEntityDataApi();
             overseasEntityDataApi.setEmail(email);
         }
-        
+
         return ResponseEntity.ok(overseasEntityDataApi);
+    }
+
+    @GetMapping("/managing-officers")
+    public ResponseEntity<ManagingOfficerListDataApi> getManagingOfficers(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+
+        HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
+        ApiLogger.infoContext(requestId, "Calling service to retrieve the overseas entity submission for overseas entity " + overseasEntityId, logMap);
+
+        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+
+        if (submissionDtoOptional.isPresent()) {
+            final var submissionDto = submissionDtoOptional.get();
+
+            if (!isRoeUpdateEnabled) {
+                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
+            }
+
+            return retrieveAndEvaluateManagingOfficerData(submissionDto, overseasEntityId, requestId, logMap);
+        } else {
+            ApiLogger.errorContext(requestId, "Could not find overseas entity submission for overseas entity " + overseasEntityId, null, logMap);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private ResponseEntity<ManagingOfficerListDataApi> retrieveAndEvaluateManagingOfficerData(OverseasEntitySubmissionDto submissionDto, String overseasEntityId, String requestId, HashMap<String, Object> logMap) {
+        try {
+            ManagingOfficerListDataApi managingOfficerDataList = privateDataRetrievalService.getManagingOfficerData(submissionDto.getEntityNumber());
+
+            if (managingOfficerDataList == null || managingOfficerDataList.getManagingOfficerData() == null || managingOfficerDataList.getManagingOfficerData().isEmpty()) {
+                ApiLogger.errorContext(requestId, "Could not find any managing officers data for overseas entity " + overseasEntityId, null, logMap);
+                return ResponseEntity.notFound().build();
+            }
+
+            ApiLogger.infoContext(requestId, "Successfully retrieved the managing officers data", logMap);
+            return ResponseEntity.ok(managingOfficerDataList);
+
+        } catch (ServiceException e) {
+            ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private HashMap<String, Object> createLogMap(String transactionId, String overseasEntityId) {
+        HashMap<String, Object> logMap = new HashMap<>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        return logMap;
     }
 }
