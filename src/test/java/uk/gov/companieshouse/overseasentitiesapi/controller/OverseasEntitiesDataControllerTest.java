@@ -260,9 +260,41 @@ class OverseasEntitiesDataControllerTest {
         }
     }
 
+    @Test
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntityNumber() throws ServiceException {
+        try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
+
+            when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                    Optional.of(createOverseasNullEntitySubmissionMocks()));
+            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+
+            setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            assertNull(response.getBody());
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+            mockApiLogger.verify(
+                    () -> ApiLogger.errorContext(
+                            eq(ERIC_REQUEST_ID),
+                            eq("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity " + overseasEntityId),
+                            eq(null),
+                            any()),
+                    times(1)
+            );
+        }
+    }
+
     private OverseasEntitySubmissionDto createOverseasEntitySubmissionMock() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber(COMPANY_NUMBER);
+        EntityDto entityDto = new EntityDto();
+        overseasEntitySubmissionDto.setEntity(entityDto);
+        return overseasEntitySubmissionDto;
+    }
+
+    private OverseasEntitySubmissionDto createOverseasNullEntitySubmissionMocks() {
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber(null);
         EntityDto entityDto = new EntityDto();
         overseasEntitySubmissionDto.setEntity(entityDto);
         return overseasEntitySubmissionDto;
