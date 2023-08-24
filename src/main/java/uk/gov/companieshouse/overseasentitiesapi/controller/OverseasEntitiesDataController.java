@@ -129,12 +129,9 @@ public class OverseasEntitiesDataController {
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
         isRoeUpdateFlagEnabled();
-
-        if(overseasEntitySubmissionDto.isPresent()) {
-            if(overseasEntitySubmissionDto.get().getEntityNumber() != null){
-                String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
-                privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
-            }
+        if(overseasEntitySubmissionDto.isPresent() && StringUtils.isNotBlank(overseasEntitySubmissionDto.get().getEntityNumber())) {
+            String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
+            privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
 
             if(privateBeneficialOwnersData == null){
                 final var message = String.format("Beneficial owner private data not found for overseas entity %s",
