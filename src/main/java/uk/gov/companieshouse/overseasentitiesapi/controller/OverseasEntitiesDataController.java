@@ -122,29 +122,27 @@ public class OverseasEntitiesDataController {
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transactionId);
-        ApiLogger.infoContext(requestId, "Calling service to retrieve submitted beneficial owner information", logMap);
-
-        PrivateBoDataListApi privateBeneficialOwnersData =  null;
-
-        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        ApiLogger.infoContext(requestId, "Calling service to retrieve private beneficial owner information", logMap);
 
         isRoeUpdateFlagEnabled();
-        if(overseasEntitySubmissionDto.isPresent() && StringUtils.isNotBlank(overseasEntitySubmissionDto.get().getEntityNumber())) {
-            String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
-            privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
+        if(overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
+            String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
+            PrivateBoDataListApi privateBeneficialOwnersData =  null;
+            privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
             if(privateBeneficialOwnersData == null){
                 final var message = String.format("Beneficial owner private data not found for overseas entity %s",
                         overseasEntityId);
                 ApiLogger.errorContext(requestId, message, null, logMap);
                 return ResponseEntity.notFound().build();
             }
+            return ResponseEntity.ok(privateBeneficialOwnersData);
         }
         else{
             final var message = String.format("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity %s", overseasEntityId);
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(privateBeneficialOwnersData);
     }
 }
