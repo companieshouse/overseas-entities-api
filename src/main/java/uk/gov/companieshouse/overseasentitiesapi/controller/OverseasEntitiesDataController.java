@@ -37,6 +37,9 @@ public class OverseasEntitiesDataController {
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT:false}")
+    private String salt;
+
     @Autowired
     public OverseasEntitiesDataController(
             final PrivateDataRetrievalService privateDataRetrievalService,
