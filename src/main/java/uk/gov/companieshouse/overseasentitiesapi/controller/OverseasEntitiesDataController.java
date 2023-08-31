@@ -144,7 +144,7 @@ public class OverseasEntitiesDataController {
                     return ResponseEntity.notFound().build();
                 }
 
-                HashHelper hashHelper = new HashHelper(salt);
+                var hashHelper = new HashHelper(salt);
                 for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
                     var hashedId = hashHelper.generateHashedId(privateBoData.getPscId());
                     privateBoData.setHashedId(hashedId);

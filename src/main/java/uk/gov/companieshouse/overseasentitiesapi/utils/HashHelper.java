@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -21,6 +22,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -299,6 +302,23 @@ class OverseasEntitiesDataControllerTest {
                     times(1)
             );
         }
+    }
+
+    @Test
+    void testGetOverseasEntityDetailsReturnsNotFoundForEmptyBo() throws ServiceException, NoSuchAlgorithmException {
+        List<PrivateBoDataApi> privateBoDataApiList = Collections.emptyList();
+        var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(createOverseasEntitySubmissionMock()));
+        when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(boDataListApi);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+
+        verify(privateDataRetrievalService, times(1)).getBeneficialOwnersData(COMPANY_NUMBER);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     private OverseasEntitySubmissionDto createOverseasEntitySubmissionMock() {
