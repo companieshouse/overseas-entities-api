@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -122,7 +123,7 @@ public class OverseasEntitiesDataController {
     public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, NoSuchAlgorithmException {
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
@@ -131,25 +132,24 @@ public class OverseasEntitiesDataController {
 
         isRoeUpdateFlagEnabled();
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-
-
         if(overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
             try {
                 PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
-                HashHelper hashHelper = new HashHelper(salt);
 
-                privateBeneficialOwnersData.forEach(privateBoData -> {
-                    var hashedId = hashHelper.retrieveHasedId(privateBoData.getPscId());
-                    privateBoData.setHashedId(hashedId);
-                });
-
-                if (privateBeneficialOwnersData == null) {
+                if (privateBeneficialOwnersData == null || privateBeneficialOwnersData.getBoPrivateData().isEmpty()) {
                     final var message = String.format("Beneficial owner private data not found for overseas entity %s",
                             overseasEntityId);
                     ApiLogger.errorContext(requestId, message, null, logMap);
                     return ResponseEntity.notFound().build();
                 }
+
+                HashHelper hashHelper = new HashHelper(salt);
+                for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
+                    var hashedId = hashHelper.generateHashedId(privateBoData.getPscId());
+                    privateBoData.setHashedId(hashedId);
+                }
+
                 return ResponseEntity.ok(privateBeneficialOwnersData);
             } catch (ServiceException e) {
                 ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);

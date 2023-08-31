@@ -20,6 +20,7 @@ import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalSer
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -181,7 +182,7 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDetailsSuccessfully() throws ServiceException, JsonProcessingException {
+    void testGetPrivateBeneficialOwnerDetailsSuccessfully() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException {
         var objectMapper = new ObjectMapper();
         var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
         PrivateBoDataListApi privateBoDataListApi = new PrivateBoDataListApi(boDataListApi.getBoPrivateData());
@@ -201,7 +202,7 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoBoData() throws ServiceException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoBoData() throws ServiceException, NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
@@ -239,8 +240,8 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetBeneficialOwnersReturnInternalServerErrorWhenExceptionThrown() throws ServiceException {
-        Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(COMPANY_NUMBER);
+    void testGetBeneficialOwnersReturnInternalServerErrorWhenExceptionThrown() throws ServiceException, NoSuchAlgorithmException {
+        Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getBeneficialOwnersData(COMPANY_NUMBER);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
@@ -255,7 +256,7 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException, NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
@@ -277,7 +278,7 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntityNumber() throws ServiceException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntityNumber() throws ServiceException, NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
