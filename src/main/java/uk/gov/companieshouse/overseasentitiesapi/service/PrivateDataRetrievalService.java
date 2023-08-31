@@ -74,7 +74,13 @@ public class PrivateDataRetrievalService {
       ApiLogger.info("Retrieving overseas entity data for company number ",  logMap);
 
       return overseasEntityDataApi;
-    } catch (URIValidationException | IOException e) {
+    } catch (ApiErrorResponseException e) {
+      if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+        ApiLogger.info("No overseas entity data for Company Number " + companyNumber, logMap);
+        return new OverseasEntityDataApi();
+      }
+      throw new ServiceException(e.getStatusMessage(), e);
+    } catch (URIValidationException e) {
       var message = "Error Retrieving overseas entity data for " + companyNumber;
       ApiLogger.error(message, e, logMap);
       throw new ServiceException(e.getMessage(), e);
