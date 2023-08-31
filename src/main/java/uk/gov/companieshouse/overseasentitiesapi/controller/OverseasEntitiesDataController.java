@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -13,6 +14,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -28,6 +30,9 @@ public class OverseasEntitiesDataController {
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT:false}")
+    private String salt;
 
     @Autowired
     public OverseasEntitiesDataController(
@@ -125,7 +130,15 @@ public class OverseasEntitiesDataController {
         isRoeUpdateFlagEnabled();
         if(overseasEntitySubmissinDto.get().getEntityNumber() != null){
             String entityNumber = overseasEntitySubmissinDto.get().getEntityNumber();
+
+            HashHelper hashHelper = new HashHelper(salt);
             privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+
+            for (PrivateBoDataApi x : privateBeneficialOwnersData) {
+                var hashedId = hashHelper.generateHashedId(x.getPscId());
+                x.setHashedId(hashedId);
+            }
+
             if(privateBeneficialOwnersData == null){
                 final var message = String.format("Beneficial owner private data not found for overseas entity %s",
                         overseasEntityId);

@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +17,16 @@ public class HashHelper {
 
     public String encode(String plain) throws NoSuchAlgorithmException {
         return stripEquals(base64Encode(sha1Digest(plain)));
+    }
+
+    public String generateHashedId(String id) throws ServiceException {
+        String hashedId = null;
+        try {
+            hashedId = encode(id);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Error hashing ID", e);
+        }
+        return hashedId;
     }
 
     String stripEquals(String str) {

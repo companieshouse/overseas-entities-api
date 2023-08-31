@@ -99,16 +99,6 @@ public class PublicPrivateDataCombiner {
         return combinedMOs;
     }
 
-    private String retrieveHashedId(String officerId) throws ServiceException {
-        String hashedId = null;
-        try {
-            hashedId = hashHelper.encode(officerId);
-        } catch (NoSuchAlgorithmException e) {
-            throw new ServiceException("Error hashing ID", e);
-        }
-        return hashedId;
-    }
-
     private void createMoLog(StringBuilder result) {
         result.append("\"Managing Officer Data\": [");
         var first = true;
@@ -196,7 +186,7 @@ public class PublicPrivateDataCombiner {
 
     private void putPrivateBoData(PrivateBoDataListApi privateBOs) throws ServiceException {
         for (PrivateBoDataApi privateBO : privateBOs.getBoPrivateData()) {
-            String hashedId = retrieveHashedId(privateBO.getPscId());
+            String hashedId = hashHelper.generateHashedId(privateBO.getPscId());
 
             var pairFromMap = combinedBOs.get(hashedId);
             Pair<PscApi, PrivateBoDataApi> pairToPutInMap;
@@ -235,7 +225,7 @@ public class PublicPrivateDataCombiner {
     private void putPrivateMoData(ManagingOfficerListDataApi privateMOs) throws ServiceException {
         if (privateMOs.getManagingOfficerData() != null) {
             for (ManagingOfficerDataApi privateMO : privateMOs.getManagingOfficerData()) {
-                String hashedId = retrieveHashedId(privateMO.getManagingOfficerAppointmentId());
+                String hashedId = hashHelper.generateHashedId(privateMO.getManagingOfficerAppointmentId());
 
                 var pairFromMap = combinedMOs.get(hashedId);
                 Pair<CompanyOfficerApi, ManagingOfficerDataApi> pairToPutInMap;
