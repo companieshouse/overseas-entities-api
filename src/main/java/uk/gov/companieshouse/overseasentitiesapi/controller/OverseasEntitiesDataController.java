@@ -17,7 +17,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -127,17 +129,29 @@ public class OverseasEntitiesDataController {
         isRoeUpdateFlagEnabled();
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
+
         if(overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
-            PrivateBoDataListApi privateBeneficialOwnersData =  null;
-            privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
-            if(privateBeneficialOwnersData == null){
-                final var message = String.format("Beneficial owner private data not found for overseas entity %s",
-                        overseasEntityId);
-                ApiLogger.errorContext(requestId, message, null, logMap);
-                return ResponseEntity.notFound().build();
+            try {
+                PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+                HashHelper hashHelper = new HashHelper(salt);
+
+                privateBeneficialOwnersData.forEach(privateBoData -> {
+                    var hashedId = hashHelper.retrieveHasedId(privateBoData.getPscId());
+                    privateBoData.setHashedId(hashedId);
+                });
+
+                if (privateBeneficialOwnersData == null) {
+                    final var message = String.format("Beneficial owner private data not found for overseas entity %s",
+                            overseasEntityId);
+                    ApiLogger.errorContext(requestId, message, null, logMap);
+                    return ResponseEntity.notFound().build();
+                }
+                return ResponseEntity.ok(privateBeneficialOwnersData);
+            } catch (ServiceException e) {
+                ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return ResponseEntity.ok(privateBeneficialOwnersData);
         }
         else{
             final var message = String.format("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity %s", overseasEntityId);

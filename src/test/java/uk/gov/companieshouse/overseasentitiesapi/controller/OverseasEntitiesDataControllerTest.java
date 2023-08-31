@@ -239,6 +239,22 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
+    void testGetBeneficialOwnersReturnInternalServerErrorWhenExceptionThrown() throws ServiceException {
+        Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(COMPANY_NUMBER);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(createOverseasEntitySubmissionMock()));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 

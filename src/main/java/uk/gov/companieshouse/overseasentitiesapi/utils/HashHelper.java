@@ -29,4 +29,6 @@ public class HashHelper {
         return MessageDigest.getInstance("SHA-1").digest((plain + salt).getBytes(
                 StandardCharsets.UTF_8));
     }
+
+
 }
