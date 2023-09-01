@@ -17,10 +17,6 @@ public class HashHelper {
         return stripEquals(base64Encode(sha1Digest(plain)));
     }
 
-    public String generateHashedId(String id) throws NoSuchAlgorithmException {
-        return encode(id);
-    }
-
     String stripEquals(String str) {
         return str.replace("=", "");
     }
@@ -33,6 +29,4 @@ public class HashHelper {
         return MessageDigest.getInstance("SHA-1").digest((plain + salt).getBytes(
                 StandardCharsets.UTF_8));
     }
-
-
 }

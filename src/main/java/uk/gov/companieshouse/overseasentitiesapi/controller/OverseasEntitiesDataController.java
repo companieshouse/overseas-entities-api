@@ -38,7 +38,7 @@ public class OverseasEntitiesDataController {
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
-    @Value("${PUBLIC_API_IDENTITY_HASH_SALT:false}")
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
 
     @Autowired
@@ -132,7 +132,7 @@ public class OverseasEntitiesDataController {
 
         isRoeUpdateFlagEnabled();
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-        if(overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
+        if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
             try {
                 PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
@@ -146,7 +146,7 @@ public class OverseasEntitiesDataController {
 
                 var hashHelper = new HashHelper(salt);
                 for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
-                    var hashedId = hashHelper.generateHashedId(privateBoData.getPscId());
+                    var hashedId = hashHelper.encode(privateBoData.getPscId());
                     privateBoData.setHashedId(hashedId);
                 }
 
@@ -156,7 +156,7 @@ public class OverseasEntitiesDataController {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        else{
+        else {
             final var message = String.format("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity %s", overseasEntityId);
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
