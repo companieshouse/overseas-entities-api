@@ -148,6 +148,7 @@ public class OverseasEntitiesDataController {
                 for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
                     var hashedId = hashHelper.encode(privateBoData.getPscId());
                     privateBoData.setHashedId(hashedId);
+                    privateBoData.setPscId(null);
                 }
 
                 return ResponseEntity.ok(privateBeneficialOwnersData);
