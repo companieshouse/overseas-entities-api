@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
+import uk.gov.companieshouse.overseasentitiesapi.exception.HashingException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
@@ -27,6 +30,9 @@ public class OverseasEntitiesDataController {
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT:false}")
+    private String salt;
 
     @Autowired
     public OverseasEntitiesDataController(
@@ -134,6 +140,17 @@ public class OverseasEntitiesDataController {
                 ApiLogger.errorContext(requestId, "Could not find any managing officers data for overseas entity " + overseasEntityId, null, logMap);
                 return ResponseEntity.notFound().build();
             }
+
+            var hashHelper = new HashHelper(salt);
+
+            managingOfficerDataList.getManagingOfficerData().forEach(managingOfficerData -> {
+                try {
+                    String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
+                    managingOfficerData.setHashedId(hashedId);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new HashingException("Cannot encode Managing Officer ID", e);
+                }
+            });
 
             ApiLogger.infoContext(requestId, "Successfully retrieved the managing officers data", logMap);
             return ResponseEntity.ok(managingOfficerDataList);
