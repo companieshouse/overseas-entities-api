@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
@@ -18,6 +20,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Optional;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
@@ -102,8 +105,53 @@ public class OverseasEntitiesDataController {
             overseasEntityDataApi = new OverseasEntityDataApi();
             overseasEntityDataApi.setEmail(email);
         }
-
+        
         return ResponseEntity.ok(overseasEntityDataApi);
+    }
+
+    @GetMapping("/beneficial-owners")
+    public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, NoSuchAlgorithmException {
+
+        final var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        ApiLogger.infoContext(requestId, "Calling service to retrieve private beneficial owner information", logMap);
+
+        isRoeUpdateFlagEnabled();
+        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
+            String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
+            try {
+                PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+
+                if (privateBeneficialOwnersData == null || privateBeneficialOwnersData.getBoPrivateData().isEmpty()) {
+                    final var message = String.format("Beneficial owner private data not found for overseas entity %s",
+                            overseasEntityId);
+                    ApiLogger.errorContext(requestId, message, null, logMap);
+                    return ResponseEntity.notFound().build();
+                }
+
+                var hashHelper = new HashHelper(salt);
+                for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
+                    var hashedId = hashHelper.encode(privateBoData.getPscId());
+                    privateBoData.setHashedId(hashedId);
+                    privateBoData.setPscId(null);
+                }
+
+                return ResponseEntity.ok(privateBeneficialOwnersData);
+            } catch (ServiceException e) {
+                ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        else {
+            final var message = String.format("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity %s", overseasEntityId);
+            ApiLogger.errorContext(requestId, message, null, logMap);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/managing-officers")
