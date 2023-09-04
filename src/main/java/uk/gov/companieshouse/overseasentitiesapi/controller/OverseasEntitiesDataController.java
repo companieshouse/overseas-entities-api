@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
-import uk.gov.companieshouse.overseasentitiesapi.exception.HashingException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
@@ -144,15 +144,15 @@ public class OverseasEntitiesDataController {
 
             var hashHelper = new HashHelper(salt);
 
-            managingOfficerDataList.getManagingOfficerData().forEach(managingOfficerData -> {
+            for (ManagingOfficerDataApi managingOfficerData : managingOfficerDataList.getManagingOfficerData()) {
                 try {
                     String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
                     managingOfficerData.setHashedId(hashedId);
                     managingOfficerData.setManagingOfficerAppointmentId(null);
                 } catch (NoSuchAlgorithmException e) {
-                    throw new HashingException("Cannot encode Managing Officer ID", e);
+                    throw new ServiceException("Cannot encode Managing Officer ID", e);
                 }
-            });
+            }
 
             ApiLogger.infoContext(requestId, "Successfully retrieved the managing officers data", logMap);
             return ResponseEntity.ok(managingOfficerDataList);
