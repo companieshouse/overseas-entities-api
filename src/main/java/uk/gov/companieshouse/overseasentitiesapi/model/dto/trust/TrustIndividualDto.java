@@ -284,6 +284,9 @@ public class TrustIndividualDto {
     public AddressDto getServiceAddress() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
+        if (Boolean.TRUE.equals(isServiceAddressSameAsUsualResidentialAddress)) {
+            return getUsualResidentialAddress();
+        }
         if (areAnyStringsNonNull(saAddressPremises, saAddressLine1, saAddressLine2, saAddressRegion, saAddressLocality, saAddressCountry, saAddressCareOf, saAddressPoBox, saAddressPostalCode)) {
             serviceAddress = new AddressDto();
             serviceAddress.setPropertyNameNumber(saAddressPremises);
