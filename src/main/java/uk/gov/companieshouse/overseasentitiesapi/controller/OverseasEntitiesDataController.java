@@ -31,7 +31,7 @@ public class OverseasEntitiesDataController {
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
-    @Value("${PUBLIC_API_IDENTITY_HASH_SALT:false}")
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
 
     @Autowired
@@ -59,9 +59,8 @@ public class OverseasEntitiesDataController {
             if (!submissionDto.isForUpdate()) {
                 throw new ServiceException("Submission for overseas entity details must be for update");
             }
-            if (!isRoeUpdateEnabled) {
-                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
-            }
+
+            isRoeUpdateFlagEnabled();
 
             return getOverseasEntityDataResponse(overseasEntityId, requestId, submissionDto, logMap);
 
@@ -114,16 +113,18 @@ public class OverseasEntitiesDataController {
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
         HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
-        ApiLogger.infoContext(requestId, "Calling service to retrieve the overseas entity submission for overseas entity " + overseasEntityId, logMap);
+        ApiLogger.infoContext(requestId, "Calling Overseas Entities Service to retrieve private MO data for overseas entity " + overseasEntityId, logMap);
 
         final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
         if (submissionDtoOptional.isPresent()) {
             final var submissionDto = submissionDtoOptional.get();
 
-            if (!isRoeUpdateEnabled) {
-                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
+            if (!submissionDto.isForUpdate()) {
+                throw new ServiceException("Submission for overseas entity details must be for update");
             }
+
+            isRoeUpdateFlagEnabled();
 
             return retrieveAndEvaluateManagingOfficerData(submissionDto, overseasEntityId, requestId, logMap);
         } else {
@@ -147,6 +148,7 @@ public class OverseasEntitiesDataController {
                 try {
                     String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
                     managingOfficerData.setHashedId(hashedId);
+                    managingOfficerData.setManagingOfficerAppointmentId(null);
                 } catch (NoSuchAlgorithmException e) {
                     throw new HashingException("Cannot encode Managing Officer ID", e);
                 }
@@ -158,6 +160,12 @@ public class OverseasEntitiesDataController {
         } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void isRoeUpdateFlagEnabled() throws ServiceException {
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
         }
     }
 

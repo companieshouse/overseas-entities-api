@@ -286,6 +286,23 @@ class OverseasEntitiesDataControllerTest {
         assertNull(response.getBody());
     }
 
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenNoSubmissionDto() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.empty());
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers(
+                "TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
+    }
+
+
     private OverseasEntitySubmissionDto createOverseasEntitySubmissionMock() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber(COMPANY_NUMBER);
