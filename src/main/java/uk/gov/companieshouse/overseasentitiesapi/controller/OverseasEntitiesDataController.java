@@ -193,13 +193,7 @@ public class OverseasEntitiesDataController {
             var hashHelper = new HashHelper(salt);
 
             for (ManagingOfficerDataApi managingOfficerData : managingOfficerDataList.getManagingOfficerData()) {
-                try {
-                    String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
-                    managingOfficerData.setHashedId(hashedId);
-                    managingOfficerData.setManagingOfficerAppointmentId(null);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new ServiceException("Cannot encode Managing Officer ID", e);
-                }
+                processSingleManagingOfficer(managingOfficerData, hashHelper);
             }
 
             ApiLogger.infoContext(requestId, "Successfully retrieved the managing officers data", logMap);
@@ -208,6 +202,16 @@ public class OverseasEntitiesDataController {
         } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void processSingleManagingOfficer(ManagingOfficerDataApi managingOfficerData, HashHelper hashHelper) throws ServiceException {
+        try {
+            String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
+            managingOfficerData.setHashedId(hashedId);
+            managingOfficerData.setManagingOfficerAppointmentId(null);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Cannot encode Managing Officer ID", e);
         }
     }
 

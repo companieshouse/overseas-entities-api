@@ -310,6 +310,25 @@ class OverseasEntitiesDataControllerTest {
         assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
     }
 
+    @Test
+    void testGetManagingOfficersThrowsExceptionWhenIsForUpdateIsFalse() throws ServiceException {
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        submissionDtoMock.setEntityNumber(null);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        assertThrows(ServiceException.class,
+                () -> overseasEntitiesDataController.getManagingOfficers(
+                        transactionId,
+                        overseasEntityId,
+                        ERIC_REQUEST_ID),
+                "Submission for overseas entity details must be for update");
+    }
 
     @Test
     void testGetPrivateBeneficialOwnerDetailsSuccessfully() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException {
