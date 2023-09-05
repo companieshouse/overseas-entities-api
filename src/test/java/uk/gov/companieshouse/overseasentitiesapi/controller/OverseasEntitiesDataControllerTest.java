@@ -226,7 +226,30 @@ class OverseasEntitiesDataControllerTest {
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenOfficersListEmpty() throws ServiceException {
+        List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
+
+        ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
+
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenReturn(managingOfficerListDataApi);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
     }
 
     @Test
