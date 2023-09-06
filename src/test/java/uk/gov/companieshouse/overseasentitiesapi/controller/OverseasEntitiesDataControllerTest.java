@@ -9,19 +9,23 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -182,6 +186,171 @@ class OverseasEntitiesDataControllerTest {
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsSuccessfully() throws ServiceException {
+        List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
+        ManagingOfficerDataApi officerDataApi = new ManagingOfficerDataApi();
+        managingOfficers.add(officerDataApi);
+        ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
+
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenReturn(managingOfficerListDataApi);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(managingOfficerListDataApi, response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenNoOfficersFound() throws ServiceException {
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenReturn(null);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenOfficersListEmpty() throws ServiceException {
+        List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
+
+        ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
+
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenReturn(managingOfficerListDataApi);
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException {
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenThrow(new ServiceException("error occurred"));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsInternalServerErrorWhenUpdateDisabled() {
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+                Optional.of(createOverseasEntitySubmissionMock()));
+
+        assertThrows(ServiceException.class,
+                () -> overseasEntitiesDataController.getManagingOfficers(
+                        transactionId,
+                        overseasEntityId,
+                        ERIC_REQUEST_ID));
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenSubmissionNotFound() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.empty());
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenManagingOfficerDataEmpty() throws ServiceException {
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        String entityNumber = submissionDtoMock.getEntityNumber();
+        when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
+                .thenReturn(new ManagingOfficerListDataApi(Collections.emptyList()));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void testGetManagingOfficersReturnsNotFoundWhenNoSubmissionDto() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.empty());
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers(
+                "TransactionID", overseasEntityId, "requestId");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
+    }
+
+    @Test
+    void testGetManagingOfficersThrowsExceptionWhenIsForUpdateIsFalse() throws ServiceException {
+        OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntitySubmissionMock();
+        submissionDtoMock.setEntityNumber(null);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+                .thenReturn(Optional.of(submissionDtoMock));
+
+        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
+                privateDataRetrievalService, overseasEntitiesService);
+        setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
+
+        assertThrows(ServiceException.class,
+                () -> overseasEntitiesDataController.getManagingOfficers(
+                        transactionId,
+                        overseasEntityId,
+                        ERIC_REQUEST_ID),
+                "Submission for overseas entity details must be for update");
     }
 
     @Test
