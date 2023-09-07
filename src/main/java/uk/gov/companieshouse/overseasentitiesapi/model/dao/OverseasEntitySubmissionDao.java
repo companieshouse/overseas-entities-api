@@ -33,6 +33,11 @@ public class OverseasEntitySubmissionDao {
     @Field("entity_number")
     private String entityNumber;
 
+    // TODO Uncomment with getter and setter to exercise the new test
+
+//    @Field("new_field_not_in_json")
+//    private String newFieldNotInJson;
+
     @Field("presenter")
     private PresenterDao presenter;
 
@@ -94,6 +99,14 @@ public class OverseasEntitySubmissionDao {
     public String getEntityNumber() {
         return entityNumber;
     }
+
+//    public void setNewFieldNotInJson(String newFieldNotInJson) {
+//        this.newFieldNotInJson = newFieldNotInJson;
+//    }
+//
+//    public String getNewFieldNotInJson() {
+//        return newFieldNotInJson;
+//    }
 
     public void setEntityName(EntityNameDao entityName) {
         this.entityName = entityName;

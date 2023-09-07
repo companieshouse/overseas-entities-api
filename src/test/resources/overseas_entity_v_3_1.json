@@ -10,6 +10,7 @@
     "name" : "ARMS DIRECT"
   },
   "entity_number" : "OE123456",
+
   "presenter" : {
     "full_name" : "Vlad Jones",
     "email" : "vlad@dark-net.com"
@@ -22,7 +23,10 @@
       "line_2" : "Line 2",
       "town" : "Town",
       "county" : "County",
+      "locality" : "Locality",
       "country" : "Aland Islands",
+      "po_box" : "PO Box",
+      "care_of" : "C/O",
       "postcode" : "ED1"
     },
     "service_address" : {
@@ -31,7 +35,10 @@
       "line_2" : "Line 2",
       "town" : "City",
       "county" : "State",
+      "locality" : "Locality",
       "country" : "Algeria",
+      "po_box" : "PO Box",
+      "care_of" : "C/O",
       "postcode" : "AG5"
     },
     "is_service_address_same_as_principal_address" : false,
@@ -52,7 +59,10 @@
       "line_2" : "Line2",
       "town" : "Here",
       "county" : "Glamorgan",
+      "locality" : "Deepest, darkest Wales",
       "country" : "Wales",
+      "po_box" : "45782",
+      "care_of" : "Someone",
       "postcode" : "CF4 2HW"
     },
     "email" : "temp@somewhere.com",
@@ -482,6 +492,8 @@
           "town" : "Town",
           "county" : "County",
           "country" : "Aland Islands",
+          "po_box" : "PO Box",
+          "care_of" : "C/O",
           "postcode" : "ED1"
         },
         "service_address" : {
