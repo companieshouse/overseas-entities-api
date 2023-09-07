@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+
 public class UpdateDto {
 
     public static final String DATE_OF_CREATION = "date_of_creation";
@@ -24,6 +26,10 @@ public class UpdateDto {
 
     public static final String NO_CHANGE_SCENARIO = "no_change";
 
+    public static final String TRUST_DATA_FETCHED = "trust_data_fetched";
+
+    public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
+
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
 
@@ -39,6 +45,9 @@ public class UpdateDto {
     @JsonProperty(NO_CHANGE_SCENARIO)
     private boolean noChange;
 
+    @JsonProperty(TRUST_DATA_FETCHED)
+    private boolean trustDataFetched;
+
     @JsonProperty(REVIEW_BENEFICIAL_OWNERS_INDIVIDUAL_FIELD)
     private List<BeneficialOwnerIndividualDto> reviewBeneficialOwnersIndividual;
 
@@ -53,6 +62,9 @@ public class UpdateDto {
 
     @JsonProperty(REVIEW_MANAGING_OFFICERS_CORPORATE_FIELD)
     private List<ManagingOfficerCorporateDto> reviewManagingOfficersCorporate;
+
+    @JsonProperty(REVIEW_TRUSTS_FIELD)
+    private List<TrustDataDto> reviewTrusts;
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -92,6 +104,14 @@ public class UpdateDto {
 
     public void setNoChange(boolean noChange) {
         this.noChange = noChange;
+    }
+
+    public boolean isTrustDataFetched() {
+        return trustDataFetched;
+    }
+
+    public void setTrustDataFetched(boolean trustDataFetched) {
+        this.trustDataFetched = trustDataFetched;
     }
 
     public List<BeneficialOwnerIndividualDto> getReviewBeneficialOwnersIndividual() {
@@ -134,4 +154,11 @@ public class UpdateDto {
         this.reviewManagingOfficersCorporate = managingOfficersCorporate;
     }
 
+    public List<TrustDataDto> getReviewTrusts() {
+        return reviewTrusts;
+    }
+
+    public void setReviewTrusts(List<TrustDataDto> reviewTrusts) {
+        this.reviewTrusts = reviewTrusts;
+    }
 }
