@@ -198,9 +198,7 @@ class DtoModelChangeTest {
 
     private boolean ignoreForNow(String fieldName) {
         // TODO Set values for these fields in the 'overseas_entity_v_3_1.json'
-        return fieldName.equals("locality") || fieldName.equals("poBox") || fieldName.equals("careOf") || fieldName.equals("town")
-                || fieldName.equals("chipsReference")
-                || fieldName.equals("secondNationality")
+        return  fieldName.equals("careOf") || fieldName.equals("town")
                 || fieldName.equals("isServiceAddressSameAsUsualResidentialAddress")
                 || fieldName.equals("isServiceAddressSameAsPrincipalAddress")
                 || fieldName.equals("corporateName")
