@@ -1,9 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -74,25 +70,22 @@ public class OverseasEntitySubmissionDtoValidator {
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
-            // Method to be added to as Update journey developed
+
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-            // Change to Statement Validation once BO/MO Statements are complete
-            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
+            ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
 
             dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                     overseasEntitySubmissionDto.getDueDiligence(),
                     overseasEntitySubmissionDto.getOverseasEntityDueDiligence(),
                     errors,
                     loggingContext);
+
+            validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         else {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
         }
-
-        // Change when trusts are added:
-        // call validateTrustDetails with (overseasEntitySubmissionDto, errors, loggingContext)
-
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -107,7 +100,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -192,7 +184,6 @@ public class OverseasEntitySubmissionDtoValidator {
                     errors,
                     loggingContext);
         }
-
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
