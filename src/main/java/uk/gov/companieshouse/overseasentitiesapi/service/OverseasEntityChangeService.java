@@ -185,6 +185,7 @@ public class OverseasEntityChangeService {
                         .map(ForeignCompanyDetailsApi::getOriginatingRegistry)
                         .map(OriginatingRegistryApi::getName)
                         .orElse(null),
+                null,
                 Optional.ofNullable(companyDetails)
                         .map(ForeignCompanyDetailsApi::getRegistrationNumber)
                         .orElse(null));
@@ -208,6 +209,9 @@ public class OverseasEntityChangeService {
                         .orElse(null),
                 Optional.ofNullable(entityDto)
                         .map(EntityDto::getPublicRegisterName)
+                        .orElse(null),
+                Optional.ofNullable(entityDto)
+                        .map(EntityDto::getPublicRegisterJurisdiction)
                         .orElse(null),
                 Optional.ofNullable(entityDto)
                         .map(EntityDto::getRegistrationNumber)

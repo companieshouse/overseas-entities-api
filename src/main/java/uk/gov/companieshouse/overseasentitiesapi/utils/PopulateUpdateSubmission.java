@@ -86,6 +86,8 @@ public class PopulateUpdateSubmission {
                 .ifPresent(submissionDueDiligence::setAgentAssuranceCode);
         Optional.ofNullable(dueDiligenceDto.getDiligence())
                 .ifPresent(submissionDueDiligence::setDiligence);
+        Optional.ofNullable(dueDiligenceDto.getAmlNumber())
+                .ifPresent(submissionDueDiligence::setAmlRegistrationNumber);
 
         Optional.of(submissionDueDiligence).ifPresent(updateSubmission::setDueDiligence);
     }

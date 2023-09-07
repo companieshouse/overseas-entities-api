@@ -38,6 +38,7 @@ import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDa
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 
 @ExtendWith(MockitoExtension.class)
 class PrivateDataRetrievalServiceTest {
@@ -82,93 +83,6 @@ class PrivateDataRetrievalServiceTest {
 
   private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
       new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
-
-  private final String jsonBeneficialOwnerString = "["
-          + "{"
-          + "\"id\":\"9001808903\","
-          + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
-          + "\"is_service_address_same_as_usual_address\":\"N\","
-          + "\"date_of_birth\":\"2023-04-13 00:00:00.0\","
-          + "\"usual_residential_address\":{"
-          + "\"address_line_1\":\"491 SOUTH GREEN OLD BOULEVARD\","
-          + "\"address_line_2\":\"SIT NON PRAESENTIUM\","
-          + "\"care_of\":null,"
-          + "\"country\":\"ITALY\","
-          + "\"locality\":\"EXPEDITA IN OFFICIIS\","
-          + "\"po_box\":null,"
-          + "\"postal_code\":\"29765\","
-          + "\"premises\":\"DUSTIN MONTOYA\","
-          + "\"region\":\"ULLAM AUTEM IMPEDIT\""
-          + "},"
-          + "\"principal_address\":{"
-          + "\"address_line_1\":null,"
-          + "\"address_line_2\":null,"
-          + "\"care_of\":null,"
-          + "\"country\":null,"
-          + "\"locality\":null,"
-          + "\"po_box\":null,"
-          + "\"postal_code\":null,"
-          + "\"premises\":null,"
-          + "\"region\":null"
-          + "}"
-          + "},"
-          + "{"
-          + "\"id\":\"9001808904\","
-          + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
-          + "\"is_service_address_same_as_usual_address\":\"N\","
-          + "\"date_of_birth\":null,"
-          + "\"usual_residential_address\":{"
-          + "\"address_line_1\":null,"
-          + "\"address_line_2\":null,"
-          + "\"care_of\":null,"
-          + "\"country\":null,"
-          + "\"locality\":null,"
-          + "\"po_box\":null,"
-          + "\"postal_code\":null,"
-          + "\"premises\":null,"
-          + "\"region\":null"
-          + "},"
-          + "\"principal_address\":{"
-          + "\"address_line_1\":\"204 NOBEL DRIVE\","
-          + "\"address_line_2\":\"ASPERIORES VOLUPTATE\","
-          + "\"care_of\":null,"
-          + "\"country\":\"MACEDONIA\","
-          + "\"locality\":\"VELIT UT FACILIS VE\","
-          + "\"po_box\":null,"
-          + "\"postal_code\":\"41608\","
-          + "\"premises\":\"MEGAN WILDER\","
-          + "\"region\":\"ID AUT OFFICIA CUPI\""
-          + "}"
-          + "},"
-          + "{"
-          + "\"id\":\"9001808905\","
-          + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
-          + "\"is_service_address_same_as_usual_address\":\"N\","
-          + "\"date_of_birth\":null,"
-          + "\"usual_residential_address\":{"
-          + "\"address_line_1\":null,"
-          + "\"address_line_2\":null,"
-          + "\"care_of\":null,"
-          + "\"country\":null,"
-          + "\"locality\":null,"
-          + "\"po_box\":null,"
-          + "\"postal_code\":null,"
-          + "\"premises\":null,"
-          + "\"region\":null"
-          + "},"
-          + "\"principal_address\":{"
-          + "\"address_line_1\":\"55 GREEN COWLEY PARKWAY\","
-          + "\"address_line_2\":\"DISTINCTIO FACILIS\","
-          + "\"care_of\":null,"
-          + "\"country\":\"MAURITIUS\","
-          + "\"locality\":\"CULPA EOS ENIM QUI\","
-          + "\"po_box\":null,"
-          + "\"postal_code\":\"90079\","
-          + "\"premises\":\"CORA BENTON\","
-          + "\"region\":\"IN VELIT ET EIUS MIN\""
-          + "}"
-          + "}"
-          + "]";
 
   private final String jsonManagingOfficerString = "[" +
           "{" +
@@ -373,17 +287,28 @@ class PrivateDataRetrievalServiceTest {
     }
 
     @Test
-    void testServiceExceptionThrownWhenGetOverseasEntitiesPrivateDataThrowsIOException()
-        throws IOException, URIValidationException {
+    void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsNon404Error()
+            throws IOException, URIValidationException {
 
-      when(privateOverseasEntityDataGet.execute())
-          .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+      when(privateOverseasEntityDataGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException()));
 
       assertThrows(
-          ServiceException.class,
-          () -> {
-            privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
-          });
+              ServiceException.class,
+              () -> {
+                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
+              });
+    }
+
+    @Test
+    void testNoEmailWhenGetOverseasEntitiesPrivateDataThrowsApiResponseError404Exception()
+        throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+      when(privateOverseasEntityDataGet.execute())
+          .thenThrow(FourHundredAndFourException);
+
+      OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
+
+      assertNull(result.getEmail());
     }
   }
 
@@ -507,7 +432,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
@@ -532,7 +457,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
@@ -556,7 +481,7 @@ class PrivateDataRetrievalServiceTest {
       var overseasEntityApi = new OverseasEntityDataApi();
 
       //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
       var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
 
       when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);

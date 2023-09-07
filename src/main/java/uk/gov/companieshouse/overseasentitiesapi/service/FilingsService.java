@@ -20,6 +20,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_TYPE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
@@ -206,9 +207,12 @@ public class FilingsService {
       ApiLogger.infoContext("PublicPrivateDataCombiner",
               publicPrivateDataCombiner.logCollatedData());
 
+      updateSubmission.setEntityName(publicPrivateOeData.getLeft().getCompanyName());
+
       updateSubmission.getChanges()
               .addAll(overseasEntityChangeService.collateOverseasEntityChanges(publicPrivateOeData,
                       submissionDto, logMap));
+
       updateSubmission.getChanges()
               .addAll(beneficialOwnerChangeService.collateBeneficialOwnerChanges(
                       publicPrivateBoData, submissionDto, logMap));
@@ -226,7 +230,13 @@ public class FilingsService {
       updateSubmission.getAdditions()
               .addAll(managingOfficerAdditionService.managingOfficerAdditions(submissionDto));
 
+      if (!submissionDto.getTrusts().isEmpty() && submissionDto.getTrusts() != null) {
+        updateSubmission.setTrustAdditions(submissionDto.getTrusts());
+      }
+
       ApiLogger.debug("Updates have been collected", logMap);
+    } else {
+      updateSubmission.setEntityName(submissionDto.getEntityName().getName());
     }
   }
 
@@ -236,6 +246,7 @@ public class FilingsService {
           boolean isNoChange,
           Map<String, Object> logMap) {
     data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
+    data.put(UPDATE_ENTITY_NAME_FIELD, updateSubmission.getEntityName());
     data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
     if (!isNoChange) {
@@ -249,6 +260,7 @@ public class FilingsService {
       data.put(CHANGES_FIELD, updateSubmission.getChanges());
       data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
       data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
+      data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
 
     ApiLogger.debug("Update submission data has been set on filing", logMap);

@@ -89,6 +89,10 @@ public class BeneficialOwnerAdditionService {
                         addressDtoToAddress(serviceAddress),
                         natureOfControls,
                         isOnSanctionsList);
+        
+        if (bo.getTrustIds() != null && !bo.getTrustIds().isEmpty()) {
+                individualBeneficialOwnerAddition.setTrustIds(bo.getTrustIds());
+        }
 
         individualBeneficialOwnerAddition.setPersonName(
                 new PersonName(bo.getFirstName(), bo.getLastName()));
@@ -126,6 +130,10 @@ public class BeneficialOwnerAdditionService {
                         isOnSanctionsList);
 
         corporateEntityBeneficialOwnerAddition.setCorporateName(bo.getName());
+
+        if (bo.getTrustIds() != null && !bo.getTrustIds().isEmpty()) {
+                corporateEntityBeneficialOwnerAddition.setTrustIds(bo.getTrustIds());
+        }
 
         var legalForm = bo.getLegalForm();
         var governingLaw = bo.getLawGoverned();

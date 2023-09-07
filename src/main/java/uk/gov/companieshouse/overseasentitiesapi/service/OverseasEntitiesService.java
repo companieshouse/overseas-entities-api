@@ -152,14 +152,27 @@ public class OverseasEntitiesService {
         overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
-        // Update company name set on the transaction, to ensure it matches the value received with this OE submission
-        String entityName = null;
-        if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
-            entityName = overseasEntitySubmissionDto.getEntityName().getName();
-        }
+        if (overseasEntitySubmissionDto.isForUpdate()) {
+            // Switching to another OE number requires the transaction to be updated with the new OE number & name.
+            // Relies on an updateOverseasEntity call being done before the company name can be changed by the user in UI.
+            String entityNumber = overseasEntitySubmissionDto.getEntityNumber();
+            if (!entityNumber.equals(transaction.getCompanyNumber())) {
+                transaction.setCompanyNumber(entityNumber);
+                transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
+                transactionService.updateTransaction(transaction, requestId);
+            }
+        } else {
+            // Use company name set on the transaction, to ensure it matches the value received with this OE registration submission
+            String entityName = null;
+            if(Objects.nonNull(overseasEntitySubmissionDto.getEntityName())) {
+                entityName = overseasEntitySubmissionDto.getEntityName().getName();
+            }
 
-        transaction.setCompanyName(entityName);
-        transactionService.updateTransaction(transaction, requestId);
+            if (entityName != null && !entityName.equals(transaction.getCompanyName())) {
+                transaction.setCompanyName(entityName);
+                transactionService.updateTransaction(transaction, requestId);
+            }
+        }
 
         ApiLogger.infoContext(requestId, String.format(
                 "Overseas Entity Submission updated for transaction id: %s and overseas-entity submission id: %s, schema version %s",

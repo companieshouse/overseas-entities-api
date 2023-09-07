@@ -6,6 +6,9 @@ import uk.gov.companieshouse.api.model.company.RegisteredOfficeAddressApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
+
+import java.util.StringJoiner;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.registeredOfficeAddressApiToAddress;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addressDtoToAddress;
@@ -42,7 +45,7 @@ public class OverseasEntityChangeComparator {
 
     public CompanyIdentificationChange compareCompanyIdentification(
             CompanyIdentification existing, CompanyIdentification updated) {
-        return existing.equals(updated) || updated == null ?
+        return ComparisonHelper.equals(existing, updated) || updated == null ?
                 null : createCompanyIdentificationChange(existing, updated);
     }
 
@@ -52,6 +55,9 @@ public class OverseasEntityChangeComparator {
 
     private CompanyIdentificationChange createCompanyIdentificationChange(
             CompanyIdentification existing, CompanyIdentification updated){
+        var format = new StringJoiner(",");
+        var registerInformationFormat = format.add(updated.getPlaceRegistered()).add(updated.getPlaceRegisteredJurisdiction());
+
         var proposedLegalForm = existing.getLegalForm() != null &&
                 existing.getLegalForm().equals(updated.getLegalForm()) ?
                 null : updated.getLegalForm();
@@ -62,8 +68,11 @@ public class OverseasEntityChangeComparator {
                 existing.getRegisterLocation().equals(updated.getRegisterLocation()) ?
                 null : updated.getRegisterLocation();
         var proposedPlaceRegistered = existing.getPlaceRegistered() != null &&
-                existing.getPlaceRegistered().equals(updated.getPlaceRegistered()) ?
+                existing.getPlaceRegistered().equals(registerInformationFormat.toString()) ?
                 null : updated.getPlaceRegistered();
+        var proposedRegisterJurisdiction = existing.getPlaceRegistered() != null &&
+                existing.getPlaceRegistered().equals(registerInformationFormat.toString()) ?
+                null : updated.getPlaceRegisteredJurisdiction();
         var proposedRegistrationNumber = existing.getRegistrationNumber() != null &&
                 existing.getRegistrationNumber().equals(updated.getRegistrationNumber()) ?
                 null : updated.getRegistrationNumber();
@@ -73,6 +82,7 @@ public class OverseasEntityChangeComparator {
                 proposedGoverningLaw,
                 proposedRegisterLocation,
                 proposedPlaceRegistered,
+                proposedRegisterJurisdiction,
                 proposedRegistrationNumber);
     }
 }

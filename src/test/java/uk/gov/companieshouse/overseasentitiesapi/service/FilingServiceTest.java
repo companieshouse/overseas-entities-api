@@ -29,6 +29,7 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,6 +75,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateSubmissionMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -82,6 +84,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovern
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityNameDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
@@ -90,6 +93,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualManagingOfficerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.Addition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.IndividualManagingOfficerAddition;
@@ -334,7 +338,66 @@ class FilingServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        initGetPublicPrivateDataCombinerMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
+        UpdateSubmission updateSubmission = UpdateSubmissionMock.getUpdateSubmissionMock();
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setTrusts(new ArrayList<>());
+
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
+        when(managingOfficerCessationService.managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_MO_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
+        when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
+        verify(managingOfficerAdditionService, times(1)).managingOfficerAdditions(Mockito.any());
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerCessationService, times(1)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(1)).collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY_UPDATE, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
+
+        assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("Test Public Company", filing.getData().get("entityName"));
+        assertEquals("OE02", filing.getData().get("type"));
+
+        final List<Change> changesList = (List<Change>)filing.getData().get("changes");
+        final EntityNameChange entityNameChange = (EntityNameChange)changesList.get(0);
+        assertEquals("New name", entityNameChange.getProposedCorporateBodyName());
+        assertEquals("Joe Bloggs Ltd", updateSubmission.getEntityName());
+
+        testHaveFilingData(filing, true);
+
+        assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
+
+        assertEquals(3, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithTrustsAndWithIdentityChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         initGetPublicPrivateDataCombinerMocks();
@@ -343,6 +406,7 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setTrusts(List.of(new TrustDataDto()));
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -375,6 +439,7 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("dueDiligence"));
         assertNotNull(filing.getData().get("presenter"));
         assertNotNull(filing.getData().get("filingForDate"));
+        assertNotNull(filing.getData().get("trusts"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
@@ -384,6 +449,16 @@ class FilingServiceTest {
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
 
+    private static void testHaveFilingData(FilingApi filing, boolean withDueDiligence) {
+        assertNotNull(filing.getData().get("userSubmission"));
+        if (withDueDiligence) {
+            assertNotNull(filing.getData().get("dueDiligence"));
+        } else {
+            assertNull(filing.getData().get("dueDiligence"));
+        }
+        assertNotNull(filing.getData().get("presenter"));
+        assertNotNull(filing.getData().get("filingForDate"));
+    }
 
     @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksForNoChangeUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
@@ -396,6 +471,11 @@ class FilingServiceTest {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.getUpdate().setNoChange(true);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setTrusts(null);
+
+        overseasEntitySubmissionDto.setEntityName(new EntityNameDto());
+        overseasEntitySubmissionDto.getEntityName().setName("Test OE");
+
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -415,13 +495,13 @@ class FilingServiceTest {
         assertEquals("Overseas entity update statement made 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("Test OE", filing.getData().get("entityName"));
         assertEquals("OE02", filing.getData().get("type"));
 
-        assertNotNull(filing.getData().get("userSubmission"));
-        assertNull(filing.getData().get("dueDiligence"));
-        assertNotNull(filing.getData().get("presenter"));
-        assertNotNull(filing.getData().get("filingForDate"));
+        testHaveFilingData(filing, false);
+
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertNull(filing.getData().get("trusts"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
 
@@ -1376,6 +1456,7 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setTrusts(new ArrayList<>());
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);

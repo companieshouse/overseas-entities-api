@@ -3,31 +3,29 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
+import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
+import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import java.util.HashMap;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Optional;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
 @RestController
-@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/details")
+@RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
 public class OverseasEntitiesDataController {
 
     PrivateDataRetrievalService privateDataRetrievalService;
@@ -35,6 +33,9 @@ public class OverseasEntitiesDataController {
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+    private String salt;
 
     @Autowired
     public OverseasEntitiesDataController(
@@ -45,15 +46,13 @@ public class OverseasEntitiesDataController {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    @GetMapping
+    @GetMapping("/details")
     public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
-        final var logMap = new HashMap<String, Object>();
-        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
 
@@ -63,9 +62,8 @@ public class OverseasEntitiesDataController {
             if (!submissionDto.isForUpdate()) {
                 throw new ServiceException("Submission for overseas entity details must be for update");
             }
-            if (!isRoeUpdateEnabled) {
-                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
-            }
+
+            isRoeUpdateFlagEnabled();
 
             return getOverseasEntityDataResponse(overseasEntityId, requestId, submissionDto, logMap);
 
@@ -81,6 +79,7 @@ public class OverseasEntitiesDataController {
             String requestId,
             OverseasEntitySubmissionDto submissionDto,
             HashMap<String, Object> logMap) {
+
         final String email = submissionDto.getEntity().getEmail();
 
         OverseasEntityDataApi overseasEntityDataApi = null;
@@ -108,5 +107,124 @@ public class OverseasEntitiesDataController {
         }
         
         return ResponseEntity.ok(overseasEntityDataApi);
+    }
+
+    @GetMapping("/beneficial-owners")
+    public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, NoSuchAlgorithmException {
+
+        final var logMap = new HashMap<String, Object>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        ApiLogger.infoContext(requestId, "Calling service to retrieve private beneficial owner information", logMap);
+
+        isRoeUpdateFlagEnabled();
+        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
+            String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
+            try {
+                PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+
+                if (privateBeneficialOwnersData == null || privateBeneficialOwnersData.getBoPrivateData().isEmpty()) {
+                    final var message = String.format("Beneficial owner private data not found for overseas entity %s",
+                            overseasEntityId);
+                    ApiLogger.errorContext(requestId, message, null, logMap);
+                    return ResponseEntity.notFound().build();
+                }
+
+                var hashHelper = new HashHelper(salt);
+                for (PrivateBoDataApi privateBoData : privateBeneficialOwnersData) {
+                    var hashedId = hashHelper.encode(privateBoData.getPscId());
+                    privateBoData.setHashedId(hashedId);
+                    privateBoData.setPscId(null);
+                }
+
+                return ResponseEntity.ok(privateBeneficialOwnersData);
+            } catch (ServiceException e) {
+                ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        else {
+            final var message = String.format("Could not retrieve private beneficial owner data without overseas entity submission for overseas entity %s", overseasEntityId);
+            ApiLogger.errorContext(requestId, message, null, logMap);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/managing-officers")
+    public ResponseEntity<ManagingOfficerListDataApi> getManagingOfficers(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+
+        HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
+        ApiLogger.infoContext(requestId, "Calling Overseas Entities Service to retrieve private MO data for overseas entity " + overseasEntityId, logMap);
+
+        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+
+        if (submissionDtoOptional.isPresent()) {
+            final var submissionDto = submissionDtoOptional.get();
+
+            if (!submissionDto.isForUpdate()) {
+                throw new ServiceException("Submission for overseas entity details must be for update");
+            }
+
+            isRoeUpdateFlagEnabled();
+
+            return retrieveAndEvaluateManagingOfficerData(submissionDto, overseasEntityId, requestId, logMap);
+        } else {
+            ApiLogger.errorContext(requestId, "Could not find overseas entity submission for overseas entity " + overseasEntityId, null, logMap);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private ResponseEntity<ManagingOfficerListDataApi> retrieveAndEvaluateManagingOfficerData(OverseasEntitySubmissionDto submissionDto, String overseasEntityId, String requestId, HashMap<String, Object> logMap) {
+        try {
+            ManagingOfficerListDataApi managingOfficerDataList = privateDataRetrievalService.getManagingOfficerData(submissionDto.getEntityNumber());
+
+            if (managingOfficerDataList == null || managingOfficerDataList.getManagingOfficerData() == null || managingOfficerDataList.getManagingOfficerData().isEmpty()) {
+                ApiLogger.errorContext(requestId, "Could not find any managing officers data for overseas entity " + overseasEntityId, null, logMap);
+                return ResponseEntity.notFound().build();
+            }
+
+            var hashHelper = new HashHelper(salt);
+
+            for (ManagingOfficerDataApi managingOfficerData : managingOfficerDataList.getManagingOfficerData()) {
+                processSingleManagingOfficer(managingOfficerData, hashHelper);
+            }
+
+            ApiLogger.infoContext(requestId, "Successfully retrieved the managing officers data", logMap);
+            return ResponseEntity.ok(managingOfficerDataList);
+
+        } catch (ServiceException e) {
+            ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void processSingleManagingOfficer(ManagingOfficerDataApi managingOfficerData, HashHelper hashHelper) throws ServiceException {
+        try {
+            String hashedId = hashHelper.encode(managingOfficerData.getManagingOfficerAppointmentId());
+            managingOfficerData.setHashedId(hashedId);
+            managingOfficerData.setManagingOfficerAppointmentId(null);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Cannot encode Managing Officer ID", e);
+        }
+    }
+
+    private void isRoeUpdateFlagEnabled() throws ServiceException {
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
+        }
+    }
+
+    private HashMap<String, Object> createLogMap(String transactionId, String overseasEntityId) {
+        HashMap<String, Object> logMap = new HashMap<>();
+        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
+        logMap.put(TRANSACTION_ID_KEY, transactionId);
+        return logMap;
     }
 }

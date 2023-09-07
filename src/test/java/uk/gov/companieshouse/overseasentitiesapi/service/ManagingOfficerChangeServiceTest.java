@@ -28,11 +28,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import uk.gov.companieshouse.api.model.common.ContactDetails;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 import uk.gov.companieshouse.api.model.officers.IdentificationApi;
-import uk.gov.companieshouse.api.model.common.ContactDetails;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
@@ -73,14 +73,15 @@ class ManagingOfficerChangeServiceTest {
 
     ByteArrayOutputStream outputStreamCaptor;
 
+    private static final String[] DEFAULT_ADDRESS = {"John Doe", "98765", "123", " Main Street", "Apartment 4B",
+            "Cityville", "Countyshire", "AB12 3CD", "United Kingdom"};
+
     private static AddressDto createDummyAddressDto() {
-        return AddressTestUtils.createDummyAddressDto("John Doe", "98765", "123", "Main Street", "Apartment 4B",
-                "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
+        return AddressTestUtils.createDummyAddressDto(DEFAULT_ADDRESS);
     }
 
     private static Address createDummyAddress() {
-        return AddressTestUtils.createDummyAddress("John Doe", "98765", "123", "Main Street", "Apartment 4B",
-                "Cityville", "Countyshire", "AB12 3CD", "United Kingdom");
+        return AddressTestUtils.createDummyAddress(DEFAULT_ADDRESS);
     }
 
 
