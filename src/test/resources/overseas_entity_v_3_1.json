@@ -84,7 +84,8 @@
       "locality" : "Deepest, darkest Wales",
       "country" : "England",
       "postcode" : "fghfgh",
-      "po_box" : "45782"
+      "po_box" : "45782",
+      "care_of" : "C/O"
     },
     "email" : "temp@somewhere.com",
     "supervisory_name" : "xcvxvc",
@@ -108,7 +109,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Azerbaijan",
         "postcode" : "HHH",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "service_address" : {
         "property_name_number" : "AA",
@@ -119,7 +121,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Algeria",
         "postcode" : "FF",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "is_service_address_same_as_usual_residential_address" : false,
       "start_date" : "2022-12-01",
@@ -153,7 +156,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Bolivia",
         "postcode" : "FF",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "service_address" : {
         "property_name_number" : "GG",
@@ -164,7 +168,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Cameroon",
         "postcode" : "LL",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "FORM",
@@ -203,7 +208,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Christmas Island",
         "postcode" : "UU",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "service_address" : {
         "property_name_number" : "TY",
@@ -214,7 +220,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Congo, the Democratic Republic of the",
         "postcode" : "TY",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "UI",
@@ -253,7 +260,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Albania",
         "postcode" : "TR",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "service_address" : {
         "property_name_number" : "YU",
@@ -264,7 +272,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Algeria",
         "postcode" : "AG5",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "is_service_address_same_as_usual_residential_address" : false,
       "occupation" : "GGGG",
@@ -286,7 +295,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Australia",
         "postcode" : "GHG",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "service_address" : {
         "property_name_number" : "JK",
@@ -297,7 +307,8 @@
         "locality" : "Deepest, darkest Wales",
         "country" : "Ecuador",
         "postcode" : "HJ",
-        "po_box" : "45782"
+        "po_box" : "45782",
+        "care_of" : "C/O"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "FF",
@@ -554,7 +565,8 @@
           "surname" : "string",
           "ceased_date" : "2022-06-10",
           "notified_date" : "2022-06-10",
-          "corporate_indicator" : false
+          "corporate_indicator" : true,
+          "corporate_name": "my corp"
         }
       ],
       "individuals" : [
@@ -566,10 +578,12 @@
           "date_of_birth" : "2022-06-10",
           "nationality" : "Italian",
           "second_nationality" : "Argentine",
+          "is_service_address_same_as_usual_residential_address" : false,
           "service_address" : {
             "property_name_number" : "string",
             "line_1" : "string",
             "line_2" : "string",
+            "town" : "FFF",
             "county" : "string",
             "country" : "string",
             "postcode" : "string",
@@ -581,6 +595,7 @@
             "property_name_number" : "string",
             "line_1" : "string",
             "line_2" : "string",
+            "town" : "FFF",
             "county" : "string",
             "country" : "string",
             "postcode" : "string",
@@ -595,10 +610,12 @@
         {
           "type" : "BENEFICIARY",
           "name" : "string",
+          "is_service_address_same_as_principal_address" : false,
           "registered_office_address" : {
             "property_name_number" : "string",
             "line_1" : "string",
             "line_2" : "string",
+            "town" : "FFF",
             "county" : "string",
             "country" : "string",
             "postcode" : "string",
@@ -610,6 +627,7 @@
             "property_name_number" : "string",
             "line_1" : "string",
             "line_2" : "string",
+            "town" : "FFF",
             "county" : "string",
             "country" : "string",
             "postcode" : "string",
@@ -617,6 +635,7 @@
             "po_box" : "string",
             "locality" : "string"
           },
+          "is_on_register_in_country_formed_in" : true,
           "identification_country_registration" : "string",
           "identification_legal_authority" : "string",
           "identification_legal_form" : "string",
