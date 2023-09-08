@@ -81,8 +81,10 @@
       "line_2" : "wewe",
       "town" : "yuyu",
       "county" : "qwqw",
+      "locality" : "Deepest, darkest Wales",
       "country" : "England",
-      "postcode" : "fghfgh"
+      "postcode" : "fghfgh",
+      "po_box" : "45782"
     },
     "email" : "temp@somewhere.com",
     "supervisory_name" : "xcvxvc",
@@ -103,8 +105,10 @@
         "line_2" : "EEE",
         "town" : "FFF",
         "county" : "GGG",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Azerbaijan",
-        "postcode" : "HHH"
+        "postcode" : "HHH",
+        "po_box" : "45782"
       },
       "service_address" : {
         "property_name_number" : "AA",
@@ -112,8 +116,10 @@
         "line_2" : "CC",
         "town" : "DD",
         "county" : "EE",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Algeria",
-        "postcode" : "FF"
+        "postcode" : "FF",
+        "po_box" : "45782"
       },
       "is_service_address_same_as_usual_residential_address" : false,
       "start_date" : "2022-12-01",
@@ -144,8 +150,10 @@
         "line_2" : "CC",
         "town" : "DD",
         "county" : "EE",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Bolivia",
-        "postcode" : "FF"
+        "postcode" : "FF",
+        "po_box" : "45782"
       },
       "service_address" : {
         "property_name_number" : "GG",
@@ -153,8 +161,10 @@
         "line_2" : "II",
         "town" : "JJ",
         "county" : "KK",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Cameroon",
-        "postcode" : "LL"
+        "postcode" : "LL",
+        "po_box" : "45782"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "FORM",
@@ -190,8 +200,10 @@
         "line_2" : "FF",
         "town" : "DD",
         "county" : "EE",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Christmas Island",
-        "postcode" : "UU"
+        "postcode" : "UU",
+        "po_box" : "45782"
       },
       "service_address" : {
         "property_name_number" : "TY",
@@ -199,8 +211,10 @@
         "line_2" : "TY",
         "town" : "TY",
         "county" : "TY",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Congo, the Democratic Republic of the",
-        "postcode" : "TY"
+        "postcode" : "TY",
+        "po_box" : "45782"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "UI",
@@ -217,7 +231,8 @@
         "1",
         "2"
       ],
-      "ceased_date" : "2022-04-06"
+      "ceased_date" : "2022-04-06",
+      "ch_reference" : "app"
     }
   ],
   "managing_officers_individual" : [
@@ -235,8 +250,10 @@
         "line_2" : "RT",
         "town" : "RT",
         "county" : "TR",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Albania",
-        "postcode" : "TR"
+        "postcode" : "TR",
+        "po_box" : "45782"
       },
       "service_address" : {
         "property_name_number" : "YU",
@@ -244,8 +261,10 @@
         "line_2" : "UY",
         "town" : "YU",
         "county" : "UY",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Algeria",
-        "postcode" : "AG5"
+        "postcode" : "AG5",
+        "po_box" : "45782"
       },
       "is_service_address_same_as_usual_residential_address" : false,
       "occupation" : "GGGG",
@@ -264,8 +283,10 @@
         "line_2" : "ER",
         "town" : "FG",
         "county" : "FG",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Australia",
-        "postcode" : "GHG"
+        "postcode" : "GHG",
+        "po_box" : "45782"
       },
       "service_address" : {
         "property_name_number" : "JK",
@@ -273,8 +294,10 @@
         "line_2" : "HJ",
         "town" : "HJ",
         "county" : "JH",
+        "locality" : "Deepest, darkest Wales",
         "country" : "Ecuador",
-        "postcode" : "HJ"
+        "postcode" : "HJ",
+        "po_box" : "45782"
       },
       "is_service_address_same_as_principal_address" : false,
       "legal_form" : "FF",
@@ -542,6 +565,7 @@
           "surname" : "string",
           "date_of_birth" : "2022-06-10",
           "nationality" : "Italian",
+          "second_nationality" : "Argentine",
           "service_address" : {
             "property_name_number" : "string",
             "line_1" : "string",
