@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.json.Json;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +22,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -51,7 +55,6 @@ public class OverseasEntitiesDataController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
-
         HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
@@ -109,11 +112,14 @@ public class OverseasEntitiesDataController {
         return ResponseEntity.ok(overseasEntityDataApi);
     }
 
+
     @GetMapping("/beneficial-owners")
     public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, NoSuchAlgorithmException {
+
+        System.out.println("=================LOCAL 617 BRANCH ===========================");
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
@@ -125,7 +131,13 @@ public class OverseasEntitiesDataController {
         if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
             try {
-                PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+                var objectMapper = new ObjectMapper();
+                var boDataListApi = objectMapper.readValue(jsonBeneficialOwnerString, PrivateBoDataListApi.class );
+                PrivateBoDataListApi privateBeneficialOwnersData = new PrivateBoDataListApi(boDataListApi.getBoPrivateData());
+//                PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
+//                ArrayList boPrivateData = new ArrayList<>();
+//                boPrivateData.add(privateBoDataListApi);
+//                PrivateBoDataListApi privateBeneficialOwnersData = new PrivateBoDataListApi(boPrivateData);
 
                 if (privateBeneficialOwnersData == null || privateBeneficialOwnersData.getBoPrivateData().isEmpty()) {
                     final var message = String.format("Beneficial owner private data not found for overseas entity %s",
@@ -140,9 +152,9 @@ public class OverseasEntitiesDataController {
                     privateBoData.setHashedId(hashedId);
                     privateBoData.setPscId(null);
                 }
-
+                System.out.println("============Response entity log " + ResponseEntity.ok(privateBeneficialOwnersData).getBody().getBoPrivateData().get(0));
                 return ResponseEntity.ok(privateBeneficialOwnersData);
-            } catch (ServiceException e) {
+            } catch (Exception e) {
                 ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -227,4 +239,92 @@ public class OverseasEntitiesDataController {
         logMap.put(TRANSACTION_ID_KEY, transactionId);
         return logMap;
     }
+
+
+    public static final String jsonBeneficialOwnerString = "["
+            + "{"
+            + "\"id\":\"9001808903\","
+            + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
+            + "\"is_service_address_same_as_usual_address\":\"N\","
+            + "\"date_of_birth\":\"2023-04-13 00:00:00.0\","
+            + "\"usual_residential_address\":{"
+            + "\"address_line_1\":\"491 SOUTH GREEN OLD BOULEVARD\","
+            + "\"address_line_2\":\"SIT NON PRAESENTIUM\","
+            + "\"care_of\":null,"
+            + "\"country\":\"ITALY\","
+            + "\"locality\":\"EXPEDITA IN OFFICIIS\","
+            + "\"po_box\":null,"
+            + "\"postal_code\":\"29765\","
+            + "\"premises\":\"DUSTIN MONTOYA\","
+            + "\"region\":\"ULLAM AUTEM IMPEDIT\""
+            + "},"
+            + "\"principal_address\":{"
+            + "\"address_line_1\":null,"
+            + "\"address_line_2\":null,"
+            + "\"care_of\":null,"
+            + "\"country\":null,"
+            + "\"locality\":null,"
+            + "\"po_box\":null,"
+            + "\"postal_code\":null,"
+            + "\"premises\":null,"
+            + "\"region\":null"
+            + "}"
+            + "},"
+            + "{"
+            + "\"id\":\"9001808904\","
+            + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
+            + "\"is_service_address_same_as_usual_address\":\"N\","
+            + "\"date_of_birth\":null,"
+            + "\"usual_residential_address\":{"
+            + "\"address_line_1\":null,"
+            + "\"address_line_2\":null,"
+            + "\"care_of\":null,"
+            + "\"country\":null,"
+            + "\"locality\":null,"
+            + "\"po_box\":null,"
+            + "\"postal_code\":null,"
+            + "\"premises\":null,"
+            + "\"region\":null"
+            + "},"
+            + "\"principal_address\":{"
+            + "\"address_line_1\":\"204 NOBEL DRIVE\","
+            + "\"address_line_2\":\"ASPERIORES VOLUPTATE\","
+            + "\"care_of\":null,"
+            + "\"country\":\"MACEDONIA\","
+            + "\"locality\":\"VELIT UT FACILIS VE\","
+            + "\"po_box\":null,"
+            + "\"postal_code\":\"41608\","
+            + "\"premises\":\"MEGAN WILDER\","
+            + "\"region\":\"ID AUT OFFICIA CUPI\""
+            + "}"
+            + "},"
+            + "{"
+            + "\"id\":\"9001808905\","
+            + "\"date_became_registrable\":\"2023-04-13 00:00:00.0\","
+            + "\"is_service_address_same_as_usual_address\":\"N\","
+            + "\"date_of_birth\":null,"
+            + "\"usual_residential_address\":{"
+            + "\"address_line_1\":null,"
+            + "\"address_line_2\":null,"
+            + "\"care_of\":null,"
+            + "\"country\":null,"
+            + "\"locality\":null,"
+            + "\"po_box\":null,"
+            + "\"postal_code\":null,"
+            + "\"premises\":null,"
+            + "\"region\":null"
+            + "},"
+            + "\"principal_address\":{"
+            + "\"address_line_1\":\"55 GREEN COWLEY PARKWAY\","
+            + "\"address_line_2\":\"DISTINCTIO FACILIS\","
+            + "\"care_of\":null,"
+            + "\"country\":\"MAURITIUS\","
+            + "\"locality\":\"CULPA EOS ENIM QUI\","
+            + "\"po_box\":null,"
+            + "\"postal_code\":\"90079\","
+            + "\"premises\":\"CORA BENTON\","
+            + "\"region\":\"IN VELIT ET EIUS MIN\""
+            + "}"
+            + "}"
+            + "]";
 }
