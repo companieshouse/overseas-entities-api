@@ -337,6 +337,13 @@ public class TrustCorporateDto {
     }
 
     public AddressDto getServiceAddress() {
+        if (Boolean.TRUE.equals(isServiceAddressSameAsPrincipalAddress)) {
+            return getRegisteredOfficeAddress();
+        }
+        return getServiceAddressFromFields();
+    }
+
+    private AddressDto getServiceAddressFromFields() {
         // When converting from DTO to DAO the individual address fields will be present and need to be converted to an address object during the mapping process
         // When converting from DAO to DTO the individual fields will not be populated and so the address object just needs to be returned
         if (areAnyStringsNonNull(saAddressPremises, saAddressLine1, saAddressLine2, saAddressRegion, saAddressLocality, saAddressCountry, saAddressCareOf, saAddressPoBox, saAddressPostalCode)) {

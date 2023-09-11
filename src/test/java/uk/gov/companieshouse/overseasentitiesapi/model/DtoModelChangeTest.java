@@ -16,19 +16,14 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -163,10 +158,12 @@ class DtoModelChangeTest {
 
                         if (nestedDtoObject == null) {
                             fail("Unexpected null value for field '" + fieldName + "'");
-                        } else if (field.getClass().isPrimitive() || nestedDtoObject instanceof String
+                        } else if (field.getClass().isPrimitive()
                                 // TODO In the future, other object types might need to be added here, e.g. Integer
                                 //      (not sure this would occur, most JSON values are stored as strings...)
-                                || nestedDtoObject instanceof Boolean || nestedDtoObject instanceof LocalDate
+                                || nestedDtoObject instanceof String
+                                || nestedDtoObject instanceof Boolean
+                                || nestedDtoObject instanceof LocalDate
                                 // Don't recursively inspect any lists or maps that just contain simple collections of strings
                                 || isAListOrMapOfStrings(nestedDtoObject)) {
                             System.out.println("Value = " + nestedDtoObject);
@@ -210,7 +207,7 @@ class DtoModelChangeTest {
                 // TODO Having looked into this a bit more, I now think this is a valid exclusion as there is no corresponding
                 //      'trustData' field on the DAO. The DTO field is only populated by the FilingsService, so not related
                 //      to data coming from Mongo/JSON (and if its datatype ever changed that would presumably be picked up
-                //      by a compile-time failure
+                //      by a compile-time failure)
                 || fieldName.equals("trustData");
     }
 

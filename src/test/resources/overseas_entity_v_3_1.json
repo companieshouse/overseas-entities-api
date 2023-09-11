@@ -612,6 +612,100 @@
         "resigned_on" : "2009-08-01",
         "ch_reference" : "MOcorp1"
       }
+    ],
+    "review_trusts": [
+      {
+        "_id" : "string",
+        "name" : "string",
+        "creation_date" : "2022-06-10",
+        "unable_to_obtain_all_trust_info" : true,
+        "historical_beneficial_owners" : [
+          {
+            "forename" : "string",
+            "other_forenames" : "string",
+            "surname" : "string",
+            "ceased_date" : "2022-06-10",
+            "notified_date" : "2022-06-10",
+            "corporate_indicator" : true,
+            "corporate_name": "my corp"
+          }
+        ],
+        "individuals" : [
+          {
+            "type" : "GRANTOR",
+            "forename" : "string",
+            "other_forenames" : "string",
+            "surname" : "string",
+            "date_of_birth" : "2022-06-10",
+            "nationality" : "Italian",
+            "second_nationality" : "Argentine",
+            "is_service_address_same_as_usual_residential_address" : false,
+            "service_address" : {
+              "property_name_number" : "string",
+              "line_1" : "string",
+              "line_2" : "string",
+              "town" : "FFF",
+              "county" : "string",
+              "country" : "string",
+              "postcode" : "string",
+              "care_of" : "string",
+              "po_box" : "string",
+              "locality" : "string"
+            },
+            "usual_residential_address" : {
+              "property_name_number" : "string",
+              "line_1" : "string",
+              "line_2" : "string",
+              "town" : "FFF",
+              "county" : "string",
+              "country" : "string",
+              "postcode" : "string",
+              "care_of" : "string",
+              "po_box" : "string",
+              "locality" : "string"
+            },
+            "date_became_interested_person" : "2022-06-10"
+          }
+        ],
+        "corporates" : [
+          {
+            "type" : "BENEFICIARY",
+            "name" : "string",
+            "is_service_address_same_as_principal_address" : false,
+            "registered_office_address" : {
+              "property_name_number" : "string",
+              "line_1" : "string",
+              "line_2" : "string",
+              "town" : "FFF",
+              "county" : "string",
+              "country" : "string",
+              "postcode" : "string",
+              "care_of" : "string",
+              "po_box" : "string",
+              "locality" : "string"
+            },
+            "service_address" : {
+              "property_name_number" : "string",
+              "line_1" : "string",
+              "line_2" : "string",
+              "town" : "FFF",
+              "county" : "string",
+              "country" : "string",
+              "postcode" : "string",
+              "care_of" : "string",
+              "po_box" : "string",
+              "locality" : "string"
+            },
+            "is_on_register_in_country_formed_in" : true,
+            "identification_country_registration" : "string",
+            "identification_legal_authority" : "string",
+            "identification_legal_form" : "string",
+            "identification_place_registered" : "string",
+            "identification_registration_number" : "string",
+            "date_became_interested_person" : "2022-06-10"
+          }
+        ]
+      }
     ]
   },
   "trusts" : [

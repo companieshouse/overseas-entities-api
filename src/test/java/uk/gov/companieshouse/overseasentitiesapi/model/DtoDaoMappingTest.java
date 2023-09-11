@@ -150,6 +150,9 @@ class DtoDaoMappingTest {
         UpdateDao updateDao = new UpdateDao();
         updateDao.setDateOfCreation(LocalDate.of(2020,1,1));
         updateDao.setBoMoDataFetched(false);
+        updateDao.setTrustDataFetched(false);
+        List<TrustDataDao> reviewTrusts = new ArrayList<>();
+        updateDao.setReviewTrusts(reviewTrusts);
         updateDao.setRegistrableBeneficialOwner(false);
         overseasEntitySubmission.setUpdate(updateDao);
 
@@ -235,6 +238,10 @@ class DtoDaoMappingTest {
         updateDto.setFilingDate(LocalDate.of(2023,1,2));
         updateDto.setBoMoDataFetched(false);
         updateDto.setRegistrableBeneficialOwner(false);
+        updateDto.setTrustDataFetched(false);
+        List<TrustDataDto> reviewTrusts = new ArrayList<>();
+        updateDto.setReviewTrusts(reviewTrusts);
+
         overseasEntitySubmission.setUpdate(updateDto);
 
         List<TrustDataDto> trustDataDto = new ArrayList<>();
@@ -427,6 +434,8 @@ class DtoDaoMappingTest {
         assertEquals(updateDto.isBoMoDataFetched(), updateDao.isBoMoDataFetched());
         assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
         assertEquals(updateDto.isNoChange(), updateDao.isNoChange());
+        assertEquals(updateDto.isTrustDataFetched(), updateDao.isTrustDataFetched());
+        assertEquals(updateDto.getReviewTrusts(), updateDao.getReviewTrusts());
     }
 
     private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {
