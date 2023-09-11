@@ -298,10 +298,10 @@ class TrustIndividualValidatorTest {
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
-        assertEquals(trustee.getServiceAddress().getPropertyNameNumber(), "1");
-        assertEquals(trustee.getServiceAddress().getLine1(), "Broadway");
-        assertEquals(trustee.getServiceAddress().getTown(), "New York");
-        assertEquals(trustee.getServiceAddress().getCountry(), "USA");
+        assertEquals("1", trustee.getServiceAddress().getPropertyNameNumber());
+        assertEquals("Broadway", trustee.getServiceAddress().getLine1());
+        assertEquals("New York", trustee.getServiceAddress().getTown());
+        assertEquals("USA", trustee.getServiceAddress().getCountry());
     }
     
     @Test
