@@ -160,13 +160,6 @@ public class TrustIndividualValidator {
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
     }
 
-    private Errors validateOtherAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors,
-            String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
-        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
-        return errors;
-    }
-
     private void validateSameAsAddress(TrustIndividualDto trustIndividualDto, Errors errors, String loggingContext) {
         boolean isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
                 trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
@@ -174,12 +167,6 @@ public class TrustIndividualValidator {
                 && Boolean.FALSE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
             validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD, trustIndividualDto.getServiceAddress(), errors,
                     loggingContext);
-        } else if (isSameAddressFlagValid
-                && Boolean.TRUE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
-            validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD,
-                    trustIndividualDto.getServiceAddressFromFields(), errors, loggingContext);
         }
-
     }
-
 }
