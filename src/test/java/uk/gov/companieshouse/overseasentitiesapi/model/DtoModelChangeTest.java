@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,8 @@ class DtoModelChangeTest {
      */
     private void checkNoDtoModelFieldsAreNull(Object object) {
         // TODO Change all System.outs to logger calls
-        System.out.println("\nCheck for nulls in " + object.getClass().getName() + ":\n");
+        String className = object.getClass().getName();
+        System.out.println("\nCheck for nulls in " + className + ":\n");
 
         Field[] allFields = object.getClass().getDeclaredFields();
 
@@ -153,13 +155,14 @@ class DtoModelChangeTest {
                 if (!Modifier.isStatic(field.getModifiers())) {
 
                     // TODO The 'ignoreForNow' method will go, when current JSON file has been updated to have all fields present in it
-                    if (!ignoreForNow(field.getName())) {
-                        System.out.println("Checking:" + field.getName());
+                    String fieldName = field.getName();
+                    if (!ignoreForNow(className, fieldName)) {
+                        System.out.println("Checking:" + fieldName);
 
                         Object nestedDtoObject = field.get(object);
 
                         if (nestedDtoObject == null) {
-                            fail("Unexpected null value for field '" + field.getName() + "'");
+                            fail("Unexpected null value for field '" + fieldName + "'");
                         } else if (field.getClass().isPrimitive() || nestedDtoObject instanceof String
                                 // TODO In the future, other object types might need to be added here, e.g. Integer
                                 //      (not sure this would occur, most JSON values are stored as strings...)
@@ -196,13 +199,13 @@ class DtoModelChangeTest {
         return false;
     }
 
-    private boolean ignoreForNow(String fieldName) {
+    private boolean ignoreForNow(String className, String fieldName) {
         // TODO Set values for these fields in the 'overseas_entity_v_3_1.json'
         return
-                 fieldName.startsWith("saAddress")
-                || fieldName.startsWith("uraAddress")
-                || fieldName.startsWith("roAddress")
-                || fieldName.startsWith("review")
+                (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDTO") && fieldName.startsWith("saAddress"))
+                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto") && fieldName.startsWith("saAddress"))
+                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDTO") && fieldName.startsWith("uraAddress"))
+                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto") && fieldName.startsWith("roAddress"))
 
                 // TODO Having looked into this a bit more, I now think this is a valid exclusion as there is no corresponding
                 //      'trustData' field on the DAO. The DTO field is only populated by the FilingsService, so not related

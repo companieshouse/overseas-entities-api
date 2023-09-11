@@ -338,20 +338,28 @@
         "nationality" : "Algerian",
         "second_nationality" : "American",
         "usual_residential_address" : {
-          "property_name_number" : "CCC",
-          "line_1" : "DDD",
-          "line_2" : "EEE",
-          "town" : "FFF",
-          "county" : "GGG",
-          "country" : "Azerbaijan",
-          "postcode" : "HHH"
+          "property_name_number" : "RT",
+          "line_1" : "RT",
+          "line_2" : "RT",
+          "town" : "RT",
+          "county" : "TR",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Albania",
+          "postcode" : "TR",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "property_name_number" : "Companies House",
-          "line_1" : "Crown Way",
-          "town" : "Limavady",
-          "country" : "Wales",
-          "postcode" : "CF14 3UZ"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_service_address_same_as_usual_residential_address" : false,
         "start_date" : "2022-04-06",
@@ -377,20 +385,28 @@
       {
         "name" : "Mr Random Notreal No2BoOther",
         "principal_address" : {
-          "property_name_number" : "CCC",
-          "line_1" : "DDD",
-          "line_2" : "EEE",
-          "town" : "FFF",
-          "county" : "GGG",
-          "country" : "Azerbaijan",
-          "postcode" : "HHH"
+          "property_name_number" : "WW",
+          "line_1" : "QQ",
+          "line_2" : "FF",
+          "town" : "DD",
+          "county" : "EE",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Christmas Island",
+          "postcode" : "UU",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "property_name_number" : "Companies House",
-          "line_1" : "Crown Way",
-          "town" : "Limavady",
-          "country" : "Wales",
-          "postcode" : "CF14 3UZ"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_service_address_same_as_principal_address" : false,
         "legal_form" : "my form",
@@ -418,17 +434,36 @@
       },
       {
         "name" : "Mr Random Notreal no1BoOther",
+        "is_service_address_same_as_principal_address" : false,
+        "legal_form" : "my form",
+        "law_governed" : "my law",
         "principal_address" : {
-
+          "property_name_number" : "WW",
+          "line_1" : "QQ",
+          "line_2" : "FF",
+          "town" : "DD",
+          "county" : "EE",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Christmas Island",
+          "postcode" : "UU",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "property_name_number" : "Companies House",
-          "line_1" : "Crown Way",
-          "town" : "Limavady",
-          "country" : "Wales",
-          "postcode" : "CF14 3UZ"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_on_register_in_country_formed_in" : false,
+        "public_register_name" : "reg name",
+        "registration_number" : "123",
         "start_date" : "2021-04-06",
         "beneficial_owner_nature_of_control_types" : [
           "OVER_25_PERCENT_OF_SHARES",
@@ -442,6 +477,11 @@
           "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS"
         ],
         "is_on_sanctions_list" : false,
+        "trust_ids" : [
+          "1",
+          "2"
+        ],
+        "ceased_date" : "2022-04-06",
         "ch_reference" : "RandomBoOther12345"
       }
     ],
@@ -449,20 +489,28 @@
       {
         "name" : "Mr Random Notreal No2BoOther",
         "principal_address" : {
-          "property_name_number" : "CCC",
-          "line_1" : "DDD",
-          "line_2" : "EEE",
-          "town" : "FFF",
-          "county" : "GGG",
-          "country" : "Azerbaijan",
-          "postcode" : "HHH"
+          "property_name_number" : "WW",
+          "line_1" : "QQ",
+          "line_2" : "FF",
+          "town" : "DD",
+          "county" : "EE",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Christmas Island",
+          "postcode" : "UU",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "property_name_number" : "Companies House",
-          "line_1" : "Crown Way",
-          "town" : "Limavady",
-          "country" : "Wales",
-          "postcode" : "CF14 3UZ"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_service_address_same_as_principal_address": false,
         "legal_form": "form1",
@@ -493,20 +541,28 @@
         "nationality" : "British",
         "second_nationality" : "American",
         "usual_residential_address" : {
-          "property_name_number" : "CCC",
-          "line_1" : "DDD",
-          "line_2" : "EEE",
-          "town" : "FFF",
-          "county" : "GGG",
-          "country" : "Azerbaijan",
-          "postcode" : "HHH"
+          "property_name_number" : "RT",
+          "line_1" : "RT",
+          "line_2" : "RT",
+          "town" : "RT",
+          "county" : "TR",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Albania",
+          "postcode" : "TR",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "line_1" : "Cerney House",
-          "line_2" : "North Cerney",
-          "town" : "Cirencester",
-          "county" : "Gloucestershire",
-          "postcode" : "GL7 7BX"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_service_address_same_as_usual_residential_address" : false,
         "occupation" : "Chairman Unilever",
@@ -520,22 +576,28 @@
       {
         "name" : "JONES, Sarah Corporate MO Officer",
         "principal_address" : {
-          "property_name_number" : "Saron House",
-          "line_1" : "Line 1",
-          "line_2" : "Line 2",
-          "town" : "Town",
-          "county" : "County",
-          "country" : "Aland Islands",
-          "po_box" : "PO Box",
-          "care_of" : "C/O",
-          "postcode" : "ED1"
+          "property_name_number" : "WW",
+          "line_1" : "QQ",
+          "line_2" : "FF",
+          "town" : "DD",
+          "county" : "EE",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Christmas Island",
+          "postcode" : "UU",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "service_address" : {
-          "line_1" : "Cerney House",
-          "line_2" : "North Cerney",
-          "town" : "Cirencester",
-          "county" : "Gloucestershire",
-          "postcode" : "GL7 7BX"
+          "property_name_number" : "JK",
+          "line_1" : "HJ",
+          "line_2" : "HJ",
+          "town" : "HJ",
+          "county" : "JH",
+          "locality" : "Deepest, darkest Wales",
+          "country" : "Ecuador",
+          "postcode" : "HJ",
+          "po_box" : "45782",
+          "care_of" : "C/O"
         },
         "is_service_address_same_as_principal_address" : false,
         "legal_form" : "Partnership",
