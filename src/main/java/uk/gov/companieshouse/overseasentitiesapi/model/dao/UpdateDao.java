@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 
 public class UpdateDao {
 
@@ -23,6 +24,9 @@ public class UpdateDao {
     @Field("no_change")
     private boolean noChange;
 
+    @Field("trust_data_fetched")
+    private boolean trustDataFetched;
+
     @Field("review_beneficial_owners_individual")
     private List<BeneficialOwnerIndividualDao> reviewBeneficialOwnersIndividual;
 
@@ -37,6 +41,9 @@ public class UpdateDao {
 
     @Field("review_managing_officers_corporate")
     private List<ManagingOfficerCorporateDao> reviewManagingOfficersCorporate;
+
+    @Field("review_trusts")
+    private List<TrustDataDao> reviewTrusts;
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -77,12 +84,20 @@ public class UpdateDao {
         this.noChange = noChange;
     }
 
-    public List<BeneficialOwnerIndividualDao> getBeneficialOwnersIndividual() {
+    public boolean isTrustDataFetched() {
+        return trustDataFetched;
+    }
+
+    public void setTrustDataFetched(boolean trustDataFetched) {
+        this.trustDataFetched = trustDataFetched;
+    }
+
+    public List<BeneficialOwnerIndividualDao> getReviewBeneficialOwnersIndividual() {
         return reviewBeneficialOwnersIndividual;
     }
 
-    public void setBeneficialOwnersIndividual(List<BeneficialOwnerIndividualDao> beneficialOwnersIndividual) {
-        this.reviewBeneficialOwnersIndividual = beneficialOwnersIndividual;
+    public void setReviewBeneficialOwnersIndividual(List<BeneficialOwnerIndividualDao> reviewBeneficialOwnersIndividual) {
+        this.reviewBeneficialOwnersIndividual = reviewBeneficialOwnersIndividual;
     }
 
     public List<BeneficialOwnerCorporateDao> getReviewBeneficialOwnersCorporate() {
@@ -117,4 +132,11 @@ public class UpdateDao {
         this.reviewManagingOfficersCorporate = reviewManagingOfficersCorporate;
     }
 
+    public List<TrustDataDao> getReviewTrusts() {
+        return reviewTrusts;
+    }
+
+    public void setReviewTrusts(List<TrustDataDao> reviewTrusts) {
+        this.reviewTrusts = reviewTrusts;
+    }
 }

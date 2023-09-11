@@ -59,10 +59,6 @@ public class TrustCorporateValidator {
                             .equals(trustCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
                         validateAddress(TrustCorporateDto.SERVICE_ADDRESS_FIELD,
                                 trustCorporateDto.getServiceAddress(), errors, loggingContext);
-                    } else if (isSameAddressFlagValid && Boolean.TRUE
-                            .equals(trustCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
-                        validateServiceAddressIsNotSupplied(TrustCorporateDto.SERVICE_ADDRESS_FIELD,
-                                trustCorporateDto.getServiceAddress(), errors, loggingContext);
                     }
 
                     validateIdentificationLegalForm(trustCorporateDto.getIdentificationLegalForm(), errors,
@@ -85,13 +81,6 @@ public class TrustCorporateValidator {
             }
         }
 
-        return errors;
-    }
-
-    private Errors validateServiceAddressIsNotSupplied(String addressField, AddressDto addressDto, Errors errors,
-                                                       String loggingContext) {
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, addressField);
-        addressDtoValidator.validateOtherAddressIsNotSupplied(qualifiedFieldName, addressDto, errors, loggingContext);
         return errors;
     }
 
