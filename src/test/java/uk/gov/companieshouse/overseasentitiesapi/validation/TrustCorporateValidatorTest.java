@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.TrustCorporateValidator.PARENT_FIELD;
@@ -203,6 +204,24 @@ class TrustCorporateValidatorTest {
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFields() {
+        var trustee = trustDataDtoList.get(0).getCorporates().get(0);
+        trustee.setServiceAddressSameAsPrincipalAddress(true);
+        trustee.setRoAddressPremises("1");
+        trustee.setRoAddressLine1("Broadway");
+        trustee.setRoAddressLocality("New York");
+        trustee.setRoAddressCountry("USA");
+
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        assertEquals("1", trustee.getServiceAddress().getPropertyNameNumber());
+        assertEquals("Broadway", trustee.getServiceAddress().getLine1());
+        assertEquals("New York", trustee.getServiceAddress().getTown());
+        assertEquals("USA", trustee.getServiceAddress().getCountry());
     }
 
     @Test
