@@ -62,7 +62,7 @@ public class TrustCorporateValidator {
                     } else if (isSameAddressFlagValid && Boolean.TRUE
                             .equals(trustCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
                         validateServiceAddressIsNotSupplied(TrustCorporateDto.SERVICE_ADDRESS_FIELD,
-                                trustCorporateDto.getServiceAddress(), errors, loggingContext);
+                                trustCorporateDto.getServiceAddressFromFields(), errors, loggingContext);
                     }
 
                     validateIdentificationLegalForm(trustCorporateDto.getIdentificationLegalForm(), errors,

@@ -177,7 +177,7 @@ public class TrustIndividualValidator {
         } else if (isSameAddressFlagValid
                 && Boolean.TRUE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
             validateOtherAddressIsNotSupplied(ManagingOfficerIndividualDto.SERVICE_ADDRESS_FIELD,
-                    trustIndividualDto.getServiceAddress(), errors, loggingContext);
+                    trustIndividualDto.getServiceAddressFromFields(), errors, loggingContext);
         }
 
     }
