@@ -83,5 +83,4 @@ public class TrustDataDao {
     public void setCorporates(List<TrustCorporateDao> corporates) {
         this.corporates = corporates;
     }
-
 }

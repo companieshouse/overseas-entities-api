@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataToReviewDto;
 
 public class UpdateDto {
 
@@ -64,7 +64,7 @@ public class UpdateDto {
     private List<ManagingOfficerCorporateDto> reviewManagingOfficersCorporate;
 
     @JsonProperty(REVIEW_TRUSTS_FIELD)
-    private List<TrustDataDto> reviewTrusts;
+    private List<TrustDataToReviewDto> reviewTrusts;
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -154,11 +154,11 @@ public class UpdateDto {
         this.reviewManagingOfficersCorporate = managingOfficersCorporate;
     }
 
-    public List<TrustDataDto> getReviewTrusts() {
+    public List<TrustDataToReviewDto> getReviewTrusts() {
         return reviewTrusts;
     }
 
-    public void setReviewTrusts(List<TrustDataDto> reviewTrusts) {
+    public void setReviewTrusts(List<TrustDataToReviewDto> reviewTrusts) {
         this.reviewTrusts = reviewTrusts;
     }
 }

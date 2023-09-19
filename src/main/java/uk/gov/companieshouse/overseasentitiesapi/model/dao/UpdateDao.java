@@ -4,7 +4,8 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
+
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataToReviewDao;
 
 public class UpdateDao {
 
@@ -43,7 +44,7 @@ public class UpdateDao {
     private List<ManagingOfficerCorporateDao> reviewManagingOfficersCorporate;
 
     @Field("review_trusts")
-    private List<TrustDataDao> reviewTrusts;
+    private List<TrustDataToReviewDao> reviewTrusts;
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -132,11 +133,11 @@ public class UpdateDao {
         this.reviewManagingOfficersCorporate = reviewManagingOfficersCorporate;
     }
 
-    public List<TrustDataDao> getReviewTrusts() {
+    public List<TrustDataToReviewDao> getReviewTrusts() {
         return reviewTrusts;
     }
 
-    public void setReviewTrusts(List<TrustDataDao> reviewTrusts) {
+    public void setReviewTrusts(List<TrustDataToReviewDao> reviewTrusts) {
         this.reviewTrusts = reviewTrusts;
     }
 }

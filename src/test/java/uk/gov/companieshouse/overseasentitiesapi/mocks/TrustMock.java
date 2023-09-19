@@ -1,21 +1,14 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrustMock {
-    public static TrustDataDao getTrustDataDao()  {
-        TrustDataDao trustDataDao = new TrustDataDao();
+    private static void populateCommonTrustDataDao(TrustDataDao trustDataDao) {
         trustDataDao.setTrustName("Trust Name");
         trustDataDao.setCreationDate(LocalDate.of(1990, 1, 1));
         trustDataDao.setTrustId("TrustID");
@@ -36,28 +29,39 @@ public class TrustMock {
         TrustCorporateDao trustCorporateDao = getTrustCorporateDao();
         trustCorporateDaos.add(trustCorporateDao);
         trustDataDao.setCorporates(trustCorporateDaos);
-
-        return trustDataDao;
     }
 
-    public static HistoricalBeneficialOwnerDao getHistoricalBeneficialOwnerDao()  {
+    public static TrustDataDao getTrustDataDao() {
+        TrustDataDao trustData = new TrustDataDao();
+        populateCommonTrustDataDao(trustData);
+        return trustData;
+    }
+
+    public static TrustDataToReviewDao getTrustDataToReviewDao() {
+        TrustDataToReviewDao trustData = new TrustDataToReviewDao();
+        populateCommonTrustDataDao(trustData);
+        trustData.setReviewStatus(getTrustReviewStatusDao());
+        return trustData;
+    }
+
+    public static HistoricalBeneficialOwnerDao getHistoricalBeneficialOwnerDao() {
         HistoricalBeneficialOwnerDao dao = new HistoricalBeneficialOwnerDao();
         dao.setForename("Test");
         dao.setOtherForenames("Other");
         dao.setSurname("Hbo");
-        dao.setCeasedDate(LocalDate.of(1990,1,1));
-        dao.setNotifiedDate(LocalDate.of(1990,1,1));
+        dao.setCeasedDate(LocalDate.of(1990, 1, 1));
+        dao.setNotifiedDate(LocalDate.of(1990, 1, 1));
         dao.setCorporateIndicator(false);
 
         return dao;
     }
 
-    public static HistoricalBeneficialOwnerDao getHistoricalBeneficialOwnerCorporateDao()  {
+    public static HistoricalBeneficialOwnerDao getHistoricalBeneficialOwnerCorporateDao() {
         HistoricalBeneficialOwnerDao dao = new HistoricalBeneficialOwnerDao();
         dao.setCorporateName("Test Company");
         dao.setCorporateIndicator(true);
-        dao.setCeasedDate(LocalDate.of(1990,1,1));
-        dao.setNotifiedDate(LocalDate.of(1990,1,1));
+        dao.setCeasedDate(LocalDate.of(1990, 1, 1));
+        dao.setNotifiedDate(LocalDate.of(1990, 1, 1));
 
         return dao;
     }
@@ -97,8 +101,16 @@ public class TrustMock {
         return dao;
     }
 
-    public static TrustDataDto getTrustDataDto()  {
-        TrustDataDto trustDataDto = new TrustDataDto();
+    public static TrustReviewStatusDao getTrustReviewStatusDao() {
+        TrustReviewStatusDao review = new TrustReviewStatusDao();
+        review.setInReview(true);
+        review.setReviewedFormerBOs(false);
+        review.setReviewedIndividuals(true);
+        review.setReviewedLegalEntities(false);
+        return review;
+    }
+
+    private static void populateCommonTrustDataDto(TrustDataDto trustDataDto) {
         trustDataDto.setTrustName("Trust Name");
         trustDataDto.setCreationDate(LocalDate.of(1990, 1, 1));
         trustDataDto.setTrustId("TrustID");
@@ -119,27 +131,38 @@ public class TrustMock {
         TrustCorporateDto trustCorporateDto = getTrustCorporateDto();
         trustCorporateDtos.add(trustCorporateDto);
         trustDataDto.setCorporates(trustCorporateDtos);
-
-        return trustDataDto;
     }
 
-    public static HistoricalBeneficialOwnerDto getHistoricalBeneficialOwnerDto()  {
+    public static TrustDataDto getTrustDataDto() {
+        TrustDataDto trustData = new TrustDataDto();
+        populateCommonTrustDataDto(trustData);
+        return trustData;
+    }
+
+    public static TrustDataToReviewDto getTrustDataToReviewDto() {
+        TrustDataToReviewDto trustData = new TrustDataToReviewDto();
+        populateCommonTrustDataDto(trustData);
+        trustData.setReviewStatus(getTrustReviewStatusDto());
+        return trustData;
+    }
+
+    public static HistoricalBeneficialOwnerDto getHistoricalBeneficialOwnerDto() {
         HistoricalBeneficialOwnerDto Dto = new HistoricalBeneficialOwnerDto();
         Dto.setForename("Test");
         Dto.setOtherForenames("Other");
         Dto.setSurname("Hbo");
-        Dto.setCeasedDate(LocalDate.of(1990,1,1));
-        Dto.setNotifiedDate(LocalDate.of(1990,1,1));
+        Dto.setCeasedDate(LocalDate.of(1990, 1, 1));
+        Dto.setNotifiedDate(LocalDate.of(1990, 1, 1));
         Dto.setCorporateIndicator(false);
 
         return Dto;
     }
 
-    public static HistoricalBeneficialOwnerDto getHistoricalBeneficialOwnerCorporateDto()  {
+    public static HistoricalBeneficialOwnerDto getHistoricalBeneficialOwnerCorporateDto() {
         HistoricalBeneficialOwnerDto Dto = new HistoricalBeneficialOwnerDto();
         Dto.setCorporateName("Test Company");
-        Dto.setCeasedDate(LocalDate.of(1990,1,1));
-        Dto.setNotifiedDate(LocalDate.of(1990,1,1));
+        Dto.setCeasedDate(LocalDate.of(1990, 1, 1));
+        Dto.setNotifiedDate(LocalDate.of(1990, 1, 1));
         Dto.setCorporateIndicator(true);
 
         return Dto;
@@ -178,5 +201,14 @@ public class TrustMock {
         Dto.setOnRegisterInCountryFormedIn(true);
 
         return Dto;
+    }
+
+    public static TrustReviewStatusDto getTrustReviewStatusDto() {
+        TrustReviewStatusDto review = new TrustReviewStatusDto();
+        review.setInReview(true);
+        review.setReviewedFormerBOs(false);
+        review.setReviewedIndividuals(true);
+        review.setReviewedLegalEntities(false);
+        return review;
     }
 }
