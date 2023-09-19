@@ -619,6 +619,12 @@
         "name" : "string",
         "creation_date" : "2022-06-10",
         "unable_to_obtain_all_trust_info" : true,
+        "review_status": {
+          "in_review": false,
+          "reviewed_former_bos": true,
+          "reviewed_individuals": true,
+          "reviewed_legal_entities": false
+        },
         "historical_beneficial_owners" : [
           {
             "forename" : "string",

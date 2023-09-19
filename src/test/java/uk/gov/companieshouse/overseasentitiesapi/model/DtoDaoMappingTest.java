@@ -22,10 +22,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.ManagingOfficerIndividualDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.BeneficialOwnerGovernmentOrPublicAuthorityDao;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.UpdateDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.*;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -40,10 +37,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -147,19 +141,24 @@ class DtoDaoMappingTest {
         managingOfficersCorporateDao.add(managingOC);
         overseasEntitySubmission.setManagingOfficersCorporate(managingOfficersCorporateDao);
 
-        UpdateDao updateDao = new UpdateDao();
-        updateDao.setDateOfCreation(LocalDate.of(2020,1,1));
-        updateDao.setBoMoDataFetched(false);
-        updateDao.setTrustDataFetched(false);
-        List<TrustDataDao> reviewTrusts = new ArrayList<>();
-        updateDao.setReviewTrusts(reviewTrusts);
-        updateDao.setRegistrableBeneficialOwner(false);
-        overseasEntitySubmission.setUpdate(updateDao);
-
         List<TrustDataDao> trustDataDao = new ArrayList<>();
         TrustDataDao trustData = TrustMock.getTrustDataDao();
         trustDataDao.add(trustData);
         overseasEntitySubmission.setTrusts(trustDataDao);
+
+        UpdateDao updateDao = new UpdateDao();
+        updateDao.setDateOfCreation(LocalDate.of(2020,1,1));
+        updateDao.setBoMoDataFetched(false);
+        updateDao.setRegistrableBeneficialOwner(false);
+
+        List<TrustDataToReviewDao> reviewTrusts = new ArrayList<>();
+        TrustDataToReviewDao trustToReviewData = TrustMock.getTrustDataToReviewDao();
+        reviewTrusts.add(trustToReviewData);
+
+        updateDao.setTrustDataFetched(true);
+        updateDao.setReviewTrusts(reviewTrusts);
+
+        overseasEntitySubmission.setUpdate(updateDao);
 
         return overseasEntitySubmission;
     }
@@ -210,10 +209,10 @@ class DtoDaoMappingTest {
         overseasEntitySubmission.setBeneficialOwnersIndividual(beneficialOwnersIndividual);
 
         List<BeneficialOwnerCorporateDto> beneficialOwnersCorporate = new ArrayList<>();
-        BeneficialOwnerCorporateDto coroporateBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
-        coroporateBo.setPrincipalAddress(address);
-        coroporateBo.setServiceAddress(address);
-        beneficialOwnersCorporate.add(coroporateBo);
+        BeneficialOwnerCorporateDto corporateBo = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        corporateBo.setPrincipalAddress(address);
+        corporateBo.setServiceAddress(address);
+        beneficialOwnersCorporate.add(corporateBo);
         overseasEntitySubmission.setBeneficialOwnersCorporate(beneficialOwnersCorporate);
 
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnersGovernmentOrPublicAuthority = new ArrayList<>();
@@ -238,8 +237,12 @@ class DtoDaoMappingTest {
         updateDto.setFilingDate(LocalDate.of(2023,1,2));
         updateDto.setBoMoDataFetched(false);
         updateDto.setRegistrableBeneficialOwner(false);
+
+        List<TrustDataToReviewDto> reviewTrusts = new ArrayList<>();
+        TrustDataToReviewDto trustToReviewData = TrustMock.getTrustDataToReviewDto();
+        reviewTrusts.add(trustToReviewData);
+
         updateDto.setTrustDataFetched(false);
-        List<TrustDataDto> reviewTrusts = new ArrayList<>();
         updateDto.setReviewTrusts(reviewTrusts);
 
         overseasEntitySubmission.setUpdate(updateDto);
@@ -435,7 +438,23 @@ class DtoDaoMappingTest {
         assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
         assertEquals(updateDto.isNoChange(), updateDao.isNoChange());
         assertEquals(updateDto.isTrustDataFetched(), updateDao.isTrustDataFetched());
-        assertEquals(updateDto.getReviewTrusts(), updateDao.getReviewTrusts());
+        assertTrustsToReviewAreEqual(updateDto, updateDao);
+    }
+
+    private void assertTrustsToReviewAreEqual(UpdateDto updateDto, UpdateDao updateDao) {
+        TrustDataToReviewDao trustDao = updateDao.getReviewTrusts().get(0);
+        TrustDataToReviewDto trustDto = updateDto.getReviewTrusts().get(0);
+
+        assertEquals(trustDto.getTrustName(), trustDao.getTrustName());
+        assertEquals(trustDto.getCreationDate(), trustDao.getCreationDate());
+        assertEquals(trustDto.getUnableToObtainAllTrustInfo(), trustDao.isUnableToObtainAllTrustInfo());
+
+        assertTrustIndividualsAreEqual(trustDto.getIndividuals().get(0), trustDao.getIndividuals().get(0));
+        assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(0), trustDao.getHistoricalBeneficialOwners().get(0));
+        assertTrustHistoricalBeneficialOwnerAreEqual(trustDto.getHistoricalBeneficialOwners().get(1), trustDao.getHistoricalBeneficialOwners().get(1));
+        assertTrustCorporatesAreEqual(trustDto.getCorporates().get(0), trustDao.getCorporates().get(0));
+
+        assertTrustReviewAreEqual(trustDto.getReviewStatus(), trustDao.getReviewStatus());
     }
 
     private void assertTrustIndividualsAreEqual(TrustIndividualDto dto, TrustIndividualDao dao) {
@@ -469,6 +488,13 @@ class DtoDaoMappingTest {
         assertEquals(dto.getIdentificationPlaceRegistered(), dao.getIdentificationPlaceRegistered());
         assertEquals(dto.getIdentificationRegistrationNumber(), dao.getIdentificationRegistrationNumber());
         assertEquals(dto.getOnRegisterInCountryFormedIn(), dao.getOnRegisterInCountryFormedIn());
+    }
+
+    private void assertTrustReviewAreEqual(TrustReviewStatusDto dto, TrustReviewStatusDao dao) {
+        assertEquals(dto.getInReview(), dao.getInReview());
+        assertEquals(dto.getReviewedFormerBOs(), dao.getReviewedFormerBOs());
+        assertEquals(dto.getReviewedIndividuals(), dao.getReviewedIndividuals());
+        assertEquals(dto.getReviewedLegalEntities(), dao.getReviewedLegalEntities());
     }
 
     private void assertAddressesAreEqual(AddressDto dto, AddressDao dao) {
