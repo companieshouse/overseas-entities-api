@@ -4,7 +4,7 @@ import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,11 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TestUtils;
 
 import java.io.File;
@@ -26,6 +30,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,25 +39,51 @@ import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConve
 
 /**
  * If any of the tests in this class start failing it's likely due to a DTO model structure change which is an indication
- * of potential issues for clients that still need to be able to work with Mongo records created using older versions of
- * the data model.
+ * of potential - current or future - issues for clients that still need to be able to work with Mongo records created
+ * using older versions of the data model.
  *
- * If the data model structure has been modified, consideration will need to be given to how the web - and other -
+ * If the data model structure has been modified, consideration needs to be given to how the web - and other -
  * clients of the OE API end-points will deal with older versions of the model structure and ultimately how older
- * versions of the model structure can be loaded into the newly changed DAO and DTO models. Changes will probably
- * need to be made to the Mongo custom 'converters'.
+ * versions of the model structure can be loaded into the newly changed DAO and DTO models. Among other things, a new,
+ * Mongo, custom 'transformer' class may need to be written.
  *
- * Once those things have been considered and addressed, existing tests should pass again. Then, a file with the new JSON
- * model structure should be added to the test resources folder and a new test added to successfully read and process
- * the new, up-to-date DAO/DTO structure.
+ * If a non-breaking change to the model has been made - e.g. a new data field has simply been added to a DTO and DAO -
+ * the 'current' test JSON file needs updating to avoid a null check failure (this essentially future-proofs the test,
+ * which will potentially fail if the datatype of the newly added field ever changes).
  *
- * Note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not loaded
- * during this test (as the specific in-memory Mongo DB config needs to be picked up).
+ * If a breaking change to the model has been made - e.g. a data field has changed its type from String to a custom POJO -
+ * after a new 'transformer' has been implemented, a file with the new JSON model structure should be added to the test
+ * resources folder and the <code>OLD_JSON_MODEL_FILENAMES</code> and <code>CURRENT_JSON_MODEL_FILENAME</code> constants
+ * updated, in order that the new, up-to-date DAO/DTO structure is fully tested.
+ *
+ * Finally, note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not
+ * loaded during this test (as the specific in-memory Mongo DB config needs to be picked up).
  */
 @AutoConfigureDataMongo
 @SpringBootTest
 @ActiveProfiles("test")
 class DtoModelChangeTest {
+
+    private static final Logger LOGGER = Logger.getLogger(DtoModelChangeTest.class.getName());
+
+    private static final String[] HISTORICAL_JSON_MODEL_FILENAMES = {
+            "overseas_entity_v_1_0.json",
+            "overseas_entity_v_2_0.json",
+            "overseas_entity_v_3_0.json" };
+
+    /**
+     * If the DTO model changes and it is a 'breaking change', the current filename must be added to the
+     * <code>HISTORICAL_JSON_MODEL_FILENAMES</code> list and a new test JSON file will need to be created and then
+     * referenced here.
+     */
+    private static final String CURRENT_JSON_MODEL_FILENAME = "overseas_entity_v_3_1.json";
+
+    /**
+     * Allows the list to be used as input to a JUnit parameterised test (see below).
+     */
+    private static List<String> getHistoricalJsonModelFilenames() {
+        return Arrays.asList(HISTORICAL_JSON_MODEL_FILENAMES);
+    }
 
     private static final String TEST_COLLECTION_NAME = "TestCollection";
 
@@ -76,14 +107,13 @@ class DtoModelChangeTest {
         MappingMongoConverter converter = (MappingMongoConverter) mongoTemplate.getConverter();
         MappingContext mappingContext = converter.getMappingContext();
 
-        // transformer factory argument instructs mongodb to use the custom converters
+        // The transformer factory argument instructs mongodb to use the custom converters
         converter.setCustomConversions(getMongoCustomConversions(mongoTemplate.getMongoDatabaseFactory(), transformerFactory, mappingContext));
         converter.afterPropertiesSet();
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"overseas_entity_v_1_0.json", "overseas_entity_v_2_0.json",
-                            "overseas_entity_v_3_0.json" })
+    @MethodSource("getHistoricalJsonModelFilenames")
     void testCanGenerateDtoModelFromAllHistoricalJsonVersions(String fileName) {
 
         loadJsonDataIntoMongo(fileName);
@@ -96,7 +126,7 @@ class DtoModelChangeTest {
     @Test
     void testCanGenerateDtoModelFromCurrentJsonVersion() {
 
-        loadJsonDataIntoMongo("overseas_entity_v_3_1.json");
+        loadJsonDataIntoMongo(CURRENT_JSON_MODEL_FILENAME);
 
         List<OverseasEntitySubmissionDao> submissions = mongoTemplate.findAll(OverseasEntitySubmissionDao.class, TEST_COLLECTION_NAME);
 
@@ -137,9 +167,8 @@ class DtoModelChangeTest {
      * @param object The DTO object to check. If the DTO itself contains other DTOs, they will also be checked.
      */
     private void checkNoDtoModelFieldsAreNull(Object object) {
-        // TODO Change all System.outs to logger calls
         String className = object.getClass().getName();
-        System.out.println("\nCheck for nulls in " + className + ":\n");
+        LOGGER.info("Check for nulls in " + className + ":");
 
         Field[] allFields = object.getClass().getDeclaredFields();
 
@@ -148,25 +177,26 @@ class DtoModelChangeTest {
 
             try {
                 if (!Modifier.isStatic(field.getModifiers())) {
-
-                    // TODO The 'ignoreForNow' method will go, when current JSON file has been updated to have all fields present in it
                     String fieldName = field.getName();
-                    if (!ignoreForNow(className, fieldName)) {
-                        System.out.println("Checking:" + fieldName);
+
+                    // If a field is present in the DTO model but not the DAO model, then it won't be saved
+                    // to - or present in - Mongo and therefore doesn't need to be checked
+                    if (isDtoFieldPresentInDaoModelOrMongo(className, fieldName)) {
+                        LOGGER.info("Checking: " + fieldName);
 
                         Object nestedDtoObject = field.get(object);
 
                         if (nestedDtoObject == null) {
-                            fail("Unexpected null value for field '" + fieldName + "'");
+                            fail("Unexpected NULL value for field '" + fieldName + "'. This indicates that the DTO/DAO structure "
+                                    + "has been updated without the new fields being added to the latest version of the test JSON file");
                         } else if (field.getClass().isPrimitive()
-                                // TODO In the future, other object types might need to be added here, e.g. Integer
-                                //      (not sure this would occur, most JSON values are stored as strings...)
+                                // Unlikely, but in the future, other object types might need to be added here, e.g. Integer
                                 || nestedDtoObject instanceof String
                                 || nestedDtoObject instanceof Boolean
                                 || nestedDtoObject instanceof LocalDate
                                 // Don't recursively inspect any lists or maps that just contain simple collections of strings
                                 || isAListOrMapOfStrings(nestedDtoObject)) {
-                            System.out.println("Value = " + nestedDtoObject);
+                            LOGGER.info("Value = " + nestedDtoObject);
                         } else {
                             if (nestedDtoObject instanceof Map) {
                                 ((Map) nestedDtoObject).forEach((key, value) -> checkNoDtoModelFieldsAreNull(value));
@@ -196,19 +226,16 @@ class DtoModelChangeTest {
         return false;
     }
 
-    private boolean ignoreForNow(String className, String fieldName) {
-        // TODO Set values for these fields in the 'overseas_entity_v_3_1.json'
-        return
-                (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDTO") && fieldName.startsWith("saAddress"))
-                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto") && fieldName.startsWith("saAddress"))
-                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDTO") && fieldName.startsWith("uraAddress"))
-                || (className.equalsIgnoreCase("uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto") && fieldName.startsWith("roAddress"))
-
-                // TODO Having looked into this a bit more, I now think this is a valid exclusion as there is no corresponding
-                //      'trustData' field on the DAO. The DTO field is only populated by the FilingsService, so not related
-                //      to data coming from Mongo/JSON (and if its datatype ever changed that would presumably be picked up
-                //      by a compile-time failure)
-                || fieldName.equals("trustData");
+    private boolean isDtoFieldPresentInDaoModelOrMongo(String className, String fieldName) {
+        // These fields are valid exclusions from the null checks as there are no corresponding fields in the DAOs. The
+        // DTO fields are only populated when the FilingsService is building a data structure to send to CHIPS, so not
+        // related to JSON data being read from Mongo
+        return !((className.equalsIgnoreCase(BeneficialOwnerIndividualDto.class.getName()) && fieldName.equals("trustData"))
+                || (className.equalsIgnoreCase(BeneficialOwnerCorporateDto.class.getName()) && fieldName.startsWith("trustData"))
+                || (className.equalsIgnoreCase(TrustIndividualDto.class.getName()) && fieldName.startsWith("saAddress"))
+                || (className.equalsIgnoreCase(TrustCorporateDto.class.getName()) && fieldName.startsWith("saAddress"))
+                || (className.equalsIgnoreCase(TrustIndividualDto.class.getName()) && fieldName.startsWith("uraAddress"))
+                || (className.equalsIgnoreCase(TrustCorporateDto.class.getName()) && fieldName.startsWith("roAddress")));
     }
 
     private void loadJsonDataIntoMongo(String filename) {

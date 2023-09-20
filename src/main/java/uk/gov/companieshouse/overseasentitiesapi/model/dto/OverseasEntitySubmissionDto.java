@@ -36,13 +36,6 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(ENTITY_NUMBER_FIELD)
     private String entityNumber;
 
-    // TODO Uncomment this field with getter and setter here and in the DAO. Run test - it will fail as new field not
-    //      mapped with a value from JSON. Then add "new_field_not_in_json" : "A VALUE", to the JSON and test should
-    //      once again pass
-
-//    @JsonProperty("newFieldNotInJson")
-//    private String newFieldNotInJson;
-
     @JsonProperty(PRESENTER_FIELD)
     private PresenterDto presenter;
 
@@ -91,14 +84,6 @@ public class OverseasEntitySubmissionDto {
     public EntityNameDto getEntityName() {
         return entityName;
     }
-
-//    public void setNewFieldNotInJson(String newFieldNotInJson) {
-//        this.newFieldNotInJson = newFieldNotInJson;
-//    }
-//
-//    public String getNewFieldNotInJson() {
-//        return newFieldNotInJson;
-//    }
 
     public void setEntityNumber(String entityNumber) {
         this.entityNumber = entityNumber;
