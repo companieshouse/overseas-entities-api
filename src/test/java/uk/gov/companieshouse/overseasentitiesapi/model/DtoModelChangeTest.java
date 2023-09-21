@@ -52,9 +52,10 @@ import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConve
  * which will potentially fail if the datatype of the newly added field ever changes).
  *
  * If a breaking change to the model has been made - e.g. a data field has changed its type from String to a custom POJO -
- * after a new 'transformer' has been implemented, a file with the new JSON model structure should be added to the test
- * resources folder and the <code>OLD_JSON_MODEL_FILENAMES</code> and <code>CURRENT_JSON_MODEL_FILENAME</code> constants
- * updated, in order that the new, up-to-date DAO/DTO structure is fully tested.
+ * after a new 'transformer' has been implemented and a new <code>SchemaVersion</> enum value added, a file with the new
+ * JSON model structure should be added to the test resources folder and the <code>OLD_JSON_MODEL_FILENAMES</code> and
+ * <code>CURRENT_JSON_MODEL_FILENAME</code> constants updated, in order that the new, up-to-date DAO/DTO structure is
+ * fully tested.
  *
  * Finally, note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not
  * loaded during this test (as the specific in-memory Mongo DB config needs to be picked up).
