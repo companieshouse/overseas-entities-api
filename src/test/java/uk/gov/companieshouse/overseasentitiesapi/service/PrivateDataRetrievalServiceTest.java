@@ -7,12 +7,16 @@ import static org.mockito.Mockito.when;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,25 +29,35 @@ import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.beneficialowner.PrivateBeneficialOwnerResourceHandler;
 import uk.gov.companieshouse.api.handler.beneficialowner.request.PrivateBeneficialOwnerGet;
+import uk.gov.companieshouse.api.handler.corporatetrustee.PrivateCorporateTrusteesResourceHandler;
+import uk.gov.companieshouse.api.handler.corporatetrustee.request.PrivateCorporateTrusteesGet;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.managingofficerdata.PrivateManagingOfficerDataResourceHandler;
 import uk.gov.companieshouse.api.handler.managingofficerdata.request.PrivateManagingOfficerDataGet;
+import uk.gov.companieshouse.api.handler.trusts.PrivateTrustDetailsResourceHandler;
+import uk.gov.companieshouse.api.handler.trusts.request.PrivateTrustDetailsGet;
 import uk.gov.companieshouse.api.handler.update.PrivateOverseasEntityDataHandler;
 import uk.gov.companieshouse.api.handler.update.request.PrivateOverseasEntityDataGet;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
+import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeApi;
+import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 @ExtendWith(MockitoExtension.class)
 class PrivateDataRetrievalServiceTest {
 
   private static final String COMPANY_NUMBER = "OE123456";
+
+  private ByteArrayOutputStream outputStreamCaptor;
 
   @InjectMocks
   private PrivateDataRetrievalService privateDataRetrievalService;
@@ -81,7 +95,32 @@ class PrivateDataRetrievalServiceTest {
   @Mock
   private PrivateManagingOfficerDataGet privateManagingOfficerDataGet;
 
-  private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
+  //////////
+
+  @Mock
+  private PrivateCorporateTrusteesResourceHandler privateCorporateTrusteesResourceHandler;
+
+  @Mock
+  private PrivateCorporateTrusteesGet privateCorporateTrusteesGet;
+
+  @Mock
+  private ApiResponse<PrivateCorporateTrusteeListApi> apiCorporateTrusteeListGetResponse;
+
+  /////////
+
+  @Mock
+  private PrivateTrustDetailsResourceHandler privateTrustDetailsResourceHandler;
+
+  @Mock
+  private PrivateTrustDetailsGet privateTrustDetailsGet;
+
+  @Mock
+  private ApiResponse<PrivateTrustDetailsListApi> apiTrustDetailsGetResponse;
+
+  @Mock
+  private HashHelper hashHelper;
+
+  private static final ApiErrorResponseException FOUR_HUNDRED_AND_FOUR_EXCEPTION = ApiErrorResponseException.fromHttpResponseException(
       new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
 
   private final String jsonManagingOfficerString = "[" +
@@ -304,7 +343,7 @@ class PrivateDataRetrievalServiceTest {
         throws ApiErrorResponseException, URIValidationException, ServiceException {
 
       when(privateOverseasEntityDataGet.execute())
-          .thenThrow(FourHundredAndFourException);
+          .thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
       OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
 
@@ -466,7 +505,7 @@ class PrivateDataRetrievalServiceTest {
       when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
       when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
 
-      when(privateBeneficialOwnerGet.execute()).thenThrow(FourHundredAndFourException);
+      when(privateBeneficialOwnerGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
       assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
       assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER), new PrivateBoDataListApi(Collections.emptyList()));
@@ -490,11 +529,120 @@ class PrivateDataRetrievalServiceTest {
       when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
       when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
 
-      when(privateManagingOfficerDataGet.execute()).thenThrow(FourHundredAndFourException);
+      when(privateManagingOfficerDataGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
       assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
       assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
       assertEquals(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER), new ManagingOfficerListDataApi(Collections.emptyList()));
     }
   }
+
+  @Nested
+  class CorporateTrusteesTests {
+
+    @BeforeEach
+    public void setUp() throws IOException, URIValidationException {
+      // Assuming that apiClientService, apiClient, and the other dependencies are
+      // correctly mocked and injected in a similar manner as in the ManagingOfficerTests class
+      when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+      var privateTrustDetailsListApi = new PrivateTrustDetailsListApi(Collections.emptyList());
+
+
+      // Corporate Trustee Data Mocks
+      when(apiClient.privateCorporateTrusteeDataResourceHandler()).thenReturn(
+              privateCorporateTrusteesResourceHandler);
+      when(privateCorporateTrusteesResourceHandler.getCorporateTrusteeData(Mockito.anyString())).thenReturn(
+              privateCorporateTrusteesGet);
+
+
+      when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(
+              privateTrustDetailsResourceHandler);
+      when(privateTrustDetailsResourceHandler.getTrustDetails(Mockito.anyString())).thenReturn(
+              privateTrustDetailsGet);
+      when(privateTrustDetailsGet.execute()).thenReturn(apiTrustDetailsGetResponse);
+      when(apiTrustDetailsGetResponse.getData()).thenReturn(privateTrustDetailsListApi);
+      outputStreamCaptor = new ByteArrayOutputStream();
+    }
+
+    @AfterEach
+    void tearDown() {
+      outputStreamCaptor.reset();
+      System.setOut(System.out);
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenGetCorporateTrusteesThrowsURIValidationException() throws IOException, URIValidationException {
+      when(privateCorporateTrusteesGet.execute()).thenThrow(new URIValidationException("ERROR"));
+
+      assertThrows(
+              ServiceException.class,
+              () -> {
+                privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
+              });
+    }
+
+    @Test
+    void testServiceExceptionThrownWhenGetCorporateTrusteesThrowsIOException() throws IOException, URIValidationException {
+      when(privateCorporateTrusteesGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+
+      assertThrows(
+              ServiceException.class,
+              () -> {
+                privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
+              });
+    }
+
+    @Test
+    void testNoCorporateTrusteesFound()
+            throws ServiceException, ApiErrorResponseException, URIValidationException {
+      var privateCorporateTrusteeListApi = new PrivateCorporateTrusteeListApi(Collections.emptyList());
+
+      when(privateCorporateTrusteesGet.execute()).thenReturn(apiCorporateTrusteeListGetResponse);
+      when(apiCorporateTrusteeListGetResponse.getData()).thenReturn(privateCorporateTrusteeListApi);
+
+      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
+
+      assertTrue(result.getData().isEmpty());
+    }
+
+    @Test
+    void testNoCorporateTrusteesFoundWith404StatusCode()
+            throws ServiceException, ApiErrorResponseException, URIValidationException {
+      var privateCorporateTrusteeApi = new PrivateCorporateTrusteeApi();
+      privateCorporateTrusteeApi.setId("1111");
+
+
+      when(privateCorporateTrusteesGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
+
+      System.setOut(new PrintStream(outputStreamCaptor));
+
+      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
+
+      assertEquals(0, result.getData().size());
+      assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"No Corporate Trustee found for Trust Id hashedTrustId123"));
+
+    }
+
+    @Test
+    void testCorporateTrusteesFound()
+            throws ServiceException, ApiErrorResponseException, URIValidationException {
+
+      var privateCorporateTrusteeApi = new PrivateCorporateTrusteeApi();
+      privateCorporateTrusteeApi.setId("1111");
+
+      var privateCorporateTrusteeListApi = new PrivateCorporateTrusteeListApi(List.of(privateCorporateTrusteeApi));
+
+      when(privateCorporateTrusteesGet.execute()).thenReturn(apiCorporateTrusteeListGetResponse);
+      when(apiCorporateTrusteeListGetResponse.getData()).thenReturn(privateCorporateTrusteeListApi);
+
+      System.setOut(new PrintStream(outputStreamCaptor));
+
+      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
+
+      assertEquals(1, result.getData().size());
+      assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"Retrieved 1 Trusts for Company Number hashedTrustId123"));
+
+    }
+  }
+
 }
