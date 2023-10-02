@@ -131,15 +131,14 @@ public class PrivateDataRetrievalService {
 
     try {
       PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
-              .privateTrustsResourceHandler()
+              .privateTrustDetailsResourceHandler()
               .getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
               .execute()
               .getData();
 
-      if (trusts != null && trusts.getTrustDetailsList() != null
-              && !trusts.getTrustDetailsList().isEmpty()) {
+      if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
         ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
-                trusts.getTrustDetailsList().size(), companyNumber));
+                trusts.getData().size(), companyNumber));
       }
 
       return trusts;

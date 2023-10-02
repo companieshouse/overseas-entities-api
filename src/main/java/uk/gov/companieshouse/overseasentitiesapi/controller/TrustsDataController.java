@@ -1,18 +1,27 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
+import uk.gov.companieshouse.api.model.utils.Hashable;
+import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
+import uk.gov.companieshouse.overseasentitiesapi.utils.Constants;
+import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
@@ -24,6 +33,13 @@ public class TrustsDataController {
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
+
+    @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
+    private String salt;
+
+    private HashHelper hashHelper = new HashHelper(salt);
+
+    private Map<String, Object> logMap;
 
     @Autowired
     public TrustsDataController(
@@ -39,53 +55,84 @@ public class TrustsDataController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNumber == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Callable<PrivateTrustDetailsListApi> function =
+                () -> privateDataRetrievalService.getTrustDetails(companyNumber);
+        return checkSubmissionDto(function, requestId, "trust details");
+    }
 
-        HashMap<String, Object> logMap = new HashMap<>();
-        logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
-        logMap.put(TRANSACTION_ID_KEY, transactionId);
+    private Map makeLogMap(String transactionId, String overseasEntityId) {
+        return Map.of(
+                Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                Constants.TRANSACTION_ID_KEY, transactionId
+        );
+    }
+
+    public String getCompanyNumber(String overseasEntityId, String requestId) throws ServiceException {
         ApiLogger.infoContext(requestId,
                 "Calling Overseas Entities Service to retrieve private trust data for overseas entity "
                         + overseasEntityId, logMap);
+        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
+                overseasEntityId);
 
-        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        if (!submissionDtoOptional.isPresent()) {
+            ApiLogger.errorContext(requestId,
+                    "Could not find overseas entity submission for overseas entity "
+                            + overseasEntityId, null, logMap);
+            return null;
+        }
 
-        if (submissionDtoOptional.isPresent()) {
-            final var submissionDto = submissionDtoOptional.get();
+        final var submissionDto = submissionDtoOptional.get();
 
-            if (!submissionDto.isForUpdate()) {
-                throw new ServiceException("Submission for overseas entity details must be for update");
+        if (!submissionDto.isForUpdate()) {
+            throw new ServiceException(
+                    "Submission for overseas entity details must be for update");
+        }
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException(
+                    "ROE Update feature must be enabled for get overseas entity details");
+        }
+
+        return submissionDto.getEntityNumber();
+    }
+
+
+    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> checkSubmissionDto(
+            Callable<T> supplier,
+            String requestId,
+            String logPart) {
+        try {
+            T dataList = supplier.call();
+
+            if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
+                ApiLogger.errorContext(requestId,
+                        "Could not find any " + logPart + " for overseas entity "
+                                + logMap.get(Constants.OVERSEAS_ENTITY_ID_KEY),
+                        null, logMap);
+                return ResponseEntity.notFound().build();
             }
-
-            if (!isRoeUpdateEnabled) {
-                throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
+            for (var data : dataList) {
+                hashId(data);
             }
-
-            return retrievePrivateTrustData(submissionDto, overseasEntityId, requestId, logMap);
-        } else {
-            ApiLogger.errorContext(requestId, "Could not find overseas entity submission for overseas entity "
-                    + overseasEntityId, null, logMap);
-            return ResponseEntity.notFound().build();
+            ApiLogger.infoContext(requestId, "Successfully retrieved " + logPart, logMap);
+            return ResponseEntity.ok(dataList);
+        } catch (Exception e) {
+            ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private ResponseEntity<PrivateTrustDetailsListApi> retrievePrivateTrustData(
-            OverseasEntitySubmissionDto submissionDto, String overseasEntityId, String requestId,
-            HashMap<String, Object> logMap) {
+    private void hashId(Hashable hashableData) throws ServiceException {
         try {
-            PrivateTrustDetailsListApi trusts =
-                    privateDataRetrievalService.getTrustDetails(submissionDto.getEntityNumber());
-
-            if (trusts == null || trusts.getTrustDetailsList() == null || trusts.getTrustDetailsList().isEmpty()) {
-                ApiLogger.errorContext(requestId, "Could not find any trust data for overseas entity "
-                        + overseasEntityId, null, logMap);
-                return ResponseEntity.notFound().build();
-            }
-
-            ApiLogger.infoContext(requestId, "Successfully retrieved trust data", logMap);
-            return ResponseEntity.ok(trusts);
-        } catch (ServiceException e) {
-            ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            String hashedId = hashHelper.encode(hashableData.getId());
+            hashableData.setHashedId(hashedId);
+            hashableData.setId(null);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Cannot encode ID", e);
         }
     }
 }
