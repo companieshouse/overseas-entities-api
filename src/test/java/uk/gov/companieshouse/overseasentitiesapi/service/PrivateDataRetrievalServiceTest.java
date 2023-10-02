@@ -520,7 +520,7 @@ class PrivateDataRetrievalServiceTest {
         public void init() throws IOException {
             when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
 
-            when(apiClient.privateTrustsResourceHandler()).thenReturn(privateTrustDetailsResourceHandler);
+            when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(privateTrustDetailsResourceHandler);
             when(privateTrustDetailsResourceHandler.getTrustDetails(Mockito.anyString())).thenReturn(privateTrustDetailsGet);
         }
 
@@ -535,7 +535,7 @@ class PrivateDataRetrievalServiceTest {
             var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
 
             verify(apiClientService, times(1)).getInternalApiClient();
-            assertEquals(1, result.getTrustDetailsList().size());
+            assertEquals(1, result.getData().size());
         }
 
 //    @Test
@@ -560,7 +560,7 @@ class PrivateDataRetrievalServiceTest {
             var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
 
             verify(apiClientService, times(1)).getInternalApiClient();
-            assertEquals(0, result.getTrustDetailsList().size());
+            assertEquals(0, result.getData().size());
         }
 
         @Test

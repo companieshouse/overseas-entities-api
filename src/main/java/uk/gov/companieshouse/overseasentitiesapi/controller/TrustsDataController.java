@@ -44,8 +44,7 @@ public class TrustsDataController {
     @Autowired
     public TrustsDataController(
             final PrivateDataRetrievalService privateDataRetrievalService,
-            final OverseasEntitiesService overseasEntitiesService
-    ) {
+            final OverseasEntitiesService overseasEntitiesService) {
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
     }
