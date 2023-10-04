@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -17,6 +17,8 @@ import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalSer
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.Constants;
 import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
+
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
 @RestController
 @RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/trusts")
@@ -41,6 +43,20 @@ public class TrustsDataController {
         this.hashHelper = new HashHelper(salt);
     }
 
+    @GetMapping("/beneficial-owners/links")
+    public ResponseEntity<PrivateTrustLinksListApi> getTrustLinks(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNumber == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Callable<PrivateTrustLinksListApi> function =
+                () -> privateDataRetrievalService.getTrustLinks(companyNumber);
+        return checkSubmissionDto(function, requestId, "trust links");
+    }
 
     public String getCompanyNumber(String overseasEntityId, String requestId)
             throws ServiceException {
@@ -50,6 +66,7 @@ public class TrustsDataController {
                         + overseasEntityId, logMap);
         final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
                 overseasEntityId);
+        ApiLogger.info("OPTIONAL SUBMISSION DTO IS PRESENT? : " + submissionDtoOptional.toString());
         if (!submissionDtoOptional.isPresent()) {
             ApiLogger.errorContext(requestId,
                     "Could not find overseas entity submission for overseas entity "
@@ -57,13 +74,15 @@ public class TrustsDataController {
             return null;
         }
         final var submissionDto = submissionDtoOptional.get();
-        if (!submissionDto.isForUpdate()) {
-            throw new ServiceException("Submission for overseas entity details must be for update");
-        }
-        if (!isRoeUpdateEnabled) {
-            throw new ServiceException(
-                    "ROE Update feature must be enabled for get overseas entity details");
-        }
+        ApiLogger.info("Submission DTO HERE?: " + submissionDto);
+        ApiLogger.info("COMPANY NUMBER IS: "  + submissionDto.getEntityNumber().toString());
+//        if (!submissionDto.isForUpdate()) {
+//            throw new ServiceException("Submission for overseas entity details must be for update");
+//        }
+//        if (!isRoeUpdateEnabled) {
+//            throw new ServiceException(
+//                    "ROE Update feature must be enabled for get overseas entity details");
+//        }
         return submissionDto.getEntityNumber();
     }
 
@@ -76,7 +95,7 @@ public class TrustsDataController {
             if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
                 ApiLogger.errorContext(requestId,
                         "Could not find any " + logPart + " for overseas entity " + logMap.get(
-                                Constants.OVERSEAS_ENTITY_ID_KEY), null, logMap);
+                                OVERSEAS_ENTITY_ID_KEY), null, logMap);
                 return ResponseEntity.notFound().build();
             }
             for (var data : dataList) {
@@ -93,7 +112,7 @@ public class TrustsDataController {
     private void hashId(Hashable hashableData) throws ServiceException {
         try {
             String hashedId = hashHelper.encode(hashableData.getId());
-            hashableData.setHashId(hashedId);
+            hashableData.setHashedId(hashedId);
             hashableData.setId(null);
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode ID", e);
@@ -101,8 +120,8 @@ public class TrustsDataController {
     }
 
     private Map makeLogMap(String transactionId, String overseasEntityId) {
-        return Map.of(Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
-                Constants.TRANSACTION_ID_KEY, transactionId);
+        return Map.of(OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                TRANSACTION_ID_KEY, transactionId);
     }
 
 
