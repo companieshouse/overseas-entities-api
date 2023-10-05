@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -18,10 +16,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.Constants;
 import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 
@@ -71,12 +67,11 @@ public class TrustsDataController {
         );
     }
 
-    public String getCompanyNumber(String overseasEntityId, String requestId) throws ServiceException {
+    private String getCompanyNumber(String overseasEntityId, String requestId) throws ServiceException {
         ApiLogger.infoContext(requestId,
                 "Calling Overseas Entities Service to retrieve private trust data for overseas entity "
                         + overseasEntityId, logMap);
-        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
-                overseasEntityId);
+        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
 
         if (!submissionDtoOptional.isPresent()) {
             ApiLogger.errorContext(requestId,
@@ -98,7 +93,6 @@ public class TrustsDataController {
 
         return submissionDto.getEntityNumber();
     }
-
 
     private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> checkSubmissionDto(
             Callable<T> supplier,
