@@ -7,3 +7,4 @@ routes:
  2: ^/private/transactions/(.*)/overseas-entity/(.*)/filings
  3: ^/overseas-entity/healthcheck
  4: ^/private/transactions/(.*)/overseas-entity/(.*)/*
+ 5: ^/private/transactions/(.*)/overseas-entity/(.*)/*/(.*)/corporate-trustees

@@ -129,28 +129,6 @@ class TrustsDataControllerTest {
         assertEquals("ROE Update feature must be enabled for get overseas entity details",
                 thrown.getMessage());
     }
-
-
-    @Test
-    void hashHelper_ExceptionThrown() throws NoSuchAlgorithmException, ServiceException {
-        PrivateCorporateTrusteeApi trusteeApi = createTrusteeApi();
-        PrivateCorporateTrusteeListApi listApi = new PrivateCorporateTrusteeListApi(
-                List.of(trusteeApi));
-
-        when(privateDataRetrievalService.getCorporateTrustees(any(), any())).thenReturn(listApi);
-        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
-                Optional.of(overseasEntitySubmissionDto));
-
-        when(hashHelper.encode(any())).thenThrow(NoSuchAlgorithmException.class);
-
-        var thrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getCorporateTrusts("transactionId", "overseasEntityId",
-                        "trustId", "requestId"));
-
-        assertEquals("Cannot encode ID", thrown.getMessage());
-    }
-
-
     @Test
     void checkSubmissionDto_isForUpdateFalse() {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(

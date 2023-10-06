@@ -156,7 +156,7 @@ public class PrivateDataRetrievalService {
                     .getInternalApiClient()
                     .privateCorporateTrusteeDataResourceHandler()
                     .getCorporateTrusteeData(
-                            OVERSEAS_ENTITY_URI_SECTION + "/trusts/" + nonHashedId
+                            OVERSEAS_ENTITY_URI_SECTION + "trusts/" + nonHashedId
                                     + "/corporate-trustees")
                     .execute()
                     .getData();
