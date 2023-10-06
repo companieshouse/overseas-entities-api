@@ -95,8 +95,6 @@ class PrivateDataRetrievalServiceTest {
   @Mock
   private PrivateManagingOfficerDataGet privateManagingOfficerDataGet;
 
-  //////////
-
   @Mock
   private PrivateCorporateTrusteesResourceHandler privateCorporateTrusteesResourceHandler;
 
@@ -105,8 +103,6 @@ class PrivateDataRetrievalServiceTest {
 
   @Mock
   private ApiResponse<PrivateCorporateTrusteeListApi> apiCorporateTrusteeListGetResponse;
-
-  /////////
 
   @Mock
   private PrivateTrustDetailsResourceHandler privateTrustDetailsResourceHandler;

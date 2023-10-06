@@ -65,7 +65,7 @@ class TrustsDataControllerTest {
 
     @Test
     void getCorporateTrusts_success() throws ServiceException {
-        PrivateCorporateTrusteeApi trusteeApi = createTrusteeApi();
+        PrivateCorporateTrusteeApi trusteeApi = createTrustApiMock();
         PrivateCorporateTrusteeListApi listApi = new PrivateCorporateTrusteeListApi(
                 List.of(trusteeApi));
         when(privateDataRetrievalService.getCorporateTrustees(any(), any())).thenReturn(listApi);
@@ -146,7 +146,7 @@ class TrustsDataControllerTest {
 
     @Test
     void retrievePrivateTrustData_responseEntityWith500StatusCode() throws ServiceException {
-        PrivateCorporateTrusteeApi trusteeApi = createTrusteeApi();
+        PrivateCorporateTrusteeApi trusteeApi = createTrustApiMock();
         PrivateCorporateTrusteeListApi listApi = new PrivateCorporateTrusteeListApi(
                 List.of(trusteeApi));
 
@@ -166,10 +166,9 @@ class TrustsDataControllerTest {
         assertEquals(500, responseEntity.getStatusCodeValue());
     }
 
-    private PrivateCorporateTrusteeApi createTrusteeApi() {
+    private PrivateCorporateTrusteeApi createTrustApiMock() {
         PrivateCorporateTrusteeApi trusteeApi = new PrivateCorporateTrusteeApi();
         trusteeApi.setId("1111");
-        // Set the fields of trusteeApi...
         return trusteeApi;
     }
 

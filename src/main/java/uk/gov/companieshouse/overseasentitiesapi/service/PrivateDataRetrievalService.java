@@ -146,24 +146,30 @@ public class PrivateDataRetrievalService {
 
         var logMap = new HashMap<String, Object>();
 
-        String nonHashedId = findNonHashedId(hashedTrustId, companyNumber);
+        String nonHashedId = findMatchingId(hashedTrustId, companyNumber);
 
         logMap.put(TRUST_ID, nonHashedId);
-        ApiLogger.info("Retrieving Corporate Trustee data for Trust Id" + hashedTrustId, logMap);
+
+        if (nonHashedId == null) {
+            ApiLogger.info("Non-hashed ID could not be found for Hashed ID: " + hashedTrustId,
+                    logMap);
+            throw new ServiceException(
+                    String.format("Non-hashed ID could not be found for Hashed ID: %s",
+                            hashedTrustId));
+        }
+
+        ApiLogger.info("Retrieving Corporate Trustee data for Trust Id" + nonHashedId, logMap);
 
         try {
-            PrivateCorporateTrusteeListApi corporateTrustees = apiClientService
-                    .getInternalApiClient()
-                    .privateCorporateTrusteeDataResourceHandler()
-                    .getCorporateTrusteeData(
+            PrivateCorporateTrusteeListApi corporateTrustees = apiClientService.getInternalApiClient()
+                    .privateCorporateTrusteeDataResourceHandler().getCorporateTrusteeData(
                             OVERSEAS_ENTITY_URI_SECTION + "trusts/" + nonHashedId
-                                    + "/corporate-trustees")
-                    .execute()
-                    .getData();
+                                    + "/corporate-trustees").execute().getData();
 
             if (corporateTrustees != null && corporateTrustees.getData() != null
                     && !corporateTrustees.getData().isEmpty()) {
-                ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s", corporateTrustees.getData().size(), hashedTrustId));
+                ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
+                        corporateTrustees.getData().size(), hashedTrustId));
             }
 
             return corporateTrustees;
@@ -190,10 +196,9 @@ public class PrivateDataRetrievalService {
 
         try {
             PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
-                    .privateTrustDetailsResourceHandler()
-                    .getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
-                    .execute()
-                    .getData();
+                    .privateTrustDetailsResourceHandler().getTrustDetails(
+                            OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
+                    .execute().getData();
 
             if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
                 ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
@@ -214,24 +219,24 @@ public class PrivateDataRetrievalService {
         }
     }
 
-    private String findNonHashedId(String hashedId, String companyNumber) throws ServiceException {
+    private String findMatchingId(String hashedId, String companyNumber) throws ServiceException {
         PrivateTrustDetailsListApi details = getTrustDetails(companyNumber);
-        Map<String, String> hashedIdMap = getHashedIdMap(details);
-        return hashedIdMap.get(hashedId);
+        return getHashedIdMap(details, hashedId);
     }
 
-    private <T extends Hashable> Map<String, String> getHashedIdMap(
-            PrivateDataList<T> hashableDataList) throws ServiceException {
+    private <T extends Hashable> String getHashedIdMap(PrivateDataList<T> hashableDataList, String hashedIdFromEndpoint) throws ServiceException {
         Map<String, String> output = new HashMap<>();
         for (Hashable hashableData : hashableDataList) {
             try {
                 String hashedId = hashHelper.encode(hashableData.getId());
-                output.put(hashedId, hashableData.getId());
+                if(hashedIdFromEndpoint.equals(hashedId)){
+                    return hashableData.getId();
+                }
             } catch (NoSuchAlgorithmException e) {
                 throw new ServiceException("Cannot encode ID", e);
             }
         }
-        return output;
+        return null;
     }
 
 }
