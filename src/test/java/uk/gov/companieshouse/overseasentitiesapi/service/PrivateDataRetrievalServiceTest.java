@@ -538,18 +538,18 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(1, result.getData().size());
         }
 
-//    @Test
-//    void testGetTrustDetailsReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
-//      PrivateTrustDetailsListApi trustDetailsList = null;
-//
-//      when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
-//      when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
-//
-//      var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-//
-//      verify(apiClientService, times(1)).getInternalApiClient();
-//      assertEquals(0, result.getTrustDetailsList().size());
-//    }
+        @Test
+        void testGetTrustDetailsReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            PrivateTrustDetailsListApi trustDetailsList = null;
+
+            when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
+            when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
+
+            var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertNull(result);
+        }
 
         @Test
         void testGetTrustDetailsApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {

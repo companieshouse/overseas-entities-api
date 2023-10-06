@@ -111,7 +111,7 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void checkSubmissionDto_updateEnabledFeatureFlagFalse() {
+    void retrievePrivateTrustData_updateEnabledFeatureFlagFalse() {
         setUpdateEnabledFeatureFlag(trustsDataController, false);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
@@ -123,7 +123,7 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void checkSubmissionDto_isForUpdateFalse() {
+    void retrievePrivateTrustData_isForUpdateFalse() {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
         when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(false);
 

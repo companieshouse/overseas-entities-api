@@ -55,9 +55,9 @@ public class TrustsDataController {
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
-        Callable<PrivateTrustDetailsListApi> function =
-                () -> privateDataRetrievalService.getTrustDetails(companyNumber);
-        return checkSubmissionDto(function, requestId, "trust details");
+
+        return retrievePrivateTrustData(
+                () -> privateDataRetrievalService.getTrustDetails(companyNumber), requestId, "trust details");
     }
 
     private Map makeLogMap(String transactionId, String overseasEntityId) {
@@ -94,7 +94,7 @@ public class TrustsDataController {
         return submissionDto.getEntityNumber();
     }
 
-    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> checkSubmissionDto(
+    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> retrievePrivateTrustData(
             Callable<T> supplier,
             String requestId,
             String logPart) {
