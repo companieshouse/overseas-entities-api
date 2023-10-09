@@ -149,7 +149,7 @@ public class PrivateDataRetrievalService {
       }
       throw new ServiceException(e.getStatusMessage(), e);
     } catch (URIValidationException e) {
-      var message = "Error Retrieving Trust data for " + companyNumber;
+      var message = "Error retrieving Trust data for " + companyNumber;
       ApiLogger.errorContext(message, e);
       throw new ServiceException(e.getMessage(), e);
     }

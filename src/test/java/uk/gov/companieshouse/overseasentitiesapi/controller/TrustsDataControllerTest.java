@@ -2,11 +2,11 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +52,7 @@ class TrustsDataControllerTest {
     @BeforeEach
     void setUp() {
         setUpdateEnabledFeatureFlag(trustsDataController, true);
-        when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
+        lenient().when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
         reset(privateDataRetrievalService, overseasEntitiesService, hashHelper);
         outputStreamCaptor = new ByteArrayOutputStream();
     }
@@ -81,9 +81,7 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void getTrustDetails_getTrustDetailsNull()
-            throws ServiceException {
-
+    void getTrustDetails_getTrustDetailsApiListNull() throws ServiceException {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
         when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
 
@@ -98,10 +96,51 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void getTrustDetails_noCompanyNumber()
-            throws ServiceException {
-
+    void getTrustDetails_getTrustDetailsApiNull() throws ServiceException {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+        when(privateDataRetrievalService.getTrustDetails(any())).thenReturn(new PrivateTrustDetailsListApi(null));
+
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "OE123456", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust details for overseas entity OE123456"));
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void getTrustDetails_getTrustDetailsApiEmpty() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+        when(privateDataRetrievalService.getTrustDetails(any())).thenReturn(new PrivateTrustDetailsListApi(Collections.emptyList()));
+
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "OE123456", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust details for overseas entity OE123456"));
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void getTrustDetails_noCompanyNumber() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "overseasEntityId", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void getTrustDetails_noOverseasEntitySubmission() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.empty());
 
         ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
