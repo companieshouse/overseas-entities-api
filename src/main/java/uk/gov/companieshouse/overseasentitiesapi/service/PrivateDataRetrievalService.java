@@ -9,6 +9,7 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -118,6 +119,37 @@ public class PrivateDataRetrievalService {
       throw new ServiceException(e.getStatusMessage(), e);
     } catch (URIValidationException e) {
       var message = "Error Retrieving Beneficial Owner data for " + companyNumber;
+      ApiLogger.errorContext(message, e);
+      throw new ServiceException(e.getMessage(), e);
+    }
+  }
+
+  public PrivateTrustDetailsListApi getTrustDetails(String companyNumber) throws ServiceException {
+    var logMap = new HashMap<String, Object>();
+    logMap.put(COMPANY_NUMBER, companyNumber);
+    ApiLogger.info("Retrieving Trusts for Company Number " + companyNumber, logMap);
+
+    try {
+      PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
+              .privateTrustDetailsResourceHandler()
+              .getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
+              .execute()
+              .getData();
+
+      if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
+        ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
+                trusts.getData().size(), companyNumber));
+      }
+
+      return trusts;
+    } catch (ApiErrorResponseException e) {
+      if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+        ApiLogger.info("No Trusts found for Company Number " + companyNumber, logMap);
+        return new PrivateTrustDetailsListApi(Collections.emptyList());
+      }
+      throw new ServiceException(e.getStatusMessage(), e);
+    } catch (URIValidationException e) {
+      var message = "Error retrieving Trust data for " + companyNumber;
       ApiLogger.errorContext(message, e);
       throw new ServiceException(e.getMessage(), e);
     }
