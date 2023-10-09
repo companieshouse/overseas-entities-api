@@ -83,9 +83,8 @@ public class TrustsDataController {
         if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
-        Callable<PrivateCorporateTrusteeListApi> function = () -> privateDataRetrievalService.getCorporateTrustees(
-                trustId, companyNo);
-        return retrievePrivateTrustData(function, requestId, "corporate trustee");
+        return retrievePrivateTrustData(() -> privateDataRetrievalService.getCorporateTrustees(
+                trustId, companyNo), requestId, "corporate trustee");
 
     }
 

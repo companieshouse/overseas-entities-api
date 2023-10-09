@@ -1,20 +1,25 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,136 +62,110 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 class PrivateDataRetrievalServiceTest {
 
     private static final String COMPANY_NUMBER = "OE123456";
-
-  private ByteArrayOutputStream outputStreamCaptor;
-
-  @InjectMocks
-  private PrivateDataRetrievalService privateDataRetrievalService;
-
-    @Mock
-    private ApiClientService apiClientService;
-
-    @Mock
-    private InternalApiClient apiClient;
-
-    @Mock
-    private ApiResponse<OverseasEntityDataApi> overseasEntityDataResponse;
-
-    @Mock
-    private ApiResponse<ManagingOfficerListDataApi> managingOfficerDataResponse;
-
-    @Mock
-    private PrivateOverseasEntityDataHandler privateOverseasEntityDataHandler;
-
-    @Mock
-    private PrivateOverseasEntityDataGet privateOverseasEntityDataGet;
-
-    @Mock
-    private ApiResponse<PrivateBoDataListApi> apiBoDataListGetResponse;
-
-    @Mock
-    private PrivateBeneficialOwnerResourceHandler privateBeneficialOwnerResourceHandler;
-
-    @Mock
-    private PrivateBeneficialOwnerGet privateBeneficialOwnerGet;
-
-    @Mock
-    private PrivateManagingOfficerDataResourceHandler privateManagingOfficerDataResourceHandler;
-
-    @Mock
-    private PrivateManagingOfficerDataGet privateManagingOfficerDataGet;
-
-  @Mock
-  private PrivateCorporateTrusteesResourceHandler privateCorporateTrusteesResourceHandler;
-
-  @Mock
-  private PrivateCorporateTrusteesGet privateCorporateTrusteesGet;
-
-  @Mock
-  private ApiResponse<PrivateCorporateTrusteeListApi> apiCorporateTrusteeListGetResponse;
-
-  @Mock
-  private PrivateTrustDetailsResourceHandler privateTrustDetailsResourceHandler;
-
-  @Mock
-  private PrivateTrustDetailsGet privateTrustDetailsGet;
-
-  @Mock
-  private ApiResponse<PrivateTrustDetailsListApi> apiTrustDetailsGetResponse;
-
-  @Mock
-  private HashHelper hashHelper;
-
-  private static final ApiErrorResponseException FOUR_HUNDRED_AND_FOUR_EXCEPTION = ApiErrorResponseException.fromHttpResponseException(
-      new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
-
-    @Mock
-    private PrivateTrustDetailsGet privateTrustDetailsGet;
-
-    @Mock
-    private ApiResponse<PrivateTrustDetailsListApi> privateTrustDetailsDataResponse;
-
+    private static final ApiErrorResponseException FOUR_HUNDRED_AND_FOUR_EXCEPTION = ApiErrorResponseException.fromHttpResponseException(
+            new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
     private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
             new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
+    private final String jsonManagingOfficerString = "["
+            + "{"
+            + "\"managingOfficerAppointmentId\":\"9001808986\","
+            + "\"residential_address\":{"
+            + "\"address_line_1\":\"32 WHITE FIRST ROAD\","
+            + "\"address_line_2\":\"QUOS ADIPISCI OFFICI\","
+            + "\"care_of\":null,"
+            + "\"country\":\"HUNGARY\","
+            + "\"locality\":\"QUI QUIS EST MAIORE\","
+            + "\"po_box\":null,"
+            + "\"postal_code\":\"51291\","
+            + "\"premises\":\"DARRYL VALENTINE\","
+            + "\"region\":\"CILLUM EXERCITATION\""
+            + "},"
+            + "\"principal_address\":{"
+            + "\"address_line_1\":null,"
+            + "\"address_line_2\":null,"
+            + "\"care_of\":null,"
+            + "\"country\":null,"
+            + "\"locality\":null,"
+            + "\"po_box\":null,"
+            + "\"postal_code\":null,"
+            + "\"premises\":null,"
+            + "\"region\":null"
+            + "},"
+            + "\"date_of_birth\":\"2023-01-01 00:00:00.0\","
+            + "\"contact_name_full\":null,"
+            + "\"contact_email_address\":null"
+            + "},"
+            + "{"
+            + "\"managingOfficerAppointmentId\":\"9001808987\","
+            + "\"residential_address\":{"
+            + "\"address_line_1\":null,"
+            + "\"address_line_2\":null,"
+            + "\"care_of\":null,"
+            + "\"country\":null,"
+            + "\"locality\":null,"
+            + "\"po_box\":null,"
+            + "\"postal_code\":null,"
+            + "\"premises\":null,"
+            + "\"region\":null"
+            + "},"
+            + "\"principal_address\":{"
+            + "\"address_line_1\":\"29 SOUTH MILTON ROAD\","
+            + "\"address_line_2\":\"TENETUR QUI VOLUPTAT\","
+            + "\"care_of\":null,"
+            + "\"country\":\"ICELAND\","
+            + "\"locality\":\"QUIA ELIGENDI DOLORE\","
+            + "\"po_box\":null,"
+            + "\"postal_code\":\"77761\","
+            + "\"premises\":\"WYNNE GARCIA\","
+            + "\"region\":\"VERO CORRUPTI IPSUM\""
+            + "},"
+            + "\"date_of_birth\":\"9999-12-31 00:00:00.0\","
+            + "\"contact_name_full\":\"TYLER DELEON\","
+            + "\"contact_email_address\":\"QEZUX@MAILINATOR.COM\""
+            + "}"
+            + "]";
 
-    private final String jsonManagingOfficerString = "[" +
-            "{" +
-            "\"managingOfficerAppointmentId\":\"9001808986\"," +
-            "\"residential_address\":{" +
-            "\"address_line_1\":\"32 WHITE FIRST ROAD\"," +
-            "\"address_line_2\":\"QUOS ADIPISCI OFFICI\"," +
-            "\"care_of\":null," +
-            "\"country\":\"HUNGARY\"," +
-            "\"locality\":\"QUI QUIS EST MAIORE\"," +
-            "\"po_box\":null," +
-            "\"postal_code\":\"51291\"," +
-            "\"premises\":\"DARRYL VALENTINE\"," +
-            "\"region\":\"CILLUM EXERCITATION\"" +
-            "}," +
-            "\"principal_address\":{" +
-            "\"address_line_1\":null," +
-            "\"address_line_2\":null," +
-            "\"care_of\":null," +
-            "\"country\":null," +
-            "\"locality\":null," +
-            "\"po_box\":null," +
-            "\"postal_code\":null," +
-            "\"premises\":null," +
-            "\"region\":null" +
-            "}," +
-            "\"date_of_birth\":\"2023-01-01 00:00:00.0\"," +
-            "\"contact_name_full\":null," +
-            "\"contact_email_address\":null" +
-            "}," +
-            "{" +
-            "\"managingOfficerAppointmentId\":\"9001808987\"," +
-            "\"residential_address\":{" +
-            "\"address_line_1\":null," +
-            "\"address_line_2\":null," +
-            "\"care_of\":null," +
-            "\"country\":null," +
-            "\"locality\":null," +
-            "\"po_box\":null," +
-            "\"postal_code\":null," +
-            "\"premises\":null," +
-            "\"region\":null" +
-            "}," +
-            "\"principal_address\":{" +
-            "\"address_line_1\":\"29 SOUTH MILTON ROAD\"," +
-            "\"address_line_2\":\"TENETUR QUI VOLUPTAT\"," +
-            "\"care_of\":null," +
-            "\"country\":\"ICELAND\"," +
-            "\"locality\":\"QUIA ELIGENDI DOLORE\"," +
-            "\"po_box\":null," +
-            "\"postal_code\":\"77761\"," +
-            "\"premises\":\"WYNNE GARCIA\"," +
-            "\"region\":\"VERO CORRUPTI IPSUM\"" +
-            "}," +
-            "\"date_of_birth\":\"9999-12-31 00:00:00.0\"," +
-            "\"contact_name_full\":\"TYLER DELEON\"," +
-            "\"contact_email_address\":\"QEZUX@MAILINATOR.COM\"" +
-            "}" +
-            "]";
+    private ByteArrayOutputStream outputStreamCaptor;
+    @InjectMocks
+    private PrivateDataRetrievalService privateDataRetrievalService;
+    @Mock
+    private ApiClientService apiClientService;
+    @Mock
+    private InternalApiClient apiClient;
+    @Mock
+    private ApiResponse<OverseasEntityDataApi> overseasEntityDataResponse;
+    @Mock
+    private ApiResponse<ManagingOfficerListDataApi> managingOfficerDataResponse;
+    @Mock
+    private PrivateOverseasEntityDataHandler privateOverseasEntityDataHandler;
+    @Mock
+    private PrivateOverseasEntityDataGet privateOverseasEntityDataGet;
+    @Mock
+    private ApiResponse<PrivateBoDataListApi> apiBoDataListGetResponse;
+    @Mock
+    private PrivateBeneficialOwnerResourceHandler privateBeneficialOwnerResourceHandler;
+    @Mock
+    private PrivateBeneficialOwnerGet privateBeneficialOwnerGet;
+    @Mock
+    private PrivateManagingOfficerDataResourceHandler privateManagingOfficerDataResourceHandler;
+    @Mock
+    private PrivateManagingOfficerDataGet privateManagingOfficerDataGet;
+    @Mock
+    private PrivateCorporateTrusteesResourceHandler privateCorporateTrusteeDataResourceHandler;
+    @Mock
+    private PrivateCorporateTrusteesGet privateCorporateTrusteeGet;
+    @Mock
+    private ApiResponse<PrivateCorporateTrusteeListApi> privateCorporateTrusteeDataResponse;
+    @Mock
+    private PrivateTrustDetailsResourceHandler privateTrustDetailsResourceHandler;
+    @Mock
+    private PrivateTrustDetailsGet privateTrustDetailsGet;
+    @Mock
+    private ApiResponse<PrivateTrustDetailsListApi> apiTrustDetailsGetResponse;
+    @Mock
+    private HashHelper hashHelper;
+    @Mock
+    private ApiResponse<PrivateTrustDetailsListApi> privateTrustDetailsDataResponse;
 
     protected void retrievePrivateData() throws ServiceException {
         privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
@@ -212,27 +191,24 @@ class PrivateDataRetrievalServiceTest {
         @Test
         void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsURIValidationException()
                 throws IOException, URIValidationException {
-            when(privateBeneficialOwnerGet.execute()).thenThrow(new URIValidationException("ERROR"));
+            when(privateBeneficialOwnerGet.execute()).thenThrow(
+                    new URIValidationException("ERROR"));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
+            });
         }
 
         @Test
         void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsIOException()
                 throws IOException, URIValidationException {
 
-            when(privateBeneficialOwnerGet.execute())
-                    .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+            when(privateBeneficialOwnerGet.execute()).thenThrow(
+                    ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER);
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER);
+            });
         }
     }
 
@@ -246,8 +222,8 @@ class PrivateDataRetrievalServiceTest {
             // Overseas Entity Data Mocks
             when(apiClient.privateOverseasEntityDataHandler()).thenReturn(
                     privateOverseasEntityDataHandler);
-            when(privateOverseasEntityDataHandler.getOverseasEntityData(Mockito.anyString())).thenReturn(
-                    privateOverseasEntityDataGet);
+            when(privateOverseasEntityDataHandler.getOverseasEntityData(
+                    Mockito.anyString())).thenReturn(privateOverseasEntityDataGet);
 
             // Beneficial Owner Data Mocks
             when(apiClient.privateBeneficialOwnerResourceHandler()).thenReturn(
@@ -268,20 +244,18 @@ class PrivateDataRetrievalServiceTest {
             var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
             var overseasEntityApi = new OverseasEntityDataApi();
 
-
             when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
             when(apiBoDataListGetResponse.getData()).thenReturn(privateBoDataListApi);
 
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
             when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
 
-            when(privateManagingOfficerDataGet.execute()).thenThrow(new URIValidationException("ERROR"));
+            when(privateManagingOfficerDataGet.execute()).thenThrow(
+                    new URIValidationException("ERROR"));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        retrievePrivateData();
-                    });
+            assertThrows(ServiceException.class, () -> {
+                retrievePrivateData();
+            });
         }
 
         @Test
@@ -296,14 +270,12 @@ class PrivateDataRetrievalServiceTest {
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
             when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
 
-            when(privateManagingOfficerDataGet.execute())
-                    .thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+            when(privateManagingOfficerDataGet.execute()).thenThrow(
+                    ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        retrievePrivateData();
-                    });
+            assertThrows(ServiceException.class, () -> {
+                retrievePrivateData();
+            });
         }
     }
 
@@ -316,44 +288,42 @@ class PrivateDataRetrievalServiceTest {
 
             when(apiClient.privateOverseasEntityDataHandler()).thenReturn(
                     privateOverseasEntityDataHandler);
-            when(privateOverseasEntityDataHandler.getOverseasEntityData(Mockito.anyString())).thenReturn(
-                    privateOverseasEntityDataGet);
+            when(privateOverseasEntityDataHandler.getOverseasEntityData(
+                    Mockito.anyString())).thenReturn(privateOverseasEntityDataGet);
         }
 
         @Test
         void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsURIValidationException()
                 throws IOException, URIValidationException {
 
-            when(privateOverseasEntityDataGet.execute()).thenThrow(new URIValidationException("ERROR"));
+            when(privateOverseasEntityDataGet.execute()).thenThrow(
+                    new URIValidationException("ERROR"));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
+            });
         }
 
         @Test
         void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsNon404Error()
                 throws IOException, URIValidationException {
 
-            when(privateOverseasEntityDataGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException()));
+            when(privateOverseasEntityDataGet.execute()).thenThrow(
+                    ApiErrorResponseException.fromIOException(new IOException()));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
+            });
         }
 
         @Test
         void testNoEmailWhenGetOverseasEntitiesPrivateDataThrowsApiResponseError404Exception()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
 
-            when(privateOverseasEntityDataGet.execute())
-                    .thenThrow(FourHundredAndFourException);
+            when(privateOverseasEntityDataGet.execute()).thenThrow(FourHundredAndFourException);
 
-            OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
+            OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(
+                    COMPANY_NUMBER);
 
             assertNull(result.getEmail());
         }
@@ -369,8 +339,8 @@ class PrivateDataRetrievalServiceTest {
             // Overseas Entity Data Mocks
             when(apiClient.privateOverseasEntityDataHandler()).thenReturn(
                     privateOverseasEntityDataHandler);
-            when(privateOverseasEntityDataHandler.getOverseasEntityData(Mockito.anyString())).thenReturn(
-                    privateOverseasEntityDataGet);
+            when(privateOverseasEntityDataHandler.getOverseasEntityData(
+                    Mockito.anyString())).thenReturn(privateOverseasEntityDataGet);
 
             // Beneficial Owner Data Mocks
             when(apiClient.privateBeneficialOwnerResourceHandler()).thenReturn(
@@ -389,7 +359,8 @@ class PrivateDataRetrievalServiceTest {
         void testGetPrivateDataBeneficialOwnersDataNotFound()
                 throws IOException, URIValidationException, ServiceException {
             var overseasEntityApi = new OverseasEntityDataApi();
-            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(Collections.emptyList());
+            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(
+                    Collections.emptyList());
             var boDataListApiResponse = new ApiResponse<PrivateBoDataListApi>(404, null);
 
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
@@ -408,7 +379,8 @@ class PrivateDataRetrievalServiceTest {
         void testGetPrivateOverseasEntityDataNotFound()
                 throws IOException, URIValidationException, ServiceException {
             var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
-            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(Collections.emptyList());
+            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(
+                    Collections.emptyList());
 
             var oeDataListApiResponse = new ApiResponse<OverseasEntityDataApi>(404, null);
 
@@ -455,7 +427,8 @@ class PrivateDataRetrievalServiceTest {
             var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
 
             List<ManagingOfficerDataApi> managingOfficerDataApiList = Collections.emptyList();
-            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(managingOfficerDataApiList);
+            var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(
+                    managingOfficerDataApiList);
 
             when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
             when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
@@ -479,8 +452,11 @@ class PrivateDataRetrievalServiceTest {
             var overseasEntityApi = new OverseasEntityDataApi();
 
             //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-            var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class);
-            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class);
+            var boDataListApi = objectMapper.readValue(
+                    PrivateBeneficialOwnersMock.jsonBeneficialOwnerString,
+                    PrivateBoDataListApi.class);
+            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString,
+                    ManagingOfficerListDataApi.class);
 
             when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
             when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
@@ -504,8 +480,11 @@ class PrivateDataRetrievalServiceTest {
             var overseasEntityApi = new OverseasEntityDataApi();
 
             //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-            var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class);
-            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class);
+            var boDataListApi = objectMapper.readValue(
+                    PrivateBeneficialOwnersMock.jsonBeneficialOwnerString,
+                    PrivateBoDataListApi.class);
+            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString,
+                    ManagingOfficerListDataApi.class);
 
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
             when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
@@ -516,7 +495,8 @@ class PrivateDataRetrievalServiceTest {
             when(privateBeneficialOwnerGet.execute()).thenThrow(FourHundredAndFourException);
 
             assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
-            assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER), new PrivateBoDataListApi(Collections.emptyList()));
+            assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER),
+                    new PrivateBoDataListApi(Collections.emptyList()));
             assertNotNull(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER));
         }
 
@@ -528,8 +508,11 @@ class PrivateDataRetrievalServiceTest {
             var overseasEntityApi = new OverseasEntityDataApi();
 
             //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-            var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class);
-            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class);
+            var boDataListApi = objectMapper.readValue(
+                    PrivateBeneficialOwnersMock.jsonBeneficialOwnerString,
+                    PrivateBoDataListApi.class);
+            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString,
+                    ManagingOfficerListDataApi.class);
 
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
             when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
@@ -541,22 +524,27 @@ class PrivateDataRetrievalServiceTest {
 
             assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
             assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
-            assertEquals(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER), new ManagingOfficerListDataApi(Collections.emptyList()));
+            assertEquals(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER),
+                    new ManagingOfficerListDataApi(Collections.emptyList()));
         }
     }
 
     @Nested
     class TrustDataTests {
+
         @BeforeEach
         public void init() throws IOException {
             when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
 
-            when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(privateTrustDetailsResourceHandler);
-            when(privateTrustDetailsResourceHandler.getTrustDetails(Mockito.anyString())).thenReturn(privateTrustDetailsGet);
+            when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(
+                    privateTrustDetailsResourceHandler);
+            when(privateTrustDetailsResourceHandler.getTrustDetails(
+                    Mockito.anyString())).thenReturn(privateTrustDetailsGet);
         }
 
         @Test
-        void testGetTrustDetailsIsSuccessful() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustDetailsIsSuccessful()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
             List<PrivateTrustDetailsApi> trustDetails = List.of(new PrivateTrustDetailsApi());
             var trustDetailsList = new PrivateTrustDetailsListApi(trustDetails);
 
@@ -570,7 +558,8 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
-        void testGetTrustDetailsReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustDetailsReturnsNullTrustList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
             PrivateTrustDetailsListApi trustDetailsList = null;
 
             when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
@@ -583,7 +572,8 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
-        void testGetTrustDetailsApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustDetailsApiErrorResponseExceptionThrownNotFoundReturnsEmptyList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
             var exception = new ApiErrorResponseException(
                     new HttpResponseException.Builder(404, "notFound", new HttpHeaders()));
             when(privateTrustDetailsGet.execute()).thenThrow(exception);
@@ -595,344 +585,229 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
-        void testGetTrustDetailsApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustDetailsApiErrorResponseExceptionThrownCausesServiceException()
+                throws ApiErrorResponseException, URIValidationException {
             var exception = new ApiErrorResponseException(
                     new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
             when(privateTrustDetailsGet.execute()).thenThrow(exception);
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
+            });
         }
 
         @Test
-        void testGetTrustDetailsURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustDetailsURIValidationExceptionThrown()
+                throws ApiErrorResponseException, URIValidationException {
             when(privateTrustDetailsGet.execute()).thenThrow(new URIValidationException("Error"));
 
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-                    });
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
+            });
         }
     }
 
-    @Test
-    void testServiceExceptionThrownWhenGetOverseasEntitiesOEPrivateDataThrowsNon404Error()
-            throws IOException, URIValidationException {
 
-      when(privateOverseasEntityDataGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException()));
+    @Nested
+    class CorporateTrusteeDataTests {
 
-      assertThrows(
-              ServiceException.class,
-              () -> {
-                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
-              });
+        private static final String HASHED_TRUST_ID = "hashedTrustId";
+        private static final String NON_HASHED_TRUST_ID = "trustId";
+        private static final String COMPANY_NUMBER = "companyNumber";
+
+        @BeforeEach
+        public void init() throws IOException, NoSuchAlgorithmException {
+            when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
+            when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
+            privateDataRetrievalService.setHashHelper(hashHelper);
+
+            lenient().when(hashHelper.encode(NON_HASHED_TRUST_ID)).thenReturn(HASHED_TRUST_ID);
+
+            outputStreamCaptor = new ByteArrayOutputStream();
+        }
+
+
+        @AfterEach
+        void tearDown() {
+            outputStreamCaptor.reset();
+            System.setOut(System.out);
+        }
+
+        private void trustDetailsStubbings()
+                throws ApiErrorResponseException, URIValidationException {
+            var details = new PrivateTrustDetailsApi();
+            details.setId(NON_HASHED_TRUST_ID);
+
+            List<PrivateTrustDetailsApi> trustDetails = List.of(details);
+            var trustDetailsList = new PrivateTrustDetailsListApi(trustDetails);
+
+            when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
+            when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
+            when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(
+                    privateTrustDetailsResourceHandler);
+            when(privateTrustDetailsResourceHandler.getTrustDetails(
+                    Mockito.anyString())).thenReturn(privateTrustDetailsGet);
+        }
+
+
+        private void corporateTrusteesStubbing(
+                List<PrivateCorporateTrusteeApi> corporateTrusteesList)
+                throws ApiErrorResponseException, URIValidationException {
+
+            lenient().when(privateCorporateTrusteeGet.execute()).thenReturn(
+                    privateCorporateTrusteeDataResponse);
+            lenient().when(privateCorporateTrusteeDataResponse.getData())
+                    .thenReturn(new PrivateCorporateTrusteeListApi(corporateTrusteesList));
+
+            lenient().when(apiClient.privateCorporateTrusteeDataResourceHandler()).thenReturn(
+                    privateCorporateTrusteeDataResourceHandler);
+            lenient().when(privateCorporateTrusteeDataResourceHandler.getCorporateTrusteeData(
+                    Mockito.anyString())).thenReturn(privateCorporateTrusteeGet);
+        }
+
+
+        @Test
+        void testGetCorporateTrusteesIsSuccessful()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            var result = privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            verify(apiClientService, times(2)).getInternalApiClient();
+            assertEquals(1, result.getData().size());
+        }
+
+
+        @Test
+        void testGetCorporateTrusteesReturnsNullTrusteeList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+            corporateTrusteesStubbing(null);
+
+            var result = privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            verify(apiClientService, times(2)).getInternalApiClient();
+            assertNull(result.getData());
+        }
+
+        @Test
+        void testGetCorporateTrusteesApiErrorResponseExceptionThrownNotFoundReturnsEmptyList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            when(privateCorporateTrusteeGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            var result = privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            assertEquals(0, result.getData().size());
+            assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),
+                    "No Corporate Trustee found for Trust Id " + HASHED_TRUST_ID));
+
+        }
+
+        @Test
+        void testGetCorporateTrusteesApiErrorResponseExceptionThrownCausesServiceException()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            var exception = new ApiErrorResponseException(
+                    new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
+            
+            when(privateCorporateTrusteeGet.execute()).thenThrow(exception);
+
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+        }
+
+        @Test
+        void testGetCorporateTrusteesURIValidationExceptionThrown()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            when(privateCorporateTrusteeGet.execute()).thenThrow(new URIValidationException("Error"));
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Error Retrieving Corporate Trustee data for Trust Id " + HASHED_TRUST_ID));
+            assertEquals("Error", thrown.getMessage());
+        }
+
+        @Test
+        void testGetCorporateTrusteesHashHelperThrowsError()
+                throws ApiErrorResponseException, URIValidationException, NoSuchAlgorithmException {
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            when(hashHelper.encode(anyString())).thenThrow(new NoSuchAlgorithmException("Error"));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals("Cannot encode ID", thrown.getMessage());
+        }
+
+
+        @Test
+        void testGetCorporateTrusteesNoMatchingId()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
+            privateCorporateTrustee.setId("123");
+            when(privateDataRetrievalService.findMatchingId(HASHED_TRUST_ID, COMPANY_NUMBER)).thenReturn("matchingId");
+
+            List<PrivateCorporateTrusteeApi> corporateTrustees = List.of(privateCorporateTrustee);
+            corporateTrusteesStubbing(corporateTrustees);
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
+            assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
+
+        }
     }
-
-    @Test
-    void testNoEmailWhenGetOverseasEntitiesPrivateDataThrowsApiResponseError404Exception()
-        throws ApiErrorResponseException, URIValidationException, ServiceException {
-
-      when(privateOverseasEntityDataGet.execute())
-          .thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
-
-      OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER);
-
-      assertNull(result.getEmail());
-    }
-  }
-
-  @Nested
-  class utilisingAllMocksTests {
-
-    @BeforeEach
-    public void init() throws IOException {
-      when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
-
-      // Overseas Entity Data Mocks
-      when(apiClient.privateOverseasEntityDataHandler()).thenReturn(
-          privateOverseasEntityDataHandler);
-      when(privateOverseasEntityDataHandler.getOverseasEntityData(Mockito.anyString())).thenReturn(
-          privateOverseasEntityDataGet);
-
-      // Beneficial Owner Data Mocks
-      when(apiClient.privateBeneficialOwnerResourceHandler()).thenReturn(
-          privateBeneficialOwnerResourceHandler);
-      when(privateBeneficialOwnerResourceHandler.getBeneficialOwners(
-          Mockito.anyString())).thenReturn(privateBeneficialOwnerGet);
-
-      // Managing Officer Data Mocks
-      when(apiClient.privateManagingOfficerDataResourceHandler()).thenReturn(
-          privateManagingOfficerDataResourceHandler);
-      when(privateManagingOfficerDataResourceHandler.getManagingOfficerData(
-          Mockito.anyString())).thenReturn(privateManagingOfficerDataGet);
-    }
-
-    @Test
-    void testGetPrivateDataBeneficialOwnersDataNotFound()
-        throws IOException, URIValidationException, ServiceException {
-      var overseasEntityApi = new OverseasEntityDataApi();
-      var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(Collections.emptyList());
-      var boDataListApiResponse = new ApiResponse<PrivateBoDataListApi>(404, null);
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
-      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(boDataListApiResponse);
-
-      retrievePrivateData();
-      verify(apiClientService, times(3)).getInternalApiClient();
-    }
-
-    @Test
-    void testGetPrivateOverseasEntityDataNotFound()
-        throws IOException, URIValidationException, ServiceException {
-      var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
-      var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(Collections.emptyList());
-
-      var oeDataListApiResponse = new ApiResponse<OverseasEntityDataApi>(404, null);
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(privateBoDataListApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
-      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(oeDataListApiResponse);
-
-      retrievePrivateData();
-      verify(apiClientService, times(3)).getInternalApiClient();
-    }
-
-    @Test
-    void testGetPrivateManagingOfficerDataNotFound()
-        throws IOException, URIValidationException, ServiceException {
-
-      var privateBoDataListApi = new PrivateBoDataListApi(Collections.emptyList());
-      var overseasEntityApi = new OverseasEntityDataApi();
-
-      var moDataListApiResponse = new ApiResponse<ManagingOfficerListDataApi>(404, null);
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(privateBoDataListApi);
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(moDataListApiResponse);
-
-      retrievePrivateData();
-      verify(apiClientService, times(3)).getInternalApiClient();
-    }
-
-    @Test
-    void testGetPrivateDataIsSuccessful()
-        throws IOException, URIValidationException, ServiceException {
-
-      var overseasEntityApi = new OverseasEntityDataApi();
-
-      List<PrivateBoDataApi> privateBoDataApiList = Collections.emptyList();
-      var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
-
-      List<ManagingOfficerDataApi> managingOfficerDataApiList = Collections.emptyList();
-      var managingOfficerDataApiListApi = new ManagingOfficerListDataApi(managingOfficerDataApiList);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
-      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
-
-      retrievePrivateData();
-      verify(apiClientService, times(3)).getInternalApiClient();
-    }
-
-    @Test
-    void testGettersForBoMoEntityData()
-            throws ServiceException, ApiErrorResponseException, URIValidationException, JsonProcessingException {
-
-      var objectMapper = new ObjectMapper();
-
-      var overseasEntityApi = new OverseasEntityDataApi();
-
-      //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
-      var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
-      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
-
-      assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
-      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
-      assertNotNull(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER));
-    }
-
-    @Test
-    void testServiceExceptionThrownWhenGetBeneficialOwnerPrivateDataThrowsApiErrorResponseException()
-        throws IOException, URIValidationException, ServiceException {
-      var objectMapper = new ObjectMapper();
-
-      var overseasEntityApi = new OverseasEntityDataApi();
-
-      //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
-      var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
-      when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
-
-      when(privateBeneficialOwnerGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
-
-      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
-      assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER), new PrivateBoDataListApi(Collections.emptyList()));
-      assertNotNull(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER));
-    }
-
-    @Test
-    void testServiceExceptionThrownWhenGetManagingOfficerPrivateDataThrowsApiErrorResponseException()
-        throws IOException, URIValidationException, ServiceException {
-      var objectMapper = new ObjectMapper();
-
-      var overseasEntityApi = new OverseasEntityDataApi();
-
-      //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-      var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
-      var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString, ManagingOfficerListDataApi.class );
-
-      when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
-      when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
-
-      when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
-      when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
-
-      when(privateManagingOfficerDataGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
-
-      assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
-      assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
-      assertEquals(privateDataRetrievalService.getManagingOfficerData(COMPANY_NUMBER), new ManagingOfficerListDataApi(Collections.emptyList()));
-    }
-  }
-
-  @Nested
-  class CorporateTrusteesTests {
-
-    @BeforeEach
-    public void setUp() throws IOException, URIValidationException {
-      when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
-      var privateTrustDetailsListApi = new PrivateTrustDetailsListApi(Collections.emptyList());
-
-      when(apiClient.privateCorporateTrusteeDataResourceHandler()).thenReturn(
-              privateCorporateTrusteesResourceHandler);
-      when(privateCorporateTrusteesResourceHandler.getCorporateTrusteeData(Mockito.anyString())).thenReturn(
-              privateCorporateTrusteesGet);
-
-
-      when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(
-              privateTrustDetailsResourceHandler);
-      when(privateTrustDetailsResourceHandler.getTrustDetails(Mockito.anyString())).thenReturn(
-              privateTrustDetailsGet);
-      when(privateTrustDetailsGet.execute()).thenReturn(apiTrustDetailsGetResponse);
-      when(apiTrustDetailsGetResponse.getData()).thenReturn(privateTrustDetailsListApi);
-      outputStreamCaptor = new ByteArrayOutputStream();
-    }
-
-    @AfterEach
-    void tearDown() {
-      outputStreamCaptor.reset();
-      System.setOut(System.out);
-    }
-
-    @Test
-    void testServiceExceptionThrownWhenGetCorporateTrusteesThrowsURIValidationException() throws IOException, URIValidationException {
-      when(privateCorporateTrusteesGet.execute()).thenThrow(new URIValidationException("ERROR"));
-
-      assertThrows(
-              ServiceException.class,
-              () -> {
-                privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
-              });
-    }
-
-    @Test
-    void testServiceExceptionThrownWhenGetCorporateTrusteesThrowsIOException() throws IOException, URIValidationException {
-      when(privateCorporateTrusteesGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
-
-      assertThrows(
-              ServiceException.class,
-              () -> {
-                privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
-              });
-    }
-
-    @Test
-    void testNoCorporateTrusteesFound()
-            throws ServiceException, ApiErrorResponseException, URIValidationException {
-      var privateCorporateTrusteeListApi = new PrivateCorporateTrusteeListApi(Collections.emptyList());
-
-      when(privateCorporateTrusteesGet.execute()).thenReturn(apiCorporateTrusteeListGetResponse);
-      when(apiCorporateTrusteeListGetResponse.getData()).thenReturn(privateCorporateTrusteeListApi);
-
-      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
-
-      assertTrue(result.getData().isEmpty());
-    }
-
-    @Test
-    void testNoCorporateTrusteesFoundWith404StatusCode()
-            throws ServiceException, ApiErrorResponseException, URIValidationException {
-      var privateCorporateTrusteeApi = new PrivateCorporateTrusteeApi();
-      privateCorporateTrusteeApi.setId("1111");
-
-
-      when(privateCorporateTrusteesGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
-
-      System.setOut(new PrintStream(outputStreamCaptor));
-
-      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
-
-      assertEquals(0, result.getData().size());
-      assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"No Corporate Trustee found for Trust Id hashedTrustId123"));
-
-    }
-
-    @Test
-    void testCorporateTrusteesFound()
-            throws ServiceException, ApiErrorResponseException, URIValidationException {
-
-      var privateCorporateTrusteeApi = new PrivateCorporateTrusteeApi();
-      privateCorporateTrusteeApi.setId("1111");
-
-      var privateCorporateTrusteeListApi = new PrivateCorporateTrusteeListApi(List.of(privateCorporateTrusteeApi));
-
-      when(privateCorporateTrusteesGet.execute()).thenReturn(apiCorporateTrusteeListGetResponse);
-      when(apiCorporateTrusteeListGetResponse.getData()).thenReturn(privateCorporateTrusteeListApi);
-
-      System.setOut(new PrintStream(outputStreamCaptor));
-
-      PrivateCorporateTrusteeListApi result = privateDataRetrievalService.getCorporateTrustees("hashedTrustId123", "companyNumber123");
-
-      assertEquals(1, result.getData().size());
-      assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"Retrieved 1 Trusts for Company Number hashedTrustId123"));
-
-    }
-  }
-
 }
+

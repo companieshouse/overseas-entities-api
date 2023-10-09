@@ -152,22 +152,21 @@ public class PrivateDataRetrievalService {
         if (nonHashedId == null) {
             var message = "Non-hashed ID could not be found for Hashed ID: " + hashedTrustId;
             ApiLogger.error(message, new IllegalArgumentException(message), logMap);
-            throw new ServiceException(
-                    String.format("Non-hashed ID could not be found for Hashed ID: %s",
-                            hashedTrustId));
+            throw new ServiceException(message);
         }
 
-        ApiLogger.info("Retrieving Corporate Trustee data for Trust Id" + nonHashedId, logMap);
+        ApiLogger.info("Retrieving Corporate Trustee data for Trust Id: " + nonHashedId, logMap);
 
         try {
             PrivateCorporateTrusteeListApi corporateTrustees = apiClientService.getInternalApiClient()
-                    .privateCorporateTrusteeDataResourceHandler().getCorporateTrusteeData(
-                            OVERSEAS_ENTITY_URI_SECTION + "trusts/" + nonHashedId
-                                    + "/corporate-trustees").execute().getData();
+                    .privateCorporateTrusteeDataResourceHandler()
+                    .getCorporateTrusteeData(OVERSEAS_ENTITY_URI_SECTION + "trusts/" + nonHashedId + "/corporate-trustees")
+                    .execute()
+                    .getData();
 
             if (corporateTrustees != null && corporateTrustees.getData() != null
                     && !corporateTrustees.getData().isEmpty()) {
-                ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
+                ApiLogger.info(String.format("Retrieved %d Corporate Trustee for Company Number %s",
                         corporateTrustees.getData().size(), hashedTrustId));
             }
 
