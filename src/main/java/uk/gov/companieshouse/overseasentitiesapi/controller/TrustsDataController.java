@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -46,16 +51,31 @@ public class TrustsDataController {
     }
 
     private Map makeLogMap(String transactionId, String overseasEntityId) {
-        return Map.of(Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
-                Constants.TRANSACTION_ID_KEY, transactionId);
+        return Map.of(OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                TRANSACTION_ID_KEY, transactionId);
+    }
+
+   @GetMapping("/details")
+    public ResponseEntity<PrivateTrustDetailsListApi> getTrustDetails(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNumber == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return retrievePrivateTrustData(
+                () -> privateDataRetrievalService.getTrustDetails(companyNumber), requestId, "trust details");
     }
 
     @GetMapping("/{trust_id}/corporate-trustees")
     public ResponseEntity<PrivateCorporateTrusteeListApi> getCorporateTrusts(
-            @PathVariable(Constants.TRANSACTION_ID_KEY) String transactionId,
-            @PathVariable(Constants.OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
-            @RequestHeader(value = Constants.ERIC_REQUEST_ID_KEY) String requestId)
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
             throws ServiceException {
 
         logMap = makeLogMap(transactionId, overseasEntityId);
@@ -98,18 +118,18 @@ public class TrustsDataController {
         return submissionDto.getEntityNumber();
     }
 
-
     private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> retrievePrivateTrustData(
-            Callable<T> supplier, String requestId, String logPart
-
-    ) {
+            Callable<T> supplier,
+            String requestId,
+            String logPart) {
         try {
-            T dataList = supplier.call();
+            var dataList = supplier.call();
 
             if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
                 ApiLogger.errorContext(requestId,
-                        "Could not find any " + logPart + " for overseas entity " + logMap.get(
-                                Constants.OVERSEAS_ENTITY_ID_KEY), null, logMap);
+                        "Could not find any " + logPart + " for overseas entity "
+                                + logMap.get(OVERSEAS_ENTITY_ID_KEY),
+                        null, logMap);
                 return ResponseEntity.notFound().build();
             }
             for (var data : dataList) {
@@ -132,5 +152,4 @@ public class TrustsDataController {
             throw new ServiceException("Cannot encode ID", e);
         }
     }
-
 }

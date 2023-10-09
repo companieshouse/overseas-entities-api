@@ -8,3 +8,5 @@ routes:
  3: ^/overseas-entity/healthcheck
  4: ^/private/transactions/(.*)/overseas-entity/(.*)/*
  5: ^/private/transactions/(.*)/overseas-entity/(.*)/*/(.*)/corporate-trustees
+ 6: ^/private/transactions/(.*)/overseas-entity/(.*)/trusts/details
+
