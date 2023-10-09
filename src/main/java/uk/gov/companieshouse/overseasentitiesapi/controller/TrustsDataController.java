@@ -26,42 +26,29 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 @RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/trusts")
 public class TrustsDataController {
 
-    PrivateDataRetrievalService privateDataRetrievalService;
-    OverseasEntitiesService overseasEntitiesService;
+    private final PrivateDataRetrievalService privateDataRetrievalService;
+    private final OverseasEntitiesService overseasEntitiesService;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
-
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
-    private HashHelper hashHelper = new HashHelper(salt);
-
-    private Map<String,Object> logMap;
-
-
+    private final HashHelper hashHelper = new HashHelper(salt);
+    private Map<String, Object> logMap;
 
     @Autowired
-    public TrustsDataController(
-            final PrivateDataRetrievalService privateDataRetrievalService,
-            final OverseasEntitiesService overseasEntitiesService
-    ) {
+    public TrustsDataController(final PrivateDataRetrievalService privateDataRetrievalService,
+            final OverseasEntitiesService overseasEntitiesService) {
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
 
         this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
-
-    private Map makeLogMap(
-            String transactionId,
-            String overseasEntityId
-    ){
-        return Map.of(
-                Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
-                Constants.TRANSACTION_ID_KEY, transactionId
-        );
+    private Map makeLogMap(String transactionId, String overseasEntityId) {
+        return Map.of(Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                Constants.TRANSACTION_ID_KEY, transactionId);
     }
-
 
     @GetMapping("/{trust_id}/corporate-trustees")
     public ResponseEntity<PrivateCorporateTrusteeListApi> getCorporateTrusts(
@@ -72,19 +59,18 @@ public class TrustsDataController {
             throws ServiceException {
 
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNo = getCompanyNumber(overseasEntityId,requestId);
-        if(companyNo == null){
+        String companyNo = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
-        Callable<PrivateCorporateTrusteeListApi> function = () -> privateDataRetrievalService.getCorporateTrustees(trustId, companyNo);
-        return checkSubmissionDto(function, requestId, "corporate trustee");
+        Callable<PrivateCorporateTrusteeListApi> function = () -> privateDataRetrievalService.getCorporateTrustees(
+                trustId, companyNo);
+        return retrievePrivateTrustData(function, requestId, "corporate trustee");
 
     }
 
-    public String getCompanyNumber(
-            String overseasEntityId,
-            String requestId
-    ) throws ServiceException {
+    public String getCompanyNumber(String overseasEntityId, String requestId)
+            throws ServiceException {
 
         ApiLogger.infoContext(requestId,
                 "Calling Overseas Entities Service to retrieve private trust data for overseas entity "
@@ -102,8 +88,7 @@ public class TrustsDataController {
         final var submissionDto = submissionDtoOptional.get();
 
         if (!submissionDto.isForUpdate()) {
-            throw new ServiceException(
-                    "Submission for overseas entity details must be for update");
+            throw new ServiceException("Submission for overseas entity details must be for update");
         }
         if (!isRoeUpdateEnabled) {
             throw new ServiceException(
@@ -114,10 +99,8 @@ public class TrustsDataController {
     }
 
 
-    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> checkSubmissionDto(
-            Callable<T> supplier,
-            String requestId,
-            String logPart
+    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> retrievePrivateTrustData(
+            Callable<T> supplier, String requestId, String logPart
 
     ) {
         try {
@@ -125,9 +108,8 @@ public class TrustsDataController {
 
             if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
                 ApiLogger.errorContext(requestId,
-                        "Could not find any " + logPart + " for overseas entity "
-                                + logMap.get(Constants.OVERSEAS_ENTITY_ID_KEY),
-                        null, logMap);
+                        "Could not find any " + logPart + " for overseas entity " + logMap.get(
+                                Constants.OVERSEAS_ENTITY_ID_KEY), null, logMap);
                 return ResponseEntity.notFound().build();
             }
             for (var data : dataList) {

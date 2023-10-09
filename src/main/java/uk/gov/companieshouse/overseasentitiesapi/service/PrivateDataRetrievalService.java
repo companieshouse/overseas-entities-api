@@ -144,12 +144,14 @@ public class PrivateDataRetrievalService {
             String companyNumber) throws ServiceException {
 
         var logMap = new HashMap<String, Object>();
+
         String nonHashedId = findMatchingId(hashedTrustId, companyNumber);
+
         logMap.put(TRUST_ID, nonHashedId);
 
         if (nonHashedId == null) {
-            ApiLogger.error("Non-hashed ID could not be found for Hashed ID: " + hashedTrustId,
-                    logMap);
+            var message = "Non-hashed ID could not be found for Hashed ID: " + hashedTrustId;
+            ApiLogger.error(message, new IllegalArgumentException(message), logMap);
             throw new ServiceException(
                     String.format("Non-hashed ID could not be found for Hashed ID: %s",
                             hashedTrustId));
@@ -193,9 +195,9 @@ public class PrivateDataRetrievalService {
 
         try {
             PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
-                    .privateTrustDetailsResourceHandler().getTrustDetails(
-                            OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
-                    .execute().getData();
+                    .privateTrustDetailsResourceHandler().getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
+                    .execute()
+                    .getData();
 
             if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
                 ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
@@ -216,12 +218,12 @@ public class PrivateDataRetrievalService {
         }
     }
 
-    private String findMatchingId(String hashedId, String companyNumber) throws ServiceException {
+    protected String findMatchingId(String hashedId, String companyNumber) throws ServiceException {
         PrivateTrustDetailsListApi details = getTrustDetails(companyNumber);
         return getHashedId(details, hashedId);
     }
 
-    private <T extends Hashable> String getHashedId(PrivateDataList<T> hashableDataList, String hashedIdFromEndpoint) throws ServiceException {
+    public <T extends Hashable> String getHashedId(PrivateDataList<T> hashableDataList, String hashedIdFromEndpoint) throws ServiceException {
         for (Hashable hashableData : hashableDataList) {
             try {
                 String hashedId = hashHelper.encode(hashableData.getId());
