@@ -24,8 +24,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
 @RestController
 @RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}/trusts")
 public class TrustsDataController {
-    PrivateDataRetrievalService privateDataRetrievalService;
-    OverseasEntitiesService overseasEntitiesService;
+    private PrivateDataRetrievalService privateDataRetrievalService;
+    private OverseasEntitiesService overseasEntitiesService;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
@@ -60,7 +60,7 @@ public class TrustsDataController {
                 () -> privateDataRetrievalService.getTrustDetails(companyNumber), requestId, "trust details");
     }
 
-    private Map makeLogMap(String transactionId, String overseasEntityId) {
+    private Map<String, Object> makeLogMap(String transactionId, String overseasEntityId) {
         return Map.of(
                 Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
                 Constants.TRANSACTION_ID_KEY, transactionId
@@ -99,7 +99,7 @@ public class TrustsDataController {
             String requestId,
             String logPart) {
         try {
-            T dataList = supplier.call();
+            var dataList = supplier.call();
 
             if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
                 ApiLogger.errorContext(requestId,
