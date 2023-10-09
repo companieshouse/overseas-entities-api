@@ -538,13 +538,9 @@ class PrivateDataRetrievalServiceTest {
 
     @BeforeEach
     public void setUp() throws IOException, URIValidationException {
-      // Assuming that apiClientService, apiClient, and the other dependencies are
-      // correctly mocked and injected in a similar manner as in the ManagingOfficerTests class
       when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
       var privateTrustDetailsListApi = new PrivateTrustDetailsListApi(Collections.emptyList());
 
-
-      // Corporate Trustee Data Mocks
       when(apiClient.privateCorporateTrusteeDataResourceHandler()).thenReturn(
               privateCorporateTrusteesResourceHandler);
       when(privateCorporateTrusteesResourceHandler.getCorporateTrusteeData(Mockito.anyString())).thenReturn(

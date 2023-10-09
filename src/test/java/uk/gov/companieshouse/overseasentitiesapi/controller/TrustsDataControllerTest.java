@@ -153,7 +153,6 @@ class TrustsDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
 
-        when(privateDataRetrievalService.getCorporateTrustees(any(), any())).thenReturn(listApi);
         when(privateDataRetrievalService.getCorporateTrustees(any(), any())).thenThrow(
                 ServiceException.class);
 
