@@ -4,14 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.api.error.ApiErrorResponseException;
-import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeApi;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;
@@ -68,7 +64,7 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void getCorporateTrusts_success() throws ServiceException {
+    void getCorporateTrustees_success() throws ServiceException {
         PrivateCorporateTrusteeApi trusteeApi = createTrustApiMock();
         PrivateCorporateTrusteeListApi listApi = new PrivateCorporateTrusteeListApi(
                 List.of(trusteeApi));
@@ -79,14 +75,14 @@ class TrustsDataControllerTest {
 
         when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
 
-        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrusts(
+        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
-    void getCorporateTrusts_getCorporateTrusteesNull()
+    void getCorporateTrustees_getCorporateTrusteesNull()
             throws ServiceException {
 
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
@@ -95,7 +91,7 @@ class TrustsDataControllerTest {
 
         System.setOut(new PrintStream(outputStreamCaptor));
 
-        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrusts(
+        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
         assertEquals(404, responseEntity.getStatusCodeValue());
@@ -122,12 +118,12 @@ class TrustsDataControllerTest {
 
 
     @Test
-    void getCorporateTrusts_noCompanyNumber() throws ServiceException {
+    void getCorporateTrustees_noCompanyNumber() throws ServiceException {
 
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
 
-        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrusts(
+        ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
         assertEquals(404, responseEntity.getStatusCodeValue());
@@ -200,7 +196,7 @@ class TrustsDataControllerTest {
                 Optional.of(overseasEntitySubmissionDto));
 
         var thrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getCorporateTrusts("transactionId", "overseasEntityId",
+                () -> trustsDataController.getCorporateTrustees("transactionId", "overseasEntityId",
                         "trustId", "requestId"));
 
         assertEquals("ROE Update feature must be enabled for get overseas entity details",

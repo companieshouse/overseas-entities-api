@@ -71,7 +71,7 @@ public class TrustsDataController {
     }
 
     @GetMapping("/{trust_id}/corporate-trustees")
-    public ResponseEntity<PrivateCorporateTrusteeListApi> getCorporateTrusts(
+    public ResponseEntity<PrivateCorporateTrusteeListApi> getCorporateTrustees(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
