@@ -39,6 +39,8 @@ import uk.gov.companieshouse.api.handler.corporatetrustee.request.PrivateCorpora
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.managingofficerdata.PrivateManagingOfficerDataResourceHandler;
 import uk.gov.companieshouse.api.handler.managingofficerdata.request.PrivateManagingOfficerDataGet;
+import uk.gov.companieshouse.api.handler.trustees.individualtrustee.PrivateIndividualTrusteesResourceHandler;
+import uk.gov.companieshouse.api.handler.trustees.individualtrustee.request.PrivateIndividualTrusteesGet;
 import uk.gov.companieshouse.api.handler.trusts.PrivateTrustDetailsResourceHandler;
 import uk.gov.companieshouse.api.handler.trusts.PrivateTrustLinksResourceHandler;
 import uk.gov.companieshouse.api.handler.trusts.request.PrivateTrustDetailsGet;
@@ -52,6 +54,8 @@ import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeA
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
@@ -158,6 +162,12 @@ class PrivateDataRetrievalServiceTest {
     private PrivateCorporateTrusteesGet privateCorporateTrusteeGet;
     @Mock
     private ApiResponse<PrivateCorporateTrusteeListApi> privateCorporateTrusteeDataResponse;
+    @Mock
+    private PrivateIndividualTrusteesResourceHandler privateIndividualTrusteeDataResourceHandler;
+    @Mock
+    private PrivateIndividualTrusteesGet privateIndividualTrusteeGet;
+    @Mock
+    private ApiResponse<PrivateIndividualTrusteeListApi> privateIndividualTrusteeDataResponse;
     @Mock
     private PrivateTrustDetailsResourceHandler privateTrustDetailsResourceHandler;
     @Mock
@@ -890,6 +900,199 @@ class PrivateDataRetrievalServiceTest {
                     () -> {
                         privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
                     });
+                }
+        }
+
+    class IndividualTrusteeDataTests {
+
+        private static final String HASHED_TRUST_ID = "hashedTrustId";
+        private static final String NON_HASHED_TRUST_ID = "trustId";
+        private static final String COMPANY_NUMBER = "companyNumber";
+
+        @BeforeEach
+        public void init() throws IOException, NoSuchAlgorithmException {
+            when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
+            when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
+            privateDataRetrievalService.setHashHelper(hashHelper);
+
+            lenient().when(hashHelper.encode(NON_HASHED_TRUST_ID)).thenReturn(HASHED_TRUST_ID);
+
+            outputStreamCaptor = new ByteArrayOutputStream();
+        }
+
+        @AfterEach
+        void tearDown() {
+            outputStreamCaptor.reset();
+            System.setOut(System.out);
+        }
+
+        private void trustDetailsStubbings()
+                throws ApiErrorResponseException, URIValidationException {
+            var details = new PrivateTrustDetailsApi();
+            details.setId(NON_HASHED_TRUST_ID);
+
+            List<PrivateTrustDetailsApi> trustDetails = List.of(details);
+            var trustDetailsList = new PrivateTrustDetailsListApi(trustDetails);
+
+            when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
+            when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
+            when(apiClient.privateTrustDetailsResourceHandler()).thenReturn(
+                    privateTrustDetailsResourceHandler);
+            when(privateTrustDetailsResourceHandler.getTrustDetails(
+                    Mockito.anyString())).thenReturn(privateTrustDetailsGet);
+        }
+
+        private void individualTrusteesStubbing(
+                List<PrivateIndividualTrusteeApi> individualTrusteesList)
+                throws ApiErrorResponseException, URIValidationException {
+
+            lenient().when(privateIndividualTrusteeGet.execute()).thenReturn(
+                    privateIndividualTrusteeDataResponse);
+            lenient().when(privateIndividualTrusteeDataResponse.getData())
+                    .thenReturn(new PrivateIndividualTrusteeListApi(individualTrusteesList));
+
+            lenient().when(apiClient.privateIndividualTrusteeDataResourceHandler()).thenReturn(
+                    privateIndividualTrusteeDataResourceHandler);
+            lenient().when(privateIndividualTrusteeDataResourceHandler.getIndividualTrusteeData(
+                    Mockito.anyString())).thenReturn(privateIndividualTrusteeGet);
+        }
+
+        @Test
+        void testGetIndividualTrusteesIsSuccessful()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            var result = privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            verify(apiClientService, times(2)).getInternalApiClient();
+            assertEquals(1, result.getData().size());
+        }
+
+        void testGetIndividualTrusteesReturnsNullTrusteeList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+            individualTrusteesStubbing(null);
+
+            var result = privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            verify(apiClientService, times(2)).getInternalApiClient();
+            assertNull(result.getData());
+        }
+
+        @Test
+        void testGetIndividualTrusteesApiErrorResponseExceptionThrownNotFoundReturnsEmptyList()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            when(privateIndividualTrusteeGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            var result = privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID,
+                    COMPANY_NUMBER);
+
+            assertEquals(0, result.getData().size());
+            assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),
+                    "No Individual Trustee found for Trust Id " + HASHED_TRUST_ID));
+        }
+
+        @Test
+        void testGetIndividualTrusteesApiErrorResponseExceptionThrownCausesServiceException()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            var exception = new ApiErrorResponseException(
+                    new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
+
+            when(privateIndividualTrusteeGet.execute()).thenThrow(exception);
+
+            assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+        }
+
+        @Test
+        void testGetIndividualTrusteesURIValidationExceptionThrown()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            when(privateIndividualTrusteeGet.execute()).thenThrow(new URIValidationException("Error"));
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Error Retrieving Individual Trustee data for Trust Id " + HASHED_TRUST_ID));
+            assertEquals("Error", thrown.getMessage());
+        }
+
+        @Test
+        void testGetIndividualTrusteesHashHelperThrowsError()
+                throws ApiErrorResponseException, URIValidationException, NoSuchAlgorithmException {
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            when(hashHelper.encode(anyString())).thenThrow(new NoSuchAlgorithmException("Error"));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals("Cannot encode ID", thrown.getMessage());
+        }
+
+        @Test
+        void testGetIndividualTrusteesNoMatchingId()
+                throws ApiErrorResponseException, URIValidationException, ServiceException {
+            trustDetailsStubbings();
+
+            var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
+            privateIndividualTrustee.setId("123");
+            when(privateDataRetrievalService.findMatchingId(HASHED_TRUST_ID, COMPANY_NUMBER)).thenReturn("matchingId");
+
+            List<PrivateIndividualTrusteeApi> individualTrustees = List.of(privateIndividualTrustee);
+            individualTrusteesStubbing(individualTrustees);
+
+            System.setOut(new PrintStream(outputStreamCaptor));
+
+            ServiceException thrown =assertThrows(ServiceException.class, () -> {
+                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
+            });
+
+            assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
+            assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
         }
     }
 }

@@ -12,6 +12,7 @@ import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
@@ -20,6 +21,11 @@ import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
+
+import javax.servlet.http.HttpServletResponse;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.HashMap;
 
 @Component
 public class PrivateDataRetrievalService {
@@ -115,7 +121,7 @@ public class PrivateDataRetrievalService {
         try {
             PrivateBoDataListApi beneficialOwnerDataList = apiClientService.getInternalApiClient()
                     .privateBeneficialOwnerResourceHandler()
-                    .getBeneficialOwners( OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/beneficial-owners")
+                    .getBeneficialOwners(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/beneficial-owners")
                     .execute()
                     .getData();
 
@@ -143,22 +149,10 @@ public class PrivateDataRetrievalService {
     }
 
     public PrivateCorporateTrusteeListApi getCorporateTrustees(String hashedTrustId,
-            String companyNumber) throws ServiceException {
-
+                                                               String companyNumber) throws ServiceException {
         var logMap = new HashMap<String, Object>();
-
         String nonHashedId = findMatchingId(hashedTrustId, companyNumber);
-
-        logMap.put(TRUST_ID, nonHashedId);
-        logMap.put(COMPANY_NUMBER, companyNumber);
-
-        if (nonHashedId == null) {
-            var message = "Non-hashed ID could not be found for Hashed ID: " + hashedTrustId;
-            ApiLogger.error(message, new IllegalArgumentException(message), logMap);
-            throw new ServiceException(message);
-        }
-
-        ApiLogger.info("Retrieving Corporate Trustee data for Trust Id: " + nonHashedId, logMap);
+        writeLogs(logMap, hashedTrustId, companyNumber, nonHashedId, "Corporate Trustee");
 
         try {
             PrivateCorporateTrusteeListApi corporateTrustees = apiClientService.getInternalApiClient()
@@ -189,34 +183,74 @@ public class PrivateDataRetrievalService {
 
     }
 
+    public PrivateIndividualTrusteeListApi getIndividualTrustees(String hashedTrustId,
+                                                                 String companyNumber) throws ServiceException {
+
+        var logMap = new HashMap<String, Object>();
+        String nonHashedId = findMatchingId(hashedTrustId, companyNumber);
+        writeLogs(logMap, hashedTrustId, companyNumber, nonHashedId, "Individual Trustee");
+
+        try {
+            PrivateIndividualTrusteeListApi individualTrustees = apiClientService.getInternalApiClient()
+                    .privateIndividualTrusteeDataResourceHandler()
+                    .getIndividualTrusteeData(OVERSEAS_ENTITY_URI_SECTION + "trusts/" + nonHashedId + "/individual-trustees")
+                    .execute()
+                    .getData();
+
+            if (individualTrustees != null && individualTrustees.getData() != null
+                    && !individualTrustees.getData().isEmpty()) {
+                ApiLogger.info(String.format("Retrieved %d Individual Trustee for Company Number %s",
+                        individualTrustees.getData().size(), hashedTrustId));
+            }
+
+            return individualTrustees;
+
+        } catch (ApiErrorResponseException e) {
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info("No Individual Trustee found for Trust Id " + hashedTrustId, logMap);
+                return new PrivateIndividualTrusteeListApi(Collections.emptyList());
+            }
+            throw new ServiceException(e.getStatusMessage(), e);
+        } catch (URIValidationException e) {
+            var message = "Error Retrieving Individual Trustee data for Trust Id " + hashedTrustId;
+            ApiLogger.errorContext(message, e);
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    protected String findMatchingId(String hashedTrustId, String companyNumber) throws ServiceException {
+        PrivateTrustDetailsListApi details = getTrustDetails(companyNumber);
+        return getHashedId(details, hashedTrustId);
+    }
+
     public PrivateTrustDetailsListApi getTrustDetails(String companyNumber) throws ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put(COMPANY_NUMBER, companyNumber);
         ApiLogger.info("Retrieving Trusts for Company Number " + companyNumber, logMap);
-    
+
         try {
-          PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
-                  .privateTrustDetailsResourceHandler()
-                  .getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
-                  .execute()
-                  .getData();
-    
-          if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
-            ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
-                    trusts.getData().size(), companyNumber));
-          }
-    
-          return trusts;
+            PrivateTrustDetailsListApi trusts = apiClientService.getInternalApiClient()
+                    .privateTrustDetailsResourceHandler()
+                    .getTrustDetails(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/details")
+                    .execute()
+                    .getData();
+
+            if (trusts != null && trusts.getData() != null && !trusts.getData().isEmpty()) {
+                ApiLogger.info(String.format("Retrieved %d Trusts for Company Number %s",
+                        trusts.getData().size(), companyNumber));
+            }
+
+            return trusts;
         } catch (ApiErrorResponseException e) {
-          if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-            ApiLogger.info("No Trusts found for Company Number " + companyNumber, logMap);
-            return new PrivateTrustDetailsListApi(Collections.emptyList());
-          }
-          throw new ServiceException(e.getStatusMessage(), e);
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info("No Trusts found for Company Number " + companyNumber, logMap);
+                return new PrivateTrustDetailsListApi(Collections.emptyList());
+            }
+            throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
-          var message = "Error retrieving Trust data for " + companyNumber;
-          ApiLogger.errorContext(message, e);
-          throw new ServiceException(e.getMessage(), e);
+            var message = "Error retrieving Trust data for " + companyNumber;
+            ApiLogger.errorContext(message, e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 
@@ -224,42 +258,38 @@ public class PrivateDataRetrievalService {
         var logMap = new HashMap<String, Object>();
         logMap.put(COMPANY_NUMBER, companyNumber);
         ApiLogger.info("Retrieving Beneficial Owner Trust Links for Company Number " + companyNumber, logMap);
+        
         try {
-        PrivateTrustLinksListApi trustsLinks = apiClientService.getInternalApiClient()
-                .privateTrustLinksResourceHandler()
-                .getTrustLinks(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/beneficial-owners/links")
-                .execute()
-                .getData();
+            PrivateTrustLinksListApi trustsLinks = apiClientService.getInternalApiClient()
+                    .privateTrustLinksResourceHandler()
+                    .getTrustLinks(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/beneficial-owners/links")
+                    .execute()
+                    .getData();
 
-        if (trustsLinks != null && trustsLinks.getData() != null && !trustsLinks.getData().isEmpty()) {
-            ApiLogger.info(String.format("Retrieved %d Beneficial Owners Trust links for Company Number %s",
-                    trustsLinks.getData().size(), companyNumber));
-        }
+            if (trustsLinks != null && trustsLinks.getData() != null && !trustsLinks.getData().isEmpty()) {
+                ApiLogger.info(String.format("Retrieved %d Beneficial Owners Trust links for Company Number %s",
+                        trustsLinks.getData().size(), companyNumber));
+            }
 
-        return trustsLinks;
+            return trustsLinks;
         } catch (ApiErrorResponseException e) {
-        if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-            ApiLogger.info("No Beneficial Owner Trust links found for Company Number " + companyNumber, logMap);
-            return new PrivateTrustLinksListApi(Collections.emptyList());
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info("No Beneficial Owner Trust links found for Company Number " + companyNumber, logMap);
+                return new PrivateTrustLinksListApi(Collections.emptyList());
         }
-        throw new ServiceException(e.getStatusMessage(), e);
+            throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
-          var message = "Error Retrieving Beneficial Owner Trust links data for " + companyNumber;
-          ApiLogger.errorContext(message, e);
-          throw new ServiceException(e.getMessage(), e);
+            var message = "Error Retrieving Beneficial Owner Trust links data for " + companyNumber;
+            ApiLogger.errorContext(message, e);
+            throw new ServiceException(e.getMessage(), e);
         }
-    }
-
-    protected String findMatchingId(String hashedId, String companyNumber) throws ServiceException {
-        PrivateTrustDetailsListApi details = getTrustDetails(companyNumber);
-        return getHashedId(details, hashedId);
     }
 
     public <T extends Hashable> String getHashedId(PrivateDataList<T> hashableDataList, String hashedIdFromEndpoint) throws ServiceException {
         for (Hashable hashableData : hashableDataList) {
             try {
                 String hashedId = hashHelper.encode(hashableData.getId());
-                if(hashedIdFromEndpoint.equals(hashedId)){
+                if (hashedIdFromEndpoint.equals(hashedId)) {
                     return hashableData.getId();
                 }
             } catch (NoSuchAlgorithmException e) {
@@ -269,4 +299,17 @@ public class PrivateDataRetrievalService {
         return null;
     }
 
+    private void writeLogs(HashMap<String, Object> logMap, String hashedTrustId, String companyNumber, String nonHashedId, String trusteeType) throws ServiceException {
+        logMap.put(TRUST_ID, nonHashedId);
+        logMap.put(COMPANY_NUMBER, companyNumber);
+
+        if (nonHashedId == null) {
+            var message = "Non-hashed ID could not be found for Hashed ID: " + hashedTrustId;
+            ApiLogger.error(message, new IllegalArgumentException(message), logMap);
+            throw new ServiceException(message);
+        }
+
+        var logMessage = String.format("Retrieving %s data for Trust Id: %s", trusteeType, nonHashedId);
+        ApiLogger.info(logMessage, logMap);
+    }
 }

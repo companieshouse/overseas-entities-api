@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
@@ -100,6 +101,23 @@ public class TrustsDataController {
                 trustId, companyNo), requestId, "corporate trustee");
     }
 
+    @GetMapping("/{trust_id}/individual-trustees")
+    public ResponseEntity<PrivateIndividualTrusteeListApi> getIndividualTrustees(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @PathVariable(Constants.TRUST_ID) String trustId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
+            throws ServiceException {
+
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNo = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNo == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return retrievePrivateTrustData(() -> privateDataRetrievalService.getIndividualTrustees(
+                trustId, companyNo), requestId, "individual trustee");
+    }
+
     public String getCompanyNumber(String overseasEntityId, String requestId)
             throws ServiceException {
 
@@ -109,7 +127,7 @@ public class TrustsDataController {
         final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
                 overseasEntityId);
 
-        if (!submissionDtoOptional.isPresent()) {
+        if (submissionDtoOptional.isEmpty()) {
             ApiLogger.errorContext(requestId,
                     "Could not find overseas entity submission for overseas entity "
                             + overseasEntityId, null, logMap);
