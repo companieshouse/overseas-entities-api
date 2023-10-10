@@ -1,14 +1,10 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections4.ArrayStack;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
