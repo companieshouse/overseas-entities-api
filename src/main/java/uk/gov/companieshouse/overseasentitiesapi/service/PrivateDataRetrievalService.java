@@ -228,7 +228,7 @@ public class PrivateDataRetrievalService {
     public PrivateTrustLinksListApi getTrustLinks(String companyNumber) throws ServiceException {
         var logMap = new HashMap<String, Object>();
         logMap.put(COMPANY_NUMBER, companyNumber);
-        ApiLogger.info("Retrieving BO Trust Links for Company Number " + companyNumber, logMap);
+        ApiLogger.info("Retrieving Beneficial Owner Trust Links for Company Number " + companyNumber, logMap);
         try {
         PrivateTrustLinksListApi trustsLinks = apiClientService.getInternalApiClient()
                 .privateTrustLinksResourceHandler()
@@ -237,19 +237,19 @@ public class PrivateDataRetrievalService {
                 .getData();
 
         if (trustsLinks != null && trustsLinks.getData() != null && !trustsLinks.getData().isEmpty()) {
-            ApiLogger.info(String.format("Retrieved %d BO Trust links for Company Number %s",
+            ApiLogger.info(String.format("Retrieved %d Beneficial Owners Trust links for Company Number %s",
                     trustsLinks.getData().size(), companyNumber));
         }
 
         return trustsLinks;
         } catch (ApiErrorResponseException e) {
         if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
-            ApiLogger.info("No BO Trust links found for Company Number " + companyNumber, logMap);
+            ApiLogger.info("No Beneficial Owner Trust links found for Company Number " + companyNumber, logMap);
             return new PrivateTrustLinksListApi(Collections.emptyList());
         }
         throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
-          var message = "Error Retrieving BO Trust links data for " + companyNumber;
+          var message = "Error Retrieving Beneficial Owner Trust links data for " + companyNumber;
           ApiLogger.errorContext(message, e);
           throw new ServiceException(e.getMessage(), e);
         }

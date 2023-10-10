@@ -68,8 +68,6 @@ class PrivateDataRetrievalServiceTest {
     private static final String COMPANY_NUMBER = "OE123456";
     private static final ApiErrorResponseException FOUR_HUNDRED_AND_FOUR_EXCEPTION = ApiErrorResponseException.fromHttpResponseException(
             new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
-    private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
-            new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
     private final String jsonManagingOfficerString = "["
             + "{"
             + "\"managingOfficerAppointmentId\":\"9001808986\","
@@ -330,7 +328,7 @@ class PrivateDataRetrievalServiceTest {
         void testNoEmailWhenGetOverseasEntitiesPrivateDataThrowsApiResponseError404Exception()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
 
-            when(privateOverseasEntityDataGet.execute()).thenThrow(FourHundredAndFourException);
+            when(privateOverseasEntityDataGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
             OverseasEntityDataApi result = privateDataRetrievalService.getOverseasEntityData(
                     COMPANY_NUMBER);
@@ -502,7 +500,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateManagingOfficerDataGet.execute()).thenReturn(managingOfficerDataResponse);
             when(managingOfficerDataResponse.getData()).thenReturn(managingOfficerDataApiListApi);
 
-            when(privateBeneficialOwnerGet.execute()).thenThrow(FourHundredAndFourException);
+            when(privateBeneficialOwnerGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
             assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
             assertEquals(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER),
@@ -530,7 +528,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateBeneficialOwnerGet.execute()).thenReturn(apiBoDataListGetResponse);
             when(apiBoDataListGetResponse.getData()).thenReturn(boDataListApi);
 
-            when(privateManagingOfficerDataGet.execute()).thenThrow(FourHundredAndFourException);
+            when(privateManagingOfficerDataGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
             assertNotNull(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
             assertNotNull(privateDataRetrievalService.getOverseasEntityData(COMPANY_NUMBER));
@@ -623,9 +621,7 @@ class PrivateDataRetrievalServiceTest {
 
         @Test
         void testGetTrustLinksApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            var exception = new ApiErrorResponseException(
-                    new HttpResponseException.Builder(404, "notFound", new HttpHeaders()));
-            when(privateTrustLinksGet.execute()).thenThrow(exception);
+            when(privateCorporateTrusteeGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
 
             var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
 
