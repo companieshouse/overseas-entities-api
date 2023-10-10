@@ -148,6 +148,7 @@ public class PrivateDataRetrievalService {
         String nonHashedId = findMatchingId(hashedTrustId, companyNumber);
 
         logMap.put(TRUST_ID, nonHashedId);
+        logMap.put(COMPANY_NUMBER, companyNumber);
 
         if (nonHashedId == null) {
             var message = "Non-hashed ID could not be found for Hashed ID: " + hashedTrustId;
