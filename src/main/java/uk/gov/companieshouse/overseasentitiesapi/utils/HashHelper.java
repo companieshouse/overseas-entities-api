@@ -7,7 +7,7 @@ import java.util.Base64;
 
 public class HashHelper {
 
-    private String salt;
+    private final String salt;
 
     public HashHelper(String salt) {
         this.salt = salt;
