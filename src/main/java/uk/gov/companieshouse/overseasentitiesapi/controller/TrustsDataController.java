@@ -50,7 +50,7 @@ public class TrustsDataController {
         this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
-    private Map makeLogMap(String transactionId, String overseasEntityId) {
+    private Map<String, Object> makeLogMap(String transactionId, String overseasEntityId) {
         return Map.of(OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
                 TRANSACTION_ID_KEY, transactionId);
     }

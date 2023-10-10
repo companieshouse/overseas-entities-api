@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
 public class HashHelper {
 
@@ -27,7 +26,7 @@ public class HashHelper {
     }
 
     private byte[] sha1Digest(final String plain) throws NoSuchAlgorithmException {
-        return MessageDigest.getInstance("SHA-1")
-                .digest((plain + salt).getBytes(StandardCharsets.UTF_8));
+        return MessageDigest.getInstance("SHA-1").digest((plain + salt).getBytes(
+                StandardCharsets.UTF_8));
     }
 }
