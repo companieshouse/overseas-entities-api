@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
@@ -74,15 +76,13 @@ public class TrustsDataController {
             return null;
         }
         final var submissionDto = submissionDtoOptional.get();
-        ApiLogger.info("Submission DTO HERE?: " + submissionDto);
-        ApiLogger.info("COMPANY NUMBER IS: "  + submissionDto.getEntityNumber().toString());
-//        if (!submissionDto.isForUpdate()) {
-//            throw new ServiceException("Submission for overseas entity details must be for update");
-//        }
-//        if (!isRoeUpdateEnabled) {
-//            throw new ServiceException(
-//                    "ROE Update feature must be enabled for get overseas entity details");
-//        }
+        if (!submissionDto.isForUpdate()) {
+            throw new ServiceException("Submission for overseas entity details must be for update");
+        }
+        if (!isRoeUpdateEnabled) {
+            throw new ServiceException(
+                    "ROE Update feature must be enabled for get overseas entity details");
+        }
         return submissionDto.getEntityNumber();
     }
 
@@ -114,6 +114,12 @@ public class TrustsDataController {
             String hashedId = hashHelper.encode(hashableData.getId());
             hashableData.setHashedId(hashedId);
             hashableData.setId(null);
+            if(hashableData instanceof PrivateTrustLinksApi){
+                PrivateTrustLinksApi privateTrustLinksApi = (PrivateTrustLinksApi) hashableData;
+                String hashedCorporateBodyId = hashHelper.encode(privateTrustLinksApi.getCorporateBodyAppointmentId());
+                privateTrustLinksApi.setHashedCorporateBodyAppointmentId(hashedCorporateBodyId);
+                privateTrustLinksApi.setCorporateBodyAppointmentId(null);
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode ID", e);
         }

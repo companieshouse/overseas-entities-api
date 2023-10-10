@@ -2,11 +2,11 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
-import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
@@ -52,7 +52,7 @@ class TrustsDataControllerTest {
     @BeforeEach
     void setUp() {
         setUpdateEnabledFeatureFlag(trustsDataController, true);
-        when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
+        lenient().when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
         reset(privateDataRetrievalService, overseasEntitiesService, hashHelper);
         outputStreamCaptor = new ByteArrayOutputStream();
     }
@@ -65,14 +65,14 @@ class TrustsDataControllerTest {
 
     @Test
     void getTrustDetails_success() throws ServiceException {
-        PrivateTrustLinksApi trustDetailsApi = createTrustLinksApiMock();
-        PrivateTrustLinksListApi listApi = new PrivateTrustLinksListApi(
+        PrivateTrustDetailsApi trustDetailsApi = createTrustDetailsApiMock();
+        PrivateTrustDetailsListApi listApi = new PrivateTrustDetailsListApi(
                 List.of(trustDetailsApi));
-        when(privateDataRetrievalService.getTrustLinks(any())).thenReturn(listApi);
+        when(privateDataRetrievalService.getTrustDetails(any())).thenReturn(listApi);
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
         when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
 
-        ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
         assertEquals(200, responseEntity.getStatusCodeValue());
@@ -81,29 +81,57 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void getTrustDetails_getTrustDetailsNull()
-            throws ServiceException {
-
+    void getTrustDetails_getTrustDetailsApiListNull() throws ServiceException {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
         when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
 
         System.setOut(new PrintStream(outputStreamCaptor));
 
-        ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
         assertEquals(404, responseEntity.getStatusCodeValue());
-        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust links for overseas entity overseasEntityId"));
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust details for overseas entity overseasEntityId"));
         assertNull(responseEntity.getBody());
     }
 
     @Test
-    void getTrustDetails_noCompanyNumber()
-            throws ServiceException {
+    void getTrustDetails_getTrustDetailsApiNull() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+        when(privateDataRetrievalService.getTrustDetails(any())).thenReturn(new PrivateTrustDetailsListApi(null));
 
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "OE123456", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust details for overseas entity OE123456"));
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void getTrustDetails_getTrustDetailsApiEmpty() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+        when(privateDataRetrievalService.getTrustDetails(any())).thenReturn(new PrivateTrustDetailsListApi(Collections.emptyList()));
+
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "OE123456", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust details for overseas entity OE123456"));
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void getTrustDetails_noCompanyNumber() throws ServiceException {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
-        ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
         assertEquals(404, responseEntity.getStatusCodeValue());
@@ -111,46 +139,56 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void checkSubmissionDto_updateEnabledFeatureFlagFalse() {
+    void getTrustDetails_noOverseasEntitySubmission() throws ServiceException {
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.empty());
+
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
+                "transactionId", "overseasEntityId", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void retrievePrivateTrustData_updateEnabledFeatureFlagFalse() {
         setUpdateEnabledFeatureFlag(trustsDataController, false);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         var thrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getTrustLinks("transactionId", "overseasEntityId", "requestId"));
+                () -> trustsDataController.getTrustDetails("transactionId", "overseasEntityId", "requestId"));
 
-        assertEquals("ROE Update feature must be enabled for get overseas entity links", thrown.getMessage());
+        assertEquals("ROE Update feature must be enabled for get overseas entity details", thrown.getMessage());
     }
 
     @Test
-    void checkSubmissionDto_isForUpdateFalse() {
+    void retrievePrivateTrustData_isForUpdateFalse() {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
         when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(false);
 
         var thrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getTrustLinks("transactionId", "overseasEntityId", "requestId"));
+                () -> trustsDataController.getTrustDetails("transactionId", "overseasEntityId", "requestId"));
 
-        assertEquals("Submission for overseas entity trust links must be for update",
+        assertEquals("Submission for overseas entity details must be for update",
                 thrown.getMessage());
     }
 
     @Test
     void retrievePrivateTrustData_responseEntityWith500StatusCode() throws ServiceException {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(Optional.of(overseasEntitySubmissionDto));
-        when(privateDataRetrievalService.getTrustLinks(any())).thenThrow(ServiceException.class);
+        when(privateDataRetrievalService.getTrustDetails(any())).thenThrow(ServiceException.class);
         when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
 
-        ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
+        ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
         assertEquals(500, responseEntity.getStatusCodeValue());
     }
 
-    private PrivateTrustLinksApi createTrustLinksApiMock() {
-        PrivateTrustLinksApi trustLinksApi = new PrivateTrustLinksApi();
-        trustLinksApi.setId("1111");
-        trustLinksApi.setCorporateBodyAppointmentId("afdffds");
-        return trustLinksApi;
+    private PrivateTrustDetailsApi createTrustDetailsApiMock() {
+        PrivateTrustDetailsApi trustDetailsApi = new PrivateTrustDetailsApi();
+        trustDetailsApi.setId("1111");
+        return trustDetailsApi;
     }
 
     private void setUpdateEnabledFeatureFlag(TrustsDataController trustsDataController, boolean value) {
