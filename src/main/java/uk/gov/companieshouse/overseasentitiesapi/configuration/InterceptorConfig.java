@@ -25,14 +25,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     static final String DETAILS = "/private/**/details";
     static final String MANAGING_OFFICERS_PRIVATE_DATA = "/private/**/managing-officers";
     static final String BENEFICIAL_OWNERS_PRIVATE_DATA = "/private/**/beneficial-owners";
-    static final String TRUST_PRIVATE_DATA = "/private/**/trusts/**";
+    static final String TRUST_DETAILS_PRIVATE_DATA = "/private/**/trusts/details";
+    static final String CORPORATE_TRUSTEES_PRIVATE_DATA = "/private/**/trusts/**/corporate-trustees";
 
     static final String[] USER_AUTH_ENDPOINTS = {
             TRANSACTIONS,
             DETAILS,
             MANAGING_OFFICERS_PRIVATE_DATA,
             BENEFICIAL_OWNERS_PRIVATE_DATA,
-            TRUST_PRIVATE_DATA
+            TRUST_DETAILS_PRIVATE_DATA,
+            CORPORATE_TRUSTEES_PRIVATE_DATA
     };
 
     static final String[] INTERNAL_AUTH_ENDPOINTS = {
