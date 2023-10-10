@@ -104,7 +104,7 @@ public class TrustsDataController {
         return submissionDto.getEntityNumber();
     }
 
-     private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> retrievePrivateTrustData(
+    private <U extends Hashable, T extends PrivateDataList<U>> ResponseEntity<T> retrievePrivateTrustData(
             Callable<T> supplier,
             String requestId,
             String logPart) {

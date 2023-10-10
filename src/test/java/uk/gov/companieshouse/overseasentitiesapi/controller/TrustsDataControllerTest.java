@@ -52,7 +52,7 @@ class TrustsDataControllerTest {
     private final String HASHED_ID = "u2YuMp-BwsQ_GGMbYE2EExDBkoA";
 
     private final String CORP_BODY_HASHED_ID = "WhjCS3yQb908KXF-c1Z8sEJsJII";
-    
+
     @BeforeEach
     void setUp() {
         setUpdateEnabledFeatureFlag(trustsDataController, true);
