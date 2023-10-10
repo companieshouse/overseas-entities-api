@@ -25,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeApi;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -44,8 +46,6 @@ class TrustsDataControllerTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
     @Mock
-    private HashHelper hashHelper;
-    @Mock
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
     private ByteArrayOutputStream outputStreamCaptor;
 
@@ -64,8 +64,44 @@ class TrustsDataControllerTest {
     }
 
     @Test
+    void getIndividualTrustees_success() throws ServiceException {
+        PrivateIndividualTrusteeApi trusteeApi = createIndividualTrustApiMock();
+        PrivateIndividualTrusteeListApi listApi = new PrivateIndividualTrusteeListApi(
+                List.of(trusteeApi));
+        when(privateDataRetrievalService.getIndividualTrustees(any(), any())).thenReturn(listApi);
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
+                Optional.of(overseasEntitySubmissionDto));
+
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+
+        ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
+                "transactionId", "overseasEntityId", "trustId", "requestId");
+
+        assertEquals(200, responseEntity.getStatusCodeValue());
+    }
+
+    @Test
+    void getIndividualTrustees_getIndividualTrusteesNull()
+            throws ServiceException {
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
+                Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDto.getEntityNumber()).thenReturn("OE123456");
+
+        System.setOut(new PrintStream(outputStreamCaptor));
+
+        ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
+                "transactionId", "overseasEntityId", "trustId", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"Could not find any individual trustee for overseas entity overseasEntityId"));
+
+    }
+
+    @Test
     void getCorporateTrustees_success() throws ServiceException {
-        PrivateCorporateTrusteeApi trusteeApi = createTrustApiMock();
+        PrivateCorporateTrusteeApi trusteeApi = createCorpTrustApiMock();
         PrivateCorporateTrusteeListApi listApi = new PrivateCorporateTrusteeListApi(
                 List.of(trusteeApi));
         when(privateDataRetrievalService.getCorporateTrustees(any(), any())).thenReturn(listApi);
@@ -99,6 +135,7 @@ class TrustsDataControllerTest {
 
     }
 
+    @Test
     void getTrustDetails_success() throws ServiceException {
         PrivateTrustDetailsApi trustDetailsApi = createTrustDetailsApiMock();
         PrivateTrustDetailsListApi listApi = new PrivateTrustDetailsListApi(
@@ -124,6 +161,18 @@ class TrustsDataControllerTest {
                 Optional.of(overseasEntitySubmissionDto));
 
         ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
+                "transactionId", "overseasEntityId", "trustId", "requestId");
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+    }
+
+    @Test
+    void getIndividualTrustees_noCompanyNumber() throws ServiceException {
+
+        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
+                Optional.of(overseasEntitySubmissionDto));
+
+        ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
         assertEquals(404, responseEntity.getStatusCodeValue());
@@ -233,7 +282,13 @@ class TrustsDataControllerTest {
         assertEquals(500, responseEntity.getStatusCodeValue());
     }
 
-    private PrivateCorporateTrusteeApi createTrustApiMock() {
+    private PrivateIndividualTrusteeApi createIndividualTrustApiMock() {
+        PrivateIndividualTrusteeApi trusteeApi = new PrivateIndividualTrusteeApi();
+        trusteeApi.setId("1111");
+        return trusteeApi;
+    }
+
+    private PrivateCorporateTrusteeApi createCorpTrustApiMock() {
         PrivateCorporateTrusteeApi trusteeApi = new PrivateCorporateTrusteeApi();
         trusteeApi.setId("1111");
         return trusteeApi;
