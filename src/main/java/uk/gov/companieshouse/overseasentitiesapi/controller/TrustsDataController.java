@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
+import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
@@ -50,11 +51,6 @@ public class TrustsDataController {
         this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
-    private Map<String, Object> makeLogMap(String transactionId, String overseasEntityId) {
-        return Map.of(OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
-                TRANSACTION_ID_KEY, transactionId);
-    }
-
    @GetMapping("/details")
     public ResponseEntity<PrivateTrustDetailsListApi> getTrustDetails(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
@@ -85,7 +81,23 @@ public class TrustsDataController {
         }
         return retrievePrivateTrustData(() -> privateDataRetrievalService.getCorporateTrustees(
                 trustId, companyNo), requestId, "corporate trustee");
+    }
 
+    @GetMapping("/{trust_id}/individual-trustees")
+    public ResponseEntity<PrivateIndividualTrusteeListApi> getIndividualTrustees(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @PathVariable(Constants.TRUST_ID) String trustId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
+            throws ServiceException {
+
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNo = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNo == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return retrievePrivateTrustData(() -> privateDataRetrievalService.getIndividualTrustees(
+                trustId, companyNo), requestId, "individual trustee");
     }
 
     public String getCompanyNumber(String overseasEntityId, String requestId)
@@ -97,7 +109,7 @@ public class TrustsDataController {
         final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
                 overseasEntityId);
 
-        if (!submissionDtoOptional.isPresent()) {
+        if (submissionDtoOptional.isEmpty()) {
             ApiLogger.errorContext(requestId,
                     "Could not find overseas entity submission for overseas entity "
                             + overseasEntityId, null, logMap);
@@ -150,5 +162,12 @@ public class TrustsDataController {
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode ID", e);
         }
+    }
+
+    private Map<String, Object> makeLogMap(String transactionId, String overseasEntityId) {
+        return Map.of(
+                Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                Constants.TRANSACTION_ID_KEY, transactionId
+        );
     }
 }
