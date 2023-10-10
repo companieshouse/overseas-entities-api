@@ -165,11 +165,17 @@ class PrivateDataRetrievalServiceTest {
     @Mock
     private PrivateTrustDetailsGet privateTrustDetailsGet;
     @Mock
-    private ApiResponse<PrivateTrustDetailsListApi> apiTrustDetailsGetResponse;
-    @Mock
     private HashHelper hashHelper;
     @Mock
     private ApiResponse<PrivateTrustDetailsListApi> privateTrustDetailsDataResponse;
+    @Mock
+    private PrivateTrustLinksResourceHandler privateTrustLinksResourceHandler;
+
+    @Mock
+    private PrivateTrustLinksGet privateTrustLinksGet;
+
+    @Mock
+    private ApiResponse<PrivateTrustLinksListApi> privateTrustLinksDataResponse;
 
     protected void retrievePrivateData() throws ServiceException {
         privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
