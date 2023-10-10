@@ -565,19 +565,7 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(1, result.getData().size());
         }
 
-        @Test
-        void testGetTrustLinksIsSuccessful() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            List<PrivateTrustLinksApi> trustLinks = List.of(new PrivateTrustLinksApi());
-            var trustLinksList = new PrivateTrustLinksListApi(trustLinks);
 
-            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
-            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
-
-            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
-
-            verify(apiClientService, times(1)).getInternalApiClient();
-            assertEquals(1, result.getData().size());
-        }
 
         @Test
         void testGetTrustDetailsReturnsNullTrustList()
@@ -588,19 +576,6 @@ class PrivateDataRetrievalServiceTest {
             when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
 
             var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-
-            verify(apiClientService, times(1)).getInternalApiClient();
-            assertNull(result);
-        }
-
-        @Test
-        void testGetTrustLinksReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            PrivateTrustLinksListApi trustLinksList = null;
-
-            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
-            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
-
-            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
 
             verify(apiClientService, times(1)).getInternalApiClient();
             assertNull(result);
@@ -620,16 +595,6 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
-        void testGetTrustLinksApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            when(privateCorporateTrusteeGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
-
-            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
-
-            verify(apiClientService, times(1)).getInternalApiClient();
-            assertEquals(0, result.getData().size());
-        }
-
-        @Test
         void testGetTrustDetailsApiErrorResponseExceptionThrownCausesServiceException()
                 throws ApiErrorResponseException, URIValidationException {
             var exception = new ApiErrorResponseException(
@@ -639,19 +604,6 @@ class PrivateDataRetrievalServiceTest {
             assertThrows(ServiceException.class, () -> {
                 privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
             });
-        }
-
-        @Test
-        void testGetTrustLinksApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            var exception = new ApiErrorResponseException(
-                    new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
-            when(privateTrustLinksGet.execute()).thenThrow(exception);
-
-            assertThrows(
-                    ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
-                    });
         }
 
         @Test
@@ -865,6 +817,69 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
             assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
 
+        }
+    }
+
+    @Nested
+    class TrustLinkDataTests {
+
+        @BeforeEach
+        public void init() throws IOException {
+            when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
+
+            when(apiClient.privateTrustLinksResourceHandler()).thenReturn(
+                    privateTrustLinksResourceHandler);
+            when(privateTrustLinksResourceHandler.getTrustLinks(
+                    Mockito.anyString())).thenReturn(privateTrustLinksGet);
+        }
+        @Test
+        void testGetTrustLinksIsSuccessful() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            List<PrivateTrustLinksApi> trustLinks = List.of(new PrivateTrustLinksApi());
+            var trustLinksList = new PrivateTrustLinksListApi(trustLinks);
+
+            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
+            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertEquals(1, result.getData().size());
+        }
+
+        @Test
+        void testGetTrustLinksReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            PrivateTrustLinksListApi trustLinksList = null;
+
+            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
+            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertNull(result);
+        }
+
+        @Test
+        void testGetTrustLinksApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            when(privateTrustLinksGet.execute()).thenThrow(FOUR_HUNDRED_AND_FOUR_EXCEPTION);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertEquals(0, result.getData().size());
+        }
+
+        @Test
+        void testGetTrustLinksApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            var exception = new ApiErrorResponseException(
+                    new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
+            when(privateTrustLinksGet.execute()).thenThrow(exception);
+
+            assertThrows(
+                    ServiceException.class,
+                    () -> {
+                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+                    });
         }
         @Test
         void testGetTrustLinksURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException, ServiceException {
