@@ -72,9 +72,9 @@ public class TrustsDataController {
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
-        Callable<PrivateTrustLinksListApi> function =
-                () -> privateDataRetrievalService.getTrustLinks(companyNumber);
-        return checkSubmissionDto(function, requestId, "trust links");
+
+        return retrievePrivateTrustData(
+                () -> privateDataRetrievalService.getTrustLinks(companyNumber), requestId, "trust links");
     }
 
     private String getCompanyNumber(String overseasEntityId, String requestId) throws ServiceException {
@@ -143,5 +143,12 @@ public class TrustsDataController {
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode ID", e);
         }
+    }
+
+    private Map<String, Object> makeLogMap(String transactionId, String overseasEntityId) {
+        return Map.of(
+                Constants.OVERSEAS_ENTITY_ID_KEY, overseasEntityId,
+                Constants.TRANSACTION_ID_KEY, transactionId
+        );
     }
 }
