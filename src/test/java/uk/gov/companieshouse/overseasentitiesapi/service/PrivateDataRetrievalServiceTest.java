@@ -30,7 +30,9 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.managingofficerdata.PrivateManagingOfficerDataResourceHandler;
 import uk.gov.companieshouse.api.handler.managingofficerdata.request.PrivateManagingOfficerDataGet;
 import uk.gov.companieshouse.api.handler.trusts.PrivateTrustDetailsResourceHandler;
+import uk.gov.companieshouse.api.handler.trusts.PrivateTrustLinksResourceHandler;
 import uk.gov.companieshouse.api.handler.trusts.request.PrivateTrustDetailsGet;
+import uk.gov.companieshouse.api.handler.trusts.request.PrivateTrustLinksGet;
 import uk.gov.companieshouse.api.handler.update.PrivateOverseasEntityDataHandler;
 import uk.gov.companieshouse.api.handler.update.request.PrivateOverseasEntityDataGet;
 import uk.gov.companieshouse.api.model.ApiResponse;
@@ -40,6 +42,8 @@ import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataAp
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -94,6 +98,15 @@ class PrivateDataRetrievalServiceTest {
 
     @Mock
     private ApiResponse<PrivateTrustDetailsListApi> privateTrustDetailsDataResponse;
+
+    @Mock
+    private PrivateTrustLinksResourceHandler privateTrustLinksResourceHandler;
+
+    @Mock
+    private PrivateTrustLinksGet privateTrustLinksGet;
+
+    @Mock
+    private ApiResponse<PrivateTrustLinksListApi> privateTrustLinksDataResponse;
 
     private static final ApiErrorResponseException FourHundredAndFourException = ApiErrorResponseException.fromHttpResponseException(
             new HttpResponseException.Builder(404, "ERROR", new HttpHeaders()).build());
@@ -539,6 +552,20 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
+        void testGetTrustLinksIsSuccessful() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            List<PrivateTrustLinksApi> trustLinks = List.of(new PrivateTrustLinksApi());
+            var trustLinksList = new PrivateTrustLinksListApi(trustLinks);
+
+            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
+            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertEquals(1, result.getData().size());
+        }
+
+        @Test
         void testGetTrustDetailsReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
             PrivateTrustDetailsListApi trustDetailsList = null;
 
@@ -552,12 +579,37 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
+        void testGetTrustLinksReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            PrivateTrustLinksListApi trustLinksList = null;
+
+            when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
+            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertNull(result);
+        }
+
+        @Test
         void testGetTrustDetailsApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
             var exception = new ApiErrorResponseException(
                     new HttpResponseException.Builder(404, "notFound", new HttpHeaders()));
             when(privateTrustDetailsGet.execute()).thenThrow(exception);
 
             var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
+
+            verify(apiClientService, times(1)).getInternalApiClient();
+            assertEquals(0, result.getData().size());
+        }
+
+        @Test
+        void testGetTrustLinksApiErrorResponseExceptionThrownNotFoundReturnsEmptyList() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            var exception = new ApiErrorResponseException(
+                    new HttpResponseException.Builder(404, "notFound", new HttpHeaders()));
+            when(privateTrustLinksGet.execute()).thenThrow(exception);
+
+            var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
 
             verify(apiClientService, times(1)).getInternalApiClient();
             assertEquals(0, result.getData().size());
@@ -577,6 +629,19 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
+        void testGetTrustLinksApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            var exception = new ApiErrorResponseException(
+                    new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
+            when(privateTrustLinksGet.execute()).thenThrow(exception);
+
+            assertThrows(
+                    ServiceException.class,
+                    () -> {
+                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
+                    });
+        }
+
+        @Test
         void testGetTrustDetailsURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException, ServiceException {
             when(privateTrustDetailsGet.execute()).thenThrow(new URIValidationException("Error"));
 
@@ -584,6 +649,16 @@ class PrivateDataRetrievalServiceTest {
                     ServiceException.class,
                     () -> {
                         privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
+                    });
+        }
+        @Test
+        void testGetTrustLinksURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException, ServiceException {
+            when(privateTrustLinksGet.execute()).thenThrow(new URIValidationException("Error"));
+
+            assertThrows(
+                    ServiceException.class,
+                    () -> {
+                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
                     });
         }
     }
