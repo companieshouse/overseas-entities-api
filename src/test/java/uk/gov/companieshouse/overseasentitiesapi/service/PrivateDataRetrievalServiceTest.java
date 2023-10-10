@@ -840,7 +840,6 @@ class PrivateDataRetrievalServiceTest {
             outputStreamCaptor = new ByteArrayOutputStream();
         }
 
-
         @AfterEach
         void tearDown() {
             outputStreamCaptor.reset();
@@ -895,7 +894,6 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(1, result.getData().size());
         }
 
-
         @Test
         void testGetIndividualTrusteesReturnsNullTrusteeList()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
@@ -930,7 +928,6 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(0, result.getData().size());
             assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),
                     "No Individual Trustee found for Trust Id " + HASHED_TRUST_ID));
-
         }
 
         @Test
@@ -994,7 +991,6 @@ class PrivateDataRetrievalServiceTest {
 
             assertEquals("Cannot encode ID", thrown.getMessage());
         }
-
 
         @Test
         void testGetIndividualTrusteesNoMatchingId()
