@@ -27,6 +27,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     static final String BENEFICIAL_OWNERS_PRIVATE_DATA = "/private/**/beneficial-owners";
     static final String TRUST_DETAILS_PRIVATE_DATA = "/private/**/trusts/details";
     static final String CORPORATE_TRUSTEES_PRIVATE_DATA = "/private/**/corporate-trustees";
+    static final String TRUST_LINKS_PRIVATE_DATA = "/private/**/trusts/beneficial-owner/links";
 
     static final String[] USER_AUTH_ENDPOINTS = {
             TRANSACTIONS,
@@ -34,7 +35,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
             MANAGING_OFFICERS_PRIVATE_DATA,
             BENEFICIAL_OWNERS_PRIVATE_DATA,
             TRUST_DETAILS_PRIVATE_DATA,
-            CORPORATE_TRUSTEES_PRIVATE_DATA
+            CORPORATE_TRUSTEES_PRIVATE_DATA,
+            TRUST_LINKS_PRIVATE_DATA
     };
 
     static final String[] INTERNAL_AUTH_ENDPOINTS = {

@@ -10,4 +10,5 @@ routes:
  5: ^/private/transactions/(.*)/overseas-entity/(.*)/trusts/(.*)/individual-trustees
  6: ^/private/transactions/(.*)/overseas-entity/(.*)/trusts/(.*)/corporate-trustees
  7: ^/private/transactions/(.*)/overseas-entity/(.*)/trusts/details
+ 8: ^/private/transactions/(.*)/overseas-entity/(.*)/trusts/beneficial-owners/links
 

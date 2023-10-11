@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
@@ -64,6 +66,21 @@ public class TrustsDataController {
 
         return retrievePrivateTrustData(
                 () -> privateDataRetrievalService.getTrustDetails(companyNumber), requestId, "trust details");
+    }
+
+    @GetMapping("/beneficial-owners/links")
+    public ResponseEntity<PrivateTrustLinksListApi> getTrustLinks(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+        logMap = makeLogMap(transactionId, overseasEntityId);
+        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+        if (companyNumber == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return retrievePrivateTrustData(
+                () -> privateDataRetrievalService.getTrustLinks(companyNumber), requestId, "trust links");
     }
 
     @GetMapping("/{trust_id}/corporate-trustees")
@@ -159,6 +176,12 @@ public class TrustsDataController {
             String hashedId = hashHelper.encode(hashableData.getId());
             hashableData.setHashedId(hashedId);
             hashableData.setId(null);
+            if(hashableData instanceof PrivateTrustLinksApi){
+                var privateTrustLinksApi = (PrivateTrustLinksApi) hashableData;
+                String hashedCorporateBodyId = hashHelper.encode(privateTrustLinksApi.getCorporateBodyAppointmentId());
+                privateTrustLinksApi.setHashedCorporateBodyAppointmentId(hashedCorporateBodyId);
+                privateTrustLinksApi.setCorporateBodyAppointmentId(null);
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode ID", e);
         }

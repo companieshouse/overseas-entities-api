@@ -1,11 +1,17 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.HashMap;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
@@ -243,6 +249,37 @@ public class PrivateDataRetrievalService {
             throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
             var message = "Error retrieving Trust data for " + companyNumber;
+            ApiLogger.errorContext(message, e);
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    public PrivateTrustLinksListApi getTrustLinks(String companyNumber) throws ServiceException {
+        var logMap = new HashMap<String, Object>();
+        logMap.put(COMPANY_NUMBER, companyNumber);
+        ApiLogger.info("Retrieving Beneficial Owner Trust Links for Company Number " + companyNumber, logMap);
+        
+        try {
+            PrivateTrustLinksListApi trustsLinks = apiClientService.getInternalApiClient()
+                    .privateTrustLinksResourceHandler()
+                    .getTrustLinks(OVERSEAS_ENTITY_URI_SECTION + companyNumber + "/trusts/beneficial-owners/links")
+                    .execute()
+                    .getData();
+
+            if (trustsLinks != null && trustsLinks.getData() != null && !trustsLinks.getData().isEmpty()) {
+                ApiLogger.info(String.format("Retrieved %d Beneficial Owners Trust links for Company Number %s",
+                        trustsLinks.getData().size(), companyNumber));
+            }
+
+            return trustsLinks;
+        } catch (ApiErrorResponseException e) {
+            if (e.getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                ApiLogger.info("No Beneficial Owner Trust links found for Company Number " + companyNumber, logMap);
+                return new PrivateTrustLinksListApi(Collections.emptyList());
+        }
+            throw new ServiceException(e.getStatusMessage(), e);
+        } catch (URIValidationException e) {
+            var message = "Error Retrieving Beneficial Owner Trust links data for " + companyNumber;
             ApiLogger.errorContext(message, e);
             throw new ServiceException(e.getMessage(), e);
         }
