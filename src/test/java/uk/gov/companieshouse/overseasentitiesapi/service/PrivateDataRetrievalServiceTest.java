@@ -901,6 +901,7 @@ class PrivateDataRetrievalServiceTest {
                 }
         }
 
+    @Nested
     class IndividualTrusteeDataTests {
 
         private static final String HASHED_TRUST_ID = "hashedTrustId";
