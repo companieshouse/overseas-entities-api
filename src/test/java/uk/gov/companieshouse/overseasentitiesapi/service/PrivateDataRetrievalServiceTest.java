@@ -575,8 +575,6 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(1, result.getData().size());
         }
 
-
-
         @Test
         void testGetTrustDetailsReturnsNullTrustList()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
