@@ -50,10 +50,10 @@ import uk.gov.companieshouse.api.handler.update.request.PrivateOverseasEntityDat
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
-import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeApi;
-import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.trustees.corporatetrustee.PrivateCorporateTrusteeApi;
+import uk.gov.companieshouse.api.model.trustees.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsApi;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.api.model.corporatetrustee.PrivateCorporateTrusteeListApi;
+import uk.gov.companieshouse.api.model.trustees.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksApi;
