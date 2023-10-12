@@ -104,6 +104,7 @@ public class TrustMock {
     public static TrustReviewStatusDao getTrustReviewStatusDao() {
         TrustReviewStatusDao review = new TrustReviewStatusDao();
         review.setInReview(true);
+        review.setReviewedTrustDetails(true);
         review.setReviewedFormerBOs(false);
         review.setReviewedIndividuals(true);
         review.setReviewedLegalEntities(false);
@@ -206,6 +207,7 @@ public class TrustMock {
     public static TrustReviewStatusDto getTrustReviewStatusDto() {
         TrustReviewStatusDto review = new TrustReviewStatusDto();
         review.setInReview(true);
+        review.setReviewedTrustDetails(true);
         review.setReviewedFormerBOs(false);
         review.setReviewedIndividuals(true);
         review.setReviewedLegalEntities(false);
