@@ -6,6 +6,8 @@ public class TrustReviewStatusDao {
 
     public static final String IN_REVIEW_FIELD = "in_review";
 
+    public static final String REVIEWED_TRUST_DETAILS_FIELD = "reviewed_trust_details";
+
     public static final String REVIEWED_FORMER_BOS_FIELD = "reviewed_former_bos";
 
     public static final String REVIEWED_INDIVIDUALS_FIELD = "reviewed_individuals";
@@ -14,6 +16,9 @@ public class TrustReviewStatusDao {
 
     @Field(IN_REVIEW_FIELD)
     private Boolean inReview;
+
+    @Field(REVIEWED_TRUST_DETAILS_FIELD)
+    private Boolean reviewedTrustDetails;
 
     @Field(REVIEWED_FORMER_BOS_FIELD)
     private Boolean reviewedFormerBOs;
@@ -30,6 +35,14 @@ public class TrustReviewStatusDao {
 
     public void setInReview(Boolean inReview) {
         this.inReview = inReview;
+    }
+
+    public Boolean getReviewedTrustDetails() {
+        return reviewedTrustDetails;
+    }
+
+    public void setReviewedTrustDetails(Boolean reviewedTrustDetails) {
+        this.reviewedTrustDetails = reviewedTrustDetails;
     }
 
     public Boolean getReviewedFormerBOs() {

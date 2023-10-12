@@ -6,6 +6,8 @@ public class TrustReviewStatusDto {
 
     public static final String IN_REVIEW = "in_review";
 
+    public static final String REVIEWED_TRUST_DETAILS = "reviewed_trust_details";
+
     public static final String REVIEWED_FORMER_BOS = "reviewed_former_bos";
 
     public static final String REVIEWED_INDIVIDUALS = "reviewed_individuals";
@@ -14,6 +16,9 @@ public class TrustReviewStatusDto {
 
     @JsonProperty(IN_REVIEW)
     private Boolean inReview;
+
+    @JsonProperty(REVIEWED_TRUST_DETAILS)
+    private Boolean reviewedTrustDetails;
 
     @JsonProperty(REVIEWED_FORMER_BOS)
     private Boolean reviewedFormerBOs;
@@ -30,6 +35,14 @@ public class TrustReviewStatusDto {
 
     public void setInReview(Boolean inReview) {
         this.inReview = inReview;
+    }
+
+    public Boolean getReviewedTrustDetails() {
+        return reviewedTrustDetails;
+    }
+
+    public void setReviewedTrustDetails(Boolean reviewedTrustDetails) {
+        this.reviewedTrustDetails = reviewedTrustDetails;
     }
 
     public Boolean getReviewedFormerBOs() {

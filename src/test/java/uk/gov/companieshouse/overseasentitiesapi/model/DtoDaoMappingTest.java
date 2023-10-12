@@ -492,6 +492,7 @@ class DtoDaoMappingTest {
 
     private void assertTrustReviewAreEqual(TrustReviewStatusDto dto, TrustReviewStatusDao dao) {
         assertEquals(dto.getInReview(), dao.getInReview());
+        assertEquals(dto.getReviewedTrustDetails(), dao.getReviewedTrustDetails());
         assertEquals(dto.getReviewedFormerBOs(), dao.getReviewedFormerBOs());
         assertEquals(dto.getReviewedIndividuals(), dao.getReviewedIndividuals());
         assertEquals(dto.getReviewedLegalEntities(), dao.getReviewedLegalEntities());
