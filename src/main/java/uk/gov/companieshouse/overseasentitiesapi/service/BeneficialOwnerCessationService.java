@@ -104,6 +104,7 @@ public class BeneficialOwnerCessationService {
             appointmentId,
             bo.getCeasedDate(),
             bo.getDateOfBirth(),
+            bo.getHaveDayOfBirth(),
             new PersonName(bo.getFirstName(), bo.getLastName())
     ));
   }

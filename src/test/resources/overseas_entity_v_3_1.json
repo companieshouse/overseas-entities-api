@@ -98,6 +98,7 @@
       "first_name" : "AAA",
       "last_name" : "BBB",
       "date_of_birth" : "2022-12-01",
+      "have_day_of_birth": true,
       "nationality" : "Algerian",
       "second_nationality" : "American",
       "usual_residential_address" : {
@@ -249,6 +250,7 @@
       "has_former_names" : true,
       "former_names" : "YU JK",
       "date_of_birth" : "2022-12-01",
+      "have_day_of_birth": true,
       "nationality" : "Angolan",
       "second_nationality" : "Argentine",
       "usual_residential_address" : {
@@ -335,6 +337,7 @@
         "first_name" : "Bob",
         "last_name" : "Smith",
         "date_of_birth" : "1990-08-31",
+        "have_day_of_birth": true,
         "nationality" : "Algerian",
         "second_nationality" : "American",
         "usual_residential_address" : {
@@ -538,6 +541,7 @@
         "has_former_names" : false,
         "former_names" : "name name",
         "date_of_birth" : "1988-08-01",
+        "have_day_of_birth": true,
         "nationality" : "British",
         "second_nationality" : "American",
         "usual_residential_address" : {

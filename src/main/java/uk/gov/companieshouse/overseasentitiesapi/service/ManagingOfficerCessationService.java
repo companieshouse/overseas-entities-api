@@ -96,13 +96,14 @@ public class ManagingOfficerCessationService {
     }
 
     var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    String formattedDate = mo.getDateOfBirth().format(formatter);
+    String formattedDateOfBirth = mo.getDateOfBirth().format(formatter);
 
     return Optional.of(
         new IndividualManagingOfficerCessation(
             officerAppointmentId,
             new PersonName(mo.getFirstName(), mo.getLastName()),
-            formattedDate,
+            formattedDateOfBirth,
+            mo.getHaveDayOfBirth(),
             mo.getResignedOn()));
   }
 

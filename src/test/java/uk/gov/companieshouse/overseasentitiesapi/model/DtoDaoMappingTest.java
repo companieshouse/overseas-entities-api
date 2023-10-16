@@ -322,6 +322,7 @@ class DtoDaoMappingTest {
         assertEquals(boDto.getFirstName(), boDao.getFirstName());
         assertEquals(boDto.getLastName(), boDao.getLastName());
         assertEquals(boDto.getDateOfBirth(), boDao.getDateOfBirth());
+        assertEquals(boDto.getHaveDayOfBirth(), boDao.getHaveDayOfBirth());
         assertEquals(boDto.getNationality(), boDao.getNationality());
         assertEquals(boDto.getServiceAddressSameAsUsualResidentialAddress(),
                 boDao.getServiceAddressSameAsUsualResidentialAddress());
