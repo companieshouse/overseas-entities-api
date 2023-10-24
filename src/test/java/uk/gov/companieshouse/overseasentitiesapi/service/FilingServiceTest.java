@@ -124,11 +124,13 @@ class FilingServiceTest {
             new IndividualBeneficialOwnerCessation("Appointment id",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 1, 1),
+                Boolean.TRUE,
                 new PersonName("Joe", "Bloggs")));
     private static final List<Cessation> DUMMY_MO_CESSATION = List.of(
             new IndividualManagingOfficerCessation("Appointment id",
                     new PersonName("Joe","Bloggs"),
                     "1980-01-01",
+                    Boolean.TRUE,
                     LocalDate.of(2023, 1, 1)));
     private static final List<Addition> DUMMY_BO_ADDITION = List.of(
             new IndividualBeneficialOwnerAddition(

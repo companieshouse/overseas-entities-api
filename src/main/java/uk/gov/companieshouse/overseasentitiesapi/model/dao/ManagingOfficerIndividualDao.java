@@ -21,6 +21,9 @@ public class ManagingOfficerIndividualDao {
     @Field("date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Field("have_day_of_birth")
+    private Boolean haveDayOfBirth;
+    
     @Field("nationality")
     private String nationality;
 
@@ -89,6 +92,14 @@ public class ManagingOfficerIndividualDao {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public Boolean getHaveDayOfBirth() {
+        return haveDayOfBirth;
+    }
+
+    public void setHaveDayOfBirth(Boolean haveDayOfBirth) {
+        this.haveDayOfBirth = haveDayOfBirth;
     }
 
     public String getNationality() {

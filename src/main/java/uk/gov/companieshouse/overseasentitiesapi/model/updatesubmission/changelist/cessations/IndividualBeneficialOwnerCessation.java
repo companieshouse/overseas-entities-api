@@ -14,10 +14,14 @@ public class IndividualBeneficialOwnerCessation extends BeneficialOwnerCessation
     @JsonProperty("birthDate")
     private LocalDate birthDate;
 
+    @JsonProperty("haveDayOfDate")
+    private Boolean haveDayOfBirth;
+
     public IndividualBeneficialOwnerCessation(
             String appointmentId,
             LocalDate actionDate,
             LocalDate birthDate,
+            Boolean haveDayOfBirth,
             PersonName personName) {
         super(appointmentId, actionDate);
         this.birthDate = birthDate;

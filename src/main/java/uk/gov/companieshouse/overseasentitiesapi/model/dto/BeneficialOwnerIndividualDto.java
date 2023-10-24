@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
@@ -11,6 +14,7 @@ public class BeneficialOwnerIndividualDto {
     public static final String FIRST_NAME_FIELD = "first_name";
     public static final String LAST_NAME_FIELD = "last_name";
     public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
+    public static final String HAVE_DAY_OF_BIRTH_FIELD = "have_day_of_birth";
     public static final String NATIONALITY_FIELD = "nationality";
     public static final String SECOND_NATIONALITY_FIELD = "second_nationality";
     public static final String USUAL_RESIDENTIAL_ADDRESS_FIELD = "usual_residential_address";
@@ -36,6 +40,10 @@ public class BeneficialOwnerIndividualDto {
 
     @JsonProperty(DATE_OF_BIRTH_FIELD)
     private LocalDate dateOfBirth;
+
+    @JsonInclude(NON_NULL)
+    @JsonProperty(HAVE_DAY_OF_BIRTH_FIELD)
+    private Boolean haveDayOfBirth;
 
     @JsonProperty(NATIONALITY_FIELD)
     private String nationality;
@@ -101,6 +109,14 @@ public class BeneficialOwnerIndividualDto {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public Boolean getHaveDayOfBirth() {
+        return haveDayOfBirth;
+    }
+
+    public void setHaveDayOfBirth(Boolean haveDayOfBirth) {
+        this.haveDayOfBirth = haveDayOfBirth;
     }
 
     public String getNationality() {
