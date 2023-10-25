@@ -10,6 +10,10 @@ public class HashHelper {
     private final String salt;
 
     public HashHelper(String salt) {
+        if (salt == null)
+        {
+            throw new IllegalArgumentException("Salt cannot be null");
+        }
         this.salt = salt;
     }
 

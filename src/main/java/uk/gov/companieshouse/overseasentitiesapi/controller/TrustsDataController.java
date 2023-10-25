@@ -41,7 +41,7 @@ public class TrustsDataController {
     private boolean isRoeUpdateEnabled;
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
-    private final HashHelper hashHelper = new HashHelper(salt);
+    private final HashHelper hashHelper;
     private Map<String, Object> logMap;
 
     @Autowired
@@ -49,7 +49,7 @@ public class TrustsDataController {
             final OverseasEntitiesService overseasEntitiesService) {
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
-
+        this.hashHelper = new HashHelper(salt);
         this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
