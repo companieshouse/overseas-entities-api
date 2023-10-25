@@ -218,6 +218,7 @@ class FilingServiceTest {
         var transactionLinks = new TransactionLinks();
         transactionLinks.setPayment("/12345678/payment");
         transaction.setLinks(transactionLinks);
+        ReflectionTestUtils.setField(filingsService, "salt", "mockedSalt");
     }
 
     void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {

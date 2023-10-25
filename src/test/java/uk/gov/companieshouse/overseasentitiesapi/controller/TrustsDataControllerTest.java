@@ -35,12 +35,11 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
-import uk.gov.companieshouse.overseasentitiesapi.utils.HashHelper;
 
 @ExtendWith(MockitoExtension.class)
 class TrustsDataControllerTest {
 
-    private final String HASHED_ID = "u2YuMp-BwsQ_GGMbYE2EExDBkoA";
+    private final String HASHED_ID = "WA0s6H5fbmpR0zXPGQe1o1sLMWc";
     @InjectMocks
     private TrustsDataController trustsDataController;
     @Mock
@@ -51,7 +50,7 @@ class TrustsDataControllerTest {
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
     private ByteArrayOutputStream outputStreamCaptor;
 
-    private final String CORP_BODY_HASHED_ID = "WhjCS3yQb908KXF-c1Z8sEJsJII";
+    private final String CORP_BODY_HASHED_ID = "7WjVLd1jRquoDgnNNTGq1j-k3gE";
 
     @BeforeEach
     void setUp() {
@@ -59,6 +58,7 @@ class TrustsDataControllerTest {
         lenient().when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
         reset(privateDataRetrievalService, overseasEntitiesService);
         outputStreamCaptor = new ByteArrayOutputStream();
+        ReflectionTestUtils.setField(trustsDataController, "salt", "mockedSalt");
     }
 
     @AfterEach
