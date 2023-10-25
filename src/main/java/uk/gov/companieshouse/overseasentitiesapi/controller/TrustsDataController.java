@@ -41,7 +41,7 @@ public class TrustsDataController {
     private boolean isRoeUpdateEnabled;
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
-    private final HashHelper hashHelper;
+    private HashHelper hashHelper;
     private Map<String, Object> logMap;
 
     @Autowired
@@ -49,7 +49,6 @@ public class TrustsDataController {
             final OverseasEntitiesService overseasEntitiesService) {
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
-        this.hashHelper = new HashHelper(salt);
         this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
@@ -150,6 +149,8 @@ public class TrustsDataController {
             Callable<T> supplier,
             String requestId,
             String logPart) {
+        hashHelper = new HashHelper(salt);
+
         try {
             var dataList = supplier.call();
 

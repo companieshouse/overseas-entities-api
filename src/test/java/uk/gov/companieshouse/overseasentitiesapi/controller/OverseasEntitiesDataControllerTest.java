@@ -2,8 +2,10 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -49,7 +51,14 @@ class OverseasEntitiesDataControllerTest {
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
-
+    
+    @InjectMocks
+    private OverseasEntitiesDataController overseasEntitiesDataController;
+    
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(overseasEntitiesDataController, "salt", "mockedSalt");
+    }
 
     @Test
     void testGetOverseasEntityDetailsReturnsSuccessfully() throws ServiceException {
@@ -59,7 +68,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -80,7 +88,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(submissionDto));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -97,7 +104,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -108,8 +114,6 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenUpdateDisabled() {
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
@@ -124,8 +128,6 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenRegistration() {
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = createOverseasEntitySubmissionMock();
@@ -142,8 +144,6 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetOverseasEntityDetailsReturnsNotFoundWhenNoSubmissionFound() throws ServiceException {
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
@@ -163,7 +163,6 @@ class OverseasEntitiesDataControllerTest {
                 Optional.of(createOverseasEntitySubmissionMock()));
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(null);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -179,7 +178,6 @@ class OverseasEntitiesDataControllerTest {
                 Optional.of(createOverseasEntitySubmissionMock()));
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(overseasEntityDataApi);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -203,7 +201,6 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(managingOfficerListDataApi);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -221,7 +218,6 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(null);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -244,7 +240,6 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(managingOfficerListDataApi);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -262,7 +257,6 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenThrow(new ServiceException("error occurred"));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -272,8 +266,6 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetManagingOfficersReturnsInternalServerErrorWhenUpdateDisabled() {
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
 
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
@@ -291,7 +283,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
                 .thenReturn(Optional.empty());
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -309,7 +300,6 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(new ManagingOfficerListDataApi(Collections.emptyList()));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
 
@@ -322,8 +312,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
                 .thenReturn(Optional.empty());
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers(
@@ -341,8 +329,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
                 .thenReturn(Optional.of(submissionDtoMock));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         assertThrows(ServiceException.class,
@@ -363,7 +349,6 @@ class OverseasEntitiesDataControllerTest {
 
         when(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER)).thenReturn(boDataListApi);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -379,7 +364,6 @@ class OverseasEntitiesDataControllerTest {
 
             when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                     Optional.of(createOverseasEntitySubmissionMock()));
-            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
 
             setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
             var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -399,9 +383,6 @@ class OverseasEntitiesDataControllerTest {
 
     @Test
     void testGetBeneficialOwnerReturnsInternalServerErrorWhenUpdateDisabled() {
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(
-                privateDataRetrievalService, overseasEntitiesService);
-
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, false);
 
         assertThrows(ServiceException.class,
@@ -418,7 +399,6 @@ class OverseasEntitiesDataControllerTest {
         when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                 Optional.of(createOverseasEntitySubmissionMock()));
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -430,9 +410,6 @@ class OverseasEntitiesDataControllerTest {
     @Test
     void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException, NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
-
-            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
-
             setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
             var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
             assertNull(response.getBody());
@@ -455,7 +432,6 @@ class OverseasEntitiesDataControllerTest {
 
             when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
                     Optional.of(createOverseasNullEntitySubmissionMocks()));
-            OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
 
             setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
             var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
@@ -481,7 +457,6 @@ class OverseasEntitiesDataControllerTest {
                 Optional.of(createOverseasEntitySubmissionMock()));
         when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(boDataListApi);
 
-        OverseasEntitiesDataController overseasEntitiesDataController = new OverseasEntitiesDataController(privateDataRetrievalService, overseasEntitiesService);
         setUpdateEnabledFeatureFlag(overseasEntitiesDataController, true);
 
         var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
