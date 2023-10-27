@@ -25,6 +25,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_TYPE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_REMOVE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -78,6 +79,9 @@ public class FilingsService {
 
   @Value("${OE02_COST}")
   private String updateCostAmount;
+
+  @Value("${OE03_COST}")
+  private String removeCostAmount;
 
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
@@ -161,7 +165,12 @@ public class FilingsService {
                             String.format("Empty submission returned when generating filing for %s", overseasEntityId)
                     ));
 
-    if (submissionDto.isForUpdate()) {
+    if (Boolean.TRUE.equals(submissionDto.isRemoveEntity())) {
+      var updateSubmission = new UpdateSubmission();
+      collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, true, logMap);
+      setUpdateSubmissionData(userSubmission, updateSubmission, true, logMap);
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_REMOVE);
+    } else if (submissionDto.isForUpdate()) {
       boolean isNoChange = submissionDto.getUpdate().isNoChange();
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
@@ -172,7 +181,9 @@ public class FilingsService {
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
     }
 
-    if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
+    if (overseasEntitiesService.isSubmissionARemove(requestId, overseasEntityId)) {
+      filing.setCost(removeCostAmount);
+    } else if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
       filing.setCost(updateCostAmount);
     } else {
       filing.setCost(registerCostAmount);

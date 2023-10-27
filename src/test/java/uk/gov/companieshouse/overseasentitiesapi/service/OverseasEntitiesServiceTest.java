@@ -591,7 +591,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntityWhenTransactionNotLinked() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSavedOverseasEntityWhenTransactionNotLinked() {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(false);
@@ -607,7 +607,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
@@ -646,6 +646,26 @@ class OverseasEntitiesServiceTest {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
         assertEquals(SubmissionType.UPDATE, kind);
+    }
+
+    @Test
+    void checkSubmissionTypeIsUpdateIfOverseasNumberInSubmissionAndRemoveFlagIsFalse() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        submissionDto.setRemoveEntity(Boolean.FALSE);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
+        assertEquals(SubmissionType.UPDATE, kind);
+    }
+
+    @Test
+    void checkSubmissionTypeIsRemoveIfOverseasNumberInSubmissionAndRemoveFlagIsTrue() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        submissionDto.setRemoveEntity(Boolean.TRUE);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
+        assertEquals(SubmissionType.REMOVE, kind);
     }
 
     @Test
