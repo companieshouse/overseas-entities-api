@@ -41,16 +41,13 @@ public class TrustsDataController {
     private boolean isRoeUpdateEnabled;
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
-    private HashHelper hashHelper;
     private Map<String, Object> logMap;
 
     @Autowired
     public TrustsDataController(final PrivateDataRetrievalService privateDataRetrievalService,
             final OverseasEntitiesService overseasEntitiesService) {
-        this.hashHelper = new HashHelper(salt);
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
-        this.privateDataRetrievalService.setHashHelper(hashHelper);
     }
 
    @GetMapping("/details")
@@ -91,6 +88,8 @@ public class TrustsDataController {
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
             throws ServiceException {
 
+        privateDataRetrievalService.setHashHelper(new HashHelper(salt));
+
         logMap = makeLogMap(transactionId, overseasEntityId);
         String companyNo = getCompanyNumber(overseasEntityId, requestId);
         if (companyNo == null) {
@@ -107,6 +106,8 @@ public class TrustsDataController {
             @PathVariable(Constants.TRUST_ID) String trustId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
             throws ServiceException {
+
+        privateDataRetrievalService.setHashHelper(new HashHelper(salt));
 
         logMap = makeLogMap(transactionId, overseasEntityId);
         String companyNo = getCompanyNumber(overseasEntityId, requestId);
@@ -150,7 +151,6 @@ public class TrustsDataController {
             Callable<T> supplier,
             String requestId,
             String logPart) {
-        hashHelper = new HashHelper(salt);
 
         try {
             var dataList = supplier.call();
@@ -175,6 +175,7 @@ public class TrustsDataController {
 
     private void hashId(Hashable hashableData) throws ServiceException {
         try {
+            var hashHelper = new HashHelper(salt);
             String hashedId = hashHelper.encode(hashableData.getId());
             hashableData.setHashedId(hashedId);
             hashableData.setId(null);
