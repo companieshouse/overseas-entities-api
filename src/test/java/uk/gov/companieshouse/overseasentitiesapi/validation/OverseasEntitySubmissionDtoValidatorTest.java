@@ -21,7 +21,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
@@ -570,9 +569,52 @@ class OverseasEntitySubmissionDtoValidatorTest {
                     eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
                     any(),
                     any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+    
         assertFalse(errors.hasErrors());
     }
+
+    @Test
+    void testFullUpdateValidationWithoutBeneficialOwners() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(new ArrayList<>());
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+    
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testFullUpdateValidationWithoutManagingOfficers() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
+                    eq(overseasEntitySubmissionDto.getDueDiligence()),
+                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                    any(),
+                    any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+    
+        assertFalse(errors.hasErrors());
+    }
+
+
 
     @Test
     void testPartialUpdateValidationNoEntity() {

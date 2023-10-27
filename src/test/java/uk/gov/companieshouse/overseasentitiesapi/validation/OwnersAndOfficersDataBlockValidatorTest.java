@@ -22,9 +22,11 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,6 +109,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithOnlyBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
@@ -118,11 +121,14 @@ class OwnersAndOfficersDataBlockValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    // TODO roe-1640 AC are that at least one BO and at least one MO must be present - if either one is missing an error is logged and returned
+
     @Test
-    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoBeneficialOwnersAndManagingOfficer() {
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithCorporateManagingOfficer() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
@@ -132,7 +138,41 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
-    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithCeasedCorporateManagingOfficer() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
+        ManagingOfficerCorporateDto ceasedCorporateManagingOfficer = ManagingOfficerMock.getManagingOfficerCorporateDto();
+        ceasedCorporateManagingOfficer.setResignedOn(LocalDate.now());
+        managingOfficerCorporateDtoList.add(ceasedCorporateManagingOfficer);
+        overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testFullValidationNoErrorReportedForSomeBeneficialOwnersIdentifiedWithCeasedIndividualManagingOfficer() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
+        ManagingOfficerIndividualDto ceasedIndividualManagingOfficer = ManagingOfficerMock.getManagingOfficerIndividualDto();
+        ceasedIndividualManagingOfficer.setResignedOn(LocalDate.now());
+        managingOfficerIndividualDtoList.add(ceasedIndividualManagingOfficer);
+        overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testFullValidationNoErrorReportedForSomeCorporateBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
@@ -140,7 +180,31 @@ class OwnersAndOfficersDataBlockValidatorTest {
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testFullValidationNoErrorReportedForSomeIndividualBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerIndividualDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerCorporateDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testFullValidationNoErrorReportedForSomeGovernmentOrPublicAuthorityBeneficialOwnersIdentifiedWithNoManagingOfficersAndBeneficialOwner() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
     }
 
     @Test
@@ -149,8 +213,52 @@ class OwnersAndOfficersDataBlockValidatorTest {
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
-        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER + " or " + MISSING_MANAGING_OFFICER), errors);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
     }
+
+    @Test
+    void testFullValidationErrorReportedForNoActiveCorporateBeneficialOwnersIdentifiedWhenSomeAreIdentified() {
+        buildOverseasEntitySubmissionDto();
+        BeneficialOwnerCorporateDto corporateBeneficialOwnerDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        corporateBeneficialOwnerDto.setCeasedDate(LocalDate.now());
+        List<BeneficialOwnerCorporateDto> corporateBeneficialOwnerDtos = new ArrayList<>();
+        corporateBeneficialOwnerDtos.add(corporateBeneficialOwnerDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(corporateBeneficialOwnerDtos);
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
+    }
+
+    @Test
+    void testFullValidationErrorReportedForNoActiveIndividualBeneficialOwnersIdentifiedWhenSomeAreIdentified() {
+        buildOverseasEntitySubmissionDto();
+        BeneficialOwnerIndividualDto individualBeneficialOwnerDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        individualBeneficialOwnerDto.setCeasedDate(LocalDate.now());
+        List<BeneficialOwnerIndividualDto> individualBeneficialOwnerDtos = new ArrayList<>();
+        individualBeneficialOwnerDtos.add(individualBeneficialOwnerDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(individualBeneficialOwnerDtos);
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
+    }
+
+    @Test
+    void testFullValidationErrorReportedForNoActiveGovernmentOrPublicAuthorityBeneficialOwnersIdentifiedWhenSomeAreIdentified() {
+        buildOverseasEntitySubmissionDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto governmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        governmentOrPublicAuthorityDto.setCeasedDate(LocalDate.now());
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> governmentOrPublicAuthorityDtos = new ArrayList<>();
+        governmentOrPublicAuthorityDtos.add(governmentOrPublicAuthorityDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(governmentOrPublicAuthorityDtos);
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.SOME_IDENTIFIED_ALL_DETAILS);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertError(BENEFICIAL_OWNERS_STATEMENT, String.format("%s for statement that some can be identified", MISSING_BENEFICIAL_OWNER), errors);
+    }
+
+
 
     @Test
     void testFullValidationNoErrorReportedForNoBeneficialOwnersIdentifiedWithOnlyManagingOfficer() {
@@ -355,6 +463,152 @@ class OwnersAndOfficersDataBlockValidatorTest {
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateRegistrableBeneficialOwnerWithCeasedBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(true);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerIndividualDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateRegistrableBeneficialOwnerWithAddedBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(true);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateNonRegistrableBeneficialOwnerWithExistingBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDto.setChipsReference("TEST REF");
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setChipsReference("TEST REF");
+        beneficialOwnerIndividualDto.setChipsReference("TEST REF");
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateNonRegistrableBeneficialOwnerWithAddedBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateNonRegistrableBeneficialOwnerWithCeasedBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerIndividualDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setCeasedDate(LocalDate.now());
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateNonRegistrableBeneficialOwnerWithEmptyBeneficialOwners() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testValidateRegistrableBeneficialOwnerWithEmptyBeneficialOwners() {
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(true);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
     }
 
     private void buildOverseasEntitySubmissionDto() {
