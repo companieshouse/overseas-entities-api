@@ -175,7 +175,7 @@ public class TrustsDataController {
 
     private void hashId(Hashable hashableData) throws ServiceException {
         try {
-            HashHelper hashHelper = new HashHelper(salt);
+            var hashHelper = new HashHelper(salt);
             String hashedId = hashHelper.encode(hashableData.getId());
             hashableData.setHashedId(hashedId);
             hashableData.setId(null);
