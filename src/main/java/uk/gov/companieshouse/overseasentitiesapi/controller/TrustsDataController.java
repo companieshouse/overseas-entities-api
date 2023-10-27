@@ -47,6 +47,7 @@ public class TrustsDataController {
     @Autowired
     public TrustsDataController(final PrivateDataRetrievalService privateDataRetrievalService,
             final OverseasEntitiesService overseasEntitiesService) {
+        this.hashHelper = new HashHelper(salt);
         this.privateDataRetrievalService = privateDataRetrievalService;
         this.overseasEntitiesService = overseasEntitiesService;
         this.privateDataRetrievalService.setHashHelper(hashHelper);
