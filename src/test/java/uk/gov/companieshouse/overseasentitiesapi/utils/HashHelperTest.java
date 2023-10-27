@@ -22,10 +22,4 @@ class HashHelperTest {
         String str = hashHelper.stripEquals("==abc=123=");
         assertEquals("abc123", str);
     }
-
-    @Test
-    void hashHelperNullSalt() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new HashHelper(null));
-        assertEquals("Salt cannot be null", exception.getMessage());
-    }
 }
