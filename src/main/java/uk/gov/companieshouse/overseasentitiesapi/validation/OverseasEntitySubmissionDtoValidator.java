@@ -77,7 +77,6 @@ public class OverseasEntitySubmissionDtoValidator {
             // Method to be added to as Update journey developed
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-            // Change to Statement Validation once BO/MO Statements are complete
             ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
             ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, loggingContext);
 
