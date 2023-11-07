@@ -564,6 +564,32 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
+    void testValidateNonRegistrableBeneficialOwnerWithAccidentallyAddedBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        UpdateDto updateDto = new UpdateDto();
+        updateDto.setRegistrableBeneficialOwner(false);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto();
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto();
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerCorporateDto.setChipsReference("");
+        beneficialOwnerIndividualDto.setChipsReference("");
+        beneficialOwnerGovernmentOrPublicAuthorityDto.setChipsReference("");
+        beneficialOwnerCorporateDtoList.add(beneficialOwnerCorporateDto);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(beneficialOwnerGovernmentOrPublicAuthorityDto);
+        beneficialOwnerIndividualDtoList.add(beneficialOwnerIndividualDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnerGovernmentOrPublicAuthorityDtoList);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        Errors errors = new Errors();
+        ownersAndOfficersDataBlockValidator.validateRegistrableBeneficialOwnerStatement(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
+        assertTrue(errors.hasErrors());
+    }
+
+    @Test
     void testValidateNonRegistrableBeneficialOwnerWithCeasedBeneficialOwners() {
         buildOverseasEntitySubmissionDto();
         UpdateDto updateDto = new UpdateDto();
