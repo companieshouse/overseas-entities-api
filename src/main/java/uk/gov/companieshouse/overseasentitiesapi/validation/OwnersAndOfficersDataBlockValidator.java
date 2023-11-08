@@ -138,13 +138,14 @@ public class OwnersAndOfficersDataBlockValidator {
         var anyIndividualsAddedOrCeased = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
         var anyCorporateAddedOrCeased = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
         var anyGovOrPublicAuthorityAddedOrCeased = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
+        var anyBeneficialOwnersAddedOrCeased = (anyIndividualsAddedOrCeased || anyCorporateAddedOrCeased || anyGovOrPublicAuthorityAddedOrCeased);
         if (!overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner()) {
-            if (anyIndividualsAddedOrCeased || anyCorporateAddedOrCeased || anyGovOrPublicAuthorityAddedOrCeased){
+            if (anyBeneficialOwnersAddedOrCeased){
                 logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "Benefical owners have been added or ceased"));
                 return false;
             }
         } else {
-            if (!anyIndividualsAddedOrCeased || !anyCorporateAddedOrCeased || !anyGovOrPublicAuthorityAddedOrCeased){
+            if (!anyBeneficialOwnersAddedOrCeased){
                 logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "No beneficial owners have been added or ceased"));
                 return false;
             }
