@@ -1,9 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -90,9 +86,6 @@ public class OverseasEntitySubmissionDtoValidator {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
         }
 
-        // Change when trusts are added:
-        // call validateTrustDetails with (overseasEntitySubmissionDto, errors, loggingContext)
-
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -136,8 +129,8 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            // validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
-            return errors;
+             validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+             return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -149,14 +142,12 @@ public class OverseasEntitySubmissionDtoValidator {
         var entityDto = overseasEntitySubmissionDto.getEntity();
 
         if (Objects.nonNull(entityDto)) {
-            var entityEmail = entityDto.getEmail();
-            // Temporary as initial public data Entity fetch has no Email Address. UAR-711
-            if (StringUtils.isNotBlank(entityEmail)) {
-                entityDtoValidator.validate(entityDto, errors, loggingContext);
-            }
+            entityDtoValidator.validate(entityDto, errors, loggingContext);
         }
-        // Temporarily disabling BO/MO validation till it is implemented in Update Journey UAR-711
+
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
