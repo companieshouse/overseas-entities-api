@@ -1,24 +1,25 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.NatureOfControlValidators;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class BeneficialOwnerCorporateValidator {
@@ -31,6 +32,7 @@ public class BeneficialOwnerCorporateValidator {
     public BeneficialOwnerCorporateValidator(AddressDtoValidator addressDtoValidator) {
         this.addressDtoValidator = addressDtoValidator;
     }
+
 
     public Errors validate(List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList, Errors errors, String loggingContext) {
         for (BeneficialOwnerCorporateDto beneficialOwnerCorporateDto : beneficialOwnerCorporateDtoList) {
@@ -59,16 +61,13 @@ public class BeneficialOwnerCorporateValidator {
 
             validateStartDate(beneficialOwnerCorporateDto.getStartDate(), errors, loggingContext);
 
-            List<NatureOfControlType> fields = new ArrayList<>();
-            if (Objects.nonNull(beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes());
-            }
-            if (Objects.nonNull(beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes());
-            }
-            if (Objects.nonNull(beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes());
-            }
+            var fields = Stream.of(
+                            beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes(),
+                            beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes(),
+                            beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes())
+                    .filter(Objects::nonNull).flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+
             validateNatureOfControl(fields, errors, loggingContext);
 
             validateOnSanctionsList(beneficialOwnerCorporateDto.getOnSanctionsList(), errors, loggingContext);

@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,15 +15,12 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
-import uk.gov.companieshouse.overseasentitiesapi.validation.utils.*;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.CountryLists;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.DateValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class TrustCorporateValidator {
@@ -32,57 +35,68 @@ public class TrustCorporateValidator {
     }
 
     public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
-
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustCorporateDto> corporates = trustDataDto.getCorporates();
 
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateName(trustCorporateDto.getName(), errors, loggingContext);
-
-                    String type = trustCorporateDto.getType();
-                    if(validateType(type, errors, loggingContext) && BeneficialOwnerType
-                            .findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
-
-                        validateDateBecameInterestedPerson(trustCorporateDto.getDateBecameInterestedPerson(), errors,
-                                loggingContext);
-                    }
-
-                    validateAddress(TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD,
-                            trustCorporateDto.getRegisteredOfficeAddress(), errors, loggingContext);
-
-                    boolean isSameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(
-                            trustCorporateDto.getServiceAddressSameAsPrincipalAddress(), errors,
-                            loggingContext);
-
-                    if (isSameAddressFlagValid && Boolean.FALSE
-                            .equals(trustCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
-                        validateAddress(TrustCorporateDto.SERVICE_ADDRESS_FIELD,
-                                trustCorporateDto.getServiceAddress(), errors, loggingContext);
-                    }
-
-                    validateIdentificationLegalForm(trustCorporateDto.getIdentificationLegalForm(), errors,
-                            loggingContext);
-                    validateIdentificationLegalAuthority(trustCorporateDto.getIdentificationLegalAuthority(), errors,
-                            loggingContext);
-
-                    boolean isOnRegisterInCountryFormedInIsValid =
-                            validateOnRegisteredInCountryFormedIn(trustCorporateDto.
-                                    getOnRegisterInCountryFormedIn(), errors, loggingContext);
-
-                    if (isOnRegisterInCountryFormedInIsValid && Boolean.FALSE
-                            .equals(trustCorporateDto.getOnRegisterInCountryFormedIn())) {
-                        validateOnRegisteredInCountryFormedInNotSupplied(trustCorporateDto, errors, loggingContext);
-                    } else if(isOnRegisterInCountryFormedInIsValid && Boolean.TRUE
-                            .equals(trustCorporateDto.getOnRegisterInCountryFormedIn())) {
-                        validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors, loggingContext);
-                    }
+                    validateTrustCorporateDto(trustCorporateDto, errors, loggingContext);
                 }
             }
         }
-
         return errors;
     }
+
+    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, Errors errors,
+            String loggingContext) {
+
+        validateName(trustCorporateDto.getName(), errors, loggingContext);
+
+        String type = trustCorporateDto.getType();
+        if (validateType(type, errors, loggingContext) && BeneficialOwnerType
+                .findByBeneficialOwnerTypeString(type)
+                .equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+
+            validateDateBecameInterestedPerson(
+                    trustCorporateDto.getDateBecameInterestedPerson(),
+                    errors,
+                    loggingContext);
+        }
+
+        validateAddress(TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD,
+                trustCorporateDto.getRegisteredOfficeAddress(), errors, loggingContext);
+
+        boolean isSameAddressFlagValid = validateServiceAddressSameAsPrincipalAddress(
+                trustCorporateDto.getServiceAddressSameAsPrincipalAddress(), errors,
+                loggingContext);
+
+        if (isSameAddressFlagValid && Boolean.FALSE
+                .equals(trustCorporateDto.getServiceAddressSameAsPrincipalAddress())) {
+            validateAddress(TrustCorporateDto.SERVICE_ADDRESS_FIELD,
+                    trustCorporateDto.getServiceAddress(), errors, loggingContext);
+        }
+
+        validateIdentificationLegalForm(trustCorporateDto.getIdentificationLegalForm(), errors,
+                loggingContext);
+        validateIdentificationLegalAuthority(trustCorporateDto.getIdentificationLegalAuthority(),
+                errors,
+                loggingContext);
+
+        boolean isOnRegisterInCountryFormedInIsValid =
+                validateOnRegisteredInCountryFormedIn(trustCorporateDto.
+                        getOnRegisterInCountryFormedIn(), errors, loggingContext);
+
+        if (isOnRegisterInCountryFormedInIsValid && Boolean.FALSE
+                .equals(trustCorporateDto.getOnRegisterInCountryFormedIn())) {
+            validateOnRegisteredInCountryFormedInNotSupplied(trustCorporateDto, errors,
+                    loggingContext);
+        } else if (isOnRegisterInCountryFormedInIsValid && Boolean.TRUE
+                .equals(trustCorporateDto.getOnRegisterInCountryFormedIn())) {
+            validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
+                    loggingContext);
+        }
+    }
+
 
     private boolean validateServiceAddressSameAsPrincipalAddress(Boolean same, Errors errors,
                                                                  String loggingContext) {
