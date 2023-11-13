@@ -386,7 +386,7 @@ public class FilingsService {
 
   private String convertTrustDataToString(List<TrustDataDto> trustsDataForBO)
           throws ServiceException {
-    String trustData = "";
+    var trustData = "";
     if (!trustsDataForBO.isEmpty()) {
       // Convert trust data to JSON string if it exists on transaction else it's to an empty string
       try {
