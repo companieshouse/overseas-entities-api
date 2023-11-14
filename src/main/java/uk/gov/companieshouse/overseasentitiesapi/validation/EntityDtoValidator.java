@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT_NO_COMMA;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -12,11 +16,6 @@ import uk.gov.companieshouse.overseasentitiesapi.validation.utils.StringValidato
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
-
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CONCATENATED_STRING_FORMAT_NO_COMMA;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class EntityDtoValidator {

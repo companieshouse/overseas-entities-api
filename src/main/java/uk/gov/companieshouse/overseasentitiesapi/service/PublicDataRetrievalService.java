@@ -17,7 +17,7 @@ import java.util.HashMap;
 @Component
 public class PublicDataRetrievalService {
     public static final String COMPANY_NUMBER = "company_number";
-
+    public static final String COMPANY = "/company/";
     private final ApiClientService apiClientService;
 
     public PublicDataRetrievalService(ApiClientService apiClientService) {
@@ -34,7 +34,7 @@ public class PublicDataRetrievalService {
             return apiClientService
                     .getOauthAuthenticatedClient(passThroughTokenHeader)
                     .company()
-                    .get("/company/" + companyNumber)
+                    .get(COMPANY + companyNumber)
                     .execute()
                     .getData();
         } catch (URIValidationException | IOException e) {
@@ -53,7 +53,7 @@ public class PublicDataRetrievalService {
             return apiClientService
                     .getOauthAuthenticatedClient(passThroughTokenHeader)
                     .officers()
-                    .list("/company/" + companyNumber + "/officers")
+                    .list(COMPANY + companyNumber + "/officers")
                     .execute()
                     .getData();
         } catch (ApiErrorResponseException e) {
@@ -80,7 +80,7 @@ public class PublicDataRetrievalService {
             return apiClientService
                     .getOauthAuthenticatedClient(passThroughTokenHeader)
                     .pscs()
-                    .list("/company/" + companyNumber + "/persons-with-significant-control")
+                    .list(COMPANY + companyNumber + "/persons-with-significant-control")
                     .execute()
                     .getData();
         } catch (ApiErrorResponseException e) {

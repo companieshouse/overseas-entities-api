@@ -575,6 +575,37 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+
+    @Test
+    void testFullUpdateValidationWithTrusts() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        List<TrustDataDto> trustsDataDtos = new ArrayList<>();
+        TrustDataDto trustDataDto = new TrustDataDto();
+        trustDataDto.setTrustName("TEST TRUST");
+        trustsDataDtos.add(trustDataDto);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
+                    eq(overseasEntitySubmissionDto.getDueDiligence()),
+                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                    any(),
+                    any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(1)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(trustCorporateValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(trustIndividualValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(historicalBeneficialOwnerValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+    
+        assertFalse(errors.hasErrors());
+    }
+
     @Test
     void testFullUpdateValidationWithoutBeneficialOwners() {
         setIsRoeUpdateEnabledFeatureFlag(true);

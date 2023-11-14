@@ -86,6 +86,8 @@ public class OverseasEntitySubmissionDtoValidator {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
         }
 
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -118,12 +120,13 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        if(isTrustWebEnabled &&
-                !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+        if(isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            if(!overseasEntitySubmissionDto.isForUpdate()) {
+                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+                historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+                trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            }
         }
     }
 
