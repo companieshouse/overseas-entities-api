@@ -660,7 +660,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
+        verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         assertFalse(errors.hasErrors());
     }
 
