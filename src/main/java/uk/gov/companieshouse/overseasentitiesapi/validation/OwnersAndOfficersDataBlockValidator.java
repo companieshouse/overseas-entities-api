@@ -89,11 +89,11 @@ public class OwnersAndOfficersDataBlockValidator {
         }
         switch (overseasEntitySubmissionDto.getBeneficialOwnersStatement()) {
             case ALL_IDENTIFIED_ALL_DETAILS:
-                 if (!hasBeneficialOwners(overseasEntitySubmissionDto)) {
+                 if (!hasActiveBeneficialOwners(overseasEntitySubmissionDto)) {
                      logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that all can be identified", MISSING_BENEFICIAL_OWNER));
                      return false;
                  }
-                 if (hasManagingOfficers(overseasEntitySubmissionDto)) {
+                 if (hasActiveManagingOfficers(overseasEntitySubmissionDto)) {
                      logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that all can be identified", INCORRECTLY_ADDED_MANAGING_OFFICER));
                      return false;
                  }
@@ -109,11 +109,11 @@ public class OwnersAndOfficersDataBlockValidator {
                 }
                 break;
             case NONE_IDENTIFIED:
-                if (!hasManagingOfficers(overseasEntitySubmissionDto)) {
+                if (!hasActiveManagingOfficers(overseasEntitySubmissionDto)) {
                     logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that none can be identified", MISSING_MANAGING_OFFICER));
                     return false;
                 }
-                if (hasBeneficialOwners(overseasEntitySubmissionDto)) {
+                if (hasActiveBeneficialOwners(overseasEntitySubmissionDto)) {
                     logValidationErrorMessage(errors, loggingContext, String.format("%s for statement that none can be identified", INCORRECTLY_ADDED_BENEFICIAL_OWNER));
                     return false;
                 }
@@ -124,13 +124,6 @@ public class OwnersAndOfficersDataBlockValidator {
 
         }
         return true;
-    }
-
-    private boolean hasBeneficialOwners(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ||
-                hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ||
-                hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(
-                        overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority());
     }
 
     public boolean validateRegistrableBeneficialOwnerStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -167,11 +160,6 @@ public class OwnersAndOfficersDataBlockValidator {
         var anyActiveIndividualManagingOfficers = hasIndividualManagingOfficersPresent(overseasEntitySubmissionDto.getManagingOfficersIndividual()) ? overseasEntitySubmissionDto.getManagingOfficersIndividual().stream().anyMatch(o -> o.getResignedOn() == null) : emptyManagingOfficerArray;
         return (anyActiveCorporateManagingOfficers || anyActiveIndividualManagingOfficers);
             
-    }
-
-    private boolean hasManagingOfficers(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
-        return hasIndividualManagingOfficersPresent(overseasEntitySubmissionDto.getManagingOfficersIndividual()) ||
-               hasCorporateManagingOfficersPresent(overseasEntitySubmissionDto.getManagingOfficersCorporate());
     }
 
     private  boolean hasIndividualBeneficialOwnersPresent(List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList) {

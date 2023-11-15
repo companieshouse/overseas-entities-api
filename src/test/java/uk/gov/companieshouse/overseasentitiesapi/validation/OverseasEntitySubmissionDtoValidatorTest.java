@@ -645,8 +645,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-
-
     @Test
     void testPartialUpdateValidationNoEntity() {
         setIsRoeUpdateEnabledFeatureFlag(true);
@@ -662,7 +660,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(0)).validate(any(), any(), any()); // UAR-711
+        verify(entityDtoValidator, times(1)).validate(any(), any(), any());
         assertFalse(errors.hasErrors());
     }
 
@@ -673,16 +671,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setEntityNumber(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         verify(entityDtoValidator, times(1)).validate(any(), any(), any());
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testPartialUpdateValidationNoEntityEmail() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        buildPartialOverseasEntityUpdateSubmissionDto();
-        overseasEntitySubmissionDto.getEntity().setEmail(null);
-        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         assertFalse(errors.hasErrors());
     }
 
