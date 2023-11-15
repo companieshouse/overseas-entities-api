@@ -70,7 +70,7 @@ public class OverseasEntitySubmissionDtoValidator {
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
-            // Method to be added to as Update journey developed
+
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
             ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
@@ -141,12 +141,6 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-
-        var entityDto = overseasEntitySubmissionDto.getEntity();
-
-        if (Objects.nonNull(entityDto)) {
-            entityDtoValidator.validate(entityDto, errors, loggingContext);
-        }
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
