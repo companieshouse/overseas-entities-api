@@ -28,3 +28,28 @@ The full path for each public endpoints that requires a transaction id begins wi
 
 Method    | Path                                                                         | Description
 :---------|:-----------------------------------------------------------------------------|:-----------
+
+### Health Endpoints
+
+We can define health groups by defining properties in application.properties file:
+- ```management.endpoint.health.group.detail-healthcheck.include=detailHealthcheckIndicator```:
+  - This will only display customised ```detailHealthcheckIndicator``` health info based on the class ```DetailHealthcheckIndicator```
+    when calling ```http://api.chs.local/overseas-entity/healthcheck/detail-healthcheck``` **and not anything else**
+    
+  - Note: calling ```http://api.chs.local/overseas-entity/healthcheck``` will display everything including ```detailHealthcheckIndicator``` details in any groups,
+    I wasn't able to exclude ```detailHealthcheckIndicator``` details on this endpoint so created another group endpoint below that excludes it
+
+    
+
+### Health Endpoints Groups
+- By defining another group to have everything in the normal health group minus any ```detailHealthcheckIndicator``` info we can define another group endpoint:
+  ```management.endpoint.health.group.simple-healthcheck.exclude=detailHealthcheckIndicator``` which has everything ```health``` has minus the ```detailHealthcheckIndicator``` details
+
+
+- We can create multiple different health indicators by implementing the ```HealthIndicator``` interface. We can include and exclude them into health groups defined at the ```application.properties``` level
+
+
+### Inspecting Docker containers from within other docker containers
+- As part of service startup in docker, its important to be able to check whether a another dependent service (e.g. kafka) is up 
+  and running before we attempt to bring a service our up. This is a bit more challenging as we'd need for example in the case of kafka, inspect the kafka container is alive from within another application container that uses kafka.
+  Ideas for executing docker inspect commands inside containers might be a way, but needs exploring. Other professional inspection tools might be available, but again will need more research in our dev environment setup.
