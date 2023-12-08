@@ -159,7 +159,7 @@ class OverseasEntitiesServiceTest {
         assertEquals(1, overseasEntitySubmissionDao.getTrusts().size());
 
         // assert expected version is present
-        assertEquals(SchemaVersion.VERSION_3_1.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
+        assertEquals(SchemaVersion.VERSION_3_2.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
 
         // assert transaction resources are updated to point to submission
         Transaction transactionSent = transactionApiCaptor.getValue();
@@ -406,7 +406,7 @@ class OverseasEntitiesServiceTest {
     private static void verifySubmissionDao(OverseasEntitySubmissionDao overseasEntitySubmissionDao,
             OverseasEntitySubmissionDao savedSubmission) {
         // assert expected version is present
-        assertEquals(SchemaVersion.VERSION_3_1.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
+        assertEquals(SchemaVersion.VERSION_3_2.getVersion(), overseasEntitySubmissionDao.getSchemaVersion());
 
         assertEquals(SUBMISSION_ID, savedSubmission.getId());
         assertEquals(REQUEST_ID, savedSubmission.getHttpRequestId());

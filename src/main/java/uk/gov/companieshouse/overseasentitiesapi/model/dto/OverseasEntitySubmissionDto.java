@@ -27,7 +27,7 @@ public class OverseasEntitySubmissionDto {
     public static final String MANAGING_OFFICERS_INDIVIDUAL_FIELD = "managing_officers_individual";
     public static final String MANAGING_OFFICERS_CORPORATE_FIELD = "managing_officers_corporate";
     public static final String TRUST_DATA = "trusts";
-
+    public static final String IS_REMOVE_FIELD = "is_remove";
     public static final String UPDATE_FIELD = "update";
 
     @JsonProperty(ENTITY_NAME_FIELD)
@@ -72,6 +72,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(UPDATE_FIELD)
     private UpdateDto update;
+
+    @JsonProperty(IS_REMOVE_FIELD)
+    private Boolean isRemove;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -191,6 +194,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setUpdate(UpdateDto update) {
         this.update = update;
+    }
+
+    public Boolean getIsRemove() {
+        return isRemove;
+    }
+
+    public void setIsRemove(Boolean isRemove) {
+        this.isRemove = isRemove;
     }
 
     public Map<String, String> getLinks() {

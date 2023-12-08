@@ -70,14 +70,15 @@ class DtoModelChangeTest {
     private static final String[] HISTORICAL_JSON_MODEL_FILENAMES = {
             "overseas_entity_v_1_0.json",
             "overseas_entity_v_2_0.json",
-            "overseas_entity_v_3_0.json" };
+            "overseas_entity_v_3_0.json",
+            "overseas_entity_v_3_1.json" };
 
     /**
      * If the DTO model changes and it is a 'breaking change', the current filename must be added to the
      * <code>HISTORICAL_JSON_MODEL_FILENAMES</code> list and a new test JSON file will need to be created and then
      * referenced here.
      */
-    private static final String CURRENT_JSON_MODEL_FILENAME = "overseas_entity_v_3_1.json";
+    private static final String CURRENT_JSON_MODEL_FILENAME = "overseas_entity_v_3_2.json";
 
     /**
      * Allows the list to be used as input to a JUnit parameterised test (see below).

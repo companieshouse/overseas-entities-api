@@ -66,6 +66,9 @@ public class OverseasEntitySubmissionDao {
     @Field("update")
     private UpdateDao update;
 
+    @Field("is_remove")
+    private Boolean isRemove;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -196,6 +199,14 @@ public class OverseasEntitySubmissionDao {
     }
     public Map<String, String> getLinks() {
         return links;
+    }
+
+    public Boolean getIsRemove() {
+        return isRemove;
+    }
+
+    public void setIsRemove(Boolean isRemove) {
+        this.isRemove = isRemove;
     }
 
     public void setLinks(Map<String, String> links) {
