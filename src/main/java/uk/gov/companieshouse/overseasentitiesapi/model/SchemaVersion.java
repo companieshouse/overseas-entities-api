@@ -11,7 +11,8 @@ public enum SchemaVersion {
     VERSION_3_0("3.0"),
 
     // Newer versions, that will be set on the schema_version field:
-    VERSION_3_1("3.1");
+    VERSION_3_1("3.1"),
+    VERSION_3_2("3.2");
 
     private final String version;
 
