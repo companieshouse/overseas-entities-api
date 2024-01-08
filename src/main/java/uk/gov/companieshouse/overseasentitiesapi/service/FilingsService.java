@@ -163,6 +163,7 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       boolean isNoChange = submissionDto.getUpdate().isNoChange();
+      ApiLogger.debug("Value of 'isNoChange' flag is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
       setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
@@ -234,6 +235,8 @@ public class FilingsService {
         updateSubmission.setTrustAdditions(submissionDto.getTrusts());
       }
 
+      ApiLogger.debug("Value of 'changes' is :" + updateSubmission.getChanges(), logMap);
+
       ApiLogger.debug("Updates have been collected", logMap);
     } else {
       updateSubmission.setEntityName(submissionDto.getEntityName().getName());
@@ -250,6 +253,7 @@ public class FilingsService {
     data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
     if (!isNoChange) {
+      ApiLogger.debug("Adding Agent due diligence data to filing", logMap);
       data.put(UPDATE_DUE_DILIGENCE_FIELD, updateSubmission.getDueDiligence());
     }
     data.put(UPDATE_PRESENTER_FIELD, updateSubmission.getPresenter());
@@ -257,13 +261,14 @@ public class FilingsService {
     data.put(ANY_BOS_ADDED_CEASED_FIELD, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
     data.put(BENEFICIAL_OWNERS_FIELD, updateSubmission.getBeneficialOwnerStatement());
     if (!isNoChange) {
+      ApiLogger.debug("Adding 'changes' data to filing", logMap);
       data.put(CHANGES_FIELD, updateSubmission.getChanges());
       data.put(ADDITIONS_FIELD, updateSubmission.getAdditions());
       data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
       data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
 
-    ApiLogger.debug("Update submission data has been set on filing", logMap);
+    ApiLogger.debug("Update submission data has been set on filing: " + data, logMap);
   }
 
   private void setSubmissionData(
