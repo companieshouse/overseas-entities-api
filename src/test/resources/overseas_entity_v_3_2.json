@@ -4,7 +4,7 @@
   "created_by_user_id" : "xBjfyx0li07r6test8",
   "http_request_id" : "W-w0S_iGzwdVTthEV_T7uyCN72-k",
 
-  "schema_version" : "3.1",
+  "schema_version" : "3.2",
 
   "entity_name" : {
     "name" : "ARMS DIRECT"
@@ -719,7 +719,10 @@
       }
     ]
   },
-  "is_remove" : false,
+  "is_remove" : true,
+  "remove" : {
+    "is_not_proprietor_of_land" : true
+  },
   "trusts" : [
     {
       "_id" : "string",

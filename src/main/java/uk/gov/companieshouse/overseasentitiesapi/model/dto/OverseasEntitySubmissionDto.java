@@ -29,6 +29,7 @@ public class OverseasEntitySubmissionDto {
     public static final String TRUST_DATA = "trusts";
     public static final String IS_REMOVE_FIELD = "is_remove";
     public static final String UPDATE_FIELD = "update";
+    public static final String REMOVE_FIELD = "remove";
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -72,6 +73,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(UPDATE_FIELD)
     private UpdateDto update;
+
+    @JsonProperty(REMOVE_FIELD)
+    private RemoveDto remove;
 
     @JsonProperty(IS_REMOVE_FIELD)
     private Boolean isRemove;
@@ -194,6 +198,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setUpdate(UpdateDto update) {
         this.update = update;
+    }
+
+    public RemoveDto getRemove() {
+        return remove;
+    }
+
+    public void setRemove(RemoveDto remove) {
+        this.remove = remove;
     }
 
     public Boolean getIsRemove() {

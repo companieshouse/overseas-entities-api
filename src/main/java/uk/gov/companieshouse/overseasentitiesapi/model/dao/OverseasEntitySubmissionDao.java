@@ -66,6 +66,9 @@ public class OverseasEntitySubmissionDao {
     @Field("update")
     private UpdateDao update;
 
+    @Field("remove")
+    private RemoveDao remove;
+
     @Field("is_remove")
     private Boolean isRemove;
 
@@ -197,6 +200,15 @@ public class OverseasEntitySubmissionDao {
     public void setUpdate(UpdateDao update) {
         this.update = update;
     }
+
+    public RemoveDao getRemove() {
+        return remove;
+    }
+
+    public void setRemove(RemoveDao remove) {
+        this.remove = remove;
+    }
+
     public Map<String, String> getLinks() {
         return links;
     }
