@@ -375,6 +375,12 @@
           },
           "update": {
             "$ref": "#/components/schemas/Update"
+          },
+          "remove": {
+            "$ref": "#/components/schemas/Remove"
+          },
+          "is_remove": {
+            "type": "boolean"
           }
         }
       },
@@ -1368,6 +1374,14 @@
             "type": "boolean"
           },
           "no_change": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Remove": {
+        "type": "object",
+        "properties": {
+          "is_not_proprietor_of_land": {
             "type": "boolean"
           }
         }
