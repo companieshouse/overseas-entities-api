@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,8 @@ public class OverseasEntitySubmissionDtoValidator {
     private final TrustIndividualValidator trustIndividualValidator;
     private final HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator;
     private final TrustCorporateValidator trustCorporateValidator;
-
     private final UpdateValidator updateValidator;
+    private final RemoveValidator removeValidator;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
@@ -43,7 +44,8 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 TrustIndividualValidator trustIndividualValidator,
                                                 TrustCorporateValidator trustCorporateValidator,
                                                 HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator,
-                                                UpdateValidator updateValidator) {
+                                                UpdateValidator updateValidator,
+                                                RemoveValidator removeValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
@@ -54,12 +56,16 @@ public class OverseasEntitySubmissionDtoValidator {
         this.trustCorporateValidator = trustCorporateValidator;
         this.historicalBeneficialOwnerValidator = historicalBeneficialOwnerValidator;
         this.updateValidator = updateValidator;
+        this.removeValidator = removeValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else if (overseasEntitySubmissionDto.isForRemove()) {
+            // TODO Validate when we come to implementing sending the filing details for a Remove journey to CHIPS
+            throw new NotImplementedException("Sending filing details for Remove to CHIPS is not yet implemented");
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -87,7 +93,6 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -102,7 +107,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -120,9 +124,9 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        if(isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+        if (isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            if(!overseasEntitySubmissionDto.isForUpdate()) {
+            if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                 trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
@@ -134,6 +138,9 @@ public class OverseasEntitySubmissionDtoValidator {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
              validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
              return errors;
+        } else if (overseasEntitySubmissionDto.isForRemove()) {
+            validatePartialRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -147,6 +154,17 @@ public class OverseasEntitySubmissionDtoValidator {
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
                     loggingContext);
+        }
+
+        return errors;
+    }
+
+    public Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        if (overseasEntitySubmissionDto.getRemove() != null) {
+            removeValidator.validate(overseasEntitySubmissionDto.getRemove(), errors, loggingContext);
         }
 
         return errors;
