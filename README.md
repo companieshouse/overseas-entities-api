@@ -51,5 +51,5 @@ We can define health groups by defining properties in application.properties fil
 
 ### Inspecting Docker containers from within other docker containers
 - As part of service startup in docker, its important to be able to check whether a another dependent service (e.g. kafka) is up 
-  and running before we attempt to bring a service our up. This is a bit more challenging as we'd need for example in the case of kafka, inspect the kafka container is alive from within another application container that uses kafka.
+  and running before we attempt to bring our service up. This is a bit more challenging as we'd need for example, in the case of kafka, inspect the kafka container is alive from within another application container that uses kafka.
   Ideas for executing docker inspect commands inside containers might be a way, but needs exploring. Other professional inspection tools might be available, but again will need more research in our dev environment setup.
