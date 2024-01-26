@@ -47,7 +47,7 @@ public class CostsController {
         ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
         try {
-            Cost cost = costsService.getCosts(requestId, overseasEntityId);
+            var cost = costsService.getCosts(requestId, overseasEntityId);
 
             return ResponseEntity.ok(Collections.singletonList(cost));
         } catch (SubmissionNotFoundException e) {

@@ -90,7 +90,7 @@ public class OverseasEntitySubmissionDto {
 
     @JsonIgnore
     public boolean isForRemove() {
-        return isRemove == null ? false : isRemove;
+        return Boolean.TRUE.equals(isRemove);
     }
 
     @JsonIgnore
