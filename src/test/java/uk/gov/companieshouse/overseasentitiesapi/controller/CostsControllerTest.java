@@ -5,15 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
-import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
-import uk.gov.companieshouse.overseasentitiesapi.service.SubmissionType;
+import uk.gov.companieshouse.api.model.payment.Cost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,68 +25,35 @@ class CostsControllerTest {
     private final Transaction transaction = new Transaction();
 
     @Mock
-    private OverseasEntitiesService overseasEntitiesService;
-
     private CostsService costsService;
+
+    private CostsController costsController;
 
     @BeforeEach
     void init() {
-        costsService = new CostsService(overseasEntitiesService);
-        ReflectionTestUtils.setField(costsService, "registerCostAmount", "13.00");
-        ReflectionTestUtils.setField(costsService, "updateCostAmount", "26.00");
-    }
-
-    private void setRoeUpdateEnabled(CostsController costsController, boolean value) {
-        ReflectionTestUtils.setField(costsController, "isRoeUpdateEnabled", value);
+        costsController = new CostsController(costsService);
     }
 
     @Test
-    void testGetCostsReturnsRegistrationCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(false);
-
-        final CostsController costsController = new CostsController(costsService);
-        setRoeUpdateEnabled(costsController, true);
-        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals("13.00", response.getBody().get(0).getAmount());
-    }
-
-    @Test
-    void testGetCostsReturnsUpdateCosts() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenReturn(true);
-
-        final CostsController costsController = new CostsController(costsService);
-        setRoeUpdateEnabled(costsController, true);
+    void testGetCostsReturnsCosts() throws SubmissionNotFoundException {
+        final String amount = "13.00";
+        Cost cost = new Cost();
+        cost.setAmount(amount);
+        when(costsService.getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID)).thenReturn(cost);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals("26.00", response.getBody().get(0).getAmount());
-    }
-;
-    @Test
-    void testGetCostsReturnsRegistrationCostsForRegistrationWhenUpdateDisabled() throws SubmissionNotFoundException {
-        final CostsController costsController = new CostsController(costsService);
-        setRoeUpdateEnabled(costsController, false);
-        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals("13.00", response.getBody().get(0).getAmount());
-    }
 
-    @Test
-    void testGetCostsReturnsRegistrationCostsForUpdateWhenUpdateDisabled() throws SubmissionNotFoundException {
-        final CostsController costsController = new CostsController(costsService);
-        setRoeUpdateEnabled(costsController, false);
-
-        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals("13.00", response.getBody().get(0).getAmount());
+        assertEquals(amount, response.getBody().get(0).getAmount());
+        verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 
     @Test
     void testGetCostsSubmissionException() throws SubmissionNotFoundException {
-        when(overseasEntitiesService.isSubmissionAnUpdate(any(), any())).thenThrow(
+        when(costsService.getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID)).thenThrow(
                 new SubmissionNotFoundException("test"));
-
-        final CostsController costsController = new CostsController(costsService);
-        setRoeUpdateEnabled(costsController, true);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals(500, response.getStatusCodeValue());
+        verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 }

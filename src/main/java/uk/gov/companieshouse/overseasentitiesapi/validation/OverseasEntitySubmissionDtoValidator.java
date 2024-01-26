@@ -60,6 +60,8 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        } else if (overseasEntitySubmissionDto.isForRemove()) {
+            // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -87,7 +89,6 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -102,7 +103,6 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
-
     }
 
     private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -120,9 +120,9 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        if(isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
+        if (isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            if(!overseasEntitySubmissionDto.isForUpdate()) {
+            if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                 trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
@@ -134,6 +134,9 @@ public class OverseasEntitySubmissionDtoValidator {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
              validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
              return errors;
+        } else if (overseasEntitySubmissionDto.isForRemove()) {
+            // TODO Perform partial validation on this Remove submission
+            return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
