@@ -15,10 +15,13 @@ public class CostsService {
 
     private static final String UPDATE_COST_DESCRIPTION = "Update Overseas Entity fee";
 
+    private static final String REMOVE_COST_DESCRIPTION = "Remove Overseas Entity fee";
+
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
     private static final String RESOURCE_KIND = "overseas-entity";
     private static final String REGISTER_PRODUCT_TYPE = "register-overseas-entity";
     private static final String UPDATE_PRODUCT_TYPE = "update-overseas-entity";
+    private static final String REMOVE_PRODUCT_TYPE = "remove-overseas-entity";
     private static final String CREDIT_CARD = "credit-card";
     private static final String DESCRIPTION_IDENTIFIER = "description-identifier";
     private static final String PAYMENT_SESSION = "payment-session#payment-session";
@@ -31,6 +34,9 @@ public class CostsService {
     @Value("${OE02_COST}")
     private String updateCostAmount;
 
+    @Value("${OE03_COST}")
+    private String removeCostAmount;
+
     private final OverseasEntitiesService overseasEntitiesService;
 
     @Autowired
@@ -41,12 +47,14 @@ public class CostsService {
     public Cost getCosts(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
             return getCostsForUpdate();
+        } else if (overseasEntitiesService.isSubmissionARemove(requestId, overseasEntityId)) {
+            return getCostsForRemove();
         } else {
             return getCostsForRegistration();
         }
     }
 
-    public Cost getCostsForRegistration() {
+    private Cost getCostsForRegistration() {
         var cost = new Cost();
         cost.setAmount(registerCostAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
@@ -72,6 +80,21 @@ public class CostsService {
         cost.setKind(PAYMENT_SESSION);
         cost.setResourceKind(RESOURCE_KIND);
         cost.setProductType(UPDATE_PRODUCT_TYPE);
+
+        return cost;
+    }
+
+    private Cost getCostsForRemove() {
+        var cost = new Cost();
+        cost.setAmount(removeCostAmount);
+        cost.setAvailablePaymentMethods(Collections.singletonList(CREDIT_CARD));
+        cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
+        cost.setDescription(REMOVE_COST_DESCRIPTION);
+        cost.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
+        cost.setDescriptionValues(Collections.singletonMap(KEY, VALUE));
+        cost.setKind(PAYMENT_SESSION);
+        cost.setResourceKind(RESOURCE_KIND);
+        cost.setProductType(REMOVE_PRODUCT_TYPE);
 
         return cost;
     }

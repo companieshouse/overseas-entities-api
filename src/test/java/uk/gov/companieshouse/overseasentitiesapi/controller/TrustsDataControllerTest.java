@@ -55,7 +55,7 @@ class TrustsDataControllerTest {
     @BeforeEach
     void setUp() {
         setUpdateEnabledFeatureFlag(trustsDataController, true);
-        lenient().when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(true);
+        lenient().when(overseasEntitySubmissionDto.isForUpdateOrRemove()).thenReturn(true);
         reset(privateDataRetrievalService, overseasEntitiesService);
         outputStreamCaptor = new ByteArrayOutputStream();
         ReflectionTestUtils.setField(trustsDataController, "salt", "mockedSalt");
@@ -346,7 +346,7 @@ class TrustsDataControllerTest {
     void retrievePrivateTrustData_isForUpdateFalse() {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
-        when(overseasEntitySubmissionDto.isForUpdate()).thenReturn(false);
+        when(overseasEntitySubmissionDto.isForUpdateOrRemove()).thenReturn(false);
 
         var detailsThrown = assertThrows(ServiceException.class,
                 () -> trustsDataController.getTrustDetails("transactionId", "overseasEntityId", "requestId"));
@@ -358,9 +358,11 @@ class TrustsDataControllerTest {
                 () -> trustsDataController.getCorporateTrustees("transactionId", "overseasEntityId", "trustId", "requestId"));
 
 
-        assertEquals("Submission for overseas entity details must be for update", detailsThrown.getMessage());
-        assertEquals("Submission for overseas entity details must be for update", linksThrown.getMessage());
-        assertEquals("Submission for overseas entity details must be for update", corpTrusteeThrown.getMessage());
+        final String expectedExceptionMessage = "Submission for overseas entity details must be for update or remove";
+
+        assertEquals(expectedExceptionMessage, detailsThrown.getMessage());
+        assertEquals(expectedExceptionMessage, linksThrown.getMessage());
+        assertEquals(expectedExceptionMessage, corpTrusteeThrown.getMessage());
     }
 
     @Test

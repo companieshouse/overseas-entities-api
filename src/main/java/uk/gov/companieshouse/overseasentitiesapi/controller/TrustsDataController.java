@@ -136,8 +136,8 @@ public class TrustsDataController {
 
         final var submissionDto = submissionDtoOptional.get();
 
-        if (!submissionDto.isForUpdate()) {
-            throw new ServiceException("Submission for overseas entity details must be for update");
+        if (!submissionDto.isForUpdateOrRemove()) {
+            throw new ServiceException("Submission for overseas entity details must be for update or remove");
         }
         if (!isRoeUpdateEnabled) {
             throw new ServiceException(

@@ -184,20 +184,25 @@ class OverseasEntitiesServiceTest {
 
     @Test
     void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException  {
-        testUpdateSubmissionCreation(true, ENTITY_NAME);
+        testUpdateSubmissionCreation(true, ENTITY_NAME, false);
     }
 
     @Test
     void testOverseasEntityUpdateSubmissionCreatedSuccessfullyWithNoResumeLink() throws ServiceException  {
-        testUpdateSubmissionCreation(false, ENTITY_NAME);
+        testUpdateSubmissionCreation(false, ENTITY_NAME, false);
     }
 
     @Test
     void testOverseasEntityUpdateSubmissionCanBeCreatedWhenEntityNameIsNull() throws ServiceException {
-        testUpdateSubmissionCreation(false, null);
+        testUpdateSubmissionCreation(false, null, false);
     }
 
-    private void testUpdateSubmissionCreation(boolean isResumeLinkExpected, String entityName) throws ServiceException {
+    @Test
+    void testOverseasEntityRemoveSubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException  {
+        testUpdateSubmissionCreation(true, ENTITY_NAME, true);
+    }
+
+    private void testUpdateSubmissionCreation(boolean isResumeLinkExpected, String entityName, boolean isRemove) throws ServiceException {
         final String submissionId = "434jhg43hj34534";
 
         Transaction transaction = buildTransaction();
@@ -207,6 +212,10 @@ class OverseasEntitiesServiceTest {
         entityNameDto.setName(entityName);
         overseasEntitySubmissionDto.setEntityName(entityNameDto);
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
+
+        if (isRemove) {
+            overseasEntitySubmissionDto.setIsRemove(true);
+        }
 
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         overseasEntitySubmissionDao.setId(submissionId);
@@ -461,6 +470,50 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
+    void testOverseasEntitySubmissionUpdatedSuccessfullyForRemove() throws ServiceException {
+        var transaction = buildTransaction();
+        var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+        EntityNameDto entityNameDto = new EntityNameDto();
+        entityNameDto.setName(ENTITY_NAME);
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE123456");
+        var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
+        overseasEntitySubmissionDao.setEntityNumber(overseasEntitySubmissionDto.getEntityNumber());
+        overseasEntitySubmissionDao.setIsRemove(true);
+
+        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(overseasEntityDtoDaoMapper.dtoToDao(overseasEntitySubmissionDto)).thenReturn(overseasEntitySubmissionDao);
+        when(localDateTimeSupplier.get()).thenReturn(DUMMY_TIME_STAMP);
+
+        // ensure DAO id is null before we use it in the test
+        assertNull(overseasEntitySubmissionDao.getId());
+
+        // make the call to test
+        var response = overseasEntitiesService.updateOverseasEntity(
+                transaction,
+                SUBMISSION_ID,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        verify(overseasEntitySubmissionsRepository, times(1)).save(overseasEntitySubmissionsRepositoryCaptor.capture());
+        var savedSubmission = overseasEntitySubmissionsRepositoryCaptor.getValue();
+
+        verifySubmissionDao(overseasEntitySubmissionDao, savedSubmission);
+
+        verify(transactionService, times(1)).updateTransaction(transactionApiCaptor.capture(), any());
+        // assert transaction resources are updated to point to submission
+        Transaction transactionSent = transactionApiCaptor.getValue();
+        assertEquals(ENTITY_NAME, transactionSent.getCompanyName());
+
+        // assert response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
     void testOverseasEntitySubmissionUpdatedSuccessfullyForUpdateSameEntityNumber() throws ServiceException {
         var transaction = buildTransaction();
         var overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
@@ -649,6 +702,16 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
+    void checkSubmissionTypeIsRemoveIfOverseasNumberInSubmissionAndFlaggedAsRemove() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        submissionDto.setIsRemove(true);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        SubmissionType kind = overseasEntitiesService.getSubmissionType(REQUEST_ID,"testId1");
+        assertEquals(SubmissionType.REMOVE, kind);
+    }
+
+    @Test
     void checkIsUpdateSubmissionIfOverseasNumberInSubmission() throws SubmissionNotFoundException {
         submissionDto.setEntityNumber("OE111129");
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
@@ -656,6 +719,17 @@ class OverseasEntitiesServiceTest {
         boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
         assertEquals(true, isUpdate);
     }
+
+    @Test
+    void checkIsRemoveSubmissionIfOverseasNumberInSubmissionAndFlaggedAsRemove() throws SubmissionNotFoundException {
+        submissionDto.setEntityNumber("OE111129");
+        submissionDto.setIsRemove(true);
+        when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
+        when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
+        boolean isRemove = overseasEntitiesService.isSubmissionARemove(REQUEST_ID,"testId1");
+        assertEquals(true, isRemove);
+    }
+
     @Test
     void checkIsNotUpdateSubmissionIfNoOverseasNumberInSubmission() throws SubmissionNotFoundException {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);

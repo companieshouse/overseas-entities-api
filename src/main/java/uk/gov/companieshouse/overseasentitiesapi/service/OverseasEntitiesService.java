@@ -61,6 +61,10 @@ public class OverseasEntitiesService {
         return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
     }
 
+    public boolean isSubmissionARemove(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.REMOVE;
+    }
+
     SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
@@ -70,11 +74,15 @@ public class OverseasEntitiesService {
 
         String entityNumber = submissionOpt.get().getEntityNumber();
         if (submissionOpt.get().isForUpdate()) {
-            ApiLogger.infoContext(requestId, String.format("Submission with overseas entity number %s found",
+            ApiLogger.infoContext(requestId, String.format("Update submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.UPDATE;
+        } else if (submissionOpt.get().isForRemove()) {
+            ApiLogger.infoContext(requestId, String.format("Remove submission with overseas entity number %s found",
+                    entityNumber));
+            return SubmissionType.REMOVE;
         } else {
-            ApiLogger.infoContext(requestId, "Submission without overseas entity number found");
+            ApiLogger.infoContext(requestId, "Registration submission found");
             return SubmissionType.REGISTRATION;
         }
     }
@@ -152,7 +160,7 @@ public class OverseasEntitiesService {
         overseasEntitySubmissionDao.setSchemaVersion(CURRENT_MONGO_SCHEMA_VERSION.getVersion());
         updateOverseasEntitySubmissionWithMetaData(overseasEntitySubmissionDao, submissionUri, requestId, userId);
 
-        if (overseasEntitySubmissionDto.isForUpdate()) {
+        if (overseasEntitySubmissionDto.isForUpdateOrRemove()) {
             // Switching to another OE number requires the transaction to be updated with the new OE number & name.
             // Relies on an updateOverseasEntity call being done before the company name can be changed by the user in UI.
             String entityNumber = overseasEntitySubmissionDto.getEntityNumber();
@@ -237,7 +245,7 @@ public class OverseasEntitiesService {
 
         transaction.setCompanyName(entityName);
 
-        if (overseasEntitySubmissionDto.isForUpdate()) {
+        if (overseasEntitySubmissionDto.isForUpdateOrRemove()) {
             var entityNumber = overseasEntitySubmissionDto.getEntityNumber();
             transaction.setCompanyNumber(entityNumber);
         }
@@ -246,7 +254,7 @@ public class OverseasEntitiesService {
 
         if (addResumeLinkToTransaction) {
             String resumeJourneyUri;
-            if (overseasEntitySubmissionDto.isForUpdate()) {
+            if (overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                 resumeJourneyUri = String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
             } else {
                 resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);

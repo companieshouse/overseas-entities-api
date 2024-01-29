@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -168,6 +170,9 @@ public class FilingsService {
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
       setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
+    } else if (submissionDto.isForRemove()) {
+      // TODO Send appropriate data for a Remove filing
+      throw new NotImplementedException("Sending filing details for Remove to CHIPS is not yet implemented");
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
@@ -181,7 +186,9 @@ public class FilingsService {
 
     filing.setData(userSubmission);
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
-    setDescriptionFields(filing, submissionDto.isForUpdate());
+
+    // TODO Vary the description if this is a Remove submission. For now, set the same description as an Update
+    setDescriptionFields(filing, submissionDto.isForUpdateOrRemove());
   }
 
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,

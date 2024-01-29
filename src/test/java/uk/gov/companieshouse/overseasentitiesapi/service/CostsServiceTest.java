@@ -11,7 +11,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +29,7 @@ class CostsServiceTest {
         costService = new CostsService(overseasEntitiesService);
         ReflectionTestUtils.setField(costService, "registerCostAmount", "13.00");
         ReflectionTestUtils.setField(costService, "updateCostAmount", "26.00");
+        ReflectionTestUtils.setField(costService, "removeCostAmount", "39.00");
     }
 
     @Test
@@ -64,5 +64,23 @@ class CostsServiceTest {
         assertEquals("payment-session#payment-session", result.getKind());
         assertEquals("overseas-entity", result.getResourceKind());
         assertEquals("update-overseas-entity", result.getProductType());
+    }
+
+    @Test
+    void getRemoveCosts() throws SubmissionNotFoundException {
+
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(false);
+        when(overseasEntitiesService.isSubmissionARemove(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(true);
+
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
+
+        assertEquals("39.00", result.getAmount());
+        assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
+        assertEquals(Collections.singletonList("data-maintenance"), result.getClassOfPayment());
+        assertEquals("Remove Overseas Entity fee", result.getDescription());
+        assertEquals("description-identifier", result.getDescriptionIdentifier());
+        assertEquals("payment-session#payment-session", result.getKind());
+        assertEquals("overseas-entity", result.getResourceKind());
+        assertEquals("remove-overseas-entity", result.getProductType());
     }
 }

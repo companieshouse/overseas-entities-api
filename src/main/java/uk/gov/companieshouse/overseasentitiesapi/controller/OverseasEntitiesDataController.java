@@ -59,8 +59,8 @@ public class OverseasEntitiesDataController {
         final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
         if (submissionDtoOptional.isPresent()) {
             OverseasEntitySubmissionDto submissionDto = submissionDtoOptional.get();
-            if (!submissionDto.isForUpdate()) {
-                throw new ServiceException("Submission for overseas entity details must be for update");
+            if (!submissionDto.isForUpdateOrRemove()) {
+                throw new ServiceException("Submission for overseas entity details must be for update or remove");
             }
 
             isRoeUpdateFlagEnabled();
@@ -122,7 +122,7 @@ public class OverseasEntitiesDataController {
 
         isRoeUpdateFlagEnabled();
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
-        if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdate()) {
+        if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdateOrRemove()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
             try {
                 PrivateBoDataListApi privateBeneficialOwnersData = privateDataRetrievalService.getBeneficialOwnersData(entityNumber);
@@ -168,8 +168,8 @@ public class OverseasEntitiesDataController {
         if (submissionDtoOptional.isPresent()) {
             final var submissionDto = submissionDtoOptional.get();
 
-            if (!submissionDto.isForUpdate()) {
-                throw new ServiceException("Submission for overseas entity details must be for update");
+            if (!submissionDto.isForUpdateOrRemove()) {
+                throw new ServiceException("Submission for overseas entity details must be for update or remove");
             }
 
             isRoeUpdateFlagEnabled();
