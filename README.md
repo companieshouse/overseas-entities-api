@@ -43,7 +43,7 @@ We can define health groups by defining properties in application.properties fil
 
 ### Health Endpoints Groups
 - By defining another group to have everything in the normal health group minus any ```detailHealthcheckIndicator``` info we can define another group endpoint:
-  ```management.endpoint.health.group.simple-healthcheck.exclude=detailHealthcheckIndicator``` which has everything ```health``` has minus the ```detailHealthcheckIndicator``` details
+  ```management.endpoint.health.group.simple.exclude=detailHealthcheckIndicator``` which has everything ```health``` has minus the ```detailHealthcheckIndicator``` details
 
 
 - We can create multiple different health indicators by implementing the ```HealthIndicator``` interface. We can include and exclude them into health groups defined at the ```application.properties``` level
