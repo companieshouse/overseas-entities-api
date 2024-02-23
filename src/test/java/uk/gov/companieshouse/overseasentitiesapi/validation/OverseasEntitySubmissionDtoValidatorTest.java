@@ -598,7 +598,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
                     any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(trustDetailsValidator, times(1)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(trustDetailsValidator, times(1)).validate(eq(overseasEntitySubmissionDto), any(), any());
         verify(trustCorporateValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
         verify(trustIndividualValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
         verify(historicalBeneficialOwnerValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());

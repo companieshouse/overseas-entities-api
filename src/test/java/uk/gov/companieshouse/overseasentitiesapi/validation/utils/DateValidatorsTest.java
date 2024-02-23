@@ -67,4 +67,29 @@ class DateValidatorsTest {
         assertEquals(1, errors.size());
         assertTrue(errors.containsError(err));
     }
+
+    @Test
+    @DisplayName("Validate cease date when same as creation date successfully")
+    void validateCeaseDateIsSameAsCreationDate() {
+        assertTrue(DateValidators.isCeasedDateOnOrAfterCreationDate(LocalDate.now(), LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+    }
+
+    @Test
+    @DisplayName("Validate cease date when after creation date successfully")
+    void validateCeaseDateAfterCreationDate() {
+        assertTrue(DateValidators.isCeasedDateOnOrAfterCreationDate(LocalDate.now(), LocalDate.now().minusDays(10), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT));
+    }
+
+    @Test
+    @DisplayName("Validate cease date when before creation date unsuccessfully")
+    void validateCeaseDateBeforeCreationDate() {
+        String errMsg = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
+
+        boolean isValidDate = DateValidators.isCeasedDateOnOrAfterCreationDate(LocalDate.now().minusDays(10), LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
+
+        assertFalse(isValidDate);
+        assertEquals(1, errors.size());
+        assertTrue(errors.containsError(err));
+    }
 }

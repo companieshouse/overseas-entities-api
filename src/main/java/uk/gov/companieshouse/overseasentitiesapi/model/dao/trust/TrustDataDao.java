@@ -16,6 +16,9 @@ public class TrustDataDao {
     @Field("creation_date")
     private LocalDate creationDate;
 
+    @Field("cease_date")
+    private LocalDate ceaseDate;
+
     @Field("unable_to_obtain_all_trust_info")
     private boolean unableToObtainAllTrustInfo;
 
@@ -50,6 +53,14 @@ public class TrustDataDao {
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public LocalDate getCeaseDate() {
+        return ceaseDate;
+    }
+
+    public void setCeaseDate(LocalDate ceaseDate) {
+        this.ceaseDate = ceaseDate;
     }
 
     public boolean isUnableToObtainAllTrustInfo() {
