@@ -13,7 +13,7 @@ public class TrustDataDto {
     public static final String TRUST_ID_FIELD = "trust_id";
     public static final String TRUST_NAME_FIELD = "trust_name";
     public static final String CREATION_DATE_FIELD = "creation_date";
-    public static final String CEASE_DATE_FIELD = "cease_date";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
     public static final String INDIVIDUAL_FIELD = "INDIVIDUAL";
     public static final String HISTORICAL_BO_FIELD = "HISTORICAL_BO";
@@ -28,8 +28,8 @@ public class TrustDataDto {
     @JsonProperty(CREATION_DATE_FIELD)
     private LocalDate creationDate;
 
-    @JsonProperty(CEASE_DATE_FIELD)
-    private LocalDate ceaseDate;
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     @JsonProperty(UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD)
     private Boolean unableToObtainAllTrustInfo;
@@ -70,12 +70,12 @@ public class TrustDataDto {
         this.creationDate = creationDate;
     }
 
-    public LocalDate getCeaseDate() {
-        return ceaseDate;
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
     }
 
-    public void setCeaseDate(LocalDate ceaseDate) {
-        this.ceaseDate = ceaseDate;
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 
     public Boolean getUnableToObtainAllTrustInfo() {

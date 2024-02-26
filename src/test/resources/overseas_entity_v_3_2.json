@@ -728,7 +728,7 @@
       "_id" : "string",
       "name" : "string",
       "creation_date" : "2022-06-10",
-      "cease_date" : "2023-02-01",
+      "ceased_date" : "2023-02-01",
       "unable_to_obtain_all_trust_info" : true,
       "historical_beneficial_owners" : [
         {

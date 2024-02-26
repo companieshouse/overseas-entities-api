@@ -82,8 +82,8 @@ public class TrustDetailsValidator {
                                    TrustDataDto trustDataDto,
                                    Errors errors,
                                    String loggingContext) {
-        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASE_DATE_FIELD);
-        final LocalDate trustCeaseDate = trustDataDto.getCeaseDate();
+        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        final LocalDate trustCeaseDate = trustDataDto.getCeasedDate();
 
         if (isTrustStillRequired(overseasEntitySubmissionDto, trustDataDto)) {
             // Cease date of the trust must be 'null' as there are still Individual and/or Corporate BOs associated with this trust
@@ -121,18 +121,14 @@ public class TrustDetailsValidator {
             return true;
         }
 
-        if (overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
+        return (overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(
                         boCorporateDto -> trustDataDto.getTrustId() != null
                             && boCorporateDto.getTrustIds() != null
                             && boCorporateDto.getTrustIds().contains(trustDataDto.getTrustId())
                             && boCorporateDto.getCeasedDate() == null
                             && boCorporateDto.getTrusteesNatureOfControlTypes() != null
-                            && !boCorporateDto.getTrusteesNatureOfControlTypes().isEmpty())) {
-            return true;
-        }
-
-        return false;
+                            && !boCorporateDto.getTrusteesNatureOfControlTypes().isEmpty()));
     }
 
     private boolean validateUnableToObtainAllTrustInfo(Boolean partialInfo, Errors errors, String loggingContext) {
