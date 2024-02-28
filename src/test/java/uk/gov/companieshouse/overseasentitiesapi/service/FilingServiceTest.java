@@ -306,7 +306,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -512,7 +512,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
         overseasEntitySubmissionDto.setEntityName(null);
@@ -540,7 +540,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -576,7 +576,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoIndividualTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -613,7 +613,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -648,7 +648,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -685,7 +685,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrustsAndThreeIndividualTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -729,7 +729,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithThreeTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -766,7 +766,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithThreeTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -799,7 +799,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOIndividualMoreThanOneTrustID() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithTwoTrustsSameID();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -810,7 +810,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOIndividualNoTrustExists() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualNoTrustExists();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -821,7 +821,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOIndividualTrustDataIsEmpty() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrustDataIsEmpty();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -832,7 +832,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOCorporateMoreThanOneTrustID() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithTwoTrustsSameID();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -843,7 +843,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOCorporateNoTrustExists() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateNoTrustExists();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -854,7 +854,7 @@ class FilingServiceTest {
     @Test
     void testFilingGenerationThrowsExceptionWithBOCorporateTrustDataIsEmpty() {
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrustDataIsEmpty();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1105,7 +1105,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1162,7 +1162,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1197,7 +1197,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1232,7 +1232,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoIndividualTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1268,7 +1268,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1303,7 +1303,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrusts();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1339,7 +1339,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithThreeBoCorporateTrustsAndThreeIndividualTrust();
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
         when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
@@ -1379,7 +1379,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoIndividualWithThreeTrusts();
 
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
@@ -1415,7 +1415,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
-        ReflectionTestUtils.setField(filingsService, "filingDescription", FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "registrationFilingDescription", FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDtoWithBoCorporateWithThreeTrusts();
 
         Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
