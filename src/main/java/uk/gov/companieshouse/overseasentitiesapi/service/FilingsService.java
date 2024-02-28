@@ -12,6 +12,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ADDITIONS_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ANY_BOS_ADDED_CEASED_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.BENEFICIAL_OWNERS_FIELD;
@@ -22,9 +23,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_TYPE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_REMOVE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
@@ -70,16 +71,22 @@ public class FilingsService {
   private String filingDescriptionIdentifier;
 
   @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION}")
-  private String filingDescription;
+  private String registrationFilingDescription;
 
   @Value("${OVERSEAS_ENTITIES_UPDATE_FILING_DESCRIPTION}")
   private String updateFilingDescription;
+
+  @Value("${OVERSEAS_ENTITIES_REMOVE_FILING_DESCRIPTION}")
+  private String removeFilingDescription;
 
   @Value("${OE01_COST}")
   private String registerCostAmount;
 
   @Value("${OE02_COST}")
   private String updateCostAmount;
+
+  @Value("${OE03_COST}")
+  private String removeCostAmount;
 
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
@@ -133,19 +140,17 @@ public class FilingsService {
   }
 
   public FilingApi generateOverseasEntityFiling(
-          String requestId,
           String overseasEntityId,
           Transaction transaction,
           String passThroughTokenHeader)
           throws SubmissionNotFoundException, ServiceException {
     var filing = new FilingApi();
-    setFilingApiData(filing, requestId, overseasEntityId, transaction, passThroughTokenHeader);
+    setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader);
     return filing;
   }
 
   private void setFilingApiData(
           FilingApi filing,
-          String requestId,
           String overseasEntityId,
           Transaction transaction,
           String passThroughTokenHeader)
@@ -165,30 +170,31 @@ public class FilingsService {
 
     if (submissionDto.isForUpdate()) {
       boolean isNoChange = submissionDto.getUpdate().isNoChange();
-      ApiLogger.debug("Value of 'isNoChange' flag is :" + isNoChange, logMap);
+      ApiLogger.debug("Value of 'isNoChange' flag for Update is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
       setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
+      filing.setCost(updateCostAmount);
     } else if (submissionDto.isForRemove()) {
-      // TODO Send appropriate data for a Remove filing
-      throw new NotImplementedException("Sending filing details for Remove to CHIPS is not yet implemented");
+      // Note that most of the remove details are saved under the 'UpdateDTO' and an 'UpdateSubmission' object is still
+      // used to record the data changes, just before the filing data is returned
+      boolean isNoChange = submissionDto.getUpdate().isNoChange();
+      ApiLogger.debug("Value of 'isNoChange' flag for Remove is :" + isNoChange, logMap);
+      var updateSubmission = new UpdateSubmission();
+      collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
+      setRemoveSubmissionData(userSubmission, updateSubmission, isNoChange, submissionDto.getRemove().getIsNotProprietorOfLand(), logMap);
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_REMOVE);
+      filing.setCost(removeCostAmount);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
-    }
-
-    if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
-      filing.setCost(updateCostAmount);
-    } else {
       filing.setCost(registerCostAmount);
     }
 
     filing.setData(userSubmission);
     setPaymentData(userSubmission, transaction, passThroughTokenHeader, logMap);
-
-    // TODO Vary the description if this is a Remove submission. For now, set the same description as an Update
-    setDescriptionFields(filing, submissionDto.isForUpdateOrRemove());
+    setDescriptionFields(filing, submissionDto);
   }
 
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,
@@ -250,21 +256,41 @@ public class FilingsService {
     }
   }
 
-  private void setUpdateSubmissionData(
-          Map<String, Object> data,
-          UpdateSubmission updateSubmission,
-          boolean isNoChange,
-          Map<String, Object> logMap) {
+  private void setUpdateSubmissionData(Map<String, Object> data,
+                                       UpdateSubmission updateSubmission,
+                                       boolean isNoChange,
+                                       Map<String, Object> logMap) {
+    setUpdateAndRemoveSubmissionData(data, updateSubmission, isNoChange, logMap);
+
+    data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
+
+    ApiLogger.debug("Update specific submission data has been set on filing: " + data, logMap);
+  }
+
+  private void setRemoveSubmissionData(Map<String, Object> data,
+                                       UpdateSubmission updateSubmission,
+                                       boolean isNoChange,
+                                       boolean isNotProprietorOfLand,
+                                       Map<String, Object> logMap) {
+    setUpdateAndRemoveSubmissionData(data, updateSubmission, isNoChange, logMap);
+
+    data.put(IS_NOT_PROPRIETOR_OF_LAND_FIELD, isNotProprietorOfLand);
+
+    ApiLogger.debug("Remove specific submission data has been set on filing: " + data, logMap);
+  }
+
+  private void setUpdateAndRemoveSubmissionData(Map<String, Object> data,
+                                                UpdateSubmission updateSubmission,
+                                                boolean isNoChange,
+                                                Map<String, Object> logMap) {
     data.put(UPDATE_ENTITY_NUMBER_FIELD, updateSubmission.getEntityNumber());
     data.put(UPDATE_ENTITY_NAME_FIELD, updateSubmission.getEntityName());
-    data.put(UPDATE_TYPE_FIELD, updateSubmission.getType());
     data.put(UPDATE_USER_SUBMISSION_FIELD, updateSubmission.getUserSubmission());
     if (!isNoChange) {
       ApiLogger.debug("Adding Agent due diligence data to filing", logMap);
       data.put(UPDATE_DUE_DILIGENCE_FIELD, updateSubmission.getDueDiligence());
     }
     data.put(UPDATE_PRESENTER_FIELD, updateSubmission.getPresenter());
-    data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
     data.put(ANY_BOS_ADDED_CEASED_FIELD, updateSubmission.getAnyBOsOrMOsAddedOrCeased());
     data.put(BENEFICIAL_OWNERS_FIELD, updateSubmission.getBeneficialOwnerStatement());
     if (!isNoChange) {
@@ -275,7 +301,7 @@ public class FilingsService {
       data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
 
-    ApiLogger.debug("Update submission data has been set on filing: " + data, logMap);
+    ApiLogger.debug("Update/Remove submission data has been set on filing: " + data, logMap);
   }
 
   private void setSubmissionData(
@@ -455,13 +481,16 @@ public class FilingsService {
     }
   }
 
-  private void setDescriptionFields(FilingApi filing, boolean isUpdateFiling) {
+  private void setDescriptionFields(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
     String formattedDate = dateNowSupplier.get().format(formatter);
     filing.setDescriptionIdentifier(filingDescriptionIdentifier);
-    if (isUpdateFiling) {
+    if (submissionDto.isForUpdate()) {
       filing.setDescription(updateFilingDescription.replace("{date}", formattedDate));
+    } else if (submissionDto.isForRemove()) {
+      filing.setDescription(removeFilingDescription.replace("{date}", formattedDate));
     } else {
-      filing.setDescription(filingDescription.replace("{date}", formattedDate));
+      // Must be a registration
+      filing.setDescription(registrationFilingDescription.replace("{date}", formattedDate));
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
