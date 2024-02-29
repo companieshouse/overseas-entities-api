@@ -21,6 +21,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.OVERSEAS_ENTITY_DUE_DILIGENCE;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_REMOVE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -90,6 +91,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualManagingOfficerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
@@ -116,6 +118,7 @@ class FilingServiceTest {
     private static final String FILING_DESCRIPTION_IDENTIFIER = "Filing Description Id";
     private static final String FILING_DESCRIPTION = "Filing Description with registration date {date}";
     private static final String UPDATE_FILING_DESCRIPTION = "Overseas entity update statement made {date}";
+    private static final String REMOVE_FILING_DESCRIPTION = "Overseas entity remove statement made {date}";
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
@@ -320,7 +323,6 @@ class FilingServiceTest {
         verify(managingOfficerAdditionService, times(0)).managingOfficerAdditions(Mockito.any());
         verify(managingOfficerCessationService, times(0)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
 
-
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
@@ -437,6 +439,66 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("dueDiligence"));
         assertNotNull(filing.getData().get("presenter"));
         assertNotNull(filing.getData().get("filingForDate"));
+        assertNotNull(filing.getData().get("trusts"));
+        assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
+        assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
+        assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, filing.getData().get("beneficialOwnerStatement"));
+
+        assertEquals(3, ((List<?>)filing.getData().get("changes")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
+        assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
+    }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulForRemove() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        initGetPublicPrivateDataCombinerMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "removeFilingDescription", REMOVE_FILING_DESCRIPTION);
+        ReflectionTestUtils.setField(filingsService, "removeCostAmount", "499");
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+
+        // This indicates it's a Remove submission
+        overseasEntitySubmissionDto.setIsRemove(true);
+        RemoveDto removeDto = new RemoveDto();
+        removeDto.setIsNotProprietorOfLand(true);
+        overseasEntitySubmissionDto.setRemove(removeDto);
+
+        overseasEntitySubmissionDto.setTrusts(List.of(new TrustDataDto()));
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
+        when(managingOfficerCessationService.managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_MO_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
+        when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        verify(overseasEntityChangeService, times(1)).collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerChangeService, times(1)).collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(beneficialOwnerAdditionService, times(1)).beneficialOwnerAdditions(Mockito.any());
+        verify(managingOfficerAdditionService, times(1)).managingOfficerAdditions(Mockito.any());
+        verify(beneficialOwnerCessationService, times(1)).beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerCessationService, times(1)).managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(managingOfficerChangeService, times(1)).collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any());
+
+        verify(localDateSupplier, times(1)).get();
+        assertEquals(FILING_KIND_OVERSEAS_ENTITY_REMOVE, filing.getKind());
+        assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
+        assertEquals("Overseas entity remove statement made 26 March 2022", filing.getDescription());
+
+        assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals("499", filing.getCost());
+
+        assertNotNull(filing.getData().get("userSubmission"));
+        assertNotNull(filing.getData().get("dueDiligence"));
+        assertNotNull(filing.getData().get("presenter"));
+        assertNull(filing.getData().get("filingForDate"));
         assertNotNull(filing.getData().get("trusts"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
