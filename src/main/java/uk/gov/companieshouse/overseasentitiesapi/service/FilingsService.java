@@ -482,16 +482,20 @@ public class FilingsService {
   }
 
   private void setDescriptionFields(FilingApi filing, OverseasEntitySubmissionDto submissionDto) {
-    String formattedDate = dateNowSupplier.get().format(formatter);
     filing.setDescriptionIdentifier(filingDescriptionIdentifier);
+
+    String filingDescription;
     if (submissionDto.isForUpdate()) {
-      filing.setDescription(updateFilingDescription.replace("{date}", formattedDate));
+      filingDescription = updateFilingDescription;
     } else if (submissionDto.isForRemove()) {
-      filing.setDescription(removeFilingDescription.replace("{date}", formattedDate));
+      filingDescription = removeFilingDescription;
     } else {
       // Must be a registration
-      filing.setDescription(registrationFilingDescription.replace("{date}", formattedDate));
+      filingDescription = registrationFilingDescription;
     }
+    String formattedDate = dateNowSupplier.get().format(formatter);
+    filing.setDescription(filingDescription.replace("{date}", formattedDate));
+
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
