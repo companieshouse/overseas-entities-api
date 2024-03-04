@@ -122,7 +122,9 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
             trustDetailsValidator.validate(overseasEntitySubmissionDto, errors, loggingContext);
+
             if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
+                // Note that this validation is only done for registrations
                 trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
