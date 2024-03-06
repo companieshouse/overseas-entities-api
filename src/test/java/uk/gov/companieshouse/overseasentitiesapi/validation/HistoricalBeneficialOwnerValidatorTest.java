@@ -183,6 +183,15 @@ class HistoricalBeneficialOwnerValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenCeasedDateFieldIsNullAndIsUnableToObtainAllTrustInfoIsSetToTrue() {
+        individualTrustDataDtoList.get(0).setUnableToObtainAllTrustInfo(true);
+        individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0).setCeasedDate(null);
+        Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),
+                LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testNoErrorReportedWhenCeasedDateFieldIsInThePast() {
         individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0)
                 .setCeasedDate(LocalDate.of(1970, 1, 1));

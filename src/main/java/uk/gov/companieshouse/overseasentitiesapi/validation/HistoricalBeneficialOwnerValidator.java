@@ -27,8 +27,11 @@ public class HistoricalBeneficialOwnerValidator {
             List<HistoricalBeneficialOwnerDto> historicalBeneficialOwners = trustDataDto
                     .getHistoricalBeneficialOwners();
             if (!CollectionUtils.isEmpty(historicalBeneficialOwners)) {
+                boolean isUnableToObtainAllTrustInfo = trustDataDto.getUnableToObtainAllTrustInfo();
                 for (HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto : historicalBeneficialOwners) {
-                    validateCeasedDate(historicalBeneficialOwnerDto.getCeasedDate(), errors, loggingContext);
+                    if (!isUnableToObtainAllTrustInfo){
+                        validateCeasedDate(historicalBeneficialOwnerDto.getCeasedDate(), errors, loggingContext);
+                    }
                     validateNotifiedDate(historicalBeneficialOwnerDto.getNotifiedDate(), errors, loggingContext);
                     if (!historicalBeneficialOwnerDto.isCorporateIndicator()) {
                         validateForename(historicalBeneficialOwnerDto.getForename(), errors, loggingContext);
