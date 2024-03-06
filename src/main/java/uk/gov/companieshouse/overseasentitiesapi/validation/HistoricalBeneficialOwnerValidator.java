@@ -29,7 +29,7 @@ public class HistoricalBeneficialOwnerValidator {
             if (!CollectionUtils.isEmpty(historicalBeneficialOwners)) {
                 boolean isUnableToObtainAllTrustInfo = trustDataDto.getUnableToObtainAllTrustInfo();
                 for (HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto : historicalBeneficialOwners) {
-                    if (!isUnableToObtainAllTrustInfo || historicalBeneficialOwnerDto.getCeasedDate() != null) {
+                    if (!isCeasedDateOptional(historicalBeneficialOwnerDto, isUnableToObtainAllTrustInfo)) {
                         validateCeasedDate(historicalBeneficialOwnerDto.getCeasedDate(), errors, loggingContext);
                     }
                     validateNotifiedDate(historicalBeneficialOwnerDto.getNotifiedDate(), errors, loggingContext);
@@ -45,6 +45,10 @@ public class HistoricalBeneficialOwnerValidator {
         }
 
         return errors;
+    }
+
+    private static boolean isCeasedDateOptional(HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto, boolean isUnableToObtainAllTrustInfo) {
+        return isUnableToObtainAllTrustInfo && historicalBeneficialOwnerDto.getCeasedDate() == null;
     }
 
     private boolean validateForename(String forename, Errors errors, String loggingContext) {
