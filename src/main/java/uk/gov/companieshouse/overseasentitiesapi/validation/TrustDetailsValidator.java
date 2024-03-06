@@ -110,10 +110,13 @@ public class TrustDetailsValidator {
         // with this trust. As soon as a matching BO is found where cease date is null and a trust NOC is set then this
         // indicates that the trust is still required
 
+        if (trustDataDto.getTrustId() == null) {
+            return false;   // No trust ID, so trust is not required
+        }
+
         if (overseasEntitySubmissionDto.getBeneficialOwnersIndividual() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(
-                        boIndividualDto -> trustDataDto.getTrustId() != null
-                            && boIndividualDto.getTrustIds() != null
+                        boIndividualDto -> boIndividualDto.getTrustIds() != null
                             && boIndividualDto.getTrustIds().contains(trustDataDto.getTrustId())
                             && boIndividualDto.getCeasedDate() == null
                             && boIndividualDto.getTrusteesNatureOfControlTypes() != null
@@ -123,8 +126,7 @@ public class TrustDetailsValidator {
 
         return (overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(
-                        boCorporateDto -> trustDataDto.getTrustId() != null
-                            && boCorporateDto.getTrustIds() != null
+                        boCorporateDto -> boCorporateDto.getTrustIds() != null
                             && boCorporateDto.getTrustIds().contains(trustDataDto.getTrustId())
                             && boCorporateDto.getCeasedDate() == null
                             && boCorporateDto.getTrusteesNatureOfControlTypes() != null
