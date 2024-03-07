@@ -27,8 +27,12 @@ public class HistoricalBeneficialOwnerValidator {
             List<HistoricalBeneficialOwnerDto> historicalBeneficialOwners = trustDataDto
                     .getHistoricalBeneficialOwners();
             if (!CollectionUtils.isEmpty(historicalBeneficialOwners)) {
+                boolean isUnableToObtainAllTrustInfo = trustDataDto.getUnableToObtainAllTrustInfo();
                 for (HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto : historicalBeneficialOwners) {
-                    validateCeasedDate(historicalBeneficialOwnerDto.getCeasedDate(), errors, loggingContext);
+                    // The only field that becomes optional when the user is unable to obtain all trust info is the ceased date.
+                    if (!isCeasedDateOptional(historicalBeneficialOwnerDto, isUnableToObtainAllTrustInfo)) {
+                        validateCeasedDate(historicalBeneficialOwnerDto.getCeasedDate(), errors, loggingContext);
+                    }
                     validateNotifiedDate(historicalBeneficialOwnerDto.getNotifiedDate(), errors, loggingContext);
                     if (!historicalBeneficialOwnerDto.isCorporateIndicator()) {
                         validateForename(historicalBeneficialOwnerDto.getForename(), errors, loggingContext);
@@ -42,6 +46,10 @@ public class HistoricalBeneficialOwnerValidator {
         }
 
         return errors;
+    }
+
+    private static boolean isCeasedDateOptional(HistoricalBeneficialOwnerDto historicalBeneficialOwnerDto, boolean isUnableToObtainAllTrustInfo) {
+        return isUnableToObtainAllTrustInfo && historicalBeneficialOwnerDto.getCeasedDate() == null;
     }
 
     private boolean validateForename(String forename, Errors errors, String loggingContext) {
