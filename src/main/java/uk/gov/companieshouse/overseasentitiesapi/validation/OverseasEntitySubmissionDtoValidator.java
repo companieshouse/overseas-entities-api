@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private final TrustCorporateValidator trustCorporateValidator;
 
     private final UpdateValidator updateValidator;
+    private final RemoveValidator removeValidator;
 
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
@@ -43,7 +45,8 @@ public class OverseasEntitySubmissionDtoValidator {
                                                 TrustIndividualValidator trustIndividualValidator,
                                                 TrustCorporateValidator trustCorporateValidator,
                                                 HistoricalBeneficialOwnerValidator historicalBeneficialOwnerValidator,
-                                                UpdateValidator updateValidator) {
+                                                UpdateValidator updateValidator,
+                                                RemoveValidator removeValidator) {
         this.entityNameValidator = entityNameValidator;
         this.entityDtoValidator = entityDtoValidator;
         this.presenterDtoValidator = presenterDtoValidator;
@@ -54,16 +57,18 @@ public class OverseasEntitySubmissionDtoValidator {
         this.trustCorporateValidator = trustCorporateValidator;
         this.historicalBeneficialOwnerValidator = historicalBeneficialOwnerValidator;
         this.updateValidator = updateValidator;
+        this.removeValidator = removeValidator;
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
-        } else if (overseasEntitySubmissionDto.isForRemove()) {
-            // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
+        }  else if (overseasEntitySubmissionDto.isForRemove()) {
+            // TODO Validate when we come to implementing sending the filing details for a Remove journey to CHIPS
+            
         } else {
-            validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+                validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
     }
@@ -135,7 +140,7 @@ public class OverseasEntitySubmissionDtoValidator {
              validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
              return errors;
         } else if (overseasEntitySubmissionDto.isForRemove()) {
-            // TODO Perform partial validation on this Remove submission
+            validatePartialRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
             return errors;
         } else {
             validatePartialRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -150,6 +155,17 @@ public class OverseasEntitySubmissionDtoValidator {
         if (overseasEntitySubmissionDto.getUpdate() != null) {
             updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
                     loggingContext);
+        }
+
+        return errors;
+    }
+
+    public Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        if (overseasEntitySubmissionDto.getRemove() != null) {
+            removeValidator.validate(overseasEntitySubmissionDto.getRemove(), errors, loggingContext);
         }
 
         return errors;
