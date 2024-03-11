@@ -23,7 +23,10 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 @Component
 public class TrustDetailsValidator {
 
-    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                           Errors errors,
+                           String loggingContext,
+                           boolean checkCeasedDate) {
 
         List<TrustDataDto> trustDataDtoList = overseasEntitySubmissionDto.getTrusts();
 
@@ -32,7 +35,11 @@ public class TrustDetailsValidator {
         for(TrustDataDto trustDataDto : trustDataDtoList) {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
-            validateCeaseDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
+
+            if (checkCeasedDate) {
+                validateCeaseDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
+            }
+
             validateUnableToObtainAllTrustInfo(trustDataDto.getUnableToObtainAllTrustInfo(), errors, loggingContext);
         }
 
