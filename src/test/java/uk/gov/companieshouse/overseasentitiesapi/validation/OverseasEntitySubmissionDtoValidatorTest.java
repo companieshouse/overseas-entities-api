@@ -322,7 +322,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(presenterDtoValidator, times(0)).validate(any(), any(), any());
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
         verify(dueDiligenceDataBlockValidator, times(1)).validatePartialDueDiligenceFields(any(), any(), any(), any());
-        verify(trustDetailsValidator, times(0)).validate(any(), any(), any(), eq(true));
+        verify(trustDetailsValidator, times(0)).validate(any(), any(), any(), any(Boolean.class));
         verify(trustIndividualValidator, times(0)).validate(any(), any(), any());
         verify(historicalBeneficialOwnerValidator, times(0)).validate(any(), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficers(eq(overseasEntitySubmissionDto), any(), any());

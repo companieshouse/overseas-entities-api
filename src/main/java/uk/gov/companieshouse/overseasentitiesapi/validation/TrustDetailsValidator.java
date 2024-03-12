@@ -26,7 +26,7 @@ public class TrustDetailsValidator {
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                            Errors errors,
                            String loggingContext,
-                           boolean checkCeasedDate) {
+                           boolean isFullValidation) {
 
         List<TrustDataDto> trustDataDtoList = overseasEntitySubmissionDto.getTrusts();
 
@@ -36,7 +36,7 @@ public class TrustDetailsValidator {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
-            if (checkCeasedDate) {
+            if (isFullValidation) {
                 validateCeaseDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
