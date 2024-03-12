@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -65,10 +64,10 @@ public class OverseasEntitySubmissionDtoValidator {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }  else if (overseasEntitySubmissionDto.isForRemove()) {
-            // TODO Validate when we come to implementing sending the filing details for a Remove journey to CHIPS
-            
+            // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
+            // TODO Validate when we come to implementing sending the filing details for a Remove journey to CHIPS            
         } else {
-                validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
         return errors;
     }
@@ -160,7 +159,7 @@ public class OverseasEntitySubmissionDtoValidator {
         return errors;
     }
 
-    public Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    private Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 

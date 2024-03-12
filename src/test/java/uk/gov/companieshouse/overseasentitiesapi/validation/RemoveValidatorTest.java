@@ -9,11 +9,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.companieshouse.overseasentitiesapi.mocks.RemoveMock;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.REMOVE_FIELD;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -50,10 +53,29 @@ class RemoveValidatorTest {
     }
 
     @Test
-    void testNoValidationErrorReportedWhenIsNotProprietorOfLandIsFalse() {
+    void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalse() {
         removeDto.setIsNotProprietorOfLand(false);
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
         assertTrue(errors.hasErrors());
     }
-    
+
+    @Test
+    void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalseTest() {
+        String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
+        removeDto.setIsNotProprietorOfLand(false);
+        Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    private void assertError(String qualifiedFieldName, String message, Errors errors) {
+        Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
+
+        assertFalse(errors.containsError(err));
+    }
+
+    private String getQualifiedFieldName(String field) {
+        return REMOVE_FIELD + "." + field;
+    }
 }

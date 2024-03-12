@@ -543,6 +543,13 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
+    @Test
+    void testPartialRemoveValidation() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityRemoveSubmissionDto();
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
 
     @Test
     void testPartialUpdateValidationNoFilingDate() {
@@ -782,6 +789,21 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+
+        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setEntityName(entityNameDto);
+        overseasEntitySubmissionDto.setEntity(entityDto);
+        overseasEntitySubmissionDto.setPresenter(presenterDto);
+        overseasEntitySubmissionDto.setDueDiligence(dueDiligenceDto);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
+        overseasEntitySubmissionDto.setUpdate(updateDto);
+    }
+
+    private void buildPartialOverseasEntityRemoveSubmissionDto() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(true);
 
