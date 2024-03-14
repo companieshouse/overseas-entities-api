@@ -46,7 +46,7 @@ class RemoveValidatorTest {
     void testNoValidationErrorReportedWhenIsNotProprietorOfLandIsTrue() {
         removeDto.setIsNotProprietorOfLand(true);
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.hasErrors());
+        assertFalse(errors.hasErrors());
     }
 
     @Test
