@@ -51,17 +51,10 @@ class RemoveValidatorTest {
 
     @Test
     void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalse() {
-        removeDto.setIsNotProprietorOfLand(false);
-        Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
-        assertTrue(errors.hasErrors());
-    }
-
-    @Test
-    void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalseTest() {
         String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
         removeDto.setIsNotProprietorOfLand(false);
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
-        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -69,7 +62,7 @@ class RemoveValidatorTest {
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
 
-        assertFalse(errors.containsError(err));
+        assertTrue(errors.containsError(err));
     }
 
     private String getQualifiedFieldName(String field) {
