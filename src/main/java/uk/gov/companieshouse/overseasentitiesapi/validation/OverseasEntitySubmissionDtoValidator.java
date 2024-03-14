@@ -65,7 +65,6 @@ public class OverseasEntitySubmissionDtoValidator {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }  else if (overseasEntitySubmissionDto.isForRemove()) {
             // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
-            // TODO Validate when we come to implementing sending the filing details for a Remove journey to CHIPS            
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }

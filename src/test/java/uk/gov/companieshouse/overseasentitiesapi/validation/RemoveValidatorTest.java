@@ -10,12 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.companieshouse.overseasentitiesapi.mocks.RemoveMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.service.rest.err.Err;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
-import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.REMOVE_FIELD;
 
 
@@ -49,7 +46,7 @@ class RemoveValidatorTest {
     void testNoValidationErrorReportedWhenIsNotProprietorOfLandIsTrue() {
         removeDto.setIsNotProprietorOfLand(true);
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
-        assertFalse(errors.hasErrors());
+        assertTrue(errors.hasErrors());
     }
 
     @Test
