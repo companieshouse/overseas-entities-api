@@ -63,7 +63,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
-        }  else if (overseasEntitySubmissionDto.isForRemove()) {
+        } else if (overseasEntitySubmissionDto.isForRemove()) {
             // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
