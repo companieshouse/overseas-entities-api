@@ -1162,6 +1162,10 @@
             "type": "string",
             "format": "date"
           },
+          "ceased_date": {
+            "type": "string",
+            "format": "date"
+          },
           "unable_to_obtain_all_trust_info": {
             "type": "boolean"
           },

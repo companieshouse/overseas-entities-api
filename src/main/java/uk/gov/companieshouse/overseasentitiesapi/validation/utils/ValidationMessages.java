@@ -4,6 +4,7 @@ public class ValidationMessages {
 
     private ValidationMessages() {}
 
+    public static final String NULL_ERROR_MESSAGE = "%s must be null";
     public static final String NOT_NULL_ERROR_MESSAGE = "%s must not be null";
     public static final String NOT_EMPTY_ERROR_MESSAGE = "%s must not be empty and must not only consist of whitespace";
     public static final String NOT_VALID_ERROR_MESSAGE = "%s is not a valid value";
@@ -21,6 +22,7 @@ public class ValidationMessages {
     public static final String SECOND_NATIONALITY_SHOULD_BE_DIFFERENT = "%s should not be the same as the nationality given";
     public static final String DUPLICATE_TRUST_ID = "Duplicate Trust Id for %s";
     public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be on or after the appointed date";
+    public static final String CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE = "%s must be on or after the creation date";
     public static final String TRUST_INDIVIDUAL_TYPE_ERROR_MESSAGE = "Individual trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
     public static final String TRUST_CORPORATE_TYPE_ERROR_MESSAGE = "Corporate trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
 }

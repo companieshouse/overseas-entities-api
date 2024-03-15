@@ -32,10 +32,31 @@ public class DateValidators {
         return false;
     }
 
-    public static boolean isCeasedDateOnOrAfterStartDate(LocalDate ceasedDate, LocalDate startDate, String qualifiedFieldName, Errors errors, String loggingContext) {
-        if (ceasedDate.isBefore(startDate)) {
-            setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
-            ApiLogger.infoContext(loggingContext, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+    public static boolean isCeasedDateOnOrAfterStartDate(LocalDate ceasedDate,
+                                                         LocalDate startDate,
+                                                         String qualifiedFieldName,
+                                                         Errors errors,
+                                                         String loggingContext) {
+        return isDateOnOrAfterAnotherDate(ceasedDate, startDate, ValidationMessages.CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+    }
+
+    public static boolean isCeasedDateOnOrAfterCreationDate(LocalDate ceasedDate,
+                                                            LocalDate creationDate,
+                                                            String qualifiedFieldName,
+                                                            Errors errors,
+                                                            String loggingContext) {
+        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private static boolean isDateOnOrAfterAnotherDate(LocalDate aDate,
+                                                      LocalDate anotherDate,
+                                                      String validationErrorMessage,
+                                                      String qualifiedFieldName,
+                                                      Errors errors,
+                                                      String loggingContext) {
+        if (aDate.isBefore(anotherDate)) {
+            setErrorMsgToLocation(errors, qualifiedFieldName, validationErrorMessage.replace("%s", qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext, validationErrorMessage.replace("%s", qualifiedFieldName));
             return false;
         }
 
