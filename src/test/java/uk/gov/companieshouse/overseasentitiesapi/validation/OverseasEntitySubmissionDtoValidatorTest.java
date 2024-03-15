@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
@@ -44,6 +45,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
@@ -81,6 +83,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private TrustCorporateValidator trustCorporateValidator;
     @Mock
     private UpdateValidator updateValidator;
+    @Mock
+    private RemoveValidator removeValidator;
 
     private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
@@ -545,6 +549,32 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
+    void testPartialRemoveValidationNoRemoveStatement() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityRemoveSubmissionDto();
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(removeValidator, never()).validate(any(), any(), any());
+    }
+
+    @Test
+    void testPartialRemoveValidationRemoveStatementPresent() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityRemoveSubmissionDto();
+
+        RemoveDto removeDto = new RemoveDto();
+        removeDto.setIsNotProprietorOfLand(true);
+        overseasEntitySubmissionDto.setRemove(removeDto);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(removeValidator, times(1)).validate(any(), any(), any());
+    }
+
+    @Test
     void testPartialUpdateValidationNoFilingDate() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
@@ -794,6 +824,12 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
         overseasEntitySubmissionDto.setUpdate(updateDto);
+    }
+
+    private void buildPartialOverseasEntityRemoveSubmissionDto() {
+        buildPartialOverseasEntityUpdateSubmissionDto();
+
+        overseasEntitySubmissionDto.setIsRemove(true);
     }
 
     private void buildOverseasEntityUpdateSubmissionDtoWithFullDto() {
