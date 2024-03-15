@@ -160,10 +160,9 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
-
-        if (overseasEntitySubmissionDto.getRemove() != null) {
-            removeValidator.validate(overseasEntitySubmissionDto.getRemove(), errors, loggingContext);
+        var removeDto = overseasEntitySubmissionDto.getRemove();
+        if (removeDto != null) {
+            removeValidator.validate(removeDto, errors, loggingContext);
         }
 
         return errors;

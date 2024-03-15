@@ -15,7 +15,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 public class RemoveValidator {
 
     public Errors validate(RemoveDto removeDto, Errors errors, String loggingContext) {
-        if (removeDto.getIsNotProprietorOfLand() != null && !removeDto.getIsNotProprietorOfLand()){
+        if (Boolean.FALSE.equals(removeDto.getIsNotProprietorOfLand())) {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.REMOVE_FIELD, RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
             String errorMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
