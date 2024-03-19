@@ -64,7 +64,7 @@ public class OverseasEntitySubmissionDtoValidator {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else if (overseasEntitySubmissionDto.isForRemove()) {
-            // TODO Perform full validation on this Remove submission (before sending the filing details to CHIPS)
+            validateFullRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
             validateFullRegistrationDetails(overseasEntitySubmissionDto, errors, loggingContext);
         }
@@ -74,6 +74,10 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
 
+        validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
 
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -92,6 +96,12 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+    }
+
+    private void validateFullRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        removeValidator.validateFull(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -159,6 +169,9 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+
+        // TODO Need to also perform partial validation of the common details (like for update journey). See UAR-1461.
+        //      Probably a call to validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext)
 
         var removeDto = overseasEntitySubmissionDto.getRemove();
         if (removeDto != null) {
