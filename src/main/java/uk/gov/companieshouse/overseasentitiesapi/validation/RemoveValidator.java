@@ -28,7 +28,7 @@ public class RemoveValidator {
     }
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        UpdateDto updateDto = overseasEntitySubmissionDto.getUpdate();
+        var updateDto = overseasEntitySubmissionDto.getUpdate();
 
         if (updateDto == null) {
             String errorMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.UPDATE_FIELD);
@@ -38,7 +38,7 @@ public class RemoveValidator {
             validateFilingDate(updateDto.getFilingDate(), errors, loggingContext);
         }
 
-        RemoveDto removeDto = overseasEntitySubmissionDto.getRemove();
+        var removeDto = overseasEntitySubmissionDto.getRemove();
 
         if (removeDto == null || removeDto.getIsNotProprietorOfLand() == null) {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.REMOVE_FIELD,
@@ -64,7 +64,7 @@ public class RemoveValidator {
     }
 
     private void validateRemoveStatement(Boolean isNotProprietorOfLand, Errors errors, String loggingContext) {
-        if (!isNotProprietorOfLand) {
+        if (Boolean.FALSE.equals(isNotProprietorOfLand)) {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.REMOVE_FIELD,
                     RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
             String errorMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
