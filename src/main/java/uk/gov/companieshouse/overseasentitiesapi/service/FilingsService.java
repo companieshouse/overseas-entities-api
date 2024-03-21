@@ -56,6 +56,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.removesubmission.RemoveSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.utils.PopulateUpdateSubmission;
@@ -171,8 +172,12 @@ public class FilingsService {
       setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
     } else if (submissionDto.isForRemove()) {
-      // TODO Send appropriate data for a Remove filing
-      throw new NotImplementedException("Sending filing details for Remove to CHIPS is not yet implemented");
+      boolean isNoChange = submissionDto.getRemove().isNoChange();
+      ApiLogger.debug("Value of 'isNoChange' flag is :" + isNoChange, logMap);
+      var removeSubmission = new RemoveSubmission();
+      collectRemoveSubmissionData(removeSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
+      setUpdateSubmissionData(userSubmission, updateSubmission, isNoChange, logMap);
+      filing.setKind(FILING_KIND_OVERSEAS_ENTITY_UPDATE);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
@@ -189,6 +194,9 @@ public class FilingsService {
 
     // TODO Vary the description if this is a Remove submission. For now, set the same description as an Update
     setDescriptionFields(filing, submissionDto.isForUpdateOrRemove());
+  }
+  private void collectRemoveSubmissionData(){
+    // TODO collection of remove submission data
   }
 
   private void collectUpdateSubmissionData(UpdateSubmission updateSubmission,
@@ -248,6 +256,10 @@ public class FilingsService {
     } else {
       updateSubmission.setEntityName(submissionDto.getEntityName().getName());
     }
+  }
+
+  private void setRemovteSubmissionData(){
+    // TODO set remove submission data
   }
 
   private void setUpdateSubmissionData(
