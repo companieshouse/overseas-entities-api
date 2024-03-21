@@ -42,28 +42,37 @@ class RemoveValidatorTest {
     }
     @Test
     void testNoValidationErrorReportedWhenIsNotProprietorOfLandIsNull() {
+        // Given
         removeDto.setIsNotProprietorOfLand(null);
 
+        // When
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         assertFalse(errors.hasErrors());
     }
     
     @Test
     void testNoValidationErrorReportedWhenIsNotProprietorOfLandIsTrue() {
+        // Given
         removeDto.setIsNotProprietorOfLand(true);
 
+        // When
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalse() {
+        // Given
         removeDto.setIsNotProprietorOfLand(false);
 
+        // When
         Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
         String validationMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -71,20 +80,26 @@ class RemoveValidatorTest {
 
     @Test
     void testNoFullValidationErrorReportedWhenFilingDateIsNotPresentAndIsNotProprietorOfLandIsTrue() {
+        // Given
         removeDto.setIsNotProprietorOfLand(true);
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testFullValidationErrorReportedWhenFilingDateIsPresentAndIsNotProprietorOfLandIsTrue() {
+        // Given
         removeDto.setIsNotProprietorOfLand(true);
         updateDto.setFilingDate(LocalDate.of(2024, 2, 1));
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
         String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -92,11 +107,14 @@ class RemoveValidatorTest {
 
     @Test
     void testFullValidationErrorsReportedWhenFilingDateIsPresentAndIsNotProprietorOfLandIsFalse() {
+        // Given
         removeDto.setIsNotProprietorOfLand(false);
         updateDto.setFilingDate(LocalDate.of(2024, 2, 1));
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFilingDateFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
         String filingDateValidationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFilingDateFieldName);
         String qualifiedRemoveStatementFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
@@ -107,10 +125,13 @@ class RemoveValidatorTest {
 
     @Test
     void testFullValidationErrorReportedWhenFilingDateIsNotPresentAndRemoveBlockNotPresent() {
+        // Given
         overseasEntitySubmissionDto.setRemove(null);
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -118,10 +139,13 @@ class RemoveValidatorTest {
 
     @Test
     void testFullValidationErrorReportedWhenFilingDateIsNotPresentAndIsNotProprietorOfLandIsNull() {
+        // Given
         overseasEntitySubmissionDto.getRemove().setIsNotProprietorOfLand(null);
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
@@ -129,11 +153,14 @@ class RemoveValidatorTest {
 
     @Test
     void testFullValidationErrorReportedWhenUpdateBlockNotPresentAndIsNotProprietorOfLandIsTrue() {
+        // Given
         overseasEntitySubmissionDto.setUpdate(null);
         removeDto.setIsNotProprietorOfLand(true);
 
+        // When
         Errors errors = removeValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
+        // Then
         String qualifiedFieldName = UPDATE_FIELD;
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);

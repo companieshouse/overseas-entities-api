@@ -20,9 +20,7 @@ public class RemoveValidator {
 
         // TODO Check that the filing date is 'null' if an Update block is present. See UAR-1461.
 
-        if (removeDto.getIsNotProprietorOfLand() != null) {
-            validateRemoveStatement(removeDto.getIsNotProprietorOfLand(), errors, loggingContext);
-        }
+        validateRemoveStatement(removeDto.getIsNotProprietorOfLand(), errors, loggingContext);
 
         return errors;
     }
