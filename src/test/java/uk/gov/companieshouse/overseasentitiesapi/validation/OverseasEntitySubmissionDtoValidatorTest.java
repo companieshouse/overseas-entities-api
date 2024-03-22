@@ -586,93 +586,70 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testFullUpdateValidationWithoutTrusts() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        setIsTrustWebEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
-        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
-        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
-                    eq(overseasEntitySubmissionDto.getDueDiligence()),
-                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-                    any(),
-                    any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
-    
-        assertFalse(errors.hasErrors());
+
+        testFullUpdateRemoveValidationWithoutTrusts();
     }
 
+    @Test
+    void testFullRemoveValidationWithoutTrusts() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+
+        testFullUpdateRemoveValidationWithoutTrusts();
+
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
+    }
 
     @Test
     void testFullUpdateValidationWithTrusts() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        setIsTrustWebEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
-        List<TrustDataDto> trustsDataDtos = new ArrayList<>();
-        TrustDataDto trustDataDto = new TrustDataDto();
-        trustDataDto.setTrustName("TEST TRUST");
-        trustsDataDtos.add(trustDataDto);
-        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
-        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
-        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
-                    eq(overseasEntitySubmissionDto.getDueDiligence()),
-                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-                    any(),
-                    any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(trustDetailsValidator, times(1)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
-        verify(trustCorporateValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
-        verify(trustIndividualValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
-        verify(historicalBeneficialOwnerValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
-    
-        assertFalse(errors.hasErrors());
+
+        testFullUpdateRemoveValidationWithTrusts();
+    }
+
+    @Test
+    void testFullRemoveValidationWithTrusts() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+
+        testFullUpdateRemoveValidationWithTrusts();
+
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
 
     @Test
     void testFullUpdateValidationWithoutBeneficialOwners() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        setIsTrustWebEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
-        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
-        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(new ArrayList<>());
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
-    
-        assertFalse(errors.hasErrors());
+        testFullUpdateRemoveValidationWithoutBeneficialOwners();
+    }
+
+    @Test
+    void testFullRemoveValidationWithoutBeneficialOwners() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+
+        testFullUpdateRemoveValidationWithoutBeneficialOwners();
+
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
 
     @Test
     void testFullUpdateValidationWithoutManagingOfficers() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        setIsTrustWebEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
-        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
-        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
-        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
-                    eq(overseasEntitySubmissionDto.getDueDiligence()),
-                    eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
-                    any(),
-                    any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
-        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
-    
-        assertFalse(errors.hasErrors());
+
+        testFullUpdateRemoveValidationWithoutManagingOfficers();
+    }
+
+    @Test
+    void testFullRemoveValidationWithoutManagingOfficers() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+
+        testFullUpdateRemoveValidationWithoutManagingOfficers();
+
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
 
     @Test
@@ -793,6 +770,88 @@ class OverseasEntitySubmissionDtoValidatorTest {
         String qualifiedFieldName = ENTITY_NAME_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    private void testFullUpdateRemoveValidationWithoutTrusts() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
+                eq(overseasEntitySubmissionDto.getDueDiligence()),
+                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                any(),
+                any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+
+        assertFalse(errors.hasErrors());
+    }
+
+    private void testFullUpdateRemoveValidationWithTrusts() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(true);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        List<TrustDataDto> trustsDataDtos = new ArrayList<>();
+        TrustDataDto trustDataDto = new TrustDataDto();
+        trustDataDto.setTrustName("TEST TRUST");
+        trustsDataDtos.add(trustDataDto);
+        overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
+                eq(overseasEntitySubmissionDto.getDueDiligence()),
+                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                any(),
+                any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(trustDetailsValidator, times(1)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(trustCorporateValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(trustIndividualValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+        verify(historicalBeneficialOwnerValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
+
+        assertFalse(errors.hasErrors());
+    }
+
+    private void testFullUpdateRemoveValidationWithoutBeneficialOwners() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
+        overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(new ArrayList<>());
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+
+        assertFalse(errors.hasErrors());
+    }
+
+    private void testFullUpdateRemoveValidationWithoutManagingOfficers() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        setIsTrustWebEnabledFeatureFlag(false);
+        overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(entityDtoValidator, times(1)).validate(eq(entityDto), any(), any());
+        verify(presenterDtoValidator, times(1)).validate(eq(presenterDto), any(), any());
+        verify(dueDiligenceDataBlockValidator, times(1)).validateFullDueDiligenceFields(
+                eq(overseasEntitySubmissionDto.getDueDiligence()),
+                eq(overseasEntitySubmissionDto.getOverseasEntityDueDiligence()),
+                any(),
+                any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
+        verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
+
+        assertFalse(errors.hasErrors());
     }
 
     private void buildOverseasEntitySubmissionDto() {
