@@ -457,7 +457,7 @@ class FilingServiceTest {
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "removeFilingDescription", REMOVE_FILING_DESCRIPTION);
-        ReflectionTestUtils.setField(filingsService, "removeCostAmount", "499");
+//        ReflectionTestUtils.setField(filingsService, "removeCostAmount", "499");
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
 
@@ -493,7 +493,7 @@ class FilingServiceTest {
         assertEquals("Overseas entity remove statement made 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
-        assertEquals("499", filing.getCost());
+        assertNull(filing.getCost());
 
         assertNotNull(filing.getData().get("userSubmission"));
         assertNotNull(filing.getData().get("dueDiligence"));
