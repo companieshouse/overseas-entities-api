@@ -457,7 +457,6 @@ class FilingServiceTest {
         when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
         ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
         ReflectionTestUtils.setField(filingsService, "removeFilingDescription", REMOVE_FILING_DESCRIPTION);
-//        ReflectionTestUtils.setField(filingsService, "removeCostAmount", "499");
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
 
