@@ -118,7 +118,7 @@ class FilingServiceTest {
     private static final String FILING_DESCRIPTION_IDENTIFIER = "Filing Description Id";
     private static final String FILING_DESCRIPTION = "Filing Description with registration date {date}";
     private static final String UPDATE_FILING_DESCRIPTION = "Overseas entity update statement made {date}";
-    private static final String REMOVE_FILING_DESCRIPTION = "Overseas entity remove statement made {date}";
+    private static final String REMOVE_FILING_DESCRIPTION = "Overseas entity application for removal made on {date}";
     private static final LocalDate DUMMY_DATE = LocalDate.of(2022, 3, 26);
     private static final String ERROR_MESSAGE = "error message";
     private static final String PASS_THROUGH_HEADER = "432342353255";
@@ -490,7 +490,7 @@ class FilingServiceTest {
         verify(localDateSupplier, times(1)).get();
         assertEquals(FILING_KIND_OVERSEAS_ENTITY_REMOVE, filing.getKind());
         assertEquals(FILING_DESCRIPTION_IDENTIFIER, filing.getDescriptionIdentifier());
-        assertEquals("Overseas entity remove statement made 26 March 2022", filing.getDescription());
+        assertEquals("Overseas entity application for removal made on 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
         assertEquals("499", filing.getCost());
