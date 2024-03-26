@@ -85,9 +85,6 @@ public class FilingsService {
   @Value("${OE02_COST}")
   private String updateCostAmount;
 
-  @Value("${OE03_COST}")
-  private String removeCostAmount;
-
   @Value("${FEATURE_FLAG_ENABLE_TRUSTS_CHIPS_1502023}")
   private boolean isTrustsSubmissionThroughWebEnabled;
 
@@ -178,14 +175,14 @@ public class FilingsService {
       filing.setCost(updateCostAmount);
     } else if (submissionDto.isForRemove()) {
       // Note that most of the remove details are saved under the 'UpdateDTO' and an 'UpdateSubmission' object is still
-      // used to record the data changes, just before the filing data is returned
+      // used to record the data changes, just before the filing data is returned.
+      // Cost is not set on a remove submission to prevent automatic refunds.
       boolean isNoChange = submissionDto.getUpdate().isNoChange();
       ApiLogger.debug("Value of 'isNoChange' flag for Remove is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
       setRemoveSubmissionData(userSubmission, updateSubmission, isNoChange, submissionDto.getRemove().getIsNotProprietorOfLand(), logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_REMOVE);
-      filing.setCost(removeCostAmount);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY);
