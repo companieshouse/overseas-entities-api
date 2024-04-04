@@ -181,7 +181,7 @@ class RemoveValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-     private void assertError(String qualifiedFieldName, String message, Errors errors) {
+    private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
 
         assertTrue(errors.containsError(err));

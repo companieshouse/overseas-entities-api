@@ -18,14 +18,14 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 public class RemoveValidator {
 
     public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        UpdateDto updateDto = overseasEntitySubmissionDto.getUpdate();
+        var updateDto = overseasEntitySubmissionDto.getUpdate();
         if (updateDto != null && updateDto.getFilingDate() != null) {
             String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
             String errorMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }
-        RemoveDto removeDto = overseasEntitySubmissionDto.getRemove();
+        var removeDto = overseasEntitySubmissionDto.getRemove();
         validateRemoveStatement(removeDto.getIsNotProprietorOfLand(), errors, loggingContext);
 
         return errors;
