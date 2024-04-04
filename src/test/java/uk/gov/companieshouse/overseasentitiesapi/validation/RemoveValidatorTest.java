@@ -65,6 +65,32 @@ class RemoveValidatorTest {
     }
 
     @Test
+    void testNoValidationErrorReportedWhenFilingDateIsNullAndIsNotProprietorOfLandIsTrue() {
+        // Given
+        removeDto.setIsNotProprietorOfLand(true);
+        updateDto.setFilingDate(null);
+
+        // When
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        // Then
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoValidationErrorReportedWhenUpdateIsNullAndIsNotProprietorOfLandIsTrue() {
+        // Given
+        removeDto.setIsNotProprietorOfLand(true);
+        overseasEntitySubmissionDto.setUpdate(null);
+
+        // When
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        // Then
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testValidationErrorReportedWhenIsNotProprietorOfLandIsFalse() {
         // Given
         removeDto.setIsNotProprietorOfLand(false);
