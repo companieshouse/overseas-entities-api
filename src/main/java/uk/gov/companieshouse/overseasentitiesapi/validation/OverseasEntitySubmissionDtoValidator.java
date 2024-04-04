@@ -170,12 +170,11 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private Errors validatePartialRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
 
-        // TODO Need to also perform partial validation of the common details (like for update journey). See UAR-1461.
-        //      Probably a call to validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext)
+        errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         var removeDto = overseasEntitySubmissionDto.getRemove();
         if (removeDto != null) {
-            removeValidator.validate(removeDto, errors, loggingContext);
+            removeValidator.validate(overseasEntitySubmissionDto, errors, loggingContext);
         }
 
         return errors;

@@ -46,7 +46,7 @@ class RemoveValidatorTest {
         removeDto.setIsNotProprietorOfLand(null);
 
         // When
-        Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         // Then
         assertFalse(errors.hasErrors());
@@ -58,7 +58,7 @@ class RemoveValidatorTest {
         removeDto.setIsNotProprietorOfLand(true);
 
         // When
-        Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         // Then
         assertFalse(errors.hasErrors());
@@ -70,11 +70,26 @@ class RemoveValidatorTest {
         removeDto.setIsNotProprietorOfLand(false);
 
         // When
-        Errors errors = removeValidator.validate(removeDto, new Errors(), LOGGING_CONTEXT);
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         // Then
         String qualifiedFieldName = getQualifiedFieldName(RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD);
         String validationMessage = ValidationMessages.NOT_VALID_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testPartialValidationErrorReportedWhenFilingDateIsPresentAndIsNotProprietorOfLandIsTrue() {
+        // Given
+        removeDto.setIsNotProprietorOfLand(true);
+        updateDto.setFilingDate(LocalDate.of(2024, 2, 1));
+
+        // When
+        Errors errors = removeValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        // Then
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
@@ -166,7 +181,7 @@ class RemoveValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    private void assertError(String qualifiedFieldName, String message, Errors errors) {
+     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
 
         assertTrue(errors.containsError(err));

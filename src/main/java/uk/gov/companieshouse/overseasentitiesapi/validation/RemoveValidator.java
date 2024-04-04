@@ -10,16 +10,22 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.UPDATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class RemoveValidator {
 
-    public Errors validate(RemoveDto removeDto, Errors errors, String loggingContext) {
-
-        // TODO Check that the filing date is 'null' if an Update block is present. See UAR-1461.
-
+    public Errors validate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        UpdateDto updateDto = overseasEntitySubmissionDto.getUpdate();
+        if (updateDto != null && updateDto.getFilingDate() != null) {
+            String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+            String errorMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+        RemoveDto removeDto = overseasEntitySubmissionDto.getRemove();
         validateRemoveStatement(removeDto.getIsNotProprietorOfLand(), errors, loggingContext);
 
         return errors;
