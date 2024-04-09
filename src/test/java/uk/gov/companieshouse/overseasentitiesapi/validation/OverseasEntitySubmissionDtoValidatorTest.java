@@ -561,7 +561,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testPartialRemoveValidationNoRemoveStatementFilingIsPresent() {
+    void testPartialRemoveValidationNoRemoveStatementFilingDateIsPresent() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
