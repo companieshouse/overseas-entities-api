@@ -115,7 +115,7 @@ class RemoveValidatorTest {
     }
 
     @Test
-    void testFullValidationErrorReportedWhenFilingDateIsNotPresentAndRemoveBlockNotPresent() {
+    void testFullValidationErrorReportedWhenRemoveBlockNotPresent() {
         // Given
         overseasEntitySubmissionDto.setRemove(null);
 
