@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,8 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
+import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators;
+import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Errors;
+
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 @Component
 public class OverseasEntitySubmissionDtoValidator {
@@ -99,9 +106,19 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        removeValidator.validateFull(overseasEntitySubmissionDto, errors, loggingContext);
 
-        validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        var updateDto = overseasEntitySubmissionDto.getUpdate();
+
+        if (updateDto == null) {
+            String errorMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", OverseasEntitySubmissionDto.UPDATE_FIELD);
+            setErrorMsgToLocation(errors, OverseasEntitySubmissionDto.UPDATE_FIELD, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        } else {
+            validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateFilingDate(updateDto.getFilingDate(), errors, loggingContext);
+        }
+        var removeDto = overseasEntitySubmissionDto.getRemove();
+        removeValidator.validateFull(removeDto, errors, loggingContext);
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -172,9 +189,14 @@ public class OverseasEntitySubmissionDtoValidator {
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
+        var updateDto = overseasEntitySubmissionDto.getUpdate();
+        if (updateDto != null) {
+            validateFilingDate(updateDto.getFilingDate(), errors, loggingContext);
+        }
+
         var removeDto = overseasEntitySubmissionDto.getRemove();
         if (removeDto != null) {
-            removeValidator.validate(overseasEntitySubmissionDto, errors, loggingContext);
+            removeValidator.validate(removeDto, errors, loggingContext);
         }
 
         return errors;
@@ -222,6 +244,17 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateNoChangeUpdate(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         if (UtilsValidators.isNotNull(overseasEntitySubmissionDto.getPresenter(), OverseasEntitySubmissionDto.PRESENTER_FIELD, errors, loggingContext)) {
             presenterDtoValidator.validate(overseasEntitySubmissionDto.getPresenter(), errors, loggingContext);
+        }
+    }
+
+    private void validateFilingDate(LocalDate filingDate, Errors errors, String loggingContext) {
+        // A filing date should NOT be present for a Remove submission
+        if (filingDate != null) {
+            String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.UPDATE_FIELD,
+                    UpdateDto.FILING_DATE);
+            String errorMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
         }
     }
 }

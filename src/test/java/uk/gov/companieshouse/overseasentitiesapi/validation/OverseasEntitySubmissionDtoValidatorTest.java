@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.UPDATE_FIELD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -549,10 +550,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testPartialRemoveValidationNoRemoveStatement() {
+    void testPartialRemoveValidationNoRemoveStatementFilingDateNotPresent() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
-
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
@@ -560,7 +561,34 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testPartialRemoveValidationRemoveStatementPresent() {
+    void testPartialRemoveValidationNoRemoveStatementFilingIsPresent() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityRemoveSubmissionDto();
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+        verify(removeValidator, never()).validate(any(), any(), any());
+    }
+
+    @Test
+    void testPartialRemoveValidationRemoveStatementPresentFilingDateNotPresent() {
+        setIsRoeUpdateEnabledFeatureFlag(true);
+        buildPartialOverseasEntityRemoveSubmissionDto();
+
+        RemoveDto removeDto = new RemoveDto();
+        removeDto.setIsNotProprietorOfLand(true);
+        overseasEntitySubmissionDto.setRemove(removeDto);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        assertFalse(errors.hasErrors());
+        verify(removeValidator, times(1)).validate(any(), any(), any());
+    }
+
+    @Test
+    void testPartialRemoveValidationRemoveStatementPresentFilingDateIsPresent() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
 
@@ -570,7 +598,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
 
-        assertFalse(errors.hasErrors());
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
         verify(removeValidator, times(1)).validate(any(), any(), any());
     }
 
@@ -588,33 +618,62 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testFullUpdateValidationWithoutTrusts() {
         buildOverseasEntitySubmissionDto();
 
-        testFullUpdateRemoveValidationWithoutTrusts();
+        Errors errors = testFullUpdateRemoveValidationWithoutTrusts();
+        assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testFullRemoveValidationWithoutTrusts() {
+    void testFullRemoveValidationWithoutTrustsFilingDateNotPresent() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setIsRemove(true);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+        Errors errors = testFullUpdateRemoveValidationWithoutTrusts();
 
-        testFullUpdateRemoveValidationWithoutTrusts();
-
+        assertFalse(errors.hasErrors());
         verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
+
+    @Test
+    void testFullRemoveValidationWithoutTrustsFilingDateIsPresent() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+        Errors errors = testFullUpdateRemoveValidationWithoutTrusts();
+
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
+    }
+
 
     @Test
     void testFullUpdateValidationWithTrusts() {
         buildOverseasEntitySubmissionDto();
 
-        testFullUpdateRemoveValidationWithTrusts();
+        Errors errors = testFullUpdateRemoveValidationWithTrusts();
+        assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testFullRemoveValidationWithTrusts() {
+    void testFullRemoveValidationWithTrustsFilingDateNotPresent() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setIsRemove(true);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+        Errors errors = testFullUpdateRemoveValidationWithTrusts();
 
-        testFullUpdateRemoveValidationWithTrusts();
+        assertFalse(errors.hasErrors());
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
+    }
 
+    @Test
+    void testFullRemoveValidationWithTrustsFilingDateIsPresent() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+        Errors errors = testFullUpdateRemoveValidationWithTrusts();
+
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
         verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
 
@@ -622,16 +681,19 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testFullUpdateValidationWithoutBeneficialOwners() {
         buildOverseasEntitySubmissionDto();
 
-        testFullUpdateRemoveValidationWithoutBeneficialOwners();
+        Errors errors = testFullUpdateRemoveValidationWithoutBeneficialOwners();
+        assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testFullRemoveValidationWithoutBeneficialOwners() {
+    void testFullRemoveValidationWithoutBeneficialOwnersFilingDateIsPresent() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setIsRemove(true);
+        Errors errors = testFullUpdateRemoveValidationWithoutBeneficialOwners();
 
-        testFullUpdateRemoveValidationWithoutBeneficialOwners();
-
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
         verify(removeValidator, times(1)).validateFull(any(), any(), any());
     }
 
@@ -639,17 +701,47 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testFullUpdateValidationWithoutManagingOfficers() {
         buildOverseasEntitySubmissionDto();
 
-        testFullUpdateRemoveValidationWithoutManagingOfficers();
+        Errors errors = testFullUpdateRemoveValidationWithoutManagingOfficers();
+        assertFalse(errors.hasErrors());
     }
 
     @Test
-    void testFullRemoveValidationWithoutManagingOfficers() {
+    void testFullRemoveValidationWithoutManagingOfficersFilingDateNotPresent() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setIsRemove(true);
+        overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
+        Errors errors = testFullUpdateRemoveValidationWithoutManagingOfficers();
 
-        testFullUpdateRemoveValidationWithoutManagingOfficers();
-
+        assertFalse(errors.hasErrors());
         verify(removeValidator, times(1)).validateFull(any(), any(), any());
+    }
+
+    @Test
+    void testFullRemoveValidationWithoutManagingOfficersFilingDateIsPresent() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+        Errors errors = testFullUpdateRemoveValidationWithoutManagingOfficers();
+
+        String qualifiedFieldName = UPDATE_FIELD + "." + UpdateDto.FILING_DATE;
+        String validationMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+        verify(removeValidator, times(1)).validateFull(any(), any(), any());
+    }
+
+    @Test
+    void testFullRemoveValidationErrorReportedWhenUpdateBlockNotPresent() {
+        // Given
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsRemove(true);
+        overseasEntitySubmissionDto.setUpdate(null);
+
+        // When
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+
+        // Then
+        String qualifiedFieldName = UPDATE_FIELD;
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
@@ -772,7 +864,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    private void testFullUpdateRemoveValidationWithoutTrusts() {
+    private Errors testFullUpdateRemoveValidationWithoutTrusts() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -788,10 +880,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
 
-        assertFalse(errors.hasErrors());
+       return errors;
     }
 
-    private void testFullUpdateRemoveValidationWithTrusts() {
+    private Errors testFullUpdateRemoveValidationWithTrusts() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(true);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -816,10 +908,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(trustIndividualValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
         verify(historicalBeneficialOwnerValidator, times(0)).validate(eq(overseasEntitySubmissionDto.getTrusts()), any(), any());
 
-        assertFalse(errors.hasErrors());
+        return errors;
     }
 
-    private void testFullUpdateRemoveValidationWithoutBeneficialOwners() {
+    private Errors testFullUpdateRemoveValidationWithoutBeneficialOwners() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -832,10 +924,10 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
 
-        assertFalse(errors.hasErrors());
+        return errors;
     }
 
-    private void testFullUpdateRemoveValidationWithoutManagingOfficers() {
+    private Errors testFullUpdateRemoveValidationWithoutManagingOfficers() {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -851,7 +943,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateOwnersAndOfficersAgainstStatement(eq(overseasEntitySubmissionDto), any(), any());
         verify(ownersAndOfficersDataBlockValidator, times(1)).validateRegistrableBeneficialOwnerStatement(eq(overseasEntitySubmissionDto), any(), any());
 
-        assertFalse(errors.hasErrors());
+        return errors;
     }
 
     private void buildOverseasEntitySubmissionDto() {
