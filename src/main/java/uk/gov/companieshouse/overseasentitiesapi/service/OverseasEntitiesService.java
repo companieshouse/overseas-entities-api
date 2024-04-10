@@ -69,7 +69,7 @@ public class OverseasEntitiesService {
         Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
                 overseasEntityId);
         if (submissionOpt.isEmpty()) {
-            throw new SubmissionNotFoundException("Can not determine submission type");
+            throw new SubmissionNotFoundException("Cannot determine submission type");
         }
 
         String entityNumber = submissionOpt.get().getEntityNumber();

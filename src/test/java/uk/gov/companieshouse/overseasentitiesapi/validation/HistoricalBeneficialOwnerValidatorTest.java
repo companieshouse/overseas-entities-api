@@ -183,6 +183,15 @@ class HistoricalBeneficialOwnerValidatorTest {
     }
 
     @Test
+    void testNoErrorReportedWhenCeasedDateFieldIsNullAndIsUnableToObtainAllTrustInfoIsSetToTrue() {
+        individualTrustDataDtoList.get(0).setUnableToObtainAllTrustInfo(true);
+        individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0).setCeasedDate(null);
+        Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),
+                LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testNoErrorReportedWhenCeasedDateFieldIsInThePast() {
         individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0)
                 .setCeasedDate(LocalDate.of(1970, 1, 1));
@@ -193,6 +202,21 @@ class HistoricalBeneficialOwnerValidatorTest {
 
     @Test
     void testErrorReportedWhenCeasedDateIsInTheFuture() {
+        individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0)
+                .setCeasedDate(LocalDate.now().plusDays(1));
+        Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),
+                LOGGING_CONTEXT);
+
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
+                HistoricalBeneficialOwnerDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenCeasedDateIsInTheFutureAndAndIsUnableToObtainAllTrustInfoIsSetToTrue() {
+        individualTrustDataDtoList.get(0).setUnableToObtainAllTrustInfo(true);
         individualTrustDataDtoList.get(0).getHistoricalBeneficialOwners().get(0)
                 .setCeasedDate(LocalDate.now().plusDays(1));
         Errors errors = historicalBeneficialOwnerValidator.validate(individualTrustDataDtoList, new Errors(),

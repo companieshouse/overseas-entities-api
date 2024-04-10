@@ -51,7 +51,7 @@ class FilingsControllerTest {
     void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException, ServiceException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
-        when(filingsService.generateOverseasEntityFiling(ERIC_REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenReturn(filing);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenReturn(filing);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
@@ -60,7 +60,7 @@ class FilingsControllerTest {
 
     @Test
     void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
-        when(filingsService.generateOverseasEntityFiling(ERIC_REQUEST_ID, OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenThrow(SubmissionNotFoundException.class);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenThrow(SubmissionNotFoundException.class);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());

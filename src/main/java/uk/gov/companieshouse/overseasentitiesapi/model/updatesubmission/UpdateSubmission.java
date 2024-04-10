@@ -29,9 +29,6 @@ public class UpdateSubmission {
     public static final String CESSATIONS_FIELD = "cessations";
     public static final String TRUSTS_ADDITIONS_FIELD = "trusts";
 
-    @JsonProperty(UPDATE_TYPE_FIELD)
-    private String type = "OE02";
-
     @JsonProperty(UPDATE_USER_SUBMISSION_FIELD)
     private OverseasEntitySubmissionDto userSubmission;
 
@@ -76,14 +73,6 @@ public class UpdateSubmission {
         this.changes = new ArrayList<>();
         this.additions = new ArrayList<>();
         this.cessations = new ArrayList<>();
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public OverseasEntitySubmissionDto getUserSubmission() {
