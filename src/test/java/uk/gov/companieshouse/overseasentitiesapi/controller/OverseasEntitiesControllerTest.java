@@ -70,13 +70,15 @@ class OverseasEntitiesControllerTest {
 
     @BeforeEach
     void init() {
-        setValidationEnabledFeatureFlag(false);
-
-        overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+       overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
     }
 
     @Test
     void testCreatingANewSubmissionIsSuccessful() throws ServiceException {
+        when(overseasEntitySubmissionDtoValidator.validateFull(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID))).thenReturn(new Errors());
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
@@ -100,13 +102,11 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewUpdateSubmissionIsSuccessfulWithValidation() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
                 eq(REQUEST_ID))).thenReturn(new Errors());
-
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
                 overseasEntitySubmissionDto,
@@ -130,7 +130,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSubmissionIsSuccessfulWithValidation() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
@@ -160,8 +159,6 @@ class OverseasEntitiesControllerTest {
     @Test
     void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
-
-            setValidationEnabledFeatureFlag(true);
             final String errorLocation = "EXAMPLE_ERROR_LOCATION";
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
@@ -196,7 +193,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testResponseBodyContainsValidationErrorsWhenValidationEnabled() {
-        setValidationEnabledFeatureFlag(true);
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
 
@@ -224,6 +220,11 @@ class OverseasEntitiesControllerTest {
     @Test
     void testValidationStatusResponseWhenSubmissionIsFound() {
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(overseasEntitySubmissionDtoValidator.validateFull(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors());
 
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
 
@@ -236,8 +237,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass() {
-        setValidationEnabledFeatureFlag(true);
-
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
@@ -257,8 +256,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails() {
-        setValidationEnabledFeatureFlag(true);
-
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
@@ -288,6 +285,13 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testUpdatingAnExistingSubmissionIsSuccessful() throws ServiceException {
+
+        when(overseasEntitySubmissionDtoValidator.validatePartial(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID)
+        )).thenReturn(new Errors());
+
         when(overseasEntitiesService.updateOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -315,8 +319,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledButValidationIsDeterminedToNotBeRequired() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
@@ -350,8 +352,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testUpdatingAnExistingSubmissionIsSuccessfulWithValidationEnabledAndValidationIsDeterminedToBeRequired() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
         overseasEntitySubmissionDto.getBeneficialOwnersIndividual().add(new BeneficialOwnerIndividualDto());
 
@@ -391,8 +391,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testUpdatingAnExistingSubmissionIsUnSuccessfulWhenValidationChecksFail() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
-
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
         overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
 
@@ -419,13 +417,8 @@ class OverseasEntitiesControllerTest {
     @Test
     void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
-
-            setValidationEnabledFeatureFlag(true);
-
             overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
             overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
-
-            setValidationEnabledFeatureFlag(true);
             final String errorLocation = "EXAMPLE_ERROR_LOCATION";
             final String error = "EXAMPLE_ERROR";
             Err err = Err.invalidBodyBuilderWithLocation(errorLocation).withError(error).build();
@@ -461,8 +454,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testResponseBodyAfterUpdatingAnExistingSubmissionWhenValidationChecksFailContainsValidationErrors() {
-        setValidationEnabledFeatureFlag(true);
-
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
         overseasEntitySubmissionDto.getBeneficialOwnersCorporate().add(new BeneficialOwnerCorporateDto());
 
@@ -493,7 +484,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsSuccessful() throws ServiceException {
-        setValidationEnabledFeatureFlag(true);
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
@@ -521,8 +511,6 @@ class OverseasEntitiesControllerTest {
 
     @Test
     void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() {
-        setValidationEnabledFeatureFlag(true);
-
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
         overseasEntitySubmissionDto.getManagingOfficersCorporate().add(new ManagingOfficerCorporateDto());
 
@@ -591,9 +579,5 @@ class OverseasEntitiesControllerTest {
                 REQUEST_ID
         );
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    private void setValidationEnabledFeatureFlag(boolean value) {
-        ReflectionTestUtils.setField(overseasEntitiesController, "isValidationEnabled", value);
     }
 }

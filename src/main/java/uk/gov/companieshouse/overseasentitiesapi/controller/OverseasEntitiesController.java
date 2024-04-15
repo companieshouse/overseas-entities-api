@@ -46,9 +46,6 @@ public class OverseasEntitiesController {
     private final OverseasEntitiesService overseasEntitiesService;
     private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
 
-    @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
-    private boolean isValidationEnabled;
-
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
@@ -76,15 +73,13 @@ public class OverseasEntitiesController {
         logMap.put(TRANSACTION_ID_KEY, transaction.getId());
 
         try {
-            if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), requestId);
+            var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), requestId);
 
-                if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
-                            convertErrorsToJsonString(validationErrors)), null, logMap);
-                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
-                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-                }
+            if (validationErrors.hasErrors()) {
+                ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                        convertErrorsToJsonString(validationErrors)), null, logMap);
+                var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
             }
 
             ApiLogger.infoContext(requestId, "Calling service to create Overseas Entity Submission", logMap);
@@ -115,16 +110,14 @@ public class OverseasEntitiesController {
         ApiLogger.infoContext(requestId, "Calling service to update the Overseas Entity Submission", logMap);
 
         try {
-            if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
-                        overseasEntitySubmissionDto, new Errors(), requestId);
+            var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                    overseasEntitySubmissionDto, new Errors(), requestId);
 
-                if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
-                            convertErrorsToJsonString(validationErrors)), null, logMap);
-                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
-                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-                }
+            if (validationErrors.hasErrors()) {
+                ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                        convertErrorsToJsonString(validationErrors)), null, logMap);
+                var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
             }
 
             return overseasEntitiesService.updateOverseasEntity(
@@ -163,16 +156,14 @@ public class OverseasEntitiesController {
         try {
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
 
-            if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
-                        overseasEntitySubmissionDto, new Errors(), requestId);
+            var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
+                    overseasEntitySubmissionDto, new Errors(), requestId);
 
-                if (validationErrors.hasErrors()) {
-                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
-                            convertErrorsToJsonString(validationErrors)), null, logMap);
-                    var responseBody = ChResponseBody.createErrorsBody(validationErrors);
-                    return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-                }
+            if (validationErrors.hasErrors()) {
+                ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE,
+                        convertErrorsToJsonString(validationErrors)), null, logMap);
+                var responseBody = ChResponseBody.createErrorsBody(validationErrors);
+                return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
             }
 
             return this.overseasEntitiesService.createOverseasEntityWithResumeLink(
@@ -203,16 +194,14 @@ public class OverseasEntitiesController {
             var validationStatus = new ValidationStatusResponse();
             validationStatus.setValid(true);
 
-            if (isValidationEnabled) {
-                var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
-                        submissionDtoOptional.get(), new Errors(), requestId);
+            var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
+                    submissionDtoOptional.get(), new Errors(), requestId);
 
-                if (validationErrors.hasErrors()) {
-                    final var errorsAsJsonString = convertErrorsToJsonString(validationErrors);
-                    ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE, errorsAsJsonString), null, logMap);
+            if (validationErrors.hasErrors()) {
+                final var errorsAsJsonString = convertErrorsToJsonString(validationErrors);
+                ApiLogger.errorContext(requestId, String.format(VALIDATION_ERRORS_MESSAGE, errorsAsJsonString), null, logMap);
 
-                    flagValidationStatusAsFailed(validationStatus, errorsAsJsonString);
-                }
+                flagValidationStatusAsFailed(validationStatus, errorsAsJsonString);
             }
 
             return ResponseEntity.ok().body(validationStatus);
