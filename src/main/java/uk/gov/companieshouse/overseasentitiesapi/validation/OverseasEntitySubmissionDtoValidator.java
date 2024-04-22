@@ -102,7 +102,7 @@ public class OverseasEntitySubmissionDtoValidator {
             validateNoChangeUpdate(overseasEntitySubmissionDto, errors, loggingContext);
         }
 
-        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
     }
 
     private void validateFullRemoveDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -124,7 +124,7 @@ public class OverseasEntitySubmissionDtoValidator {
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
-        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
 
         dueDiligenceDataBlockValidator.validateFullDueDiligenceFields(
                 overseasEntitySubmissionDto.getDueDiligence(),
@@ -149,10 +149,16 @@ public class OverseasEntitySubmissionDtoValidator {
         }
     }
 
-    private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    private void validateTrustDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                      Errors errors,
+                                      String loggingContext,
+                                      boolean isFullValidation) {
         if (isTrustWebEnabled && !CollectionUtils.isEmpty(overseasEntitySubmissionDto.getTrusts())) {
-            trustDetailsValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            // The Trust Details Validator will only check the 'ceased date' if full validation is being performed
+            trustDetailsValidator.validate(overseasEntitySubmissionDto, errors, loggingContext, isFullValidation);
+
             if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
+                // Note that this validation is only done for registrations
                 trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
@@ -236,7 +242,7 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, loggingContext);
-        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext);
+        validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, false);
 
         return errors;
     }
