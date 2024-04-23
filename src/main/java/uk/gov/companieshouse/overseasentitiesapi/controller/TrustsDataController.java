@@ -156,10 +156,9 @@ public class TrustsDataController {
             var dataList = supplier.call();
 
             if (dataList == null || dataList.getData() == null || dataList.getData().isEmpty()) {
-                ApiLogger.errorContext(requestId,
+                ApiLogger.infoContext(requestId,
                         "Could not find any " + logPart + " for overseas entity "
-                                + logMap.get(OVERSEAS_ENTITY_ID_KEY),
-                        null, logMap);
+                                + logMap.get(OVERSEAS_ENTITY_ID_KEY), logMap);
                 return ResponseEntity.notFound().build();
             }
             for (var data : dataList) {
