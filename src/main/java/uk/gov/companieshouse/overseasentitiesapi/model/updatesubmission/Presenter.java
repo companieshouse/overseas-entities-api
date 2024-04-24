@@ -3,7 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Presenter {
-    @JsonProperty("fullName")
+    @JsonProperty("full_name")
     private String fullName;
 
     @JsonProperty("email")
