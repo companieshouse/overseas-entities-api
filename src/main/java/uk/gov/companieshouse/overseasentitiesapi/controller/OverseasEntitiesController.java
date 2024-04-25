@@ -52,9 +52,6 @@ public class OverseasEntitiesController {
     @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
     private boolean isRoeUpdateEnabled;
 
-    @Value("${FEATURE_FLAG_ENABLE_ROE_REMOVE_24112022:false}")
-    private boolean isRoeRemoveEnabled;
-
     @Value("${FEATURE_FLAG_ENABLE_UPDATE_SAVE_AND_RESUME_07032023:false}")
     private boolean isUpdateSaveAndResumeEnabled;
 
