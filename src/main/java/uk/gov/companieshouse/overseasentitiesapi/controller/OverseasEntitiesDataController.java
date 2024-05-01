@@ -186,7 +186,7 @@ public class OverseasEntitiesDataController {
             ManagingOfficerListDataApi managingOfficerDataList = privateDataRetrievalService.getManagingOfficerData(submissionDto.getEntityNumber());
 
             if (managingOfficerDataList == null || managingOfficerDataList.getManagingOfficerData() == null || managingOfficerDataList.getManagingOfficerData().isEmpty()) {
-                ApiLogger.errorContext(requestId, "Could not find any managing officers data for overseas entity " + overseasEntityId, null, logMap);
+                ApiLogger.infoContext(requestId, "Could not find any managing officers data for overseas entity " + overseasEntityId, logMap);
                 return ResponseEntity.notFound().build();
             }
 
