@@ -114,6 +114,10 @@ public class PopulateUpdateSubmission {
             OverseasEntitySubmissionDto overseasEntitySubmissionDto,
             UpdateSubmission updateSubmission) {
 
+        // This mapping of the PresenterDto object and its data fields to a specific 'update submission' Presenter
+        // object looks to be superfluous, as the fields are identical. The same may be true for other objects in the
+        // UpdateSubmission DTO, e.g. DueDiligence. Ideally, this code would be refactored.
+
         Optional.of(overseasEntitySubmissionDto.getPresenter())
                 .ifPresent(presenterDto -> {
                     var presenter = new Presenter();
