@@ -49,13 +49,13 @@ public class UpdateValidator {
         ApiLogger.debugContext(loggingContext, "Check filing date of " + filingDate + " for ROE company "
                 + entityNumber + " against the next Made Up To date");
 
-        CompanyProfileApi companyProfileApi = publicDataRetrievalService.getCompanyProfile(entityNumber, passThroughTokenHeader);
+        var companyProfileApi = publicDataRetrievalService.getCompanyProfile(entityNumber, passThroughTokenHeader);
         LocalDate nextMadeUpToDate = companyProfileApi.getConfirmationStatement().getNextMadeUpTo();
 
         ApiLogger.debugContext(loggingContext, "Next Made Up To date is " + nextMadeUpToDate);
 
         if (filingDate.isAfter(nextMadeUpToDate)) {
-            String errorMessage = String.format(ValidationMessages.DATE_NOT_ON_OR_BEFORE_MUD_ERROR_MESSAGE,
+            var errorMessage = String.format(ValidationMessages.DATE_NOT_ON_OR_BEFORE_MUD_ERROR_MESSAGE,
                     qualifiedFieldName, nextMadeUpToDate);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
