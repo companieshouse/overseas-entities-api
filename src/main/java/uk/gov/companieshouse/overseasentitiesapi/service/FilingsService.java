@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -66,6 +65,8 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner
 public class FilingsService {
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+  private static final String REMOVE_ENTITY_EMAIL_FIELD = "entityEmail";
 
   @Value("${OVERSEAS_ENTITIES_FILING_DESCRIPTION_IDENTIFIER}")
   private String filingDescriptionIdentifier;
@@ -181,7 +182,8 @@ public class FilingsService {
       ApiLogger.debug("Value of 'isNoChange' flag for Remove is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
-      setRemoveSubmissionData(userSubmission, updateSubmission, isNoChange, submissionDto.getRemove().getIsNotProprietorOfLand(), logMap);
+      setRemoveSubmissionData(userSubmission, updateSubmission, isNoChange, submissionDto.getEntity().getEmail(),
+              submissionDto.getRemove().getIsNotProprietorOfLand(), logMap);
       filing.setKind(FILING_KIND_OVERSEAS_ENTITY_REMOVE);
     } else {
       setSubmissionData(userSubmission, submissionDto, logMap);
@@ -267,11 +269,13 @@ public class FilingsService {
   private void setRemoveSubmissionData(Map<String, Object> data,
                                        UpdateSubmission updateSubmission,
                                        boolean isNoChange,
+                                       String entityEmail,
                                        boolean isNotProprietorOfLand,
                                        Map<String, Object> logMap) {
     setUpdateAndRemoveSubmissionData(data, updateSubmission, isNoChange, logMap);
 
     data.put(IS_NOT_PROPRIETOR_OF_LAND_FIELD, isNotProprietorOfLand);
+    data.put(REMOVE_ENTITY_EMAIL_FIELD, entityEmail);
 
     ApiLogger.debug("Remove specific submission data has been set on filing: " + data, logMap);
   }
@@ -297,8 +301,6 @@ public class FilingsService {
       data.put(CESSATIONS_FIELD, updateSubmission.getCessations());
       data.put(TRUST_DATA, updateSubmission.getTrustAdditions());
     }
-
-    ApiLogger.debug("Update/Remove submission data has been set on filing: " + data, logMap);
   }
 
   private void setSubmissionData(

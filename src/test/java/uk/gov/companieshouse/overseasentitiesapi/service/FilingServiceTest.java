@@ -459,6 +459,8 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService, "removeFilingDescription", REMOVE_FILING_DESCRIPTION);
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        final String testEmailAddress = "firma@irgendwo.de";
+        overseasEntitySubmissionDto.getEntity().setEmail(testEmailAddress);
 
         // This indicates it's a Remove submission
         overseasEntitySubmissionDto.setIsRemove(true);
@@ -492,6 +494,7 @@ class FilingServiceTest {
         assertEquals("Overseas entity application for removal made on 26 March 2022", filing.getDescription());
 
         assertEquals("OE111229", filing.getData().get("entityNumber"));
+        assertEquals(testEmailAddress, filing.getData().get("entityEmail"));
         assertNull(filing.getCost());
 
         assertNotNull(filing.getData().get("userSubmission"));
