@@ -77,7 +77,7 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+                String passThroughTokenHeader = getPassThroughTokenHeader(request);
 
                 var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), requestId, passThroughTokenHeader);
 
@@ -119,7 +119,7 @@ public class OverseasEntitiesController {
 
         try {
             if (isValidationEnabled) {
-                String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+                String passThroughTokenHeader = getPassThroughTokenHeader(request);
 
                 var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
                         overseasEntitySubmissionDto, new Errors(), requestId, passThroughTokenHeader);
@@ -170,7 +170,7 @@ public class OverseasEntitiesController {
             ApiLogger.infoContext(requestId, "createNewSubmissionForSaveAndResume Calling service to create Overseas Entity Submission", logMap);
 
             if (isValidationEnabled) {
-                String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+                String passThroughTokenHeader = getPassThroughTokenHeader(request);
 
                 var validationErrors = overseasEntitySubmissionDtoValidator.validatePartial(
                         overseasEntitySubmissionDto, new Errors(), requestId, passThroughTokenHeader);
@@ -214,7 +214,7 @@ public class OverseasEntitiesController {
                 validationStatus.setValid(true);
 
                 if (isValidationEnabled) {
-                    String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+                    String passThroughTokenHeader = getPassThroughTokenHeader(request);
 
                     var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
                             submissionDtoOptional.get(), new Errors(), requestId, passThroughTokenHeader);
@@ -279,5 +279,9 @@ public class OverseasEntitiesController {
     private String convertErrorsToJsonString(Errors validationErrors) {
         var gson = new GsonBuilder().create();
         return gson.toJson(validationErrors);
+    }
+
+    private String getPassThroughTokenHeader(HttpServletRequest request) {
+        return request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
     }
 }

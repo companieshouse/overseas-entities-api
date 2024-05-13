@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
@@ -30,6 +31,12 @@ class UpdateValidatorTest {
     private static final String ENTITY_NUMBER = "OE112233";
     private static final String PASS_THROUGH_HEADER = "545345345";
 
+    // Dates used for testing the filing date:
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate ONE_WEEK_AGO = LocalDate.now().minusDays(7);
+    private static final LocalDate TWO_WEEKS_AGO = LocalDate.now().minusDays(14);
+    private static final LocalDate NEXT_WEEK = LocalDate.now().plusDays(7);
+
     @InjectMocks
     private UpdateValidator updateValidator;
 
@@ -58,14 +65,6 @@ class UpdateValidatorTest {
     }
 
     @Test
-    void testNoValidationErrorReportedWhenFilingDateIsNotNull() throws ServiceException {
-        when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
-
-        Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
     void testNoValidationErrorReportedWhenFilingDateIsNow() throws ServiceException {
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
 
@@ -78,7 +77,7 @@ class UpdateValidatorTest {
     void testNoValidationErrorReportedWhenFilingDateIsInPast() throws ServiceException {
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
 
-        updateDto.setFilingDate(LocalDate.now().minusDays(1));
+        updateDto.setFilingDate(ONE_WEEK_AGO);
         Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
     }
@@ -87,7 +86,7 @@ class UpdateValidatorTest {
     void testValidationErrorReportedWhenFilingDateIsInFuture() throws ServiceException {
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
 
-        updateDto.setFilingDate(LocalDate.now().plusDays(1));
+        updateDto.setFilingDate(NEXT_WEEK);
         Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.UPDATE_FIELD,
@@ -99,9 +98,9 @@ class UpdateValidatorTest {
 
     @Test
     void testNoValidationErrorReportedWhenFilingDateIsBeforeNextMadeUpToDate() throws ServiceException {
-        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(LocalDate.now().minusDays(11));
+        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(ONE_WEEK_AGO);
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
-        updateDto.setFilingDate(LocalDate.now().minusDays(12));
+        updateDto.setFilingDate(TWO_WEEKS_AGO);
 
         Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
@@ -109,9 +108,9 @@ class UpdateValidatorTest {
 
     @Test
     void testNoValidationErrorReportedWhenFilingDateIsTheSameAsTheNextMadeUpToDate() throws ServiceException {
-        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(LocalDate.now());
+        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(TODAY);
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
-        updateDto.setFilingDate(LocalDate.now());
+        updateDto.setFilingDate(TODAY);
 
         Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
@@ -119,11 +118,11 @@ class UpdateValidatorTest {
 
     @Test
     void testValidationErrorReportedWhenFilingDateIsInThePastButAfterTheNextMadeUpToDate() throws ServiceException {
-        final LocalDate nextMadeUpToDate = LocalDate.now().minusDays(11);
+        final LocalDate nextMadeUpToDate = TWO_WEEKS_AGO;
         companyProfileApi.getConfirmationStatement().setNextMadeUpTo(nextMadeUpToDate);
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
 
-        updateDto.setFilingDate(LocalDate.now().minusDays(10));
+        updateDto.setFilingDate(ONE_WEEK_AGO);
         Errors errors = updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
 
         String qualifiedFieldName = getQualifiedFieldName(
@@ -134,10 +133,20 @@ class UpdateValidatorTest {
     }
 
     @Test
-    void testNoFullValidationErrorReportedWhenFilingDateIsBeforeNextMadeUpToDate() throws ServiceException {
-        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(LocalDate.now().minusDays(11));
+    void testServiceExceptionThrownWhenConfirmationStatementDetailsNotFound() throws ServiceException {
+        companyProfileApi.setConfirmationStatement(null);
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
-        updateDto.setFilingDate(LocalDate.now().minusDays(12));
+        updateDto.setFilingDate(TWO_WEEKS_AGO);
+
+        assertThrows(ServiceException.class, () -> updateValidator.validate(ENTITY_NUMBER, updateDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER));
+    }
+
+    @Test
+    void testNoFullValidationErrorReportedWhenFilingDateIsBeforeNextMadeUpToDate() throws ServiceException {
+        companyProfileApi.getConfirmationStatement().setNextMadeUpTo(ONE_WEEK_AGO);
+        when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
+        updateDto.setFilingDate(TWO_WEEKS_AGO);
 
         Errors errors = updateValidator.validateFull(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
@@ -145,10 +154,10 @@ class UpdateValidatorTest {
 
     @Test
     void testFullValidationErrorReportedWhenFilingDateIsAfterNextMadeUpToDate() throws ServiceException {
-        final LocalDate nextMadeUpToDate = LocalDate.now().minusDays(11);
+        final LocalDate nextMadeUpToDate = TWO_WEEKS_AGO;
         companyProfileApi.getConfirmationStatement().setNextMadeUpTo(nextMadeUpToDate);
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
-        updateDto.setFilingDate(LocalDate.now().minusDays(7));
+        updateDto.setFilingDate(ONE_WEEK_AGO);
 
         Errors errors = updateValidator.validateFull(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
 
@@ -163,7 +172,7 @@ class UpdateValidatorTest {
     void testNoFullValidationErrorReportedWhenFilingDateIsInPast() throws ServiceException {
         when(publicDataRetrievalService.getCompanyProfile(ENTITY_NUMBER, PASS_THROUGH_HEADER)).thenReturn(companyProfileApi);
 
-        updateDto.setFilingDate(LocalDate.now().minusDays(1));
+        updateDto.setFilingDate(ONE_WEEK_AGO);
         Errors errors = updateValidator.validateFull(ENTITY_NUMBER, updateDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
     }

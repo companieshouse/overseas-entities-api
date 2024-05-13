@@ -46,12 +46,18 @@ public class UpdateValidator {
         DateValidators.isDateInPast(filingDate, qualifiedFieldName, errors, loggingContext);
 
         ApiLogger.debugContext(loggingContext, "Check filing date of " + filingDate + " for ROE company "
-                + entityNumber + " against the next Made Up To date");
+                + entityNumber + " against the next 'made up to' date");
 
         var companyProfileApi = publicDataRetrievalService.getCompanyProfile(entityNumber, passThroughTokenHeader);
-        LocalDate nextMadeUpToDate = companyProfileApi.getConfirmationStatement().getNextMadeUpTo();
+        var confirmationStatementApi = companyProfileApi.getConfirmationStatement();
 
-        ApiLogger.debugContext(loggingContext, "Next Made Up To date is " + nextMadeUpToDate);
+        if (confirmationStatementApi == null) {
+            throw new ServiceException("Unable to validate the filing date - confirmation statement details are missing");
+        }
+
+        LocalDate nextMadeUpToDate = confirmationStatementApi.getNextMadeUpTo();
+
+        ApiLogger.debugContext(loggingContext, "Next 'made up to' date is " + nextMadeUpToDate);
 
         if (filingDate.isAfter(nextMadeUpToDate)) {
             var errorMessage = String.format(ValidationMessages.DATE_NOT_ON_OR_BEFORE_MUD_ERROR_MESSAGE,
