@@ -229,6 +229,23 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenCeasedDateIsBeforeIndividualsDateOfBirth() {
+        disassociateBosFromTrust();
+
+        TrustIndividualDto individual = trustDataDtoList.get(0).getIndividuals().get(0);
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1970,1, 1));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1970,1, 2));
+        individual.setDateOfBirth(LocalDate.of(1970,1, 3));
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
     void testNoValidationErrorReportedWhenCeasedDateIsInTheFutureAndCeasedDateCheckingDisabled() {
         disassociateBosFromTrust();
 
