@@ -11,6 +11,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class TrustDataDto {
 
     public static final String TRUST_ID_FIELD = "trust_id";
+    public static final String IS_TRUST_INVOLVED_IN_OE = "is_trust_involved_in_overseas_entity";
     public static final String TRUST_NAME_FIELD = "trust_name";
     public static final String CREATION_DATE_FIELD = "creation_date";
     public static final String CEASED_DATE_FIELD = "ceased_date";
@@ -24,6 +25,9 @@ public class TrustDataDto {
 
     @JsonProperty(TRUST_NAME_FIELD)
     private String trustName;
+
+    @JsonProperty(IS_TRUST_INVOLVED_IN_OE)
+    private Boolean isTrustInvolvedInOverseasEntity;
 
     @JsonProperty(CREATION_DATE_FIELD)
     private LocalDate creationDate;
@@ -52,6 +56,14 @@ public class TrustDataDto {
 
     public void setTrustId(String trustId) {
         this.trustId = trustId;
+    }
+
+    public Boolean isTrustInvolvedInOverseasEntity() {
+        return isTrustInvolvedInOverseasEntity;
+    }
+
+    public void setTrustInvolvedInOverseasEntity(Boolean isTrustInvolvedInOverseasEntity) {
+        this.isTrustInvolvedInOverseasEntity = isTrustInvolvedInOverseasEntity;
     }
 
     public String getTrustName() {

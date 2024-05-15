@@ -23,6 +23,7 @@ public class ValidationMessages {
     public static final String DUPLICATE_TRUST_ID = "Duplicate Trust Id for %s";
     public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be on or after the appointed date";
     public static final String CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE = "%s must be on or after the creation date";
+    public static final String CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE = "%s  must be on or after all of the trust individual's dates of birth";
     public static final String TRUST_INDIVIDUAL_TYPE_ERROR_MESSAGE = "Individual trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
     public static final String TRUST_CORPORATE_TYPE_ERROR_MESSAGE = "Corporate trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
 }

@@ -621,6 +621,7 @@
       {
         "_id" : "string",
         "name" : "string",
+        "is_trust_involved_in_overseas_entity": true,
         "creation_date" : "2022-06-10",
         "unable_to_obtain_all_trust_info" : true,
         "review_status": {
@@ -727,6 +728,7 @@
     {
       "_id" : "string",
       "name" : "string",
+      "is_trust_involved_in_overseas_entity": true,
       "creation_date" : "2022-06-10",
       "ceased_date" : "2023-02-01",
       "unable_to_obtain_all_trust_info" : true,
