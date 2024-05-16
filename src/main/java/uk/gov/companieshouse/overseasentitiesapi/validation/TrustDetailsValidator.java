@@ -37,7 +37,7 @@ public class TrustDetailsValidator {
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
             if (isFullValidation) {
-                validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
+               validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
             validateUnableToObtainAllTrustInfo(trustDataDto.getUnableToObtainAllTrustInfo(), errors, loggingContext);
@@ -106,8 +106,11 @@ public class TrustDetailsValidator {
             if (UtilsValidators.isNotNull(trustCeasedDate, qualifiedFieldName, errors, loggingContext)) {
                 DateValidators.isDateInPast(trustCeasedDate, qualifiedFieldName, errors, loggingContext);
                 DateValidators.isCeasedDateOnOrAfterCreationDate(trustCeasedDate, creationDate, qualifiedFieldName, errors, loggingContext);
-                DateValidators.isCeasedDateOnOrAfterIndividualsDateOfBirth(trustCeasedDate, trustDataDto.getIndividuals(), qualifiedFieldName, errors, loggingContext);
-            }
+
+                if (trustDataDto.getIndividuals() != null && !trustDataDto.getIndividuals().isEmpty()) {
+                    DateValidators.isCeasedDateOnOrAfterIndividualsDateOfBirth(trustCeasedDate, trustDataDto.getIndividuals(), qualifiedFieldName, errors, loggingContext);
+                }
+           }
         }
     }
 
