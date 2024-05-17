@@ -308,12 +308,23 @@ class TrustDetailsValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+
+    @Test
+    void testErrorReportedWhenTrustInvolvedIsNull() {
+        trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(null);
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+
     @Test
     void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwners() {
         disassociateBosFromTrust();
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
-        String validationMessage = ValidationMessages.TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
+        String validationMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
