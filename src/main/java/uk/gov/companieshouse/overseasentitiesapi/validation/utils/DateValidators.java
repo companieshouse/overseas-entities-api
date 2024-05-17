@@ -72,9 +72,12 @@ public class DateValidators {
                                                                            String loggingContext) {
 
         for(TrustIndividualDto individual : individuals) {
-            if (trustCeasedDate.isBefore(individual.getDateOfBirth())) {
-                setErrorMsgToLocation(errors, qualifiedFieldName, ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
-                ApiLogger.infoContext(loggingContext, qualifiedFieldName + " must be on or after all of the trust individual's dates of birth");
+            if (!isDateOnOrAfterAnotherDate(trustCeasedDate,
+                    individual.getDateOfBirth(),
+                    ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE,
+                    qualifiedFieldName,
+                    errors,
+                    loggingContext)) {
                 return false;
             }
         }

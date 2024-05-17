@@ -229,13 +229,29 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenCeasedDateIsBeforeIndividualsDateOfBirth() {
+    void testErrorReportedWhenCeasedDateIsBeforeSingleIndividualsDateOfBirth() {
         disassociateBosFromTrust();
 
         TrustIndividualDto individual = trustDataDtoList.get(0).getIndividuals().get(0);
         trustDataDtoList.get(0).setCreationDate(LocalDate.of(1970,1, 1));
         trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1970,1, 2));
         individual.setDateOfBirth(LocalDate.of(1970,1, 3));
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenCeasedDateIsBeforeMultipleIndividualsDateOfBirth() {
+        disassociateBosFromTrust();
+
+        setMultipleIndiviualsOnTrust();
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,1, 1));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,1, 2));
 
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
 
@@ -258,18 +274,6 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testNoValidationErrorReportedWhenCeaseDateIsToday() {
-        disassociateBosFromTrust();
-
-        trustDataDtoList.get(0).setCeasedDate(LocalDate.now());
-        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1970,1, 1));
-
-        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
-
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
     void testErrorReportedWhenCeaseDateIsBeforeCreationDate() {
         disassociateBosFromTrust();
 
@@ -282,18 +286,6 @@ class TrustDetailsValidatorTest {
         String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
-    }
-
-    @Test
-    void testNoValidationErrorReportedWhenCeaseDateIsInThePastAndAfterCreationDate() {
-        disassociateBosFromTrust();
-
-        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1978,4, 11));
-        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1970,1, 1));
-
-        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
-
-        assertFalse(errors.hasErrors());
     }
 
     @Test
@@ -314,6 +306,15 @@ class TrustDetailsValidatorTest {
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
 
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwners() {
+        disassociateBosFromTrust();
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+        String validationMessage = ValidationMessages.TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
@@ -367,12 +368,59 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDateBeforeAnyIndividualsDateOfBirth() {
+    void testNoErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDateAfterSingleIndividualsDateOfBirth() {
+        trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(false);
+        TrustIndividualDto individual = trustDataDtoList.get(0).getIndividuals().get(0);
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,4, 10));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,4, 11));
+        individual.setDateOfBirth(LocalDate.of(1990,4, 9));
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDatesSameAsSingleIndividualsDateOfBirth() {
+        trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(false);
+        TrustIndividualDto individual = trustDataDtoList.get(0).getIndividuals().get(0);
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,4, 10));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,4, 11));
+        individual.setDateOfBirth(LocalDate.of(1990,4, 11));
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDatesAfterMultipleIndividualsDateOfBirth() {
+        setMultipleIndiviualsOnTrust();
+        trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(false);
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,1, 4));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,1, 5));
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDateBeforeASingleIndividualsDateOfBirth() {
         trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(false);
         TrustIndividualDto individual = trustDataDtoList.get(0).getIndividuals().get(0);
         trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,4, 10));
         trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,4, 11));
         individual.setDateOfBirth(LocalDate.of(1990,4, 12));
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenTrustNotInvolvedInOverseasEntityAndCeasedDateBeforeSomeOfMultipleIndividualsDateOfBirth() {
+        trustDataDtoList.get(0).setTrustInvolvedInOverseasEntity(false);
+        setMultipleIndiviualsOnTrust();
+        trustDataDtoList.get(0).setCreationDate(LocalDate.of(1990,1, 1));
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.of(1990,1, 2));
+
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
 
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
@@ -391,5 +439,23 @@ class TrustDetailsValidatorTest {
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
+    }
+
+    private void setMultipleIndiviualsOnTrust() {
+
+        List<TrustIndividualDto> trustIndividualDtos = new ArrayList<>();
+        TrustIndividualDto trustIndividualDto1 = TrustMock.getIndividualDto();
+        trustIndividualDto1.setDateOfBirth(LocalDate.of(1990,1, 1));
+        trustIndividualDtos.add(trustIndividualDto1);
+
+        TrustIndividualDto trustIndividualDto2 = TrustMock.getIndividualDto();
+        trustIndividualDto2.setDateOfBirth(LocalDate.of(1990,1, 2));
+        trustIndividualDtos.add(trustIndividualDto2);
+
+        TrustIndividualDto trustIndividualDto3 = TrustMock.getIndividualDto();
+        trustIndividualDto3.setDateOfBirth(LocalDate.of(1990,1, 3));
+        trustIndividualDtos.add(trustIndividualDto3);
+
+        trustDataDtoList.get(0).setIndividuals(trustIndividualDtos);
     }
 }

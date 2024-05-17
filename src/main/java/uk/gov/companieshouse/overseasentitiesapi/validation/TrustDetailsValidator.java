@@ -37,6 +37,7 @@ public class TrustDetailsValidator {
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
             if (isFullValidation) {
+               validateTrustInvolvedInOverseasEntity(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
                validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
@@ -44,6 +45,23 @@ public class TrustDetailsValidator {
         }
 
         return errors;
+    }
+
+    private boolean validateTrustInvolvedInOverseasEntity(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                          TrustDataDto trustDataDto,
+                                                          Errors errors,
+                                                          String loggingContext) {
+
+        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+
+        if (trustDataDto.isTrustInvolvedInOverseasEntity() && noBeneficalOwenersArePresent(overseasEntitySubmissionDto)) {
+            final String errorMessage = ValidationMessages.TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+            return false;
+        }
+
+        return true;
     }
 
     private boolean validateDuplicateId(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
@@ -93,6 +111,7 @@ public class TrustDetailsValidator {
         final LocalDate trustCeasedDate = trustDataDto.getCeasedDate();
 
         if (isTrustStillRequired(overseasEntitySubmissionDto, trustDataDto.getTrustId(), trustDataDto.isTrustInvolvedInOverseasEntity())) {
+
             // Cease date of the trust must be 'null' as there are still Individual and/or Corporate BOs associated with this trust
             if (Objects.nonNull(trustCeasedDate)) {
                 final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -114,16 +133,31 @@ public class TrustDetailsValidator {
         }
     }
 
+    private boolean noBeneficalOwenersArePresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+        boolean allIndividualsDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersIndividual() != null
+                && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(
+                boIndividualDto -> boIndividualDto.getTrustIds() == null
+                        || boIndividualDto.getCeasedDate() != null
+                        || boIndividualDto.getTrusteesNatureOfControlTypes() == null
+                        || boIndividualDto.getTrusteesNatureOfControlTypes().isEmpty());
+
+
+        boolean allCoporatesDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
+                && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(
+                boCorporateDto -> boCorporateDto.getTrustIds() == null
+                        || boCorporateDto.getCeasedDate() != null
+                        || boCorporateDto.getTrusteesNatureOfControlTypes() == null
+                        || boCorporateDto.getTrusteesNatureOfControlTypes().isEmpty());
+
+        return allIndividualsDisassociated && allCoporatesDisassociated;
+    }
+
     private boolean isTrustStillRequired(OverseasEntitySubmissionDto overseasEntitySubmissionDto, String trustId, boolean istrustInvolvedInOverseasEntity) {
         // Use the trust id to whizz through all the Beneficial Owners that are associated with this trust. As soon as a
         // matching BO is found where cease date is null and a trust NOC is set then this indicates that the trust is
         // still required
 
-        if (!istrustInvolvedInOverseasEntity) {
-           return false;
-        }
-
-        if (trustId == null) {
+        if (!istrustInvolvedInOverseasEntity || trustId == null) {
             return false;
         }
 
