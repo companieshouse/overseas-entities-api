@@ -36,8 +36,8 @@ public class TrustDetailsValidator {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
-            if (isFullValidation) {
-               validateTrustInvolvedInOverseasEntity(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
+            if (
+               validateTrustInvolvedInOverseasEntity(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext)) {
                validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
@@ -56,11 +56,11 @@ public class TrustDetailsValidator {
 
         if (trustDataDto.isTrustInvolvedInOverseasEntity() == null) {
             // Covers validation for when the yes or no has not been selected resulting in a null value
-            final String errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
             return false;
-        } else  if (trustDataDto.isTrustInvolvedInOverseasEntity() && noBeneficalOwenersArePresent(overseasEntitySubmissionDto)) {
+        } else  if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity()) && noBeneficalOwenersArePresent(overseasEntitySubmissionDto)) {
             final String errorMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
@@ -141,7 +141,8 @@ public class TrustDetailsValidator {
     private boolean noBeneficalOwenersArePresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         boolean allIndividualsDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersIndividual() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(
-                boIndividualDto -> boIndividualDto.getTrustIds() == null
+                boIndividualDto ->
+                        (boIndividualDto.getTrustIds() == null || boIndividualDto.getTrustIds().isEmpty())
                         || boIndividualDto.getCeasedDate() != null
                         || boIndividualDto.getTrusteesNatureOfControlTypes() == null
                         || boIndividualDto.getTrusteesNatureOfControlTypes().isEmpty());
@@ -149,7 +150,8 @@ public class TrustDetailsValidator {
 
         boolean allCoporatesDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(
-                boCorporateDto -> boCorporateDto.getTrustIds() == null
+                boCorporateDto ->
+                        (boCorporateDto.getTrustIds() == null || boCorporateDto.getTrustIds().isEmpty())
                         || boCorporateDto.getCeasedDate() != null
                         || boCorporateDto.getTrusteesNatureOfControlTypes() == null
                         || boCorporateDto.getTrusteesNatureOfControlTypes().isEmpty());
