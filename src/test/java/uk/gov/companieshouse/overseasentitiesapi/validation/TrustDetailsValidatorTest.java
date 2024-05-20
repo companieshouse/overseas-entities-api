@@ -230,9 +230,19 @@ class TrustDetailsValidatorTest {
 
 
     @Test
-    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToAbsenceOfTrustIds() {
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToNullTrustIds() {
         overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(null);
         overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(null);
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+        String validationMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToEmptyTrustIds() {
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(List.of());
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(List.of());
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
         String validationMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
@@ -249,8 +259,19 @@ class TrustDetailsValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+
     @Test
-    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToAbsenceOfTrustNoc() {
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToEmptyTrustNoc() {
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrusteesNatureOfControlTypes(List.of());
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrusteesNatureOfControlTypes(List.of());
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+        String validationMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueNullTrustNoc() {
         overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrusteesNatureOfControlTypes(null);
         overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrusteesNatureOfControlTypes(null);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
