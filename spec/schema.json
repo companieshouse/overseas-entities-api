@@ -1274,6 +1274,10 @@
           "date_became_interested_person": {
             "type": "string",
             "format": "date"
+          },
+          "ceased_date": {
+            "type": "string",
+            "format": "date"
           }
         }
       },

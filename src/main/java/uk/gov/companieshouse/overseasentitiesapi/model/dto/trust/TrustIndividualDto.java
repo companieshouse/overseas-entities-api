@@ -16,6 +16,7 @@ public class TrustIndividualDto {
     public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
     public static final String TYPE_FIELD = "type";
     public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String NATIONALITY_FIELD = "nationality";
     public static final String SECOND_NATIONALITY_FIELD = "second_nationality";
 
@@ -60,6 +61,9 @@ public class TrustIndividualDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(DATE_BECAME_INTERESTED_PERSON_FIELD)
     private LocalDate dateBecameInterestedPerson;
+
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(NATIONALITY_FIELD)
@@ -412,6 +416,14 @@ public class TrustIndividualDto {
 
     public void setDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson) {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 
     public String getSecondNationality() {
