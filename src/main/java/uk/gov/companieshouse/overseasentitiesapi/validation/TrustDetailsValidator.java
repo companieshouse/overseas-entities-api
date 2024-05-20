@@ -60,7 +60,7 @@ public class TrustDetailsValidator {
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
             return false;
-        } else  if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity()) && noBeneficalOwenersArePresent(overseasEntitySubmissionDto)) {
+        } else  if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity()) && noBeneficialOwnersArePresent(overseasEntitySubmissionDto)) {
             final String errorMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
@@ -138,7 +138,7 @@ public class TrustDetailsValidator {
         }
     }
 
-    private boolean noBeneficalOwenersArePresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+    private boolean noBeneficialOwnersArePresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         boolean allIndividualsDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersIndividual() != null
                 && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(
                 boIndividualDto ->
@@ -164,7 +164,7 @@ public class TrustDetailsValidator {
         // matching BO is found where cease date is null and a trust NOC is set then this indicates that the trust is
         // still required
 
-        if ((istrustInvolvedInOverseasEntity != null && !istrustInvolvedInOverseasEntity) || trustId == null) {
+        if ((Boolean.FALSE.equals(istrustInvolvedInOverseasEntity)) || trustId == null) {
             return false;
         }
 

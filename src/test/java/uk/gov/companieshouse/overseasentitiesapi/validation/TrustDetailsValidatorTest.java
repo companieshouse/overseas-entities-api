@@ -271,7 +271,7 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueNullTrustNoc() {
+    void testErrorReportedWhenTrustIsInvolvedInOverseasEntityAndNoBeneficialOwnersDueToNullTrustNoc() {
         overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrusteesNatureOfControlTypes(null);
         overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrusteesNatureOfControlTypes(null);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
