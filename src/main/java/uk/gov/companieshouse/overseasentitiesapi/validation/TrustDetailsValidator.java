@@ -36,7 +36,7 @@ public class TrustDetailsValidator {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
-            if (
+            if (isFullValidation &&
                validateTrustInvolvedInOverseasEntity(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext)) {
                validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
