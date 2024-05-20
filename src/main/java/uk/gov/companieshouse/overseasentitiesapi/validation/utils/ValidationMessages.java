@@ -26,6 +26,5 @@ public class ValidationMessages {
     public static final String CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE = "%s must be on or after all of the trust individuals' dates of birth";
     public static final String TRUST_INDIVIDUAL_TYPE_ERROR_MESSAGE = "Individual trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
     public static final String TRUST_CORPORATE_TYPE_ERROR_MESSAGE = "Corporate trustee type must be one of these values: Beneficiary, Settlor, Grantor and Interested person for %s";
-    public static final String INVOLVED_IN_TRUST_NULL_ERROR_MESSAGE = "The trust involved flag is null";
     public static final String INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE = "The trust cannot remain involved in the overseas entity without at least one beneficial owner";
 }
