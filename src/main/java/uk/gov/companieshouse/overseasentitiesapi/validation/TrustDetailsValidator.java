@@ -60,7 +60,7 @@ public class TrustDetailsValidator {
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
             return false;
-        } else  if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity()) && noBeneficialOwnersArePresent(overseasEntitySubmissionDto)) {
+        } else  if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity()) && noBeneficialOwnersAreLinkedToTrusts(overseasEntitySubmissionDto)) {
             final String errorMessage = ValidationMessages.INVOLVED_IN_TRUST_WITHOUT_BENEFICIAL_OWNERS_ERROR_MESSAGE;
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
@@ -130,17 +130,13 @@ public class TrustDetailsValidator {
             if (UtilsValidators.isNotNull(trustCeasedDate, qualifiedFieldName, errors, loggingContext)) {
                 DateValidators.isDateInPast(trustCeasedDate, qualifiedFieldName, errors, loggingContext);
                 DateValidators.isCeasedDateOnOrAfterCreationDate(trustCeasedDate, creationDate, qualifiedFieldName, errors, loggingContext);
-
-                if (trustDataDto.getIndividuals() != null && !trustDataDto.getIndividuals().isEmpty()) {
-                    DateValidators.isCeasedDateOnOrAfterIndividualsDateOfBirth(trustCeasedDate, trustDataDto.getIndividuals(), qualifiedFieldName, errors, loggingContext);
-                }
-           }
+            }
         }
     }
 
-    private boolean noBeneficialOwnersArePresent(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
+    private boolean noBeneficialOwnersAreLinkedToTrusts(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         boolean allIndividualsDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersIndividual() != null
-                && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(
+                && overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().allMatch(
                 boIndividualDto ->
                         (boIndividualDto.getTrustIds() == null || boIndividualDto.getTrustIds().isEmpty())
                         || boIndividualDto.getCeasedDate() != null
@@ -149,7 +145,7 @@ public class TrustDetailsValidator {
 
 
         boolean allCoporatesDisassociated = overseasEntitySubmissionDto.getBeneficialOwnersCorporate() != null
-                && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(
+                && overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().allMatch(
                 boCorporateDto ->
                         (boCorporateDto.getTrustIds() == null || boCorporateDto.getTrustIds().isEmpty())
                         || boCorporateDto.getCeasedDate() != null
