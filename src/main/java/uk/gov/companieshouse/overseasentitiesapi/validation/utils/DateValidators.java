@@ -64,24 +64,4 @@ public class DateValidators {
 
         return true;
     }
-
-    public static boolean isCeasedDateOnOrAfterIndividualsDateOfBirth(LocalDate trustCeasedDate,
-                                                                           List<TrustIndividualDto> individuals,
-                                                                           String qualifiedFieldName,
-                                                                           Errors errors,
-                                                                           String loggingContext) {
-
-        for(TrustIndividualDto individual : individuals) {
-            if (!isDateOnOrAfterAnotherDate(trustCeasedDate,
-                    individual.getDateOfBirth(),
-                    ValidationMessages.CEASED_DATE_BEFORE_INDIVIDUALS_DATE_OF_BRITH_ERROR_MESSAGE,
-                    qualifiedFieldName,
-                    errors,
-                    loggingContext)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
