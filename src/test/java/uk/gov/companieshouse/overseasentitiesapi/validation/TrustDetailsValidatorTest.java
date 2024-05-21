@@ -290,7 +290,7 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenUnableToObtainAllTrustInfoFieldNotEmpty() {
+    void testNoErrorReportedWhenUnableToObtainAllTrustInfoFieldNotEmpty() {
         trustDataDtoList.get(0).setUnableToObtainAllTrustInfo(false);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
 

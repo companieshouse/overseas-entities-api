@@ -37,7 +37,7 @@ public class TrustDetailsValidator {
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
             if (isFullValidation) {
-                validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
+                checkCeasedDateAgainstBeneficialOwners(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
             validateUnableToObtainAllTrustInfo(trustDataDto.getUnableToObtainAllTrustInfo(), errors, loggingContext);
@@ -85,32 +85,48 @@ public class TrustDetailsValidator {
                 && DateValidators.isDateInPast(creationDate, qualifiedFieldName, errors, loggingContext);
     }
 
-    private void validateCeasedDate(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
-                                   TrustDataDto trustDataDto,
-                                   Errors errors,
-                                   String loggingContext) {
+    private void checkCeasedDateAgainstBeneficialOwners(OverseasEntitySubmissionDto overseasEntitySubmissionDto,
+                                                        TrustDataDto trustDataDto,
+                                                        Errors errors,
+                                                        String loggingContext) {
         final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        final LocalDate creationDate = trustDataDto.getCreationDate();
         final LocalDate trustCeasedDate = trustDataDto.getCeasedDate();
 
-        if (isTrustStillRequired(overseasEntitySubmissionDto, trustDataDto.getTrustId())) {
-            // Cease date of the trust must be 'null' as there are still Individual and/or Corporate BOs associated with this trust
-            if (Objects.nonNull(trustCeasedDate)) {
-                final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
-                ApiLogger.infoContext(loggingContext, errorMessage);
+        if (areBeneficialOwnersStillLinkedToTrusts(overseasEntitySubmissionDto, trustDataDto.getTrustId())) {
+
+            if (isTrustInvolvedInOverseasEntityFlagNull(trustDataDto.isTrustInvolvedInOverseasEntity(), errors, loggingContext)) {
+                if (Boolean.TRUE.equals(trustDataDto.isTrustInvolvedInOverseasEntity())) {
+                    // Ceased date of the trust must be 'null' as there are still Individual and/or Corporate BOs associated with this trust
+                    if (Objects.nonNull(trustCeasedDate)) {
+                        final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+                        setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+                        ApiLogger.infoContext(loggingContext, errorMessage);
+                    }
+                } else {
+                    // Ceased date of the trust cannot be 'null' as this trust is no longer involved with the overseas entity
+                    validateCeasedDate(errors, loggingContext, trustCeasedDate, qualifiedFieldName, creationDate);
+                }
             }
         } else {
-            final LocalDate creationDate = trustDataDto.getCreationDate();
-
-            // Cease date of the trust cannot be 'null' as there are no longer any Individual or Corporate BOs associated with this trust
-            if (UtilsValidators.isNotNull(trustCeasedDate, qualifiedFieldName, errors, loggingContext)) {
-                DateValidators.isDateInPast(trustCeasedDate, qualifiedFieldName, errors, loggingContext);
-                DateValidators.isCeasedDateOnOrAfterCreationDate(trustCeasedDate, creationDate, qualifiedFieldName, errors, loggingContext);
-            }
+            // Ceased date of the trust cannot be 'null' user is forced to supply this because there are no longer any Individual or Corporate BOs associated with this trust
+            validateCeasedDate(errors, loggingContext, trustCeasedDate, qualifiedFieldName, creationDate);
         }
     }
 
-    private boolean isTrustStillRequired(OverseasEntitySubmissionDto overseasEntitySubmissionDto, String trustId) {
+    private boolean isTrustInvolvedInOverseasEntityFlagNull(Boolean isTrustInvolvedInOverseasEntity, Errors errors, String loggingContext){
+        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.IS_TRUST_INVOLVED_IN_OE);
+        return UtilsValidators.isNotNull(isTrustInvolvedInOverseasEntity, qualifiedFieldName, errors, loggingContext);
+    }
+
+    private void validateCeasedDate(Errors errors, String loggingContext, LocalDate trustCeasedDate, String qualifiedFieldName, LocalDate creationDate) {
+        if (UtilsValidators.isNotNull(trustCeasedDate, qualifiedFieldName, errors, loggingContext)) {
+            DateValidators.isDateInPast(trustCeasedDate, qualifiedFieldName, errors, loggingContext);
+            DateValidators.isCeasedDateOnOrAfterCreationDate(trustCeasedDate, creationDate, qualifiedFieldName, errors, loggingContext);
+        }
+    }
+
+    private boolean areBeneficialOwnersStillLinkedToTrusts(OverseasEntitySubmissionDto overseasEntitySubmissionDto, String trustId) {
         // Use the trust id to whizz through all the Beneficial Owners that are associated with this trust. As soon as a
         // matching BO is found where cease date is null and a trust NOC is set then this indicates that the trust is
         // still required

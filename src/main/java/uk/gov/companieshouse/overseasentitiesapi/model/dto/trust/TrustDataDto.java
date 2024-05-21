@@ -12,6 +12,7 @@ public class TrustDataDto {
 
     public static final String TRUST_ID_FIELD = "trust_id";
     public static final String TRUST_NAME_FIELD = "trust_name";
+    public static final String IS_TRUST_INVOLVED_IN_OE = "is_trust_involved_in_overseas_entity";
     public static final String CREATION_DATE_FIELD = "creation_date";
     public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
@@ -24,6 +25,9 @@ public class TrustDataDto {
 
     @JsonProperty(TRUST_NAME_FIELD)
     private String trustName;
+
+    @JsonProperty(IS_TRUST_INVOLVED_IN_OE)
+    private Boolean isTrustInvolvedInOverseasEntity;
 
     @JsonProperty(CREATION_DATE_FIELD)
     private LocalDate creationDate;
@@ -60,6 +64,14 @@ public class TrustDataDto {
 
     public void setTrustName(String trustName) {
         this.trustName = trustName;
+    }
+
+    public Boolean isTrustInvolvedInOverseasEntity() {
+        return isTrustInvolvedInOverseasEntity;
+    }
+
+    public void setTrustInvolvedInOverseasEntity(Boolean isTrustInvolvedInOverseasEntity) {
+        this.isTrustInvolvedInOverseasEntity = isTrustInvolvedInOverseasEntity;
     }
 
     public LocalDate getCreationDate() {
