@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -66,10 +67,10 @@ public class OverseasEntitySubmissionDtoValidator {
         this.removeValidator = removeValidator;
     }
 
-    public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
 
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-            validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+            validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext, passThroughTokenHeader);
         } else if (overseasEntitySubmissionDto.isForRemove()) {
             validateFullRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
         } else {
@@ -78,8 +79,8 @@ public class OverseasEntitySubmissionDtoValidator {
         return errors;
     }
 
-    private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        updateValidator.validateFull(overseasEntitySubmissionDto.getUpdate(), errors, loggingContext);
+    private void validateFullUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
+        updateValidator.validateFull(overseasEntitySubmissionDto.getEntityNumber(), overseasEntitySubmissionDto.getUpdate(), errors, loggingContext, passThroughTokenHeader);
 
         validateUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
     }
@@ -166,9 +167,9 @@ public class OverseasEntitySubmissionDtoValidator {
         }
     }
 
-    public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
         if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
-             validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext);
+             validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext, passThroughTokenHeader);
              return errors;
         } else if (overseasEntitySubmissionDto.isForRemove()) {
             validatePartialRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -179,13 +180,13 @@ public class OverseasEntitySubmissionDtoValidator {
         return errors;
     }
 
-    public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public Errors validatePartialUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         if (overseasEntitySubmissionDto.getUpdate() != null) {
-            updateValidator.validate(overseasEntitySubmissionDto.getUpdate(), errors,
-                    loggingContext);
+            updateValidator.validate(overseasEntitySubmissionDto.getEntityNumber(), overseasEntitySubmissionDto.getUpdate(), errors,
+                    loggingContext, passThroughTokenHeader);
         }
 
         return errors;

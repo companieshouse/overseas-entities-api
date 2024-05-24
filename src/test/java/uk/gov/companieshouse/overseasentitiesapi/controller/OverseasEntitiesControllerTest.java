@@ -9,6 +9,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
@@ -53,6 +54,7 @@ class OverseasEntitiesControllerTest {
     private static final String SUBMISSION_ID = "abc123";
     private static final String TRANSACTION_ID = "test-1";
     private static final String USER_ID = "22334455";
+    private static final String PASS_THROUGH_HEADER = "545345345";
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
@@ -68,11 +70,16 @@ class OverseasEntitiesControllerTest {
 
     private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
+    private MockHttpServletRequest mockHttpServletRequest;
+
     @BeforeEach
     void init() {
         setValidationEnabledFeatureFlag(false);
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+
+        mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addHeader("ERIC-Access-Token", PASS_THROUGH_HEADER);
     }
 
     @Test
@@ -86,7 +93,8 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -105,7 +113,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
 
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
@@ -116,7 +125,8 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -134,7 +144,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
 
         when(overseasEntitiesService.createOverseasEntity(
                 transaction,
@@ -145,7 +156,8 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -158,7 +170,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() {
+    void testCreatingANewSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             setValidationEnabledFeatureFlag(true);
@@ -169,14 +181,16 @@ class OverseasEntitiesControllerTest {
             when(overseasEntitySubmissionDtoValidator.validateFull(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
-                    eq(REQUEST_ID)
+                    eq(REQUEST_ID),
+                    eq(PASS_THROUGH_HEADER)
             )).thenReturn(errors);
 
             var response = overseasEntitiesController.createNewSubmission(
                     transaction,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
-                    USER_ID);
+                    USER_ID,
+                    mockHttpServletRequest);
 
             assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
@@ -195,7 +209,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testResponseBodyContainsValidationErrorsWhenValidationEnabled() {
+    void testResponseBodyContainsValidationErrorsWhenValidationEnabled() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
         Err errName = Err.invalidBodyBuilderWithLocation("name").withError("Name is too long").build();
         Err errAddress = Err.invalidBodyBuilderWithLocation("address").withError("Missing address").build();
@@ -203,14 +217,16 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID)
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER)
         )).thenReturn(new Errors(errName, errAddress));
 
         var response = overseasEntitiesController.createNewSubmission(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         ChResponseBody<?> chResponseBody = (ChResponseBody<?>) response.getBody();
         assertNotNull(chResponseBody);
@@ -225,7 +241,7 @@ class OverseasEntitiesControllerTest {
     void testValidationStatusResponseWhenSubmissionIsFound() {
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
-        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof ValidationStatusResponse);
@@ -235,7 +251,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass() {
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
@@ -245,9 +261,10 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
 
-        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof ValidationStatusResponse);
         ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
@@ -256,7 +273,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails() {
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
@@ -269,9 +286,10 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors(err));
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors(err));
 
-        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof ValidationStatusResponse);
         ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
@@ -280,9 +298,30 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndServiceExceptionIsThrown() throws ServiceException {
+        setValidationEnabledFeatureFlag(true);
+
+        ValidationStatusResponse validationStatus = new ValidationStatusResponse();
+        validationStatus.setValid(true);
+        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+
+        final String errorLocation = "EXAMPLE_ERROR_LOCATION";
+        final String error = "EXAMPLE_ERROR";
+        when(overseasEntitySubmissionDtoValidator.validateFull(
+                eq(overseasEntitySubmissionDto),
+                any(Errors.class),
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenThrow(new ServiceException("TEST"));
+
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     void testValidationStatusResponseWhenSubmissionNotFound() {
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.empty());
-        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID);
+        var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(ResponseEntity.notFound().build(), response);
     }
 
@@ -300,7 +339,8 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -320,7 +360,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
 
         when(overseasEntitiesService.updateOverseasEntity(
                 transaction,
@@ -334,7 +375,8 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -345,7 +387,7 @@ class OverseasEntitiesControllerTest {
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
                 USER_ID);
-        verify(overseasEntitySubmissionDtoValidator, never()).validateFull(any(), any(), any());
+        verify(overseasEntitySubmissionDtoValidator, never()).validateFull(any(), any(), any(), any());
     }
 
     @Test
@@ -358,7 +400,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
 
         when(overseasEntitiesService.updateOverseasEntity(
                 transaction,
@@ -372,7 +415,8 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
@@ -386,7 +430,8 @@ class OverseasEntitiesControllerTest {
         verify(overseasEntitySubmissionDtoValidator).validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID));
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER));
     }
 
     @Test
@@ -401,7 +446,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID)
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER)
         )).thenReturn(new Errors(err));
 
         var response = overseasEntitiesController.updateSubmission(
@@ -409,7 +455,8 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
@@ -417,7 +464,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() {
+    void testUpdatingAnExistingSubmissionIsUnSuccessfulWithValidationError() throws ServiceException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
             setValidationEnabledFeatureFlag(true);
@@ -433,7 +480,8 @@ class OverseasEntitiesControllerTest {
             when(overseasEntitySubmissionDtoValidator.validatePartial(
                     eq(overseasEntitySubmissionDto),
                     any(Errors.class),
-                    eq(REQUEST_ID)
+                    eq(REQUEST_ID),
+                    eq(PASS_THROUGH_HEADER)
             )).thenReturn(errors);
 
             var response = overseasEntitiesController.updateSubmission(
@@ -441,7 +489,8 @@ class OverseasEntitiesControllerTest {
                     SUBMISSION_ID,
                     overseasEntitySubmissionDto,
                     REQUEST_ID,
-                    USER_ID);
+                    USER_ID,
+                    mockHttpServletRequest);
 
             assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
 
@@ -460,7 +509,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testResponseBodyAfterUpdatingAnExistingSubmissionWhenValidationChecksFailContainsValidationErrors() {
+    void testResponseBodyAfterUpdatingAnExistingSubmissionWhenValidationChecksFailContainsValidationErrors() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(new ArrayList<>());
@@ -472,7 +521,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID)
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER)
         )).thenReturn(new Errors(errName, errAddress));
 
         var response = overseasEntitiesController.updateSubmission(
@@ -480,7 +530,8 @@ class OverseasEntitiesControllerTest {
                 SUBMISSION_ID,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         ChResponseBody<?> chResponseBody = (ChResponseBody<?>) response.getBody();
         assertNotNull(chResponseBody);
@@ -497,7 +548,8 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID))).thenReturn(new Errors());
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER))).thenReturn(new Errors());
         when(overseasEntitiesService.createOverseasEntityWithResumeLink(
                 transaction,
                 overseasEntitySubmissionDto,
@@ -507,7 +559,8 @@ class OverseasEntitiesControllerTest {
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
@@ -520,7 +573,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() {
+    void testCreatingANewSaveAndResumeSubmissionIsUnSuccessfulWhenValidationChecksFail() throws ServiceException {
         setValidationEnabledFeatureFlag(true);
 
         overseasEntitySubmissionDto.setManagingOfficersCorporate(new ArrayList<>());
@@ -531,14 +584,16 @@ class OverseasEntitiesControllerTest {
         when(overseasEntitySubmissionDtoValidator.validatePartial(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
-                eq(REQUEST_ID)
+                eq(REQUEST_ID),
+                eq(PASS_THROUGH_HEADER)
         )).thenReturn(new Errors(err));
 
         var response = overseasEntitiesController.createNewSubmissionForSaveAndResume(
                 transaction,
                 overseasEntitySubmissionDto,
                 REQUEST_ID,
-                USER_ID);
+                USER_ID,
+                mockHttpServletRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
     }
