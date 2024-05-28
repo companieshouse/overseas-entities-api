@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataToReviewDto;
 
 public class UpdateDto {
@@ -29,6 +30,9 @@ public class UpdateDto {
     public static final String TRUST_DATA_FETCHED = "trust_data_fetched";
 
     public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
+    private static final String RELEVANT_STATEMENT1 = "relevant_period_beneficial_owner";
+    private static final String RELEVANT_STATEMENT2 = "relevant_period_trust_involved";
+    private static final String RELEVANT_STATEMENT3 = "relevant_period_trust_beneficiary";
 
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
@@ -65,6 +69,38 @@ public class UpdateDto {
 
     @JsonProperty(REVIEW_TRUSTS_FIELD)
     private List<TrustDataToReviewDto> reviewTrusts;
+
+    @JsonProperty(RELEVANT_STATEMENT1)
+    private RelevantStatementsType relevantStatementsType;
+    @JsonProperty(RELEVANT_STATEMENT3)
+    private RelevantStatementsType relevantStatementsType3;
+    @JsonProperty(RELEVANT_STATEMENT2)
+    private RelevantStatementsType relevantStatementsType2;
+
+    public RelevantStatementsType getRelevantStatementsType() {
+        return relevantStatementsType;
+    }
+
+    public void setRelevantStatementsType(RelevantStatementsType relevantStatementsType) {
+        this.relevantStatementsType = relevantStatementsType;
+    }
+
+    public RelevantStatementsType getRelevantStatementsType2() {
+        return relevantStatementsType2;
+    }
+
+    public void setRelevantStatementsType2(RelevantStatementsType relevantStatementsType2) {
+        this.relevantStatementsType2 = relevantStatementsType2;
+    }
+
+
+    public RelevantStatementsType getRelevantStatementsType3() {
+        return relevantStatementsType3;
+    }
+
+    public void setRelevantStatementsType3(RelevantStatementsType relevantStatementsType3) {
+        this.relevantStatementsType3 = relevantStatementsType3;
+    }
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -146,9 +182,6 @@ public class UpdateDto {
         this.reviewManagingOfficersIndividual = reviewManagingOfficersIndividual;
     }
 
-    public List<ManagingOfficerCorporateDto> getReviewManagingOfficersCorporate() {
-        return reviewManagingOfficersCorporate;
-    }
 
     public void setReviewManagingOfficersCorporate(List<ManagingOfficerCorporateDto> managingOfficersCorporate) {
         this.reviewManagingOfficersCorporate = managingOfficersCorporate;
