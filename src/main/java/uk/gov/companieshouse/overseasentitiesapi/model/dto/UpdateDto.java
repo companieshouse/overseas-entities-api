@@ -181,7 +181,10 @@ public class UpdateDto {
     public void setReviewManagingOfficersIndividual(List<ManagingOfficerIndividualDto> reviewManagingOfficersIndividual) {
         this.reviewManagingOfficersIndividual = reviewManagingOfficersIndividual;
     }
-
+    
+    public List<ManagingOfficerCorporateDto> getReviewManagingOfficersCorporate() {
+        return reviewManagingOfficersCorporate;
+    }
 
     public void setReviewManagingOfficersCorporate(List<ManagingOfficerCorporateDto> managingOfficersCorporate) {
         this.reviewManagingOfficersCorporate = managingOfficersCorporate;
