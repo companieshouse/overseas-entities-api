@@ -727,6 +727,7 @@
     {
       "_id" : "string",
       "name" : "string",
+      "trust_still_involved_in_overseas_entity": false,
       "creation_date" : "2022-06-10",
       "ceased_date" : "2023-02-01",
       "unable_to_obtain_all_trust_info" : true,
