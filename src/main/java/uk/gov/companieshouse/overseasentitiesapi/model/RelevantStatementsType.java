@@ -8,7 +8,7 @@ public enum RelevantStatementsType {
     TRUST_INVOLVED_IN_THE_OE("trust_involved_in_the_oe"),
     NO_TRUST_INVOLVED_IN_THE_OE("no_trust_involved_in_the_oe"),
     BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST("become_or_ceased_beneficiary_of_a_trust"),
-    NO_BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST("not_become_or_ceased_beneficiary_of_a_trust");
+    NO_BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST("no_become_or_ceased_beneficiary_of_a_trust");
 
     private final String relevantStatements;
     RelevantStatementsType(String relevantStatements) {

@@ -46,34 +46,40 @@ public class UpdateDao {
 
     @Field("review_trusts")
     private List<TrustDataToReviewDao> reviewTrusts;
+
     @Field("ceased_to_be_registrable_beneficial_owner")
-    private RelevantStatementsType relevantStatementsType;
+    private RelevantStatementsType ceasedTobeRegistrableBeneficialOwner;
+
     @Field("trust_involved_in_the_oe")
-    private RelevantStatementsType relevantStatementsType2;
+    private RelevantStatementsType trustInvolvedIntheOE;
+
     @Field("become_or_ceased_beneficiary_of_a_trust")
-    private RelevantStatementsType relevantStatementsType3;
+    private RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust;
 
-    public RelevantStatementsType getRelevantStatementsType() {
-        return relevantStatementsType;
-    }
-    public void setRelevantStatementsType(RelevantStatementsType relevantStatementsType) {
-        this.relevantStatementsType = relevantStatementsType;
+    public RelevantStatementsType getCeasedTobeRegistrableBeneficialOwner() {
+        return ceasedTobeRegistrableBeneficialOwner;
     }
 
-    public RelevantStatementsType getRelevantStatementsType2() {
-        return relevantStatementsType2;
+    public void setCeasedTobeRegistrableBeneficialOwner(RelevantStatementsType ceasedTobeRegistrableBeneficialOwner) {
+        this.ceasedTobeRegistrableBeneficialOwner = ceasedTobeRegistrableBeneficialOwner;
     }
 
-    public void setRelevantStatementsType2(RelevantStatementsType relevantStatementsType2) {
-        this.relevantStatementsType2 = relevantStatementsType2;
-    }
-    public RelevantStatementsType getRelevantStatementsType3() {
-        return relevantStatementsType3;
+    public RelevantStatementsType getTrustInvolvedIntheOE() {
+        return trustInvolvedIntheOE;
     }
 
-    public void setRelevantStatementsType3(RelevantStatementsType relevantStatementsType3) {
-        this.relevantStatementsType3 = relevantStatementsType3;
+    public void setTrustInvolvedIntheOE(RelevantStatementsType trustInvolvedIntheOE) {
+        this.trustInvolvedIntheOE = trustInvolvedIntheOE;
     }
+
+    public RelevantStatementsType getBecomeOrceasedBeneficiaryOfaTrust() {
+        return becomeOrceasedBeneficiaryOfaTrust;
+    }
+
+    public void setBecomeOrceasedBeneficiaryOfaTrust(RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust) {
+        this.becomeOrceasedBeneficiaryOfaTrust = becomeOrceasedBeneficiaryOfaTrust;
+    }
+
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
     }
