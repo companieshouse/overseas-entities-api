@@ -45,8 +45,8 @@ public class TrustCorporateDao {
     @Field("is_corporate_body_still_involved_in_overseas_entity")
     private Boolean isCorporateBodyStillInvolvedInOverseasEntity;
 
-    @Field("creation_date")
-    private LocalDate creationDate;
+    @Field("ceased_date")
+    private LocalDate ceasedDate;
 
     public BeneficialOwnerType getType() {
         return type;
@@ -152,11 +152,11 @@ public class TrustCorporateDao {
         isCorporateBodyStillInvolvedInOverseasEntity = corporateBodyStillInvolvedInOverseasEntity;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 }
