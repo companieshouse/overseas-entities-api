@@ -26,10 +26,6 @@ public enum RelevantStatementsType {
         return null;
     }
 
-    /**
-     *   getValue() returns the selected value (for e.g. in Update Submission) from this enum list
-     * @return selected value of beneficialOwnersStatement
-     */
     public String getValue() {
         return this.relevantStatements;
     }
