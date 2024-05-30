@@ -95,6 +95,7 @@ public class TrustCorporateValidator {
             validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
                     loggingContext);
         }
+        validateCeasedDate(trustCorporateDto,errors, loggingContext);
     }
 
 
@@ -225,5 +226,30 @@ public class TrustCorporateValidator {
         }
 
         return errors;
+    }
+
+    private Errors validateCeasedDate(TrustCorporateDto trustCorporateDto, Errors errors, String loggingContext) {
+
+       Boolean isStillInvolved = trustCorporateDto.isCorporateBodyStillInvolvedInOverseasEntity();
+       final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
+               TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_OVERSEAS_ENTITY);
+
+       if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
+
+           final String qualifiedFieldNameCeased = getQualifiedFieldName(PARENT_FIELD,
+                   TrustCorporateDto.CEASED_DATE_FIELD);
+           LocalDate ceasedDate = trustCorporateDto.getCeasedDate();
+
+           if (Boolean.TRUE.equals(isStillInvolved)) {
+               if (Objects.nonNull(ceasedDate)) {
+                   final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeased);
+                   setErrorMsgToLocation(errors, qualifiedFieldNameCeased, errorMessage);
+               }
+           } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeased, errors, loggingContext)) {
+               DateValidators.isDateInPast(ceasedDate,  qualifiedFieldNameCeased, errors, loggingContext);
+               DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustCorporateDto.getDateBecameInterestedPerson(), qualifiedFieldNameCeased, errors, loggingContext);
+           }
+       }
+       return errors;
     }
 }

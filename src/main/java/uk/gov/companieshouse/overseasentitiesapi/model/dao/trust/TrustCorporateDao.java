@@ -42,6 +42,12 @@ public class TrustCorporateDao {
     @Field("is_on_register_in_country_formed_in")
     private Boolean onRegisterInCountryFormedIn;
 
+    @Field("is_corporate_body_still_involved_in_overseas_entity")
+    private Boolean isCorporateBodyStillInvolvedInOverseasEntity;
+
+    @Field("creation_date")
+    private LocalDate creationDate;
+
     public BeneficialOwnerType getType() {
         return type;
     }
@@ -137,5 +143,20 @@ public class TrustCorporateDao {
     public void setOnRegisterInCountryFormedIn(Boolean onRegisterInCountryFormedIn) {
         this.onRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
- 
+
+    public Boolean getCorporateBodyStillInvolvedInOverseasEntity() {
+        return isCorporateBodyStillInvolvedInOverseasEntity;
+    }
+
+    public void setCorporateBodyStillInvolvedInOverseasEntity(Boolean corporateBodyStillInvolvedInOverseasEntity) {
+        isCorporateBodyStillInvolvedInOverseasEntity = corporateBodyStillInvolvedInOverseasEntity;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
 }
