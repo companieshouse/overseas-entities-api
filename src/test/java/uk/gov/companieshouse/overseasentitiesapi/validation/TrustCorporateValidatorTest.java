@@ -506,11 +506,78 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorRegisteredInCountryFormedInSupplied() {
+    void testNoErrorRegisteredInCountryFormedInSupplied() {
         trustDataDtoList.get(0).getCorporates().get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
+
+    @Test
+    void testNoErrorIsStillInvolvedAndCeasedDateNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.TRUE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsNotStillInvolvedAndCeasedDateNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorIsStillInvolvedNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_OVERSEAS_ENTITY);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedAndCeasedDateNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.TRUE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsNotStillInvolvedAndCeasedDateNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsNotStillInvolvedAndCeasedDateFuture() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.now().plusDays(1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsNotStillInvolvedAndCeasedDateBeforeDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
