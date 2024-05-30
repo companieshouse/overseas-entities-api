@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-public class RelevantStatementsTypeTest {
+class RelevantStatementsTypeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "change_bo_relevant_period", "CHANGE_BO_RELEVANT_PERIOD" })
