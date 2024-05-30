@@ -47,37 +47,37 @@ public class UpdateDao {
     @Field("review_trusts")
     private List<TrustDataToReviewDao> reviewTrusts;
 
-    @Field("ceased_to_be_registrable_beneficial_owner")
-    private RelevantStatementsType ceasedTobeRegistrableBeneficialOwner;
+    @Field("change_bo_relevant_period")
+    private RelevantStatementsType changeBORelevantPeriod;
 
-    @Field("trust_involved_in_the_oe")
-    private RelevantStatementsType trustInvolvedIntheOE;
+    @Field("trustee_involved_relevant_period")
+    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
 
-    @Field("become_or_ceased_beneficiary_of_a_trust")
-    private RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust;
+    @Field("change_beneficiary_relevant_period")
+    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
 
-    public RelevantStatementsType getCeasedTobeRegistrableBeneficialOwner() {
-        return ceasedTobeRegistrableBeneficialOwner;
+    public RelevantStatementsType getChangeBORelevantPeriod() {
+        return changeBORelevantPeriod;
     }
 
-    public void setCeasedTobeRegistrableBeneficialOwner(RelevantStatementsType ceasedTobeRegistrableBeneficialOwner) {
-        this.ceasedTobeRegistrableBeneficialOwner = ceasedTobeRegistrableBeneficialOwner;
+    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
+        this.changeBORelevantPeriod = changeBORelevantPeriod;
     }
 
-    public RelevantStatementsType getTrustInvolvedIntheOE() {
-        return trustInvolvedIntheOE;
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
+        return trusteeInvolvedRelevantPeriod;
     }
 
-    public void setTrustInvolvedIntheOE(RelevantStatementsType trustInvolvedIntheOE) {
-        this.trustInvolvedIntheOE = trustInvolvedIntheOE;
+    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
+        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
     }
 
-    public RelevantStatementsType getBecomeOrceasedBeneficiaryOfaTrust() {
-        return becomeOrceasedBeneficiaryOfaTrust;
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
+        return changeBeneficiaryRelevantPeriod;
     }
 
-    public void setBecomeOrceasedBeneficiaryOfaTrust(RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust) {
-        this.becomeOrceasedBeneficiaryOfaTrust = becomeOrceasedBeneficiaryOfaTrust;
+    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
+        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
     }
 
     public LocalDate getDateOfCreation() {

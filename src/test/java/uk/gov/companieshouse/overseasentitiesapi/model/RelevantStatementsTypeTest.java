@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class RelevantStatementsTypeTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "ceased_to_be_registrable_beneficial_owner", "CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER" })
+    @ValueSource(strings = { "change_bo_relevant_period", "CHANGE_BO_RELEVANT_PERIOD" })
     void checkFindByRelevantStatementsTypeStringExpectedEnumCases(String enumInput) {
         RelevantStatementsType type = RelevantStatementsType.findByRelevantStatementTypeString(enumInput);
-        assertEquals(RelevantStatementsType.CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER, type);
+        assertEquals(RelevantStatementsType.CHANGE_BO_RELEVANT_PERIOD, type);
     }
     @ParameterizedTest
     @NullSource
@@ -26,9 +26,10 @@ public class RelevantStatementsTypeTest {
     @Test
     void testRelevantStatementsTypeGetValue() {
         var enumRelevantStatementsType =
-                RelevantStatementsType.findByRelevantStatementTypeString("trust_involved_in_the_oe");
+                RelevantStatementsType.findByRelevantStatementTypeString(
+                        "trustee_involved_relevant_period");
         assert enumRelevantStatementsType != null;
-        assertEquals("trust_involved_in_the_oe", enumRelevantStatementsType.getValue());
+        assertEquals("trustee_involved_relevant_period", enumRelevantStatementsType.getValue());
     }
 
 }

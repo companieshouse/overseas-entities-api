@@ -3,12 +3,12 @@ package uk.gov.companieshouse.overseasentitiesapi.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum RelevantStatementsType {
-    CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER("ceased_to_be_registrable_beneficial_owner"),
-    NO_CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER("no_ceased_to_be_registrable_beneficial_owner"),
-    TRUST_INVOLVED_IN_THE_OE("trust_involved_in_the_oe"),
-    NO_TRUST_INVOLVED_IN_THE_OE("no_trust_involved_in_the_oe"),
-    BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST("become_or_ceased_beneficiary_of_a_trust"),
-    NO_BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST("no_become_or_ceased_beneficiary_of_a_trust");
+    CHANGE_BO_RELEVANT_PERIOD("change_bo_relevant_period"),
+    NO_CHANGE_BO_RELEVANT_PERIOD("no_change_bo_relevant_period"),
+    TRUSTEE_INVOLVED_RELEVANT_PERIOD("trustee_involved_relevant_period"),
+    NO_TRUSTEE_INVOLVED_RELEVANT_PERIOD("no_trustee_involved_relevant_period"),
+    CHANGE_BENEFICIARY_RELEVANT_PERIOD("change_beneficiary_relevant_period"),
+    NO_CHANGE_BENEFICIARY_RELEVANT_PERIOD("no_change_beneficiary_relevant_period");
 
     private final String relevantStatements;
     RelevantStatementsType(String relevantStatements) {

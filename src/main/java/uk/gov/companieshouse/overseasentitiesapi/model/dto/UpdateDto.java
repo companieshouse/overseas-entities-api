@@ -30,9 +30,9 @@ public class UpdateDto {
     public static final String TRUST_DATA_FETCHED = "trust_data_fetched";
 
     public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
-    private static final String CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER = "ceased_to_be_registrable_beneficial_owner";
-    private static final String TRUST_INVOLVED_IN_THE_OE = "trust_involved_in_the_oe";
-    private static final String BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST = "relevant_period_trust_beneficiary";
+    private static final String CHANGE_BO_RELEVANT_PERIOD = "change_bo_relevant_period";
+    private static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trustee_involved_relevant_period";
+    private static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD = "change_beneficiary_relevant_period";
 
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
@@ -70,38 +70,38 @@ public class UpdateDto {
     @JsonProperty(REVIEW_TRUSTS_FIELD)
     private List<TrustDataToReviewDto> reviewTrusts;
 
-    @JsonProperty(CEASED_TO_BE_REGISTRABLE_BENEFICIAL_OWNER)
-    private RelevantStatementsType ceasedTobeRegistrableBeneficialOwner;
+    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBORelevantPeriod;
 
-    @JsonProperty(TRUST_INVOLVED_IN_THE_OE)
-    private RelevantStatementsType trustInvolvedIntheOE;
+    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD)
+    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
 
-    @JsonProperty(BECOME_OR_CEASED_BENEFICIARY_OF_A_TRUST)
-    private RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust;
+    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
 
 
-    public RelevantStatementsType getCeasedTobeRegistrableBeneficialOwner() {
-        return ceasedTobeRegistrableBeneficialOwner;
+    public RelevantStatementsType getChangeBORelevantPeriod() {
+        return changeBORelevantPeriod;
     }
 
-    public void setCeasedTobeRegistrableBeneficialOwner(RelevantStatementsType ceasedTobeRegistrableBeneficialOwner) {
-        this.ceasedTobeRegistrableBeneficialOwner = ceasedTobeRegistrableBeneficialOwner;
+    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
+        this.changeBORelevantPeriod = changeBORelevantPeriod;
     }
 
-    public RelevantStatementsType getTrustInvolvedIntheOE() {
-        return trustInvolvedIntheOE;
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
+        return trusteeInvolvedRelevantPeriod;
     }
 
-    public void setTrustInvolvedIntheOE(RelevantStatementsType trustInvolvedIntheOE) {
-        this.trustInvolvedIntheOE = trustInvolvedIntheOE;
+    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
+        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
     }
 
-    public RelevantStatementsType getBecomeOrceasedBeneficiaryOfaTrust() {
-        return becomeOrceasedBeneficiaryOfaTrust;
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
+        return changeBeneficiaryRelevantPeriod;
     }
 
-    public void setBecomeOrceasedBeneficiaryOfaTrust(RelevantStatementsType becomeOrceasedBeneficiaryOfaTrust) {
-        this.becomeOrceasedBeneficiaryOfaTrust = becomeOrceasedBeneficiaryOfaTrust;
+    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
+        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
     }
 
     public LocalDate getDateOfCreation() {
