@@ -38,12 +38,14 @@ class TrustCorporateValidatorTest {
     private TrustCorporateValidator trustCorporateValidator;
     private List<TrustDataDto> trustDataDtoList;
 
+    private TrustDataDto trustDataDto;
+
     @BeforeEach
     public void init() {
         trustCorporateValidator = new TrustCorporateValidator(addressDtoValidator);
         trustDataDtoList = new ArrayList<>();
 
-        TrustDataDto trustDataDto = TrustMock.getTrustDataDto();
+        trustDataDto = TrustMock.getTrustDataDto();
         trustDataDtoList.add(trustDataDto);
     }
 
@@ -178,6 +180,40 @@ class TrustCorporateValidatorTest {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+
+    @Test
+    void testNoErrorReportedWhenDateBecameInterestedPersonIsAfterTrustCreationDate() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDto.setCreationDate(LocalDate.of(2000, 1,1));
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+
+    @Test
+    void testNoErrorReportedWhenDateBecameInterestedPersonIsOnTrustCreationDate() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDto.setCreationDate(LocalDate.of(2000, 1,1));
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenDateBecameInterestedPersonIsBeforeTrustCreationDate() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDto.setCreationDate(LocalDate.of(2000, 1,2));
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
+                TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
+        String validationMessage = ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }

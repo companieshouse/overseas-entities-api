@@ -40,14 +40,14 @@ public class TrustCorporateValidator {
 
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateTrustCorporateDto(trustCorporateDto, errors, loggingContext);
+                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, loggingContext);
                 }
             }
         }
         return errors;
     }
 
-    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, Errors errors,
+    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors,
             String loggingContext) {
 
         validateName(trustCorporateDto.getName(), errors, loggingContext);
@@ -59,6 +59,7 @@ public class TrustCorporateValidator {
 
             validateDateBecameInterestedPerson(
                     trustCorporateDto.getDateBecameInterestedPerson(),
+                    trustCreationDate,
                     errors,
                     loggingContext);
         }
@@ -95,7 +96,7 @@ public class TrustCorporateValidator {
             validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
                     loggingContext);
         }
-        validateCeasedDate(trustCorporateDto,errors, loggingContext);
+        validateCeasedDate(trustCorporateDto, errors, loggingContext);
     }
 
 
@@ -132,13 +133,14 @@ public class TrustCorporateValidator {
         return true;
     }
 
-    private boolean validateDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson, Errors errors,
+    private boolean validateDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson, LocalDate trustCreationDate, Errors errors,
                                                        String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
 
         return UtilsValidators.isNotNull(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateInPast(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext);
+                && DateValidators.isDateInPast(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isDateBecameInterestedPersonOnOrAfterCreationDate(dateBecameInterestedPerson, trustCreationDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {

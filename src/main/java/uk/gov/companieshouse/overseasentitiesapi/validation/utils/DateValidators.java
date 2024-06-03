@@ -45,16 +45,24 @@ public class DateValidators {
                                                             String qualifiedFieldName,
                                                             Errors errors,
                                                             String loggingContext) {
-        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+    }
+
+    public static boolean isDateBecameInterestedPersonOnOrAfterCreationDate(LocalDate interestedPersonDate,
+                                                                            LocalDate creationDate,
+                                                                            String qualifiedFieldName,
+                                                                            Errors errors,
+                                                                            String loggingContext) {
+        return isDateOnOrAfterAnotherDate(interestedPersonDate, creationDate, ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 
 
     public static boolean isCeasedDateOnOrAfterDateBecameInterestedPerson(LocalDate ceasedDate,
-                                                            LocalDate creationDate,
+                                                            LocalDate interestedPersonDate,
                                                             String qualifiedFieldName,
                                                             Errors errors,
                                                             String loggingContext) {
-        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+        return isDateOnOrAfterAnotherDate(ceasedDate, interestedPersonDate, ValidationMessages.CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 
     private static boolean isDateOnOrAfterAnotherDate(LocalDate aDate,

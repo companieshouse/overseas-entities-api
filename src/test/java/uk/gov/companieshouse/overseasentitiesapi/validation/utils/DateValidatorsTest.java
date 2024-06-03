@@ -83,7 +83,7 @@ class DateValidatorsTest {
     @Test
     @DisplayName("Validate cease date when before creation date unsuccessfully")
     void validateCeaseDateBeforeCreationDate() {
-        String errMsg = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
+        String errMsg = ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", DUMMY_PARENT_FIELD);
         Err err = Err.invalidBodyBuilderWithLocation(DUMMY_PARENT_FIELD).withError(errMsg).build();
 
         boolean isValidDate = DateValidators.isCeasedDateOnOrAfterCreationDate(LocalDate.now().minusDays(10), LocalDate.now(), DUMMY_PARENT_FIELD, errors, LOGGING_CONTEXT);
