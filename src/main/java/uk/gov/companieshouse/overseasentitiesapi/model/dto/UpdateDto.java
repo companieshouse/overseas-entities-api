@@ -30,8 +30,11 @@ public class UpdateDto {
     public static final String TRUST_DATA_FETCHED = "trust_data_fetched";
 
     public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
+
     private static final String CHANGE_BO_RELEVANT_PERIOD = "change_bo_relevant_period";
+
     private static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trustee_involved_relevant_period";
+
     private static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD = "change_beneficiary_relevant_period";
 
     @JsonProperty(DATE_OF_CREATION)

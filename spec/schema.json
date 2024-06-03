@@ -1379,7 +1379,16 @@
           },
           "no_change": {
             "type": "boolean"
-          }
+          },
+          "change_bo_relevant_period": {
+            "$ref": "#/components/schemas/RelevantStatementsType"
+          },
+          "trustee_involved_relevant_period": {
+            "$ref": "#/components/schemas/RelevantStatementsType"
+          },
+          "change_beneficiary_relevant_period": {
+            "$ref": "#/components/schemas/RelevantStatementsType"
+        }
         }
       },
       "Remove": {
@@ -1560,6 +1569,17 @@
           "ALL_IDENTIFIED_ALL_DETAILS",
           "SOME_IDENTIFIED_ALL_DETAILS",
           "NONE_IDENTIFIED"
+        ]
+      },
+      "RelevantStatementsType": {
+        "type": "string",
+        "enum": [
+          "CHANGE_BO_RELEVANT_PERIOD",
+          "NO_CHANGE_BO_RELEVANT_PERIOD",
+          "TRUSTEE_INVOLVED_RELEVANT_PERIOD",
+          "NO_TRUSTEE_INVOLVED_RELEVANT_PERIOD",
+          "CHANGE_BENEFICIARY_RELEVANT_PERIOD",
+          "NO_CHANGE_BENEFICIARY_RELEVANT_PERIOD"
         ]
       },
       "OverseasEntitySubmissionCreatedResponse": {
