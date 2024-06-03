@@ -96,7 +96,7 @@ public class TrustCorporateValidator {
             validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
                     loggingContext);
         }
-        validateCeasedDate(trustCorporateDto, errors, loggingContext);
+        validateCeasedDate(trustCorporateDto, trustCreationDate, errors, loggingContext);
     }
 
 
@@ -230,7 +230,7 @@ public class TrustCorporateValidator {
         return errors;
     }
 
-    private Errors validateCeasedDate(TrustCorporateDto trustCorporateDto, Errors errors, String loggingContext) {
+    private Errors validateCeasedDate(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors, String loggingContext) {
 
        Boolean isStillInvolved = trustCorporateDto.isCorporateBodyStillInvolvedInOverseasEntity();
        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
@@ -249,7 +249,13 @@ public class TrustCorporateValidator {
                }
            } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeased, errors, loggingContext)) {
                DateValidators.isDateInPast(ceasedDate,  qualifiedFieldNameCeased, errors, loggingContext);
-               DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustCorporateDto.getDateBecameInterestedPerson(), qualifiedFieldNameCeased, errors, loggingContext);
+               String type = trustCorporateDto.getType();
+               DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeased, errors, loggingContext);
+               if (validateType(type, errors, loggingContext) && BeneficialOwnerType
+                       .findByBeneficialOwnerTypeString(type)
+                       .equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                          DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustCorporateDto.getDateBecameInterestedPerson(), qualifiedFieldNameCeased, errors, loggingContext);
+               }
            }
        }
        return errors;

@@ -184,7 +184,6 @@ class TrustCorporateValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-
     @Test
     void testNoErrorReportedWhenDateBecameInterestedPersonIsAfterTrustCreationDate() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
@@ -604,7 +603,19 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
+    void testErrorIsNotStillInvolvedAndCeasedDateBeforeTrustCreationDate() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDto.setCreationDate(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
     void testErrorIsNotStillInvolvedAndCeasedDateBeforeDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
