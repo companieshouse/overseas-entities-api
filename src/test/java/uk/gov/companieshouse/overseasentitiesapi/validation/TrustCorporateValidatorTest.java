@@ -625,6 +625,16 @@ class TrustCorporateValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testNoErrorIsNotStillInvolvedAndCeasedDateBeforeDateBecameInterestedPersonWhenTypeIsNotRelevant() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
