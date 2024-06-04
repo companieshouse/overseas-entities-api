@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataToReviewDao;
 
 public class UpdateDao {
@@ -45,6 +46,39 @@ public class UpdateDao {
 
     @Field("review_trusts")
     private List<TrustDataToReviewDao> reviewTrusts;
+
+    @Field("change_bo_relevant_period")
+    private RelevantStatementsType changeBORelevantPeriod;
+
+    @Field("trustee_involved_relevant_period")
+    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
+
+    @Field("change_beneficiary_relevant_period")
+    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
+
+    public RelevantStatementsType getChangeBORelevantPeriod() {
+        return changeBORelevantPeriod;
+    }
+
+    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
+        this.changeBORelevantPeriod = changeBORelevantPeriod;
+    }
+
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
+        return trusteeInvolvedRelevantPeriod;
+    }
+
+    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
+        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
+    }
+
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
+        return changeBeneficiaryRelevantPeriod;
+    }
+
+    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
+        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
+    }
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -124,7 +158,6 @@ public class UpdateDao {
     public void setReviewManagingOfficersIndividual(List<ManagingOfficerIndividualDao> reviewManagingOfficersIndividual) {
         this.reviewManagingOfficersIndividual = reviewManagingOfficersIndividual;
     }
-
     public List<ManagingOfficerCorporateDao> getReviewManagingOfficersCorporate() {
         return reviewManagingOfficersCorporate;
     }
