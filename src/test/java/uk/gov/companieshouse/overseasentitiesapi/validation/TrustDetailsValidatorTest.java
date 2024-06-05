@@ -42,6 +42,7 @@ class TrustDetailsValidatorTest {
         trustDataDtoList.add(TrustMock.getTrustDataDto());
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE112233");    // By default, this submission is an Update
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
 
         // Associate an Individual and Corporate BO with the trust
@@ -308,6 +309,16 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
+    void testErrorNotReportedWhenTrustStillInvolvedInOverseasEntityIsNullButSubmissionIsARegistration() {
+        overseasEntitySubmissionDto.setEntityNumber(null);  // Make this submission a Registration
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(null);
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testErrorReportedWhenTrustNotStillInvolvedInOverseasEntityAndNullCeasedDate() {
         trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
         trustDataDtoList.get(0).setCeasedDate(null);
@@ -316,6 +327,17 @@ class TrustDetailsValidatorTest {
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedWhenTrustNotStillInvolvedInOverseasEntityAndNullCeasedDateButSubmissionIsARegistration() {
+        overseasEntitySubmissionDto.setEntityNumber(null);  // Make this submission a Registration
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).setCeasedDate(null);
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
     }
 
     @Test
