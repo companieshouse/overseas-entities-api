@@ -36,7 +36,10 @@ public class TrustDetailsValidator {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
-            if (isFullValidation) {
+            // Validation of the ceased date should only be performed if full validation is running (just before the
+            // transaction associated with the submission is closed) AND this is not a Registration submission (since
+            // ceased dates are not then relevant or present)
+            if (isFullValidation && overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                 validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
             }
 
