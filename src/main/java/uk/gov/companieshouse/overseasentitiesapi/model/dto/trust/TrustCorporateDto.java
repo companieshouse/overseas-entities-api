@@ -26,7 +26,7 @@ public class TrustCorporateDto {
 
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN = "is_on_register_in_country_formed_in";
 
-    public static final String CORPORATE_BODY_STILL_INVOLVED_IN_OVERSEAS_ENTITY = "is_corporate_body_still_involved_in_overseas_entity";
+    public static final String CORPORATE_BODY_STILL_INVOLVED_IN_TRUST = "is_corporate_body_still_involved_in_trust";
 
     public static final String CEASED_DATE_FIELD = "ceased_date";
 
@@ -149,8 +149,8 @@ public class TrustCorporateDto {
     @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN)
     private Boolean onRegisterInCountryFormedIn;
 
-    @JsonProperty(CORPORATE_BODY_STILL_INVOLVED_IN_OVERSEAS_ENTITY)
-    private Boolean isCorporateBodyStillInvolvedInOverseasEntity;
+    @JsonProperty(CORPORATE_BODY_STILL_INVOLVED_IN_TRUST)
+    private Boolean isCorporateBodyStillInvolvedInTrust;
 
     @JsonProperty(CEASED_DATE_FIELD)
     private LocalDate ceasedDate;
@@ -424,12 +424,12 @@ public class TrustCorporateDto {
         this.identificationRegistrationNumber = identificationRegistrationNumber;
     }
 
-    public Boolean isCorporateBodyStillInvolvedInOverseasEntity() {
-        return isCorporateBodyStillInvolvedInOverseasEntity;
+    public Boolean isCorporateBodyStillInvolvedInTrust() {
+        return isCorporateBodyStillInvolvedInTrust;
     }
 
-    public void setCorporateBodyStillInvolvedInOverseasEntity(Boolean corporateBodyStillInvolvedInOverseasEntity) {
-        isCorporateBodyStillInvolvedInOverseasEntity = corporateBodyStillInvolvedInOverseasEntity;
+    public void setCorporateBodyStillInvolvedInTrust(Boolean corporateBodyStillInvolvedInTrust) {
+        isCorporateBodyStillInvolvedInTrust = corporateBodyStillInvolvedInTrust;
     }
 
     public LocalDate getCeasedDate() {
