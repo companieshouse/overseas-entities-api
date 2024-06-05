@@ -635,6 +635,21 @@ class TrustCorporateValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    @Test
+    void testNoErrorsIsStillInvolvedNullRegistrationJourney() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsCeasedDatedNullRegistrationJourney() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
+        assertFalse(errors.hasErrors());
+    }
+
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
