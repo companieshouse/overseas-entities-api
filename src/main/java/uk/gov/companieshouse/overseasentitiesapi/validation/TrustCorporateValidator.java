@@ -34,12 +34,12 @@ public class TrustCorporateValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext, boolean isForUpdateOrRemove) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustCorporateDto> corporates = trustDataDto.getCorporates();
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, loggingContext);
+                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, loggingContext, isForUpdateOrRemove);
                 }
             }
         }
@@ -47,7 +47,7 @@ public class TrustCorporateValidator {
     }
 
     private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors,
-            String loggingContext) {
+            String loggingContext, boolean isForUpdateOrRemove) {
 
         validateName(trustCorporateDto.getName(), errors, loggingContext);
 
@@ -95,7 +95,9 @@ public class TrustCorporateValidator {
             validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
                     loggingContext);
         }
-        validateCeasedDate(trustCorporateDto, trustCreationDate, errors, loggingContext);
+        if (isForUpdateOrRemove) {
+            validateCeasedDate(trustCorporateDto, trustCreationDate, errors, loggingContext);
+        }
     }
 
 
