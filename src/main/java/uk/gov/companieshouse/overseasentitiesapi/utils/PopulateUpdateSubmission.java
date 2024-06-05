@@ -140,6 +140,16 @@ public class PopulateUpdateSubmission {
 
         Optional.of(overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner())
                 .ifPresent(updateSubmission::setAnyBOsOrMOsAddedOrCeased);
+
+        Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getChangeBeneficiaryRelevantPeriod())
+                .ifPresent(updateSubmission::setChangeBeneficiaryRelevantPeriod);
+
+        Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getTrusteeInvolvedRelevantPeriod())
+                .ifPresent(updateSubmission::setTrusteeInvolvedRelevantPeriod);
+
+        Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getChangeBORelevantPeriod())
+                .ifPresent(updateSubmission::setChangeBORelevantPeriod);
+
     }
 
     private void populateFilingForDate(

@@ -19,6 +19,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.U
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGE_BO_RELEVANT_PERIOD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.TRUSTEE_INVOLVED_RELEVANT_PERIOD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGE_BENEFICIARY_RELEVANT_PERIOD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NAME_FIELD;
@@ -260,6 +263,9 @@ public class FilingsService {
     setUpdateAndRemoveSubmissionData(data, updateSubmission, isNoChange, logMap);
 
     data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
+    data.put(CHANGE_BO_RELEVANT_PERIOD, updateSubmission.getChangeBORelevantPeriod());
+    data.put(TRUSTEE_INVOLVED_RELEVANT_PERIOD, updateSubmission.getTrusteeInvolvedRelevantPeriod());
+    data.put(CHANGE_BENEFICIARY_RELEVANT_PERIOD, updateSubmission.getChangeBeneficiaryRelevantPeriod());
 
     ApiLogger.debug("Update specific submission data has been set on filing: " + data, logMap);
   }

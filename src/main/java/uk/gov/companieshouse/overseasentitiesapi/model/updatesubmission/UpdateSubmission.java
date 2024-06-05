@@ -5,6 +5,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
@@ -28,6 +29,9 @@ public class UpdateSubmission {
     public static final String ADDITIONS_FIELD = "additions";
     public static final String CESSATIONS_FIELD = "cessations";
     public static final String TRUSTS_ADDITIONS_FIELD = "trusts";
+    public static final String CHANGE_BO_RELEVANT_PERIOD = "changeBORelevantPeriod";
+    public static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trusteeInvolvedRelevantPeriod";
+    public static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD = "changeBeneficiaryRelevantPeriod";
 
     @JsonProperty(UPDATE_USER_SUBMISSION_FIELD)
     private OverseasEntitySubmissionDto userSubmission;
@@ -52,6 +56,15 @@ public class UpdateSubmission {
 
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
     private BeneficialOwnersStatementType beneficialOwnerStatement;
+
+    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBORelevantPeriod;
+
+    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD)
+    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
+
+    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
@@ -129,6 +142,30 @@ public class UpdateSubmission {
 
     public void setAnyBOsOrMOsAddedOrCeased(Boolean anyBOsOrMOsAddedOrCeased) {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
+    }
+
+    public RelevantStatementsType getChangeBORelevantPeriod() {
+        return changeBORelevantPeriod;
+    }
+
+    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
+        this.changeBORelevantPeriod = changeBORelevantPeriod;
+    }
+
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
+        return trusteeInvolvedRelevantPeriod;
+    }
+
+    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
+        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
+    }
+
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
+        return changeBeneficiaryRelevantPeriod;
+    }
+
+    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
+        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
     }
 
     public BeneficialOwnersStatementType getBeneficialOwnerStatement() {
