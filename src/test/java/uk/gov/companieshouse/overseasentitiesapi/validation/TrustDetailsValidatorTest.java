@@ -302,7 +302,7 @@ class TrustDetailsValidatorTest {
     void testErrorReportedWhenTrustStillInvolvedInOverseasEntityIsNull() {
         trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(null);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
-        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);

@@ -12,7 +12,7 @@ public class TrustDataDto {
 
     public static final String TRUST_ID_FIELD = "trust_id";
     public static final String TRUST_NAME_FIELD = "trust_name";
-    public static final String TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY = "trust_still_involved_in_overseas_entity";
+    public static final String TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD = "trust_still_involved_in_overseas_entity";
     public static final String CREATION_DATE_FIELD = "creation_date";
     public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String UNABLE_TO_OBTAIN_ALL_TRUST_INFO_FIELD = "unable_to_obtain_all_trust_info";
@@ -26,7 +26,7 @@ public class TrustDataDto {
     @JsonProperty(TRUST_NAME_FIELD)
     private String trustName;
 
-    @JsonProperty(TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY)
+    @JsonProperty(TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD)
     private Boolean isTrustStillInvolvedInOverseasEntity;
 
     @JsonProperty(CREATION_DATE_FIELD)

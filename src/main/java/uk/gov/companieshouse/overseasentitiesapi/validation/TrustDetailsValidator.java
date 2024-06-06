@@ -118,7 +118,7 @@ public class TrustDetailsValidator {
     }
 
     private boolean isTrustStillInvolvedInOverseasEntityFlagNotNull(Boolean isTrustInvolvedInOverseasEntity, Errors errors, String loggingContext){
-        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY);
+        final String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD);
         return UtilsValidators.isNotNull(isTrustInvolvedInOverseasEntity, qualifiedFieldName, errors, loggingContext);
     }
 
