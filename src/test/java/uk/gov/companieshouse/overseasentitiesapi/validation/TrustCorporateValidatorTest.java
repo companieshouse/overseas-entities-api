@@ -212,7 +212,7 @@ class TrustCorporateValidatorTest {
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
-        String validationMessage = ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -567,7 +567,7 @@ class TrustCorporateValidatorTest {
     void testErrorIsStillInvolvedNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -609,7 +609,7 @@ class TrustCorporateValidatorTest {
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
-        String validationMessage = String.format(ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 

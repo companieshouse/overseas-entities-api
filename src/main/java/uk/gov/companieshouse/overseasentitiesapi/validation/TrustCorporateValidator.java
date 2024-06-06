@@ -175,7 +175,7 @@ public class TrustCorporateValidator {
     private boolean validateOnRegisteredInCountryFormedIn(Boolean onRegisteredInCountryFormedIn, Errors errors,
                                                         String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
-                TrustCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN);
+                TrustCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD);
         return UtilsValidators.isNotNull(onRegisteredInCountryFormedIn, qualifiedFieldName, errors, loggingContext);
     }
 
@@ -235,7 +235,7 @@ public class TrustCorporateValidator {
 
        Boolean isStillInvolved = trustCorporateDto.isCorporateBodyStillInvolvedInTrust();
        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
-               TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST);
+               TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
 
        if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
 

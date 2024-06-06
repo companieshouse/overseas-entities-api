@@ -45,7 +45,7 @@ public class DateValidators {
                                                             String qualifiedFieldName,
                                                             Errors errors,
                                                             String loggingContext) {
-        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+        return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 
     public static boolean isDateBecameInterestedPersonOnOrAfterCreationDate(LocalDate interestedPersonDate,
@@ -53,7 +53,7 @@ public class DateValidators {
                                                                             String qualifiedFieldName,
                                                                             Errors errors,
                                                                             String loggingContext) {
-        return isDateOnOrAfterAnotherDate(interestedPersonDate, creationDate, ValidationMessages.DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
+        return isDateOnOrAfterAnotherDate(interestedPersonDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 
 
