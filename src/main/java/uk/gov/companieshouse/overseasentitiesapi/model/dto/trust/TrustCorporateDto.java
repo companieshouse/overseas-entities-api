@@ -24,7 +24,7 @@ public class TrustCorporateDto {
     public static final String IDENTIFICATION_COUNTRY_REGISTRATION_FIELD = "identification_country_registration";
     public static final String IDENTIFICATION_REGISTRATION_NUMBER_FIELD = "identification_registration_number";
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
-    public static final String CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD = "is_corporate_body_still_involved_in_trust";
+    public static final String IS_CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD = "is_corporate_body_still_involved_in_trust";
 
     public static final String CEASED_DATE_FIELD = "ceased_date";
 
@@ -147,7 +147,7 @@ public class TrustCorporateDto {
     @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD)
     private Boolean onRegisterInCountryFormedIn;
 
-    @JsonProperty(CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD)
+    @JsonProperty(IS_CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD)
     private Boolean isCorporateBodyStillInvolvedInTrust;
 
     @JsonProperty(CEASED_DATE_FIELD)

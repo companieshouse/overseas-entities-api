@@ -235,7 +235,7 @@ public class TrustCorporateValidator {
 
        Boolean isStillInvolved = trustCorporateDto.isCorporateBodyStillInvolvedInTrust();
        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
-               TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
+               TrustCorporateDto.IS_CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
 
        if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
 

@@ -567,7 +567,7 @@ class TrustCorporateValidatorTest {
     void testErrorIsStillInvolvedNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IS_CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
