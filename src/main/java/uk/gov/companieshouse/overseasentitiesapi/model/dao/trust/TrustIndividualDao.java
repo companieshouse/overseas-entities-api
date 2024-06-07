@@ -40,6 +40,9 @@ public class TrustIndividualDao {
     @Field("date_became_interested_person")
     private LocalDate dateBecameInterestedPerson;
 
+    @Field("ceased_date")
+    private LocalDate ceasedDate;
+
     public BeneficialOwnerType getType() {
         return type;
     }
@@ -127,5 +130,12 @@ public class TrustIndividualDao {
     public void setSecondNationality(String secondNationality) {
         this.secondNationality = secondNationality;
     }
-    
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
+    }
 }
