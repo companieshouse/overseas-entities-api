@@ -115,6 +115,7 @@ public class TrustMock {
         trustDataDto.setTrustName("Trust Name");
         trustDataDto.setCreationDate(LocalDate.of(1990, 1, 1));
         trustDataDto.setTrustId("TrustID");
+        trustDataDto.setTrustStillInvolvedInOverseasEntity(true);
         trustDataDto.setUnableToObtainAllTrustInfo(false);
 
         List<HistoricalBeneficialOwnerDto> historicalBeneficialOwnerDtos = new ArrayList<>();

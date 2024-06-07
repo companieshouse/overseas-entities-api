@@ -190,7 +190,7 @@ class DtoModelChangeTest {
 
                         if (nestedDtoObject == null) {
                             fail("Unexpected NULL value for field '" + fieldName + "'. This indicates that the DTO/DAO structure "
-                                    + "has been updated without the new fields being added to the latest version of the test JSON file");
+                                    + "has been updated without the new fields being added to the latest version of the test JSON file or DTO/DAO generated mapper classes are not up to date");
                         } else if (field.getClass().isPrimitive()
                                 // Unlikely, but in the future, other object types might need to be added here, e.g. Integer
                                 || nestedDtoObject instanceof String
