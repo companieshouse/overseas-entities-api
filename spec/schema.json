@@ -1361,6 +1361,13 @@
           "date_became_interested_person": {
             "type": "string",
             "format": "date"
+          },
+          "ceased_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "is_corporate_body_still_involved_in_trust": {
+            "type": "boolean"
           }
         }
       },
