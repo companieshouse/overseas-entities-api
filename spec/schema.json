@@ -1366,7 +1366,7 @@
             "type": "string",
             "format": "date"
           },
-          "is_corporate_body_still_involved_in_trust": {
+          "is_corporate_still_involved_in_trust": {
             "type": "boolean"
           }
         }

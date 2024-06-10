@@ -233,9 +233,9 @@ public class TrustCorporateValidator {
 
     private Errors validateCeasedDate(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors, String loggingContext) {
 
-       Boolean isStillInvolved = trustCorporateDto.isCorporateBodyStillInvolvedInTrust();
+       Boolean isStillInvolved = trustCorporateDto.isCorporateStillInvolvedInTrust();
        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
-               TrustCorporateDto.IS_CORPORATE_BODY_STILL_INVOLVED_IN_TRUST_FIELD);
+               TrustCorporateDto.IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD);
 
        if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
 

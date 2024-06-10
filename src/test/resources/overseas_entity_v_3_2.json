@@ -814,7 +814,7 @@
           "identification_place_registered" : "string",
           "identification_registration_number" : "string",
           "date_became_interested_person" : "2022-06-10",
-          "is_corporate_body_still_involved_in_trust" : false,
+          "is_corporate_still_involved_in_trust" : false,
           "ceased_date" : "2022-06-11"
         }
       ]

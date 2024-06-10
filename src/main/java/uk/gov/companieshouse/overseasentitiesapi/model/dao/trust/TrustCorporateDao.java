@@ -42,8 +42,8 @@ public class TrustCorporateDao {
     @Field("is_on_register_in_country_formed_in")
     private Boolean onRegisterInCountryFormedIn;
 
-    @Field("is_corporate_body_still_involved_in_trust")
-    private Boolean isCorporateBodyStillInvolvedInTrust;
+    @Field("is_corporate_still_involved_in_trust")
+    private Boolean isCorporateStillInvolvedInTrust;
 
     @Field("ceased_date")
     private LocalDate ceasedDate;
@@ -144,12 +144,12 @@ public class TrustCorporateDao {
         this.onRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
 
-    public Boolean isCorporateBodyStillInvolvedInTrust() {
-        return isCorporateBodyStillInvolvedInTrust;
+    public Boolean isCorporateStillInvolvedInTrust() {
+        return isCorporateStillInvolvedInTrust;
     }
 
-    public void setCorporateBodyStillInvolvedInTrust(Boolean corporateBodyStillInvolvedInTrust) {
-        isCorporateBodyStillInvolvedInTrust = corporateBodyStillInvolvedInTrust;
+    public void setCorporateStillInvolvedInTrust(Boolean corporateStillInvolvedInTrust) {
+        isCorporateStillInvolvedInTrust = corporateStillInvolvedInTrust;
     }
 
     public LocalDate getCeasedDate() {

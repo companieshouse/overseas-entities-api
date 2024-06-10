@@ -200,7 +200,7 @@ public class TrustMock {
         Dto.setIdentificationRegistrationNumber("Registration Number");
         Dto.setType("Beneficiary");
         Dto.setOnRegisterInCountryFormedIn(true);
-        Dto.setCorporateBodyStillInvolvedInTrust(Boolean.TRUE);
+        Dto.setCorporateStillInvolvedInTrust(Boolean.TRUE);
 
         return Dto;
     }
