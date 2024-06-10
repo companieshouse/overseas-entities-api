@@ -439,9 +439,6 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("dueDiligence"));
         assertNotNull(filing.getData().get("presenter"));
         assertNotNull(filing.getData().get("filingForDate"));
-        assertNotNull(filing.getData().get("changeBORelevantPeriodStatement"));
-        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriodStatement"));
-        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriodStatement"));
         assertNotNull(filing.getData().get("trusts"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
@@ -451,6 +448,34 @@ class FilingServiceTest {
         assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulWithRPStatementsChecksForUpdate() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        initGetPublicPrivateDataCombinerMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", UPDATE_FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setTrusts(List.of(new TrustDataDto()));
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
+        when(managingOfficerCessationService.managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_MO_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
+        when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        assertNotNull(filing.getData().get("changeBORelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriodStatement"));
+    }
+
 
     @Test
     void testFilingGenerationWhenSuccessfulForRemove() throws Exception {
@@ -501,9 +526,6 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("dueDiligence"));
         assertNotNull(filing.getData().get("presenter"));
         assertNull(filing.getData().get("filingForDate"));
-        assertNull(filing.getData().get("changeBORelevantPeriod"));
-        assertNull(filing.getData().get("trusteeInvolvedRelevantPeriod"));
-        assertNull(filing.getData().get("changeBeneficiaryRelevantPeriod"));
         assertNotNull(filing.getData().get("trusts"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
@@ -513,6 +535,41 @@ class FilingServiceTest {
         assertEquals(2, ((List<?>)filing.getData().get("additions")).size());
         assertEquals(2, ((List<?>)filing.getData().get("cessations")).size());
     }
+
+    @Test
+    void testFilingGenerationWhenSuccessfulForRemoveWithRPStatements() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+        initGetPublicPrivateDataCombinerMocks();
+        when(localDateSupplier.get()).thenReturn(DUMMY_DATE);
+        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", FILING_DESCRIPTION_IDENTIFIER);
+        ReflectionTestUtils.setField(filingsService, "removeFilingDescription", REMOVE_FILING_DESCRIPTION);
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+
+        // This indicates it's a Remove submission
+        overseasEntitySubmissionDto.setIsRemove(true);
+        RemoveDto removeDto = new RemoveDto();
+        removeDto.setIsNotProprietorOfLand(true);
+        overseasEntitySubmissionDto.setRemove(removeDto);
+
+        overseasEntitySubmissionDto.setTrusts(List.of(new TrustDataDto()));
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(overseasEntitySubmissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+        when(overseasEntityChangeService.collateOverseasEntityChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(beneficialOwnerCessationService.beneficialOwnerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_BO_CESSATION);
+        when(managingOfficerCessationService.managingOfficerCessations(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_MO_CESSATION);
+        when(beneficialOwnerAdditionService.beneficialOwnerAdditions(Mockito.any())).thenReturn(DUMMY_BO_ADDITION);
+        when(managingOfficerAdditionService.managingOfficerAdditions(Mockito.any())).thenReturn(DUMMY_MO_ADDITION);
+        when(beneficialOwnerChangeService.collateBeneficialOwnerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+        when(managingOfficerChangeService.collateManagingOfficerChanges(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DUMMY_CHANGES);
+
+        FilingApi filing = filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER);
+        assertNull(filing.getData().get("changeBORelevantPeriod"));
+        assertNull(filing.getData().get("trusteeInvolvedRelevantPeriod"));
+        assertNull(filing.getData().get("changeBeneficiaryRelevantPeriod"));
+    }
+
 
     private static void testHaveFilingData(FilingApi filing, boolean withDueDiligence) {
         assertNotNull(filing.getData().get("userSubmission"));
