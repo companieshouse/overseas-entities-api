@@ -476,7 +476,6 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriodStatement"));
     }
 
-
     @Test
     void testFilingGenerationWhenSuccessfulForRemove() throws Exception {
         initTransactionPaymentLinkMocks();
@@ -537,7 +536,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void testFilingGenerationWhenSuccessfulForRemoveWithRPStatements() throws Exception {
+    void testFilingGenerationWithRPStatementsWhenSuccessfulForRemove() throws Exception {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
         initGetPublicPrivateDataCombinerMocks();
@@ -569,7 +568,6 @@ class FilingServiceTest {
         assertNull(filing.getData().get("trusteeInvolvedRelevantPeriod"));
         assertNull(filing.getData().get("changeBeneficiaryRelevantPeriod"));
     }
-
 
     private static void testHaveFilingData(FilingApi filing, boolean withDueDiligence) {
         assertNotNull(filing.getData().get("userSubmission"));
