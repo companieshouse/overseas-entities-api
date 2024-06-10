@@ -548,7 +548,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testNoErrorIsStillInvolvedAndCeasedDateNull() {
+    void testNoErrorIsStillInvolvedTrueAndCeasedDateNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.TRUE);
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
@@ -556,7 +556,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testNoErrorIsNotStillInvolvedAndCeasedDateNotNull() {
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateNotNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
@@ -573,7 +573,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsStillInvolvedAndCeasedDateNotNull() {
+    void testErrorIsStillInvolvedTrueAndCeasedDateNotNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.TRUE);
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
@@ -583,7 +583,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsNotStillInvolvedAndCeasedDateNull() {
+    void testErrorIsStillInvolvedFalseAndCeasedDateNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
@@ -593,7 +593,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsNotStillInvolvedAndCeasedDateFuture() {
+    void testErrorIsStillInvolvedFalseAndCeasedDateFuture() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.now().plusDays(1));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
@@ -603,7 +603,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsNotStillInvolvedAndCeasedDateBeforeTrustCreationDate() {
+    void testErrorIsStillInvolvedFalseAndCeasedDateBeforeTrustCreationDate() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDto.setCreationDate(LocalDate.of(2020, 1, 1));
         trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
@@ -614,7 +614,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsNotStillInvolvedAndCeasedDateBeforeDateBecameInterestedPerson() {
+    void testErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPerson() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
@@ -626,7 +626,7 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testNoErrorIsNotStillInvolvedAndCeasedDateBeforeDateBecameInterestedPersonWhenTypeIsNotRelevant() {
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPersonWhenTypeIsNotRelevant() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateBodyStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
