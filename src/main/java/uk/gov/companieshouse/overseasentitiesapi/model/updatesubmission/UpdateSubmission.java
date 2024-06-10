@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateSubmission {
-    public static final String UPDATE_TYPE_FIELD = "type";
     public static final String UPDATE_USER_SUBMISSION_FIELD = "userSubmission";
     public static final String UPDATE_ENTITY_NUMBER_FIELD = "entityNumber";
     public static final String UPDATE_ENTITY_NAME_FIELD = "entityName";
@@ -29,9 +28,9 @@ public class UpdateSubmission {
     public static final String ADDITIONS_FIELD = "additions";
     public static final String CESSATIONS_FIELD = "cessations";
     public static final String TRUSTS_ADDITIONS_FIELD = "trusts";
-    public static final String CHANGE_BO_RELEVANT_PERIOD = "changeBORelevantPeriod";
-    public static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trusteeInvolvedRelevantPeriod";
-    public static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD = "changeBeneficiaryRelevantPeriod";
+    public static final String CHANGE_BO_RELEVANT_PERIOD_FIELD = "changeBORelevantPeriodStatement";
+    public static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD = "trusteeInvolvedRelevantPeriodStatement";
+    public static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD = "changeBeneficiaryRelevantPeriodStatement";
 
     @JsonProperty(UPDATE_USER_SUBMISSION_FIELD)
     private OverseasEntitySubmissionDto userSubmission;
@@ -57,14 +56,14 @@ public class UpdateSubmission {
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
     private BeneficialOwnersStatementType beneficialOwnerStatement;
 
-    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD)
-    private RelevantStatementsType changeBORelevantPeriod;
+    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType changeBORelevantPeriodStatement;
 
-    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD)
-    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
+    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType trusteeInvolvedRelevantPeriodStatement;
 
-    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD)
-    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
+    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType changeBeneficiaryRelevantPeriodStatement;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
@@ -144,28 +143,28 @@ public class UpdateSubmission {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
     }
 
-    public RelevantStatementsType getChangeBORelevantPeriod() {
-        return changeBORelevantPeriod;
+    public RelevantStatementsType getChangeBORelevantPeriodStatement() {
+        return changeBORelevantPeriodStatement;
     }
 
-    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
-        this.changeBORelevantPeriod = changeBORelevantPeriod;
+    public void setChangeBORelevantPeriodStatement(RelevantStatementsType changeBORelevantPeriodStatement) {
+        this.changeBORelevantPeriodStatement = changeBORelevantPeriodStatement;
     }
 
-    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
-        return trusteeInvolvedRelevantPeriod;
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriodStatement() {
+        return trusteeInvolvedRelevantPeriodStatement;
     }
 
-    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
-        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
+    public void setTrusteeInvolvedRelevantPeriodStatement(RelevantStatementsType trusteeInvolvedRelevantPeriodStatement) {
+        this.trusteeInvolvedRelevantPeriodStatement = trusteeInvolvedRelevantPeriodStatement;
     }
 
-    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
-        return changeBeneficiaryRelevantPeriod;
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriodStatement() {
+        return changeBeneficiaryRelevantPeriodStatement;
     }
 
-    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
-        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
+    public void setChangeBeneficiaryRelevantPeriodStatement(RelevantStatementsType changeBeneficiaryRelevantPeriodStatement) {
+        this.changeBeneficiaryRelevantPeriodStatement = changeBeneficiaryRelevantPeriodStatement;
     }
 
     public BeneficialOwnersStatementType getBeneficialOwnerStatement() {

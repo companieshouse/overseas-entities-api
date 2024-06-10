@@ -439,9 +439,9 @@ class FilingServiceTest {
         assertNotNull(filing.getData().get("dueDiligence"));
         assertNotNull(filing.getData().get("presenter"));
         assertNotNull(filing.getData().get("filingForDate"));
-        assertNotNull(filing.getData().get("changeBORelevantPeriod"));
-        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriod"));
-        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriod"));
+        assertNotNull(filing.getData().get("changeBORelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriodStatement"));
         assertNotNull(filing.getData().get("trusts"));
         assertNull(filing.getData().get("noChangesInFilingPeriodStatement"));
         assertFalse((Boolean) filing.getData().get("anyBOsOrMOsAddedOrCeased"));
@@ -523,9 +523,9 @@ class FilingServiceTest {
         }
         assertNotNull(filing.getData().get("presenter"));
         assertNotNull(filing.getData().get("filingForDate"));
-        assertNotNull(filing.getData().get("changeBORelevantPeriod"));
-        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriod"));
-        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriod"));
+        assertNotNull(filing.getData().get("changeBORelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("trusteeInvolvedRelevantPeriodStatement"));
+        assertNotNull(filing.getData().get("changeBeneficiaryRelevantPeriodStatement"));
     }
 
     @Test

@@ -74,9 +74,9 @@ class PopulateUpdateSubmissionTest {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
         assertNull(updateSubmission.getBeneficialOwnerStatement());
         assertNotNull(updateSubmission.getFilingForDate());
-        assertNotNull(updateSubmission.getChangeBORelevantPeriod());
-        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriod());
-        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriod());
+        assertNotNull(updateSubmission.getChangeBORelevantPeriodStatement());
+        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriodStatement());
+        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriodStatement());
         assertNull(updateSubmission.getDueDiligence());
     }
 
@@ -95,9 +95,9 @@ class PopulateUpdateSubmissionTest {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
         assertNull(updateSubmission.getBeneficialOwnerStatement());
         assertNotNull(updateSubmission.getFilingForDate());
-        assertNotNull(updateSubmission.getChangeBORelevantPeriod());
-        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriod());
-        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriod());
+        assertNotNull(updateSubmission.getChangeBORelevantPeriodStatement());
+        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriodStatement());
+        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriodStatement());
         assertNull(updateSubmission.getDueDiligence());
     }
 
@@ -115,9 +115,9 @@ class PopulateUpdateSubmissionTest {
         assertFalse(updateSubmission.getAnyBOsOrMOsAddedOrCeased());
         assertNull(updateSubmission.getBeneficialOwnerStatement());
         assertNotNull(updateSubmission.getFilingForDate());
-        assertNotNull(updateSubmission.getChangeBORelevantPeriod());
-        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriod());
-        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriod());
+        assertNotNull(updateSubmission.getChangeBORelevantPeriodStatement());
+        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriodStatement());
+        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriodStatement());
         assertNull(updateSubmission.getDueDiligence());
 
 
@@ -145,9 +145,9 @@ class PopulateUpdateSubmissionTest {
     }
 
     private void checkRelevantPeriodStatementDetailsArePopulated(UpdateSubmission updateSubmission) {
-        assertNotNull(updateSubmission.getChangeBORelevantPeriod());
-        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriod());
-        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriod());
+        assertNotNull(updateSubmission.getChangeBORelevantPeriodStatement());
+        assertNotNull(updateSubmission.getTrusteeInvolvedRelevantPeriodStatement());
+        assertNotNull(updateSubmission.getChangeBeneficiaryRelevantPeriodStatement());
     }
 
     private void checkDueDiligenceDetailsArePopulated(UpdateSubmission updateSubmission) {

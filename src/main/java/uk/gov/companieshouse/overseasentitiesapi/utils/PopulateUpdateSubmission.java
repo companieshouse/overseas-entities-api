@@ -142,13 +142,13 @@ public class PopulateUpdateSubmission {
                 .ifPresent(updateSubmission::setAnyBOsOrMOsAddedOrCeased);
 
         Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getChangeBeneficiaryRelevantPeriod())
-                .ifPresent(updateSubmission::setChangeBeneficiaryRelevantPeriod);
+                .ifPresent(updateSubmission::setChangeBeneficiaryRelevantPeriodStatement);
 
         Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getTrusteeInvolvedRelevantPeriod())
-                .ifPresent(updateSubmission::setTrusteeInvolvedRelevantPeriod);
+                .ifPresent(updateSubmission::setTrusteeInvolvedRelevantPeriodStatement);
 
         Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getChangeBORelevantPeriod())
-                .ifPresent(updateSubmission::setChangeBORelevantPeriod);
+                .ifPresent(updateSubmission::setChangeBORelevantPeriodStatement);
 
     }
 
