@@ -1278,6 +1278,13 @@
           "ceased_date": {
             "type": "string",
             "format": "date"
+          },
+          "ceased_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "is_corporate_still_involved_in_trust": {
+            "type": "boolean"
           }
         }
       },

@@ -43,6 +43,9 @@ public class TrustIndividualDao {
     @Field("ceased_date")
     private LocalDate ceasedDate;
 
+    @Field("is_individual_still_involved_in_trust")
+    private Boolean isIndividualStillInvolvedInTrust;
+
     public BeneficialOwnerType getType() {
         return type;
     }
@@ -137,5 +140,13 @@ public class TrustIndividualDao {
 
     public void setCeasedDate(LocalDate ceasedDate) {
         this.ceasedDate = ceasedDate;
+    }
+
+    public Boolean getIndividualStillInvolvedInTrust() {
+        return isIndividualStillInvolvedInTrust;
+    }
+
+    public void setIndividualStillInvolvedInTrust(Boolean individualStillInvolvedInTrust) {
+        isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
     }
 }
