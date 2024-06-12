@@ -5,6 +5,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateSubmission {
-    public static final String UPDATE_TYPE_FIELD = "type";
     public static final String UPDATE_USER_SUBMISSION_FIELD = "userSubmission";
     public static final String UPDATE_ENTITY_NUMBER_FIELD = "entityNumber";
     public static final String UPDATE_ENTITY_NAME_FIELD = "entityName";
@@ -28,6 +28,9 @@ public class UpdateSubmission {
     public static final String ADDITIONS_FIELD = "additions";
     public static final String CESSATIONS_FIELD = "cessations";
     public static final String TRUSTS_ADDITIONS_FIELD = "trusts";
+    public static final String CHANGE_BO_RELEVANT_PERIOD_FIELD = "changeBORelevantPeriodStatement";
+    public static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD = "trusteeInvolvedRelevantPeriodStatement";
+    public static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD = "changeBeneficiaryRelevantPeriodStatement";
 
     @JsonProperty(UPDATE_USER_SUBMISSION_FIELD)
     private OverseasEntitySubmissionDto userSubmission;
@@ -52,6 +55,15 @@ public class UpdateSubmission {
 
     @JsonProperty(BENEFICIAL_OWNERS_FIELD)
     private BeneficialOwnersStatementType beneficialOwnerStatement;
+
+    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType changeBORelevantPeriodStatement;
+
+    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType trusteeInvolvedRelevantPeriodStatement;
+
+    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD)
+    private RelevantStatementsType changeBeneficiaryRelevantPeriodStatement;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(CHANGES_FIELD)
@@ -129,6 +141,30 @@ public class UpdateSubmission {
 
     public void setAnyBOsOrMOsAddedOrCeased(Boolean anyBOsOrMOsAddedOrCeased) {
         this.anyBOsOrMOsAddedOrCeased = anyBOsOrMOsAddedOrCeased;
+    }
+
+    public RelevantStatementsType getChangeBORelevantPeriodStatement() {
+        return changeBORelevantPeriodStatement;
+    }
+
+    public void setChangeBORelevantPeriodStatement(RelevantStatementsType changeBORelevantPeriodStatement) {
+        this.changeBORelevantPeriodStatement = changeBORelevantPeriodStatement;
+    }
+
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriodStatement() {
+        return trusteeInvolvedRelevantPeriodStatement;
+    }
+
+    public void setTrusteeInvolvedRelevantPeriodStatement(RelevantStatementsType trusteeInvolvedRelevantPeriodStatement) {
+        this.trusteeInvolvedRelevantPeriodStatement = trusteeInvolvedRelevantPeriodStatement;
+    }
+
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriodStatement() {
+        return changeBeneficiaryRelevantPeriodStatement;
+    }
+
+    public void setChangeBeneficiaryRelevantPeriodStatement(RelevantStatementsType changeBeneficiaryRelevantPeriodStatement) {
+        this.changeBeneficiaryRelevantPeriodStatement = changeBeneficiaryRelevantPeriodStatement;
     }
 
     public BeneficialOwnersStatementType getBeneficialOwnerStatement() {
