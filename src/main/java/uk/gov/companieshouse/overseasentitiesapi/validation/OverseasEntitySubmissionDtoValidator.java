@@ -165,7 +165,7 @@ public class OverseasEntitySubmissionDtoValidator {
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
             }
 
-            else if (overseasEntitySubmissionDto.isForUpdateOrRemove()) {
+            else {
                 trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, overseasEntitySubmissionDto.isForUpdateOrRemove());
             }
         }

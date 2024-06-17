@@ -416,7 +416,14 @@ class TrustIndividualValidatorTest {
 
         assertError(qualifiedFieldName, validationMessage, errors);
     }
+    @Test
+    void testErrorIsStillInvolvedTrueAndCeasedDateIsNull() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(true);
+        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(null); //LocalDate.of(2001, 1, 1));
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
+        assertFalse(errors.hasErrors());
+    }
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
