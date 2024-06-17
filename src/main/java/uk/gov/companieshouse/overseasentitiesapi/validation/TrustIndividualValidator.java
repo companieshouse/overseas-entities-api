@@ -5,6 +5,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class TrustIndividualValidator {
         this.nationalityValidator = nationalityValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext, boolean isForUpdateOrRemove) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustIndividualDto> trustIndividuals = trustDataDto.getIndividuals();
             if (!CollectionUtils.isEmpty(trustIndividuals)) {
@@ -62,6 +64,10 @@ public class TrustIndividualValidator {
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
                     validateSameAsAddress(trustIndividualDto, errors, loggingContext);
+
+                    if (isForUpdateOrRemove) {
+                        validateCeasedDate(trustIndividualDto, trustDataDto.getCreationDate(), errors, loggingContext);
+                    }
                 }
             }
         }
@@ -165,5 +171,32 @@ public class TrustIndividualValidator {
             validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD, trustIndividualDto.getServiceAddress(), errors,
                     loggingContext);
         }
+    }
+
+    private Errors validateCeasedDate(TrustIndividualDto trustIndividualDto,
+                                      LocalDate trustCreationDate,
+                                      Errors errors,
+                                      String loggingContext) {
+
+        Boolean isStillInvolved = trustIndividualDto.getIndividualStillInvolvedInTrust();
+        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD);
+
+        if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
+            final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
+                    TrustIndividualDto.CEASED_DATE_FIELD);
+            LocalDate ceasedDate = trustIndividualDto.getCeasedDate();
+
+            if (Boolean.TRUE.equals(isStillInvolved)) {
+                if (Objects.nonNull(ceasedDate)) {
+                    final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
+                    setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
+                }
+            } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext)) {
+                DateValidators.isDateInPast(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+                DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+            }
+        }
+        return errors;
     }
 }
