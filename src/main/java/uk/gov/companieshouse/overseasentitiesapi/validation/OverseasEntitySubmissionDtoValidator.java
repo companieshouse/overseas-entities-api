@@ -160,13 +160,14 @@ public class OverseasEntitySubmissionDtoValidator {
 
             if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                 // Note that this validation is only done for registrations
-                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, overseasEntitySubmissionDto.isForUpdateOrRemove());
+                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, false);
                 historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
                 trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
             }
 
             else {
-                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, overseasEntitySubmissionDto.isForUpdateOrRemove());
+                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, true);
+
             }
         }
     }

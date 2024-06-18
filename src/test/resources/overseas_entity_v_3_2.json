@@ -784,7 +784,7 @@
           },
           "date_became_interested_person" : "2022-06-10",
           "ceased_date" : "2024-02-29",
-          "is_individual_still_involved_in_trust" : true
+          "is_individual_still_involved_in_trust" : false
         }
       ],
       "corporates" : [
