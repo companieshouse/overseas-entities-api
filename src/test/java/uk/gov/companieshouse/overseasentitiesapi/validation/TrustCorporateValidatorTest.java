@@ -564,11 +564,19 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorIsStillInvolvedNull() {
+    void testNoErrorIsStillInvolvedNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(null);
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD);
-        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorIsStillInvolvedNullAndCeasedDateIsNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(null);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NULL_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
