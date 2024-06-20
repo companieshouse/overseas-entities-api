@@ -184,7 +184,7 @@ public class TrustIndividualValidator {
                 TrustIndividualDto.CEASED_DATE_FIELD);
 
 
-        if (Objects.isNull(isStillInvolved) || (Objects.nonNull(isStillInvolved) && (Boolean.TRUE.equals(isStillInvolved)))) {
+        if (Objects.isNull(isStillInvolved) || Boolean.TRUE.equals(isStillInvolved)) {
             if (Objects.nonNull(ceasedDate)) {
                 final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
                 setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
