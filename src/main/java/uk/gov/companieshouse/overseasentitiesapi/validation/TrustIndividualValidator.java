@@ -179,22 +179,26 @@ public class TrustIndividualValidator {
                                       String loggingContext) {
 
         Boolean isStillInvolved = trustIndividualDto.getIndividualStillInvolvedInTrust();
-        final String qualifiedFieldNameInvolved = getQualifiedFieldName(PARENT_FIELD,
-                TrustIndividualDto.IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD);
+        LocalDate ceasedDate = trustIndividualDto.getCeasedDate();
+        final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.CEASED_DATE_FIELD);
 
-        if (UtilsValidators.isNotNull(isStillInvolved, qualifiedFieldNameInvolved, errors, loggingContext)) {
-            final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
-                    TrustIndividualDto.CEASED_DATE_FIELD);
-            LocalDate ceasedDate = trustIndividualDto.getCeasedDate();
 
-            if (Boolean.TRUE.equals(isStillInvolved)) {
-                if (Objects.nonNull(ceasedDate)) {
-                    final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
-                    setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
-                }
-            } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext)) {
-                DateValidators.isDateInPast(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
-                DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+        if (Objects.isNull(isStillInvolved) || (Objects.nonNull(isStillInvolved) && (Boolean.TRUE.equals(isStillInvolved)))) {
+            if (Objects.nonNull(ceasedDate)) {
+                final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
+                setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
+            }
+        } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext)) {
+            DateValidators.isDateInPast(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+            DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+            DateValidators.isCeasedDateOnOrAfterDateOfBirth(ceasedDate, trustIndividualDto.getDateOfBirth(), qualifiedFieldNameCeasedDate,
+                    errors, loggingContext);
+            String type = trustIndividualDto.getType();
+            if (validateType(type, errors, loggingContext)
+                    && BeneficialOwnerType.findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustIndividualDto.getDateBecameInterestedPerson(),
+                        qualifiedFieldNameCeasedDate, errors, loggingContext);
             }
         }
         return errors;

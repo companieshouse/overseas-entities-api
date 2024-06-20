@@ -158,17 +158,10 @@ public class OverseasEntitySubmissionDtoValidator {
             // The Trust Details Validator will only check the 'ceased date' if full validation is being performed
             trustDetailsValidator.validate(overseasEntitySubmissionDto, errors, loggingContext, isFullValidation);
 
-            if (!overseasEntitySubmissionDto.isForUpdateOrRemove()) {
-                // Note that this validation is only done for registrations
-                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, false);
-                historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-                trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
-            }
-
-            else {
-                trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext, true);
-
-            }
+            trustIndividualValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext,
+                    overseasEntitySubmissionDto.isForUpdateOrRemove());
+            historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
+            trustCorporateValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
         }
     }
 

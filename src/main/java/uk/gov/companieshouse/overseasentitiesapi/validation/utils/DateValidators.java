@@ -48,6 +48,25 @@ public class DateValidators {
         return isDateOnOrAfterAnotherDate(ceasedDate, creationDate, ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName, errors, loggingContext);
     }
 
+    public static boolean isCeasedDateOnOrAfterDateBecameInterestedPerson(LocalDate ceasedDate,
+                                                                          LocalDate interestedPersonDate,
+                                                                          String qualifiedFieldName,
+                                                                          Errors errors,
+                                                                          String loggingContext) {
+        return isDateOnOrAfterAnotherDate(ceasedDate, interestedPersonDate,
+                ValidationMessages.CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE,
+                qualifiedFieldName, errors, loggingContext);
+    }
+
+    public static boolean isCeasedDateOnOrAfterDateOfBirth(LocalDate ceasedDate,
+                                                           LocalDate dob,
+                                                           String qualifiedFieldName,
+                                                           Errors errors,
+                                                           String loggingContext) {
+        return isDateOnOrAfterAnotherDate(ceasedDate, dob, ValidationMessages.CEASED_DATE_BEFORE_DATE_OF_BIRTH,
+                qualifiedFieldName, errors, loggingContext);
+    }
+
     private static boolean isDateOnOrAfterAnotherDate(LocalDate aDate,
                                                       LocalDate anotherDate,
                                                       String validationErrorMessage,
