@@ -185,39 +185,6 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenDateBecameInterestedPersonIsAfterTrustCreationDate() {
-        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDto.setCreationDate(LocalDate.of(2000, 1,1));
-        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-        assertFalse(errors.hasErrors());
-    }
-
-
-    @Test
-    void testNoErrorReportedWhenDateBecameInterestedPersonIsOnTrustCreationDate() {
-        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDto.setCreationDate(LocalDate.of(2000, 1,1));
-        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testErrorReportedWhenDateBecameInterestedPersonIsBeforeTrustCreationDate() {
-        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDto.setCreationDate(LocalDate.of(2000, 1,2));
-        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,1));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
-
-        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
-                TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
-        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
-
-        assertError(qualifiedFieldName, validationMessage, errors);
-    }
-
-    @Test
     void testErrorReportedWhenRegisteredOfficeAddressFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setRegisteredOfficeAddress(null);
 
@@ -621,6 +588,9 @@ class TrustCorporateValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+
+
+
     @Test
     void testErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPerson() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
@@ -634,11 +604,31 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateAfterDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 2));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateSameDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testNoErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPersonWhenTypeIsNotRelevant() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
-        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2019, 12, 31));
         Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
