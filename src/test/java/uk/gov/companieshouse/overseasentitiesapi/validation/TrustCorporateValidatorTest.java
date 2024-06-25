@@ -588,9 +588,6 @@ class TrustCorporateValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-
-
-
     @Test
     void testErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPerson() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
