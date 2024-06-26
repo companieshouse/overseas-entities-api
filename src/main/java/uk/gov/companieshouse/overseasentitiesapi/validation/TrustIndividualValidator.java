@@ -64,14 +64,14 @@ public class TrustIndividualValidator {
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
 
-                    // Currently, the 'isServiceAddressSameAsUsualResidentialAddress' flag isn't retrieved and populated
-                    // on the update and remove journeys (an existing defect). It's therefore only possible to run this
-                    // part of the validation if the submission is a registration
                     if (!isForUpdateOrRemove) {
+                        // Currently, the 'isServiceAddressSameAsUsualResidentialAddress' flag isn't retrieved and populated
+                        // on the update and remove journeys (an existing defect). It's therefore only possible to run this
+                        // part of the validation if the submission is a registration
                         validateSameAsAddress(trustIndividualDto, errors, loggingContext);
-                    }
-
-                    if (isForUpdateOrRemove) {
+                    } else {
+                        // Validating 'ceased date' doesn't make sense on the registration journey, as the option to enter
+                        // something in this field isn't present, so this is only validated on the update and remove journeys
                         validateCeasedDate(trustIndividualDto, trustDataDto.getCreationDate(), errors, loggingContext);
                     }
                 }
