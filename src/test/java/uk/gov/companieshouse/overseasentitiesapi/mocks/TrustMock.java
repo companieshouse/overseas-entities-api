@@ -10,6 +10,7 @@ import java.util.List;
 public class TrustMock {
     private static void populateCommonTrustDataDao(TrustDataDao trustDataDao) {
         trustDataDao.setTrustName("Trust Name");
+        trustDataDao.setChReference("_ecba-4TzUTXaln-g8daGtvS4a0");
         trustDataDao.setCreationDate(LocalDate.of(1990, 1, 1));
         trustDataDao.setTrustId("TrustID");
         trustDataDao.setUnableToObtainAllTrustInfo(false);
@@ -113,6 +114,7 @@ public class TrustMock {
 
     private static void populateCommonTrustDataDto(TrustDataDto trustDataDto) {
         trustDataDto.setTrustName("Trust Name");
+        trustDataDto.setChReference("_ecba-4TzUTXaln-g8daGtvS4a0");
         trustDataDto.setCreationDate(LocalDate.of(1990, 1, 1));
         trustDataDto.setTrustId("TrustID");
         trustDataDto.setTrustStillInvolvedInOverseasEntity(true);

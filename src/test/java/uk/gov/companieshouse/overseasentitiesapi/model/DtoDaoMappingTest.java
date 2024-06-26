@@ -423,6 +423,7 @@ class DtoDaoMappingTest {
         TrustDataDto trustDto = dto.getTrusts().get(0);
 
         assertEquals(trustDto.getTrustName(), trustDao.getTrustName());
+        assertEquals(trustDto.getChReference(), trustDao.getChReference());
         assertEquals(trustDto.getCreationDate(), trustDao.getCreationDate());
         assertEquals(trustDto.getUnableToObtainAllTrustInfo(), trustDao.isUnableToObtainAllTrustInfo());
 
@@ -447,6 +448,7 @@ class DtoDaoMappingTest {
         TrustDataToReviewDto trustDto = updateDto.getReviewTrusts().get(0);
 
         assertEquals(trustDto.getTrustName(), trustDao.getTrustName());
+        assertEquals(trustDto.getChReference(), trustDao.getChReference());
         assertEquals(trustDto.getCreationDate(), trustDao.getCreationDate());
         assertEquals(trustDto.getUnableToObtainAllTrustInfo(), trustDao.isUnableToObtainAllTrustInfo());
 

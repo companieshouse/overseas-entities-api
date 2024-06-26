@@ -13,6 +13,9 @@ public class TrustDataDao {
     @Field("name")
     private String trustName;
 
+    @Field("ch_reference")
+    private String chReference;
+
     @Field("trust_still_involved_in_overseas_entity")
     private Boolean isTrustStillInvolvedInOverseasEntity;
 
@@ -49,6 +52,10 @@ public class TrustDataDao {
     public void setTrustName(String trustName) {
         this.trustName = trustName;
     }
+
+    public String getChReference() { return chReference; }
+
+    public void setChReference(String chReference) { this.chReference = chReference; }
 
     public Boolean isTrustStillInvolvedInOverseasEntity() {
         return isTrustStillInvolvedInOverseasEntity;
