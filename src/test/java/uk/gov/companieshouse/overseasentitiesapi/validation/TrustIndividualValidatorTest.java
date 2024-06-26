@@ -363,6 +363,14 @@ class TrustIndividualValidatorTest {
     }
 
     @Test
+    void testSameAsAddressFlagNotValidatedIfUpdateOrRemoveJourney() {
+        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddressSameAsUsualResidentialAddress(null);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     void testNoErrorIsStillInvolvedNull() {
         trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);

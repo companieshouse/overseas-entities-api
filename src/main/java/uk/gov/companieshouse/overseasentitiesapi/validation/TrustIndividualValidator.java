@@ -63,7 +63,13 @@ public class TrustIndividualValidator {
 
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
-                    validateSameAsAddress(trustIndividualDto, errors, loggingContext);
+
+                    // Currently, the 'isServiceAddressSameAsUsualResidentialAddress' flag isn't retrieved and populated
+                    // on the update and remove journeys (an existing defect). It's therefore only possible to run this
+                    // part of the validation if the submission is a registration
+                    if (!isForUpdateOrRemove) {
+                        validateSameAsAddress(trustIndividualDto, errors, loggingContext);
+                    }
 
                     if (isForUpdateOrRemove) {
                         validateCeasedDate(trustIndividualDto, trustDataDto.getCreationDate(), errors, loggingContext);
