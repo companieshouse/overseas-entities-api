@@ -1278,6 +1278,9 @@
           "ceased_date": {
             "type": "string",
             "format": "date"
+          },
+          "is_individual_still_involved_in_trust": {
+            "type": "boolean"
           }
         }
       },
