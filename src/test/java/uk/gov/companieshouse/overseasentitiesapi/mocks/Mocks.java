@@ -331,6 +331,7 @@ public class Mocks {
         for (int i = 1; i <= numberOfTrusts; i++) {
             TrustDataDto trustDataDto = new TrustDataDto();
             trustDataDto.setTrustName("Trust Name " + i);
+            trustDataDto.setChReference("ch_reference" + i);
             trustDataDto.setTrustId(String.valueOf(i));
             trustDataDto.setCreationDate(LocalDate.of(2020, 4, i));
             trustDataDtos.add(trustDataDto);

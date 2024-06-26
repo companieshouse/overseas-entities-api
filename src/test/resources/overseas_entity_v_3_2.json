@@ -621,6 +621,7 @@
       {
         "_id" : "string",
         "name" : "string",
+        "ch_reference" : "ch_reference",
         "creation_date" : "2022-06-10",
         "ceased_date" : "2023-02-01",
         "unable_to_obtain_all_trust_info" : true,
@@ -733,6 +734,7 @@
     {
       "_id" : "string",
       "name" : "string",
+      "ch_reference" : "ch_reference",
       "trust_still_involved_in_overseas_entity": false,
       "creation_date" : "2022-06-10",
       "ceased_date" : "2023-02-01",
