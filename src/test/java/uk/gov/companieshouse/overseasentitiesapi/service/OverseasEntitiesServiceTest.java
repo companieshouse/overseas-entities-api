@@ -116,12 +116,10 @@ class OverseasEntitiesServiceTest {
 
         var trustDataDto = new TrustDataDto();
         trustDataDto.setTrustName("dto");
-        trustDataDto.setTrustName("ch_reference - dto");
         List<TrustDataDto> trustDataDtoList = new ArrayList<>();
         trustDataDtoList.add(trustDataDto);
         var mappedTrustDataDao = new TrustDataDao();
         mappedTrustDataDao.setTrustName("mapped dto to dao");
-        mappedTrustDataDao.setTrustName("ch_reference - mapped dto to dao");
         List<TrustDataDao> trustDataDaoList = new ArrayList<>();
         trustDataDaoList.add(mappedTrustDataDao);
 
