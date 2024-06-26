@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataToReviewDto;
 
 public class UpdateDto {
@@ -29,6 +30,12 @@ public class UpdateDto {
     public static final String TRUST_DATA_FETCHED = "trust_data_fetched";
 
     public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
+
+    private static final String CHANGE_BO_RELEVANT_PERIOD = "change_bo_relevant_period";
+
+    private static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trustee_involved_relevant_period";
+
+    private static final String CHANGE_BENEFICIARY_RELEVANT_PERIOD = "change_beneficiary_relevant_period";
 
     @JsonProperty(DATE_OF_CREATION)
     private LocalDate dateOfCreation;
@@ -65,6 +72,40 @@ public class UpdateDto {
 
     @JsonProperty(REVIEW_TRUSTS_FIELD)
     private List<TrustDataToReviewDto> reviewTrusts;
+
+    @JsonProperty(CHANGE_BO_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBORelevantPeriod;
+
+    @JsonProperty(TRUSTEE_INVOLVED_RELEVANT_PERIOD)
+    private RelevantStatementsType trusteeInvolvedRelevantPeriod;
+
+    @JsonProperty(CHANGE_BENEFICIARY_RELEVANT_PERIOD)
+    private RelevantStatementsType changeBeneficiaryRelevantPeriod;
+
+
+    public RelevantStatementsType getChangeBORelevantPeriod() {
+        return changeBORelevantPeriod;
+    }
+
+    public void setChangeBORelevantPeriod(RelevantStatementsType changeBORelevantPeriod) {
+        this.changeBORelevantPeriod = changeBORelevantPeriod;
+    }
+
+    public RelevantStatementsType getTrusteeInvolvedRelevantPeriod() {
+        return trusteeInvolvedRelevantPeriod;
+    }
+
+    public void setTrusteeInvolvedRelevantPeriod(RelevantStatementsType trusteeInvolvedRelevantPeriod) {
+        this.trusteeInvolvedRelevantPeriod = trusteeInvolvedRelevantPeriod;
+    }
+
+    public RelevantStatementsType getChangeBeneficiaryRelevantPeriod() {
+        return changeBeneficiaryRelevantPeriod;
+    }
+
+    public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
+        this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
+    }
 
     public LocalDate getDateOfCreation() {
         return dateOfCreation;
@@ -145,7 +186,7 @@ public class UpdateDto {
     public void setReviewManagingOfficersIndividual(List<ManagingOfficerIndividualDto> reviewManagingOfficersIndividual) {
         this.reviewManagingOfficersIndividual = reviewManagingOfficersIndividual;
     }
-
+    
     public List<ManagingOfficerCorporateDto> getReviewManagingOfficersCorporate() {
         return reviewManagingOfficersCorporate;
     }

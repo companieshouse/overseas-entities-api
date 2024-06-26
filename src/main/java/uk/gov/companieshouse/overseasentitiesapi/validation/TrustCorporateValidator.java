@@ -141,7 +141,7 @@ public class TrustCorporateValidator {
 
         return UtilsValidators.isNotNull(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
                 && DateValidators.isDateInPast(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateBecameInterestedPersonOnOrAfterCreationDate(dateBecameInterestedPerson, trustCreationDate, qualifiedFieldName, errors, loggingContext);
+                && DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(dateBecameInterestedPerson, trustCreationDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {

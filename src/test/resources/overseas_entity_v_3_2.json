@@ -622,7 +622,9 @@
         "_id" : "string",
         "name" : "string",
         "creation_date" : "2022-06-10",
+        "ceased_date" : "2023-02-01",
         "unable_to_obtain_all_trust_info" : true,
+        "trust_still_involved_in_overseas_entity" : false,
         "review_status": {
           "in_review": false,
           "reviewed_trust_details": true,
@@ -675,7 +677,8 @@
               "po_box" : "string",
               "locality" : "string"
             },
-            "date_became_interested_person" : "2022-06-10"
+            "date_became_interested_person" : "2022-06-10",
+            "ceased_date" : "2024-02-29"
           }
         ],
         "corporates" : [
@@ -717,7 +720,10 @@
           }
         ]
       }
-    ]
+    ],
+    "change_bo_relevant_period" : "CHANGE_BO_RELEVANT_PERIOD",
+    "trustee_involved_relevant_period" : "TRUSTEE_INVOLVED_RELEVANT_PERIOD",
+    "change_beneficiary_relevant_period" : "CHANGE_BENEFICIARY_RELEVANT_PERIOD"
   },
   "is_remove" : true,
   "remove" : {
@@ -727,6 +733,7 @@
     {
       "_id" : "string",
       "name" : "string",
+      "trust_still_involved_in_overseas_entity": false,
       "creation_date" : "2022-06-10",
       "ceased_date" : "2023-02-01",
       "unable_to_obtain_all_trust_info" : true,
@@ -775,7 +782,9 @@
             "po_box" : "string",
             "locality" : "string"
           },
-          "date_became_interested_person" : "2022-06-10"
+          "date_became_interested_person" : "2022-06-10",
+          "ceased_date" : "2024-02-29",
+          "is_individual_still_involved_in_trust" : false
         }
       ],
       "corporates" : [

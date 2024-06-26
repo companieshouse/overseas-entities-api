@@ -13,17 +13,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ADDITIONS_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ANY_BOS_ADDED_CEASED_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.BENEFICIAL_OWNERS_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NAME_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.*;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_REMOVE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
@@ -260,6 +250,9 @@ public class FilingsService {
     setUpdateAndRemoveSubmissionData(data, updateSubmission, isNoChange, logMap);
 
     data.put(FILING_FOR_DATE_FIELD, updateSubmission.getFilingForDate());
+    data.put(CHANGE_BO_RELEVANT_PERIOD_FIELD, updateSubmission.getChangeBORelevantPeriodStatement());
+    data.put(TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD, updateSubmission.getTrusteeInvolvedRelevantPeriodStatement());
+    data.put(CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD, updateSubmission.getChangeBeneficiaryRelevantPeriodStatement());
 
     ApiLogger.debug("Update specific submission data has been set on filing: " + data, logMap);
   }

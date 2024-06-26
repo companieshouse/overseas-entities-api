@@ -16,6 +16,7 @@ public class TrustIndividualDto {
     public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
     public static final String TYPE_FIELD = "type";
     public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String NATIONALITY_FIELD = "nationality";
     public static final String SECOND_NATIONALITY_FIELD = "second_nationality";
 
@@ -37,6 +38,7 @@ public class TrustIndividualDto {
     public static final String SA_ADDRESS_COUNTRY_FIELD = "sa_address_country";
     public static final String SA_ADDRESS_POSTAL_CODE_FIELD = "sa_address_postal_code";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
+    public static final String IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD = "is_individual_still_involved_in_trust";
 
     @JsonInclude(NON_NULL)
     @JsonProperty(FORENAME_FIELD)
@@ -60,6 +62,9 @@ public class TrustIndividualDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(DATE_BECAME_INTERESTED_PERSON_FIELD)
     private LocalDate dateBecameInterestedPerson;
+
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(NATIONALITY_FIELD)
@@ -152,6 +157,9 @@ public class TrustIndividualDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(URA_ADDRESS_REGION_FIELD)
     private String uraAddressRegion;
+
+    @JsonProperty(IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD)
+    private Boolean isIndividualStillInvolvedInTrust;
 
     public String getType() {
         return type;
@@ -414,12 +422,28 @@ public class TrustIndividualDto {
         this.dateBecameInterestedPerson = dateBecameInterestedPerson;
     }
 
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
+    }
+
     public String getSecondNationality() {
         return secondNationality;
     }
 
     public void setSecondNationality(String secondNationality) {
         this.secondNationality = secondNationality;
+    }
+
+    public Boolean getIndividualStillInvolvedInTrust() {
+        return isIndividualStillInvolvedInTrust;
+    }
+
+    public void setIndividualStillInvolvedInTrust(Boolean individualStillInvolvedInTrust) {
+        isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
     }
 
 }

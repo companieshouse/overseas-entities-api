@@ -42,6 +42,7 @@ class TrustDetailsValidatorTest {
         trustDataDtoList.add(TrustMock.getTrustDataDto());
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE112233");    // By default, this submission is an Update
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
 
         // Associate an Individual and Corporate BO with the trust
@@ -290,11 +291,75 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
-    void testErrorReportedWhenUnableToObtainAllTrustInfoFieldNotEmpty() {
+    void testNoErrorReportedWhenUnableToObtainAllTrustInfoFieldNotEmpty() {
         trustDataDtoList.get(0).setUnableToObtainAllTrustInfo(false);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
 
         assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenTrustStillInvolvedInOverseasEntityIsNull() {
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(null);
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedWhenTrustStillInvolvedInOverseasEntityIsNullButSubmissionIsARegistration() {
+        overseasEntitySubmissionDto.setEntityNumber(null);  // Make this submission a Registration
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(null);
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenTrustNotStillInvolvedInOverseasEntityAndNullCeasedDate() {
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).setCeasedDate(null);
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedWhenTrustNotStillInvolvedInOverseasEntityAndNullCeasedDateButSubmissionIsARegistration() {
+        overseasEntitySubmissionDto.setEntityNumber(null);  // Make this submission a Registration
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).setCeasedDate(null);
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenTrustNotStillInvolvedInOverseasEntityAndFutureCeasedDate() {
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).setCeasedDate(LocalDate.now().plusDays(1));
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenTrustNotStillInvolvedInOverseasEntityAndLaterCeasedDate() {
+        trustDataDtoList.get(0).setTrustStillInvolvedInOverseasEntity(Boolean.FALSE);
+        trustDataDtoList.get(0).setCeasedDate(trustDataDtoList.get(0).getCreationDate().minusDays(1));
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+        String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.TRUST_DATA, TrustDataDto.CEASED_DATE_FIELD);
+        String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     private void disassociateBosFromTrust() {

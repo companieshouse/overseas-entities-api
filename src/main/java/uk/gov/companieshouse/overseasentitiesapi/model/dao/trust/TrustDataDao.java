@@ -13,6 +13,9 @@ public class TrustDataDao {
     @Field("name")
     private String trustName;
 
+    @Field("trust_still_involved_in_overseas_entity")
+    private Boolean isTrustStillInvolvedInOverseasEntity;
+
     @Field("creation_date")
     private LocalDate creationDate;
 
@@ -45,6 +48,14 @@ public class TrustDataDao {
 
     public void setTrustName(String trustName) {
         this.trustName = trustName;
+    }
+
+    public Boolean isTrustStillInvolvedInOverseasEntity() {
+        return isTrustStillInvolvedInOverseasEntity;
+    }
+
+    public void setTrustStillInvolvedInOverseasEntity(Boolean trustStillInvolvedInOverseasEntity) {
+        isTrustStillInvolvedInOverseasEntity = trustStillInvolvedInOverseasEntity;
     }
 
     public LocalDate getCreationDate() {
