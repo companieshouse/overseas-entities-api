@@ -83,6 +83,9 @@ public class BeneficialOwnerCorporateDto {
     @JsonProperty(CH_REFERENCE_FIELD)
     private String chipsReference;
 
+    @JsonProperty("id")
+    private String id;
+
     public String getName() {
         return name;
     }
@@ -225,5 +228,11 @@ public class BeneficialOwnerCorporateDto {
 
     public void setChipsReference(String chipsReference) {
         this.chipsReference = chipsReference;
+    }
+
+    public String getId() { return id; }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
