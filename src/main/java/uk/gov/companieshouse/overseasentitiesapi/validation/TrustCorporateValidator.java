@@ -34,12 +34,12 @@ public class TrustCorporateValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext, boolean isForUpdateOrRemove) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, boolean isForUpdateOrRemove, String loggingContext) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustCorporateDto> corporates = trustDataDto.getCorporates();
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, loggingContext, isForUpdateOrRemove);
+                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, isForUpdateOrRemove, loggingContext);
                 }
             }
         }
@@ -47,7 +47,7 @@ public class TrustCorporateValidator {
     }
 
     private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors,
-            String loggingContext, boolean isForUpdateOrRemove) {
+            boolean isForUpdateOrRemove, String loggingContext) {
 
         validateName(trustCorporateDto.getName(), errors, loggingContext);
 
@@ -237,7 +237,6 @@ public class TrustCorporateValidator {
        LocalDate ceasedDate = trustCorporateDto.getCeasedDate();
        final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.CEASED_DATE_FIELD);
-
 
        if (Objects.isNull(isStillInvolved) || Boolean.TRUE.equals(isStillInvolved)) {
           if (Objects.nonNull(ceasedDate)) {
