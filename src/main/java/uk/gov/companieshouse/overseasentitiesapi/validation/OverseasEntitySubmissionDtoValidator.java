@@ -162,7 +162,7 @@ public class OverseasEntitySubmissionDtoValidator {
                     overseasEntitySubmissionDto.isForUpdateOrRemove());
             historicalBeneficialOwnerValidator.validate(overseasEntitySubmissionDto.getTrusts(), errors, loggingContext);
             trustCorporateValidator.validate(
-                    overseasEntitySubmissionDto.getTrusts(), errors, overseasEntitySubmissionDto.isForUpdateOrRemove(), loggingContext);
+                    overseasEntitySubmissionDto.getTrusts(), overseasEntitySubmissionDto.isForUpdateOrRemove(), errors, loggingContext);
         }
     }
 

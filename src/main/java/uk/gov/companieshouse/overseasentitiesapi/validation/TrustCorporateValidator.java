@@ -34,20 +34,20 @@ public class TrustCorporateValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, boolean isForUpdateOrRemove, String loggingContext) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, boolean isForUpdateOrRemove, Errors errors, String loggingContext) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustCorporateDto> corporates = trustDataDto.getCorporates();
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), errors, isForUpdateOrRemove, loggingContext);
+                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), isForUpdateOrRemove, errors, loggingContext);
                 }
             }
         }
         return errors;
     }
 
-    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors,
-            boolean isForUpdateOrRemove, String loggingContext) {
+    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate,
+            boolean isForUpdateOrRemove, Errors errors, String loggingContext) {
 
         validateName(trustCorporateDto.getName(), errors, loggingContext);
 
