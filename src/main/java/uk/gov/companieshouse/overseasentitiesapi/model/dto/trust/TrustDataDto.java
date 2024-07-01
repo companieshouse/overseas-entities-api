@@ -12,6 +12,7 @@ public class TrustDataDto {
 
     public static final String TRUST_ID_FIELD = "trust_id";
     public static final String TRUST_NAME_FIELD = "trust_name";
+    public static final String CH_REFERENCE_FIELD = "ch_reference";
     public static final String TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD = "trust_still_involved_in_overseas_entity";
     public static final String CREATION_DATE_FIELD = "creation_date";
     public static final String CEASED_DATE_FIELD = "ceased_date";
@@ -25,6 +26,9 @@ public class TrustDataDto {
 
     @JsonProperty(TRUST_NAME_FIELD)
     private String trustName;
+
+    @JsonProperty(CH_REFERENCE_FIELD)
+    private String chReference;
 
     @JsonProperty(TRUST_STILL_INVOLVED_IN_OVERSEAS_ENTITY_FIELD)
     private Boolean isTrustStillInvolvedInOverseasEntity;
@@ -65,6 +69,10 @@ public class TrustDataDto {
     public void setTrustName(String trustName) {
         this.trustName = trustName;
     }
+
+    public String getChReference() { return chReference; }
+
+    public void setChReference(String chReference) { this.chReference = chReference; }
 
     public Boolean isTrustStillInvolvedInOverseasEntity() {
         return isTrustStillInvolvedInOverseasEntity;

@@ -5,6 +5,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.Validat
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class TrustIndividualValidator {
         this.nationalityValidator = nationalityValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext, boolean isForUpdateOrRemove) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustIndividualDto> trustIndividuals = trustDataDto.getIndividuals();
             if (!CollectionUtils.isEmpty(trustIndividuals)) {
@@ -61,11 +63,29 @@ public class TrustIndividualValidator {
 
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
-                    validateSameAsAddress(trustIndividualDto, errors, loggingContext);
+
+                    conditionalJourneyValidation(trustIndividualDto, trustDataDto.getCreationDate(), errors, loggingContext, isForUpdateOrRemove);
                 }
             }
         }
         return errors;
+    }
+
+    private void conditionalJourneyValidation(TrustIndividualDto trustIndividualDto,
+                                              LocalDate trustCreationDate,
+                                              Errors errors,
+                                              String loggingContext,
+                                              boolean isForUpdateOrRemove) {
+        if (!isForUpdateOrRemove) {
+            // Currently, the 'isServiceAddressSameAsUsualResidentialAddress' flag isn't retrieved and populated
+            // on the update and remove journeys (an existing defect). It's therefore only possible to run this
+            // part of the validation if the submission is a registration
+            validateSameAsAddress(trustIndividualDto, errors, loggingContext);
+        } else {
+            // Validating 'ceased date' doesn't make sense on the registration journey, as the option to enter
+            // something in this field isn't present, so this is only validated on the update and remove journeys
+            validateCeasedDate(trustIndividualDto, trustCreationDate, errors, loggingContext);
+        }
     }
 
     private boolean validateForename(String forename, Errors errors, String loggingContext) {
@@ -165,5 +185,36 @@ public class TrustIndividualValidator {
             validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD, trustIndividualDto.getServiceAddress(), errors,
                     loggingContext);
         }
+    }
+
+    private Errors validateCeasedDate(TrustIndividualDto trustIndividualDto,
+                                      LocalDate trustCreationDate,
+                                      Errors errors,
+                                      String loggingContext) {
+
+        Boolean isStillInvolved = trustIndividualDto.getIndividualStillInvolvedInTrust();
+        LocalDate ceasedDate = trustIndividualDto.getCeasedDate();
+        final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
+                TrustIndividualDto.CEASED_DATE_FIELD);
+
+
+        if (Objects.isNull(isStillInvolved) || Boolean.TRUE.equals(isStillInvolved)) {
+            if (Objects.nonNull(ceasedDate)) {
+                final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
+                setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
+            }
+        } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext)) {
+            DateValidators.isDateInPast(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+            DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+            DateValidators.isCeasedDateOnOrAfterDateOfBirth(ceasedDate, trustIndividualDto.getDateOfBirth(), qualifiedFieldNameCeasedDate,
+                    errors, loggingContext);
+            String type = trustIndividualDto.getType();
+            if (validateType(type, errors, loggingContext)
+                    && BeneficialOwnerType.findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustIndividualDto.getDateBecameInterestedPerson(),
+                        qualifiedFieldNameCeasedDate, errors, loggingContext);
+            }
+        }
+        return errors;
     }
 }

@@ -42,6 +42,12 @@ public class TrustCorporateDao {
     @Field("is_on_register_in_country_formed_in")
     private Boolean onRegisterInCountryFormedIn;
 
+    @Field("is_corporate_still_involved_in_trust")
+    private Boolean isCorporateStillInvolvedInTrust;
+
+    @Field("ceased_date")
+    private LocalDate ceasedDate;
+
     public BeneficialOwnerType getType() {
         return type;
     }
@@ -137,5 +143,20 @@ public class TrustCorporateDao {
     public void setOnRegisterInCountryFormedIn(Boolean onRegisterInCountryFormedIn) {
         this.onRegisterInCountryFormedIn = onRegisterInCountryFormedIn;
     }
- 
+
+    public Boolean isCorporateStillInvolvedInTrust() {
+        return isCorporateStillInvolvedInTrust;
+    }
+
+    public void setCorporateStillInvolvedInTrust(Boolean corporateStillInvolvedInTrust) {
+        isCorporateStillInvolvedInTrust = corporateStillInvolvedInTrust;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
+    }
 }

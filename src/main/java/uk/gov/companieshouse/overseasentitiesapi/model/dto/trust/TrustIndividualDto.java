@@ -38,6 +38,7 @@ public class TrustIndividualDto {
     public static final String SA_ADDRESS_COUNTRY_FIELD = "sa_address_country";
     public static final String SA_ADDRESS_POSTAL_CODE_FIELD = "sa_address_postal_code";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
+    public static final String IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD = "is_individual_still_involved_in_trust";
 
     @JsonInclude(NON_NULL)
     @JsonProperty(FORENAME_FIELD)
@@ -156,6 +157,9 @@ public class TrustIndividualDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(URA_ADDRESS_REGION_FIELD)
     private String uraAddressRegion;
+
+    @JsonProperty(IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD)
+    private Boolean isIndividualStillInvolvedInTrust;
 
     public String getType() {
         return type;
@@ -432,6 +436,14 @@ public class TrustIndividualDto {
 
     public void setSecondNationality(String secondNationality) {
         this.secondNationality = secondNationality;
+    }
+
+    public Boolean getIndividualStillInvolvedInTrust() {
+        return isIndividualStillInvolvedInTrust;
+    }
+
+    public void setIndividualStillInvolvedInTrust(Boolean individualStillInvolvedInTrust) {
+        isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
     }
 
 }

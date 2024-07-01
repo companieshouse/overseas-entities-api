@@ -38,18 +38,20 @@ class TrustCorporateValidatorTest {
     private TrustCorporateValidator trustCorporateValidator;
     private List<TrustDataDto> trustDataDtoList;
 
+    private TrustDataDto trustDataDto;
+
     @BeforeEach
     public void init() {
         trustCorporateValidator = new TrustCorporateValidator(addressDtoValidator);
         trustDataDtoList = new ArrayList<>();
 
-        TrustDataDto trustDataDto = TrustMock.getTrustDataDto();
+        trustDataDto = TrustMock.getTrustDataDto();
         trustDataDtoList.add(trustDataDto);
     }
 
     @Test
     void testNoErrorReportedWhenAllFieldsAreCorrect() {
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -57,7 +59,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setName("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.NAME_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -68,7 +70,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setName(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.NAME_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -80,7 +82,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorReportedWhenNameFieldIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setName(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -88,7 +90,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setName(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.NAME_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -100,7 +102,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenNameFieldContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setName("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.NAME_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -111,7 +113,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenTypeFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.TYPE_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -122,7 +124,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenTypeFieldIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(" ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.TYPE_FIELD);
         String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -133,7 +135,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenTypeFieldValueIsNotExpected() {
         trustDataDtoList.get(0).getCorporates().get(0).setType("TESTY");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.TYPE_FIELD);
         String validationMessage = ValidationMessages.TRUST_CORPORATE_TYPE_ERROR_MESSAGE.replace("%s",
@@ -145,7 +147,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testNoErrorReportedWhenTypeFieldValueIsExpected() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -154,7 +156,7 @@ class TrustCorporateValidatorTest {
     void testErrorReportedWhenDateBecameInterestedPersonFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -165,7 +167,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testNoErrorReportedWhenDateBecameInterestedPersonFieldIsInThePast() {
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(1970, 1, 1));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
 
@@ -173,7 +175,7 @@ class TrustCorporateValidatorTest {
     void testErrorReportedWhenDateBecameInterestedPersonIsInTheFuture() {
         trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
         trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.now().plusDays(1));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
@@ -187,7 +189,7 @@ class TrustCorporateValidatorTest {
         trustDataDtoList.get(0).getCorporates().get(0).setRegisteredOfficeAddress(null);
 
         when(addressDtoValidator.validate(any(), any(), any(), any(), any())).thenCallRealMethod();
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.REGISTERED_OFFICE_ADDRESS_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -198,7 +200,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setServiceAddressSameAsPrincipalAddress(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -215,7 +217,7 @@ class TrustCorporateValidatorTest {
         trustee.setRoAddressLocality("New York");
         trustee.setRoAddressCountry("USA");
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
         assertEquals("1", trustee.getServiceAddress().getPropertyNameNumber());
@@ -227,7 +229,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -238,7 +240,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -249,7 +251,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -262,7 +264,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorReportedWhenLegalFormIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -270,7 +272,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalFormContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -281,7 +283,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalAuthorityIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalAuthority(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_AUTHORITY_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -292,7 +294,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalAuthorityIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalAuthority("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_AUTHORITY_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -303,7 +305,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalAuthorityExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -316,7 +318,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorReportedWhenLegalAuthorityIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -324,7 +326,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedWhenLegalAuthorityContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationLegalForm("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_LEGAL_FORM_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -335,7 +337,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedPlaceRegisteredIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationPlaceRegistered(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -346,7 +348,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedPlaceRegisteredIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationPlaceRegistered("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -357,7 +359,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedPlaceRegisteredExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationPlaceRegistered(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList,  true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -370,7 +372,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorReportedPlaceRegisteredIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationPlaceRegistered(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -378,7 +380,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedPlaceRegisteredContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationPlaceRegistered("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -389,7 +391,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedCountryRegistrationIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationCountryRegistration(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_COUNTRY_REGISTRATION_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -400,7 +402,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedCountryRegistrationIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationCountryRegistration("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_COUNTRY_REGISTRATION_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -411,7 +413,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedCountryRegistrationExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationCountryRegistration(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_COUNTRY_REGISTRATION_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -424,7 +426,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorReportedCountryRegistrationIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationCountryRegistration(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -432,7 +434,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorReportedCountryRegistrationContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationCountryRegistration("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_COUNTRY_REGISTRATION_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -443,7 +445,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorRegistrationNumberIsNull() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationRegistrationNumber(null);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -454,7 +456,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorRegistrationNumberIsEmpty() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationRegistrationNumber("  ");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
@@ -465,7 +467,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorRegistrationNumberExceedsMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationRegistrationNumber(StringUtils.repeat("A", 161));
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_REGISTRATION_NUMBER_FIELD);
         String validationMessage = qualifiedFieldName +
@@ -478,7 +480,7 @@ class TrustCorporateValidatorTest {
     void testNoErrorRegistrationNumberIsAtMaxLength() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationRegistrationNumber(StringUtils.repeat("A", 160));
 
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         assertFalse(errors.hasErrors());
     }
@@ -486,7 +488,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorRegistrationNumberContainsInvalidCharacters() {
         trustDataDtoList.get(0).getCorporates().get(0).setIdentificationRegistrationNumber("Дракон");
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_REGISTRATION_NUMBER_FIELD);
         String validationMessage = String.format(ValidationMessages.INVALID_CHARACTERS_ERROR_MESSAGE, qualifiedFieldName);
@@ -497,7 +499,7 @@ class TrustCorporateValidatorTest {
     @Test
     void testErrorRegisteredInCountryFormedInNotSupplied() {
         trustDataDtoList.get(0).getCorporates().get(0).setOnRegisterInCountryFormedIn(Boolean.FALSE);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.IDENTIFICATION_PLACE_REGISTERED_FIELD);
         String validationMessage = String.format(ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE, qualifiedFieldName);
@@ -506,11 +508,143 @@ class TrustCorporateValidatorTest {
     }
 
     @Test
-    void testErrorRegisteredInCountryFormedInSupplied() {
+    void testNoErrorRegisteredInCountryFormedInSupplied() {
         trustDataDtoList.get(0).getCorporates().get(0).setOnRegisterInCountryFormedIn(Boolean.TRUE);
-        Errors errors = trustCorporateValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
     }
+
+    @Test
+    void testNoErrorIsStillInvolvedTrueAndCeasedDateNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.TRUE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorIsStillInvolvedNullAndCeasedDateIsNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(null);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedTrueAndCeasedDateNotNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.TRUE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedFalseAndCeasedDateNull() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedFalseAndCeasedDateFuture() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.now().plusDays(1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedFalseAndCeasedDateBeforeTrustCreationDate() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDto.setCreationDate(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(1999, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustCorporateDto.CEASED_DATE_FIELD);
+        String validationMessage = String.format(ValidationMessages.CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateAfterDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 2));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateSameDateBecameInterestedPerson() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorIsStillInvolvedFalseAndCeasedDateBeforeDateBecameInterestedPersonWhenTypeIsNotRelevant() {
+        trustDataDtoList.get(0).getCorporates().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setDateBecameInterestedPerson(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(LocalDate.of(2019, 12, 31));
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, true, new Errors(),  LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsIsStillInvolvedNullRegistrationJourney() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, false, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNoErrorsCeasedDatedNullRegistrationJourney() {
+        trustDataDtoList.get(0).getCorporates().get(0).setCorporateStillInvolvedInTrust(Boolean.FALSE);
+        trustDataDtoList.get(0).getCorporates().get(0).setCeasedDate(null);
+        Errors errors = trustCorporateValidator.validate(trustDataDtoList, false, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
 
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();

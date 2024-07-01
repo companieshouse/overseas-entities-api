@@ -632,6 +632,7 @@
       {
         "_id" : "string",
         "name" : "string",
+        "ch_reference" : "_ecba-4TzUTXaln-g8daGtvS4a0",
         "creation_date" : "2022-06-10",
         "ceased_date" : "2023-02-01",
         "unable_to_obtain_all_trust_info" : true,
@@ -744,6 +745,7 @@
     {
       "_id" : "string",
       "name" : "string",
+      "ch_reference" : "_ecba-4TzUTXaln-g8daGtvS4a0",
       "trust_still_involved_in_overseas_entity": false,
       "creation_date" : "2022-06-10",
       "ceased_date" : "2023-02-01",
@@ -794,7 +796,8 @@
             "locality" : "string"
           },
           "date_became_interested_person" : "2022-06-10",
-          "ceased_date" : "2024-02-29"
+          "ceased_date" : "2024-02-29",
+          "is_individual_still_involved_in_trust" : false
         }
       ],
       "corporates" : [
@@ -832,7 +835,9 @@
           "identification_legal_form" : "string",
           "identification_place_registered" : "string",
           "identification_registration_number" : "string",
-          "date_became_interested_person" : "2022-06-10"
+          "date_became_interested_person" : "2022-06-10",
+          "is_corporate_still_involved_in_trust" : false,
+          "ceased_date" : "2022-06-11"
         }
       ]
     }
