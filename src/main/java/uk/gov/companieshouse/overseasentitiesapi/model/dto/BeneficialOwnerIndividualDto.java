@@ -27,10 +27,9 @@ public class BeneficialOwnerIndividualDto {
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
     public static final String TRUST_IDS_FIELD = "trust_ids";
     public static final String TRUST_DATA_FIELD = "trust_data";
-
     public static final String CEASED_DATE_FIELD = "ceased_date";
-
     public static final String CH_REFERENCE_FIELD = "ch_reference";
+    public static final String ID_FIELD = "id";
 
     @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
@@ -87,7 +86,7 @@ public class BeneficialOwnerIndividualDto {
     @JsonProperty(CH_REFERENCE_FIELD)
     private String chipsReference;
 
-    @JsonProperty("id")
+    @JsonProperty(ID_FIELD)
     private String id;
 
     public String getFirstName() {
@@ -232,7 +231,9 @@ public class BeneficialOwnerIndividualDto {
         this.chipsReference = chipsReference;
     }
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
     public void setId(String id) {
         this.id = id;
