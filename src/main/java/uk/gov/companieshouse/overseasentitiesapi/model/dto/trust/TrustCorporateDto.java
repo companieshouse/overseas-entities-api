@@ -23,8 +23,10 @@ public class TrustCorporateDto {
     public static final String IDENTIFICATION_PLACE_REGISTERED_FIELD = "identification_place_registered";
     public static final String IDENTIFICATION_COUNTRY_REGISTRATION_FIELD = "identification_country_registration";
     public static final String IDENTIFICATION_REGISTRATION_NUMBER_FIELD = "identification_registration_number";
+    public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
+    public static final String IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD = "is_corporate_still_involved_in_trust";
 
-    public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN = "is_on_register_in_country_formed_in";
+    public static final String CEASED_DATE_FIELD = "ceased_date";
 
     @JsonProperty(TYPE_FIELD)
     private String type;
@@ -142,8 +144,14 @@ public class TrustCorporateDto {
     private String identificationRegistrationNumber;
 
     @JsonInclude(NON_NULL)
-    @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN)
+    @JsonProperty(IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD)
     private Boolean onRegisterInCountryFormedIn;
+
+    @JsonProperty(IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD)
+    private Boolean isCorporateStillInvolvedInTrust;
+
+    @JsonProperty(CEASED_DATE_FIELD)
+    private LocalDate ceasedDate;
 
     public String getType() {
         return type;
@@ -412,6 +420,22 @@ public class TrustCorporateDto {
 
     public void setIdentificationRegistrationNumber(String identificationRegistrationNumber) {
         this.identificationRegistrationNumber = identificationRegistrationNumber;
+    }
+
+    public Boolean isCorporateStillInvolvedInTrust() {
+        return isCorporateStillInvolvedInTrust;
+    }
+
+    public void setCorporateStillInvolvedInTrust(Boolean corporateStillInvolvedInTrust) {
+        isCorporateStillInvolvedInTrust = corporateStillInvolvedInTrust;
+    }
+
+    public LocalDate getCeasedDate() {
+        return ceasedDate;
+    }
+
+    public void setCeasedDate(LocalDate ceasedDate) {
+        this.ceasedDate = ceasedDate;
     }
 
     public static boolean areAnyStringsNonNull(String... objects) {

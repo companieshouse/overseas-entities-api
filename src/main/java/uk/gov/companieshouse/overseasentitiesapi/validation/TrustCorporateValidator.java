@@ -34,21 +34,20 @@ public class TrustCorporateValidator {
         this.addressDtoValidator = addressDtoValidator;
     }
 
-    public Errors validate(List<TrustDataDto> trustDataDtoList, Errors errors, String loggingContext) {
+    public Errors validate(List<TrustDataDto> trustDataDtoList, boolean isForUpdateOrRemove, Errors errors, String loggingContext) {
         for (TrustDataDto trustDataDto : trustDataDtoList) {
             List<TrustCorporateDto> corporates = trustDataDto.getCorporates();
-
             if (!CollectionUtils.isEmpty(corporates)) {
                 for (TrustCorporateDto trustCorporateDto : corporates) {
-                    validateTrustCorporateDto(trustCorporateDto, errors, loggingContext);
+                    validateTrustCorporateDto(trustCorporateDto, trustDataDto.getCreationDate(), isForUpdateOrRemove, errors, loggingContext);
                 }
             }
         }
         return errors;
     }
 
-    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, Errors errors,
-            String loggingContext) {
+    private void validateTrustCorporateDto(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate,
+            boolean isForUpdateOrRemove, Errors errors, String loggingContext) {
 
         validateName(trustCorporateDto.getName(), errors, loggingContext);
 
@@ -59,6 +58,7 @@ public class TrustCorporateValidator {
 
             validateDateBecameInterestedPerson(
                     trustCorporateDto.getDateBecameInterestedPerson(),
+                    trustCreationDate,
                     errors,
                     loggingContext);
         }
@@ -94,6 +94,9 @@ public class TrustCorporateValidator {
                 .equals(trustCorporateDto.getOnRegisterInCountryFormedIn())) {
             validateOnRegisteredInCountryFormedInSupplied(trustCorporateDto, errors,
                     loggingContext);
+        }
+        if (isForUpdateOrRemove) {
+            validateCeasedDate(trustCorporateDto, trustCreationDate, errors, loggingContext);
         }
     }
 
@@ -131,13 +134,14 @@ public class TrustCorporateValidator {
         return true;
     }
 
-    private boolean validateDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson, Errors errors,
+    private boolean validateDateBecameInterestedPerson(LocalDate dateBecameInterestedPerson, LocalDate trustCreationDate, Errors errors,
                                                        String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustCorporateDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
 
         return UtilsValidators.isNotNull(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
-                && DateValidators.isDateInPast(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext);
+                && DateValidators.isDateInPast(dateBecameInterestedPerson, qualifiedFieldName, errors, loggingContext)
+                && DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(dateBecameInterestedPerson, trustCreationDate, qualifiedFieldName, errors, loggingContext);
     }
 
     private Errors validateAddress(String addressField, AddressDto addressDto, Errors errors, String loggingContext) {
@@ -171,7 +175,7 @@ public class TrustCorporateValidator {
     private boolean validateOnRegisteredInCountryFormedIn(Boolean onRegisteredInCountryFormedIn, Errors errors,
                                                         String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
-                TrustCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN);
+                TrustCorporateDto.IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD);
         return UtilsValidators.isNotNull(onRegisteredInCountryFormedIn, qualifiedFieldName, errors, loggingContext);
     }
 
@@ -225,5 +229,30 @@ public class TrustCorporateValidator {
         }
 
         return errors;
+    }
+
+    private Errors validateCeasedDate(TrustCorporateDto trustCorporateDto, LocalDate trustCreationDate, Errors errors, String loggingContext) {
+
+       Boolean isStillInvolved = trustCorporateDto.isCorporateStillInvolvedInTrust();
+       LocalDate ceasedDate = trustCorporateDto.getCeasedDate();
+       final String qualifiedFieldNameCeasedDate = getQualifiedFieldName(PARENT_FIELD,
+                TrustCorporateDto.CEASED_DATE_FIELD);
+
+       if (Objects.isNull(isStillInvolved) || Boolean.TRUE.equals(isStillInvolved)) {
+          if (Objects.nonNull(ceasedDate)) {
+             final String errorMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldNameCeasedDate);
+             setErrorMsgToLocation(errors, qualifiedFieldNameCeasedDate, errorMessage);
+          }
+       } else if (UtilsValidators.isNotNull(ceasedDate, qualifiedFieldNameCeasedDate, errors, loggingContext)) {
+          DateValidators.isDateInPast(ceasedDate,  qualifiedFieldNameCeasedDate, errors, loggingContext);
+          String type = trustCorporateDto.getType();
+          DateValidators.isCeasedDateOnOrAfterCreationDate(ceasedDate, trustCreationDate, qualifiedFieldNameCeasedDate, errors, loggingContext);
+          if (validateType(type, errors, loggingContext) && BeneficialOwnerType
+               .findByBeneficialOwnerTypeString(type)
+               .equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                  DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustCorporateDto.getDateBecameInterestedPerson(), qualifiedFieldNameCeasedDate, errors, loggingContext);
+          }
+       }
+       return errors;
     }
 }
