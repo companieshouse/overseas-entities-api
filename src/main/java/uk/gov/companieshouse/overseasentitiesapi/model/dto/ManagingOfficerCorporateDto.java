@@ -19,12 +19,10 @@ public class ManagingOfficerCorporateDto {
     public static final String ROLE_AND_RESPONSIBILITIES_FIELD = "role_and_responsibilities";
     public static final String CONTACT_FULL_NAME_FIELD = "contact_full_name";
     public static final String CONTACT_EMAIL_FIELD = "contact_email";
-
     public static final String START_DATE_FIELD = "start_date";
-
     public static final String RESIGNED_ON_DATE_FIELD = "resigned_on";
-
     public static final String CH_REFERENCE_FIELD = "ch_reference";
+    public static final String ID_FIELD = "id";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -70,6 +68,9 @@ public class ManagingOfficerCorporateDto {
 
     @JsonProperty(CH_REFERENCE_FIELD)
     private String chipsReference;
+
+    @JsonProperty(ID_FIELD)
+    private String id;
 
     public String getName() {
         return name;
@@ -167,7 +168,6 @@ public class ManagingOfficerCorporateDto {
         this.contactEmail = Objects.isNull(contactEmail) ? null : contactEmail.trim();
     }
 
-
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -190,5 +190,13 @@ public class ManagingOfficerCorporateDto {
 
     public void setChipsReference(String chipsReference) {
         this.chipsReference = chipsReference;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

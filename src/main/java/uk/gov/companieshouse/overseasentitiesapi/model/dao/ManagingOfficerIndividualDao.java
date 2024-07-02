@@ -54,6 +54,9 @@ public class ManagingOfficerIndividualDao {
     @Field("ch_reference")
     private String chipsReference;
 
+    @Field("id")
+    private String id;
+
     public String getFirstName() {
         return firstName;
     }
@@ -179,5 +182,13 @@ public class ManagingOfficerIndividualDao {
 
     public void setChipsReference(String chipsReference) {
         this.chipsReference = chipsReference;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

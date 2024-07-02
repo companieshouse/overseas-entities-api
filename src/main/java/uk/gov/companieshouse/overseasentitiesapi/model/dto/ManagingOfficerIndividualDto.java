@@ -22,12 +22,10 @@ public class ManagingOfficerIndividualDto {
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
     public static final String OCCUPATION_FIELD = "occupation";
     public static final String ROLE_AND_RESPONSIBILITIES_FIELD = "role_and_responsibilities";
-
     public static final String START_DATE_FIELD = "start_date";
-
     public static final String RESIGNED_ON_DATE_FIELD = "resigned_on";
-
     public static final String CH_REFERENCE_FIELD = "ch_reference";
+    public static final String ID_FIELD = "id";
 
     @JsonProperty(FIRST_NAME_FIELD)
     private String firstName;
@@ -77,6 +75,9 @@ public class ManagingOfficerIndividualDto {
 
     @JsonProperty(CH_REFERENCE_FIELD)
     private String chipsReference;
+
+    @JsonProperty(ID_FIELD)
+    private String id;
 
     public String getFirstName() {
         return firstName;
@@ -204,5 +205,13 @@ public class ManagingOfficerIndividualDto {
 
     public void setChipsReference(String chipsReference) {
         this.chipsReference = chipsReference;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

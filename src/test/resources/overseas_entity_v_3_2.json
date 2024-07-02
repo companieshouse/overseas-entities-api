@@ -142,7 +142,8 @@
         "2"
       ],
       "ceased_date" : "2022-04-06",
-      "ch_reference" : "app"
+      "ch_reference" : "app",
+      "id" : "dcdacebf-e6fa-48ab-aa57-f3d4e2e528f1"
     }
   ],
   "beneficial_owners_corporate" : [
@@ -194,7 +195,8 @@
         "2"
       ],
       "ceased_date" : "2022-04-06",
-      "ch_reference" : "app"
+      "ch_reference" : "app",
+      "id" : "dcdlcebf-e23a-48ab-aa57-f3d4e78528f1"
     }
   ],
   "beneficial_owners_government_or_public_authority" : [
@@ -240,7 +242,8 @@
         "2"
       ],
       "ceased_date" : "2022-04-06",
-      "ch_reference" : "app"
+      "ch_reference" : "app",
+      "id" : "dc88cebf-e6fa-42ab-ab57-f3d4e2e518f1"
     }
   ],
   "managing_officers_individual" : [
@@ -282,7 +285,8 @@
       "role_and_responsibilities" : "DESC",
       "start_date" : "1999-08-01",
       "resigned_on" : "2009-08-01",
-      "ch_reference" : "app"
+      "ch_reference" : "app",
+      "id" : "dcdcdebf-e6fa-44ab-aa57-f3d4e2e528f1"
     }
   ],
   "managing_officers_corporate" : [
@@ -323,7 +327,8 @@
       "contact_email" : "WW@SOME.COM",
       "start_date" : "1999-08-01",
       "resigned_on" : "2009-08-01",
-      "ch_reference" : "app"
+      "ch_reference" : "app",
+      "id" : "dcdccebf-e6fa-48ab-aa57-f311e2e538f1"
     }
   ],
   "update" : {
@@ -381,7 +386,8 @@
           "2"
         ],
         "ceased_date" : "2022-04-06",
-        "ch_reference" : "RandomBoOther6789"
+        "ch_reference" : "RandomBoOther6789",
+        "id" : "/company/OE123456/persons-with-significant-control/individual-beneficial-owner/zWGKy0aCHpuDaTWHfRrLNR3Pkr4"
       }
     ],
     "review_beneficial_owners_corporate" : [
@@ -433,7 +439,8 @@
           "2"
         ],
         "ceased_date" : "2022-04-06",
-        "ch_reference" : "RandomBoOther6789"
+        "ch_reference" : "RandomBoOther6789",
+        "id" : "/company/OE123456/persons-with-significant-control/corporate-entity-beneficial-owner/XNsrmgVpfhT4sXdTlVqsdDXoCHA"
       },
       {
         "name" : "Mr Random Notreal no1BoOther",
@@ -485,7 +492,8 @@
           "2"
         ],
         "ceased_date" : "2022-04-06",
-        "ch_reference" : "RandomBoOther12345"
+        "ch_reference" : "RandomBoOther12345",
+        "id" : "/company/OE123456/persons-with-significant-control/corporate-entity-beneficial-owner/XNlkmgVpfhT4s3dTlVqs2DXoCHA"
       }
     ],
     "review_beneficial_owners_government_or_public_authority" : [
@@ -531,7 +539,8 @@
           "2"
         ],
         "ceased_date" : "2022-04-06",
-        "ch_reference" : "RandomBoGov6789"
+        "ch_reference" : "RandomBoGov6789",
+        "id" : "/company/OE123456/persons-with-significant-control/government-beneficial-owner/XNsrwrVpfhT4sXdTl45sdDXoCHA"
       }
     ],
     "review_managing_officers_individual" : [
@@ -573,7 +582,8 @@
         "role_and_responsibilities" : "roles",
         "start_date" : "1999-08-01",
         "resigned_on" : "2009-08-01",
-        "ch_reference" : "app4"
+        "ch_reference" : "app4",
+        "id" : "/company/OE001022/persons-with-significant-control/individual-managing-officer/zLGKy0aCHpuDaTWHfRrLNR3Pkr4"
       }
     ],
     "review_managing_officers_corporate" : [
@@ -614,7 +624,8 @@
         "contact_email" : "js@email.com",
         "start_date" : "1999-08-01",
         "resigned_on" : "2009-08-01",
-        "ch_reference" : "MOcorp1"
+        "ch_reference" : "MOcorp1",
+        "id" : "/company/OE001022/persons-with-significant-control/corporate-managing-officer/XNsrmgVpfhT4sLfTlVq37DXoCHA"
       }
     ],
     "review_trusts": [
