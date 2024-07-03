@@ -6,11 +6,15 @@ import java.time.LocalDate;
 
 public class HistoricalBeneficialOwnerDto {
 
+    public static final String ID_FIELD = "id";
     public static final String FORENAME_FIELD = "forename";
     public static final String SURNAME_FIELD = "surname";
     public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String NOTIFIED_DATE_FIELD = "notified_date";
     public static final String CORPORATE_NAME_FIELD = "corporate_name";
+
+    @JsonProperty(ID_FIELD)
+    private String id;
 
     @JsonProperty(FORENAME_FIELD)
     private String forename;
@@ -32,6 +36,14 @@ public class HistoricalBeneficialOwnerDto {
 
     @JsonProperty(CORPORATE_NAME_FIELD)
     private String corporateName;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getForename() {
         return forename;

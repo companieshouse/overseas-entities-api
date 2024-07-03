@@ -6,6 +6,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 import java.time.LocalDate;
 
 public class TrustCorporateDao {
+    @Field("id")
+    private String id;
+
     @Field("type")
     private BeneficialOwnerType type;
 
@@ -47,6 +50,14 @@ public class TrustCorporateDao {
 
     @Field("ceased_date")
     private LocalDate ceasedDate;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public BeneficialOwnerType getType() {
         return type;
