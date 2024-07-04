@@ -11,6 +11,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCor
 
 public class TrustIndividualDto {
 
+    public static final String ID_FIELD = "id";
     public static final String FORENAME_FIELD = "forename";
     public static final String SURNAME_FIELD = "surname";
     public static final String DATE_OF_BIRTH_FIELD = "date_of_birth";
@@ -39,6 +40,9 @@ public class TrustIndividualDto {
     public static final String SA_ADDRESS_POSTAL_CODE_FIELD = "sa_address_postal_code";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
     public static final String IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD = "is_individual_still_involved_in_trust";
+
+    @JsonProperty(ID_FIELD)
+    private String id;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(FORENAME_FIELD)
@@ -160,6 +164,14 @@ public class TrustIndividualDto {
 
     @JsonProperty(IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD)
     private Boolean isIndividualStillInvolvedInTrust;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;

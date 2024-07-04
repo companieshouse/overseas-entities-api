@@ -12,6 +12,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 
 public class TrustCorporateDto {
 
+    public static final String ID_FIELD = "id";
     public static final String NAME_FIELD = "name";
     public static final String TYPE_FIELD = "type";
     public static final String DATE_BECAME_INTERESTED_PERSON_FIELD = "date_became_interested_person";
@@ -25,8 +26,10 @@ public class TrustCorporateDto {
     public static final String IDENTIFICATION_REGISTRATION_NUMBER_FIELD = "identification_registration_number";
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
     public static final String IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD = "is_corporate_still_involved_in_trust";
-
     public static final String CEASED_DATE_FIELD = "ceased_date";
+
+    @JsonProperty(ID_FIELD)
+    private String id;
 
     @JsonProperty(TYPE_FIELD)
     private String type;
@@ -152,6 +155,14 @@ public class TrustCorporateDto {
 
     @JsonProperty(CEASED_DATE_FIELD)
     private LocalDate ceasedDate;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;

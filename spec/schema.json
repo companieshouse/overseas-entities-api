@@ -1212,6 +1212,10 @@
       "TrustIndividual": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "dcdacebf-e6fa-48ab-aa57-f3d4e2e528f1"
+          },
           "type": {
             "type": "string"
           },
@@ -1307,6 +1311,10 @@
       "TrustCorporate": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "dcdacebf-e6fa-48ab-aa57-f3d4e2e528f1"
+          },
           "type": {
             "type": "string"
           },
@@ -1436,6 +1444,10 @@
       "HistoricalBeneficialOwner": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "dcdacebf-e6fa-48ab-aa57-f3d4e2e528f1"
+          },
           "forename": {
             "type": "string"
           },

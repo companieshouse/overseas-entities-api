@@ -646,6 +646,7 @@
         },
         "historical_beneficial_owners" : [
           {
+            "id": "372cc8c2-6057-41f9-9a49-679bfff8a688",
             "forename" : "string",
             "other_forenames" : "string",
             "surname" : "string",
@@ -657,6 +658,7 @@
         ],
         "individuals" : [
           {
+            "id": "53cdc25b-a459-459e-af70-cad30b15a0ff",
             "type" : "GRANTOR",
             "forename" : "string",
             "other_forenames" : "string",
@@ -695,6 +697,7 @@
         ],
         "corporates" : [
           {
+            "id": "d3aef9f2-b900-421a-a3fc-b2fbd3137f67",
             "type" : "BENEFICIARY",
             "name" : "string",
             "is_service_address_same_as_principal_address" : false,
@@ -752,6 +755,7 @@
       "unable_to_obtain_all_trust_info" : true,
       "historical_beneficial_owners" : [
         {
+          "id": "372cc8c2-6057-41f9-9a49-679bfff8a688",
           "forename" : "string",
           "other_forenames" : "string",
           "surname" : "string",
@@ -763,6 +767,7 @@
       ],
       "individuals" : [
         {
+          "id": "53cdc25b-a459-459e-af70-cad30b15a0ff",
           "type" : "GRANTOR",
           "forename" : "string",
           "other_forenames" : "string",
@@ -802,6 +807,7 @@
       ],
       "corporates" : [
         {
+          "id": "d3aef9f2-b900-421a-a3fc-b2fbd3137f67",
           "type" : "BENEFICIARY",
           "name" : "string",
           "is_service_address_same_as_principal_address" : false,

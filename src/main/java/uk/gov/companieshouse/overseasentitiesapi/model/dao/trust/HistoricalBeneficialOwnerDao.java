@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.LocalDate;
 
 public class HistoricalBeneficialOwnerDao {
+    @Field("id")
+    private String id;
 
     @Field("forename")
     private String forename;
@@ -26,6 +28,14 @@ public class HistoricalBeneficialOwnerDao {
 
     @Field("corporate_name")
     private String corporateName;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getForename() {
         return forename;

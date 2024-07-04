@@ -7,6 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.AddressDao;
 
 public class TrustIndividualDao {
+    @Field("id")
+    private String id;
+
     @Field("type")
     private BeneficialOwnerType type;
 
@@ -45,6 +48,14 @@ public class TrustIndividualDao {
 
     @Field("is_individual_still_involved_in_trust")
     private Boolean isIndividualStillInvolvedInTrust;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public BeneficialOwnerType getType() {
         return type;
