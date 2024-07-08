@@ -30,6 +30,7 @@ public class OverseasEntitySubmissionDto {
     public static final String IS_REMOVE_FIELD = "is_remove";
     public static final String UPDATE_FIELD = "update";
     public static final String REMOVE_FIELD = "remove";
+    public static final String HAS_SOLD_LAND_FIELD = "has_sold_land";
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -79,6 +80,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(IS_REMOVE_FIELD)
     private Boolean isRemove;
+
+    @JsonProperty(HAS_SOLD_LAND_FIELD)
+    private Boolean hasSoldLand;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -224,6 +228,14 @@ public class OverseasEntitySubmissionDto {
 
     public void setIsRemove(Boolean isRemove) {
         this.isRemove = isRemove;
+    }
+
+    public Boolean getHasSoldLand() {
+        return hasSoldLand;
+    }
+
+    public void setHasSoldLand(Boolean hasSoldLand) {
+        this.hasSoldLand = hasSoldLand;
     }
 
     public Map<String, String> getLinks() {

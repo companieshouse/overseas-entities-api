@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.UPDATE_FIELD;
 
@@ -462,11 +463,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(false);
     }
 
-    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialUpdateValidation() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(true);
-    }
-
     void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(boolean isUpdateTest) throws ServiceException {
         buildOverseasEntitySubmissionDto();
         if (isUpdateTest) {
@@ -865,6 +861,72 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testErrorNotReportedForMissingHasSoldLandFieldForPartialValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorNotReportedForMissingHasSoldLandFieldForFullValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(null);   // Will be missing (but still valid) if it's an update or remove submission
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorNotReportedWhenHasSoldLandFieldIsFalseForPartialValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorNotReportedWhenHasSoldLandFieldIsFalseForFullValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedWhenHasSoldLandFieldIsTrueForPartialValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        String qualifiedFieldName = HAS_SOLD_LAND_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedWhenHasSoldLandFieldIsTrueForFullValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        String qualifiedFieldName = HAS_SOLD_LAND_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
@@ -962,6 +1024,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
         overseasEntitySubmissionDto.setUpdate(updateDto);
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {

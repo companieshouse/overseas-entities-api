@@ -72,6 +72,9 @@ public class OverseasEntitySubmissionDao {
     @Field("is_remove")
     private Boolean isRemove;
 
+    @Field("has_sold_land")
+    private Boolean hasSoldLand;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -219,6 +222,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setIsRemove(Boolean isRemove) {
         this.isRemove = isRemove;
+    }
+
+    public Boolean getHasSoldLand() {
+        return hasSoldLand;
+    }
+
+    public void setHasSoldLand(Boolean hasSoldLand) {
+        this.hasSoldLand = hasSoldLand;
     }
 
     public void setLinks(Map<String, String> links) {
