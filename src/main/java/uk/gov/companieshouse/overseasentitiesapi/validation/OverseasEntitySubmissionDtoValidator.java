@@ -272,7 +272,7 @@ public class OverseasEntitySubmissionDtoValidator {
         if (Boolean.TRUE.equals(hasSoldLand)) {
             // The 'has_sold_land' field is a top-level field in the submission and as such has no parent
             String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
-            String errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }
