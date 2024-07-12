@@ -381,6 +381,9 @@
           },
           "is_remove": {
             "type": "boolean"
+          },
+          "has_secure_register": {
+            "type": "boolean"
           }
         }
       },

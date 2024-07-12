@@ -123,6 +123,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), errors, loggingContext);
+
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
@@ -209,6 +211,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), errors, loggingContext);
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
@@ -259,6 +262,15 @@ public class OverseasEntitySubmissionDtoValidator {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.UPDATE_FIELD,
                     UpdateDto.FILING_DATE);
             String errorMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+    }
+
+    private void validateHasSecureRegister(Boolean hasSecureRegister, Errors errors, String loggingContext) {
+        if (Boolean.TRUE.equals(hasSecureRegister) || hasSecureRegister == null) {
+            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD;
+            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }
