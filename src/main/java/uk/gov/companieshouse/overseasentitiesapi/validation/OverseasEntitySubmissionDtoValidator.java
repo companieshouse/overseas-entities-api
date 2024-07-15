@@ -36,9 +36,6 @@ public class OverseasEntitySubmissionDtoValidator {
     private final UpdateValidator updateValidator;
     private final RemoveValidator removeValidator;
 
-    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
-    private boolean isRoeUpdateEnabled;
-
     @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
     private boolean isTrustWebEnabled;
 
@@ -69,7 +66,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validateFull(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
 
-        if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
+        if (overseasEntitySubmissionDto.isForUpdate()) {
             validateFullUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext, passThroughTokenHeader);
         } else if (overseasEntitySubmissionDto.isForRemove()) {
             validateFullRemoveDetails(overseasEntitySubmissionDto, errors, loggingContext);
@@ -167,7 +164,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartial(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext, String passThroughTokenHeader) throws ServiceException {
-        if (isRoeUpdateEnabled && overseasEntitySubmissionDto.isForUpdate()) {
+        if (overseasEntitySubmissionDto.isForUpdate()) {
              validatePartialUpdateDetails(overseasEntitySubmissionDto, errors, loggingContext, passThroughTokenHeader);
              return errors;
         } else if (overseasEntitySubmissionDto.isForRemove()) {
