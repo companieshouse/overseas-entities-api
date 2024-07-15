@@ -788,18 +788,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndUpdateFlagTrue() throws ServiceException {
-//        setIsRoeUpdateEnabledFeatureFlag(true);
-        buildOverseasEntityUpdateSubmissionDtoWithFullDto();
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        verifyValidateFull(false);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testRegistrationSubmissionCalledWithEntityNumberAndUpdateFlagFalse() throws ServiceException {
-//        setIsRoeUpdateEnabledFeatureFlag(false);
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+    void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndOnUpdate() throws ServiceException {
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         verifyValidateFull(false);
