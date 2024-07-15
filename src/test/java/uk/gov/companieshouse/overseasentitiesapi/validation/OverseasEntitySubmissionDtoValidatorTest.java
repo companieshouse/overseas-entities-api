@@ -867,7 +867,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNotErrorReportedForHasSecureRegisterFieldSetToFalseForFullValidation() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldIsFalseForFullValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -875,7 +875,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForHasSecureRegisterFieldSetToTrueForFullValidation() throws ServiceException {
+    void testErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForFullValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(true);
 
@@ -886,7 +886,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingHasSecureRegisterFieldForFullValidation() throws ServiceException {
+    void testErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForFullValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(null);
 
@@ -897,7 +897,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNotErrorReportedForHasSecureRegisterFieldSetToFalseForPartialValidation() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldIsFalseForPartialValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -905,7 +905,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNotErrorReportedForHasSecureRegisterFieldSetToTrueForPartialValidation() throws ServiceException {
+    void testErrorReportedDuringRegistrationWhenHasSecureRegisterFieldIsTrueForPartialValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(true);
 
@@ -916,7 +916,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedForMissingHasSecureRegisterFieldForPartialValidation() throws ServiceException {
+    void testErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForPartialValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(null);
 
