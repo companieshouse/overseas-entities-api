@@ -211,8 +211,6 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), errors, loggingContext);
-
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityNameValidator.validate(entityNameDto, errors, loggingContext);
