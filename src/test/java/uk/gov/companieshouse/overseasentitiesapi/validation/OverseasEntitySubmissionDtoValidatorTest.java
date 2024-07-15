@@ -880,7 +880,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setHasSecureRegister(true);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + true;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -891,7 +891,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setHasSecureRegister(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + null;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -910,7 +910,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setHasSecureRegister(true);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + true;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
@@ -921,7 +921,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setHasSecureRegister(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + null;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
