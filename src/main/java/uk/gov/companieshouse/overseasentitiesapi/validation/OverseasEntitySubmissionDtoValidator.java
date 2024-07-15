@@ -269,7 +269,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private void validateHasSecureRegister(Boolean hasSecureRegister, Errors errors, String loggingContext) {
         if (Boolean.TRUE.equals(hasSecureRegister) || hasSecureRegister == null) {
-            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD;
+            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD + ": " + hasSecureRegister;
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
