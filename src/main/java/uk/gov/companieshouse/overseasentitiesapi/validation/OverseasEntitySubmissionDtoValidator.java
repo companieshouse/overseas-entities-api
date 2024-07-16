@@ -42,6 +42,9 @@ public class OverseasEntitySubmissionDtoValidator {
     @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
     private boolean isTrustWebEnabled;
 
+    @Value("${FEATURE_FLAG_ENABLE_REDIS_REMOVAL_15072024:false}")
+    private boolean isRedisRemovalEnabled;
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -123,7 +126,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), errors, loggingContext);
+        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), true, errors, loggingContext);
 
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -211,6 +214,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateHasSecureRegister(overseasEntitySubmissionDto.getHasSecureRegister(), false, errors, loggingContext);
+
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
             entityNameValidator.validate(entityNameDto, errors, loggingContext);
@@ -265,9 +270,20 @@ public class OverseasEntitySubmissionDtoValidator {
         }
     }
 
-    private void validateHasSecureRegister(Boolean hasSecureRegister, Errors errors, String loggingContext) {
-        if (Boolean.TRUE.equals(hasSecureRegister) || hasSecureRegister == null) {
-            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD + ": " + hasSecureRegister;
+    private void validateHasSecureRegister(Boolean hasSecureRegister, boolean isFullRegistration, Errors errors, String loggingContext) {
+        if (!isRedisRemovalEnabled) {
+            return;
+        }
+
+        String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD;
+
+        if (isFullRegistration && hasSecureRegister == null) {
+            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+
+        if (Boolean.TRUE.equals(hasSecureRegister)) {
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);

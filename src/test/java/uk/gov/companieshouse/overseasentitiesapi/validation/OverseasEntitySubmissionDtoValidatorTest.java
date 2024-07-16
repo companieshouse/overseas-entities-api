@@ -866,6 +866,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    // HAS SECURE REGISTER
+    // full validation
     @Test
     void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldIsFalseForFullValidation() throws ServiceException {
         buildOverseasEntitySubmissionDto();
@@ -875,25 +877,98 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForFullValidation() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(true);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + true;
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
     @Test
-    void testErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForFullValidation() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setHasSecureRegister(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD + ": " + null;
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    // partial validation
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldIsFalseForPartialValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenHasSecureRegisterFieldSetToTrueForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = HAS_SECURE_REGISTER_FIELD;
         String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
         assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationForMissingHasSecureRegisterFieldForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
     }
 
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
@@ -1039,5 +1114,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void setIsTrustWebEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
+    }
+
+    private void setIsRedisRemovalEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isRedisRemovalEnabled", value);
     }
 }
