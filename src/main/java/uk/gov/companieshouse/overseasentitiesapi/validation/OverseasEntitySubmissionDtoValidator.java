@@ -42,9 +42,8 @@ public class OverseasEntitySubmissionDtoValidator {
     @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
     private boolean isTrustWebEnabled;
 
-    @Value("${FEATURE_FLAG_ENABLE_REDIS_REMOVAL_11072024:false}")
+    @Value("${FEATURE_FLAG_ENABLE_REDIS_REMOVAL_15072024:false}")
     private boolean isRedisRemovalEnabled;
-    // check if required based on web PR from Moses!!!
 
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
@@ -273,17 +272,19 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateHasSoldLand(Boolean hasSoldLand, boolean isFullValidation, Errors errors, String loggingContext) {
-        // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
-        String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
+        if (isRedisRemovalEnabled) {
+            // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
+            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
 
-        if (isFullValidation && hasSoldLand == null) {
-            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
-            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
-            ApiLogger.infoContext(loggingContext, errorMessage);
-        } else if (Boolean.TRUE.equals(hasSoldLand)) {
-            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
-            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
-            ApiLogger.infoContext(loggingContext, errorMessage);
+            if (isFullValidation && hasSoldLand == null) {
+                var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+                ApiLogger.infoContext(loggingContext, errorMessage);
+            } else if (Boolean.TRUE.equals(hasSoldLand)) {
+                var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+                ApiLogger.infoContext(loggingContext, errorMessage);
+            }
         }
     }
 }
