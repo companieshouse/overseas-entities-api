@@ -91,7 +91,7 @@ public class OverseasEntitiesService {
                                                         OverseasEntitySubmissionDto overseasEntitySubmissionDto,
                                                         String requestId,
                                                         String userId) throws ServiceException {
-        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...), with 'add resume link'");
+        ApiLogger.debugContext(requestId, "Called createOverseasEntity(...)");
 
         if (hasExistingOverseasEntitySubmission(transaction)) {
             return ResponseEntity.badRequest().body(String.format("Transaction id: %s has an existing Overseas Entity submission", transaction.getId()));
