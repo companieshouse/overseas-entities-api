@@ -164,7 +164,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     public void setId(String id) {
         this.id = id;
     }
-    public boolean getRelevantPeriod() { return relevantPeriod;
-    }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
     public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

@@ -30,6 +30,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setTrusteesNatureOfControlTypes(naturesOfControl);
         dao.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dao.setOnSanctionsList(false);
+        dao.setRelevantPeriod(true);
         return dao;
     }
 
@@ -51,6 +52,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setTrusteesNatureOfControlTypes(naturesOfControl);
         dao.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dao.setOnSanctionsList(false);
+        dao.setRelevantPeriod(true);
         return dao;
     }
 
@@ -68,6 +70,7 @@ public class BeneficialOwnerAllFieldsMock {
         dao.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
         dao.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dao.setOnSanctionsList(true);
+        dao.setRelevantPeriod(false);
         return dao;
     }
 
@@ -87,6 +90,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setTrusteesNatureOfControlTypes(naturesOfControl);
         dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dto.setOnSanctionsList(false);
+        dto.setRelevantPeriod(true);
         return dto;
     }
 
@@ -108,6 +112,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setTrusteesNatureOfControlTypes(naturesOfControl);
         dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dto.setOnSanctionsList(false);
+        dto.setRelevantPeriod(true);
         return dto;
     }
 
@@ -125,6 +130,7 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
         dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dto.setOnSanctionsList(true);
+        dto.setRelevantPeriod(false);
         return dto;
     }
 }

@@ -51,6 +51,9 @@ public class TrustCorporateDao {
     @Field("ceased_date")
     private LocalDate ceasedDate;
 
+    @Field("relevant_period")
+    private boolean relevantPeriod;
+
     public String getId() {
         return id;
     }
@@ -170,4 +173,8 @@ public class TrustCorporateDao {
     public void setCeasedDate(LocalDate ceasedDate) {
         this.ceasedDate = ceasedDate;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

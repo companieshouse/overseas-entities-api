@@ -89,6 +89,7 @@ public class BeneficialOwnerIndividualDto {
 
     @JsonProperty(ID_FIELD)
     private String id;
+
     @JsonProperty(RELEVANT_PERIOD_FIELD)
     private boolean relevantPeriod;
 

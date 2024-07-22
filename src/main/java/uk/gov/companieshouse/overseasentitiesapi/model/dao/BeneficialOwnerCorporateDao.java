@@ -61,6 +61,7 @@ public class BeneficialOwnerCorporateDao {
 
     @Field("id")
     private String id;
+
     @Field("relevant_period")
     private boolean relevantPeriod;
 
