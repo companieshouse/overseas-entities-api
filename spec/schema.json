@@ -382,7 +382,7 @@
           "is_remove": {
             "type": "boolean"
           },
-          "has_secure_register": {
+          "is_secure_register": {
             "type": "boolean"
           }
         }

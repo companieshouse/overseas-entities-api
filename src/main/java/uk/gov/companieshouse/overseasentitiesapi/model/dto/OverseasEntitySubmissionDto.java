@@ -30,7 +30,7 @@ public class OverseasEntitySubmissionDto {
     public static final String IS_REMOVE_FIELD = "is_remove";
     public static final String UPDATE_FIELD = "update";
     public static final String REMOVE_FIELD = "remove";
-    public static final String HAS_SECURE_REGISTER_FIELD = "has_secure_register";
+    public static final String IS_SECURE_REGISTER_FIELD = "is_secure_register";
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -81,7 +81,7 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(IS_REMOVE_FIELD)
     private Boolean isRemove;
 
-    @JsonProperty(HAS_SECURE_REGISTER_FIELD)
+    @JsonProperty(IS_SECURE_REGISTER_FIELD)
     private Boolean hasSecureRegister;
 
     @JsonProperty("links")

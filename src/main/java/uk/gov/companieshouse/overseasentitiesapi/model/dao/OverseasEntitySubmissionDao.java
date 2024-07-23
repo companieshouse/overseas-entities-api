@@ -72,8 +72,8 @@ public class OverseasEntitySubmissionDao {
     @Field("is_remove")
     private Boolean isRemove;
 
-    @Field("has_secure_register")
-    private Boolean hasSecureRegister;
+    @Field("is_secure_register")
+    private Boolean isSecureRegister;
 
     @Field("trusts")
     private List<TrustDataDao> trusts;
@@ -213,11 +213,11 @@ public class OverseasEntitySubmissionDao {
     }
 
     public Boolean getHasSecureRegister() {
-        return hasSecureRegister;
+        return isSecureRegister;
     }
 
     public void setHasSecureRegister(Boolean hasSecureRegister) {
-        this.hasSecureRegister = hasSecureRegister;
+        this.isSecureRegister = hasSecureRegister;
     }
 
     public Map<String, String> getLinks() {

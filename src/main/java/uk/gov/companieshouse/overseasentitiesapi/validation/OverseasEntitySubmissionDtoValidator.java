@@ -275,7 +275,7 @@ public class OverseasEntitySubmissionDtoValidator {
             return;
         }
 
-        String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SECURE_REGISTER_FIELD;
+        String qualifiedFieldName = OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
 
         if (isFullRegistration && hasSecureRegister == null) {
             var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);

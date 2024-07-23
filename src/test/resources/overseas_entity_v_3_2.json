@@ -741,7 +741,7 @@
     "change_beneficiary_relevant_period" : "CHANGE_BENEFICIARY_RELEVANT_PERIOD"
   },
   "is_remove" : true,
-  "has_secure_register" : true,
+  "is_secure_register" : true,
   "remove" : {
     "is_not_proprietor_of_land" : true
   },
