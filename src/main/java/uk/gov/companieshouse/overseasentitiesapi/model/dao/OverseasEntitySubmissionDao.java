@@ -72,6 +72,9 @@ public class OverseasEntitySubmissionDao {
     @Field("is_remove")
     private Boolean isRemove;
 
+    @Field("has_sold_land")
+    private Boolean hasSoldLand;
+
     @Field("is_secure_register")
     private Boolean isSecureRegister;
 
@@ -212,14 +215,6 @@ public class OverseasEntitySubmissionDao {
         this.remove = remove;
     }
 
-    public Boolean getHasSecureRegister() {
-        return isSecureRegister;
-    }
-
-    public void setHasSecureRegister(Boolean hasSecureRegister) {
-        this.isSecureRegister = hasSecureRegister;
-    }
-
     public Map<String, String> getLinks() {
         return links;
     }
@@ -230,6 +225,22 @@ public class OverseasEntitySubmissionDao {
 
     public void setIsRemove(Boolean isRemove) {
         this.isRemove = isRemove;
+    }
+
+    public Boolean getHasSoldLand() {
+        return hasSoldLand;
+    }
+
+    public void setHasSoldLand(Boolean hasSoldLand) {
+        this.hasSoldLand = hasSoldLand;
+    }
+
+    public Boolean getIsSecureRegister() {
+        return isSecureRegister;
+    }
+
+    public void setIsSecureRegister(Boolean hasSecureRegister) {
+        this.isSecureRegister = hasSecureRegister;
     }
 
     public void setLinks(Map<String, String> links) {

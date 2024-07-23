@@ -30,6 +30,7 @@ public class OverseasEntitySubmissionDto {
     public static final String IS_REMOVE_FIELD = "is_remove";
     public static final String UPDATE_FIELD = "update";
     public static final String REMOVE_FIELD = "remove";
+    public static final String HAS_SOLD_LAND_FIELD = "has_sold_land";
     public static final String IS_SECURE_REGISTER_FIELD = "is_secure_register";
 
     @JsonProperty(ENTITY_NAME_FIELD)
@@ -81,8 +82,11 @@ public class OverseasEntitySubmissionDto {
     @JsonProperty(IS_REMOVE_FIELD)
     private Boolean isRemove;
 
+    @JsonProperty(HAS_SOLD_LAND_FIELD)
+    private Boolean hasSoldLand;
+
     @JsonProperty(IS_SECURE_REGISTER_FIELD)
-    private Boolean hasSecureRegister;
+    private Boolean isSecureRegister;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -230,12 +234,20 @@ public class OverseasEntitySubmissionDto {
         this.isRemove = isRemove;
     }
 
-    public Boolean getHasSecureRegister() {
-        return hasSecureRegister;
+    public Boolean getHasSoldLand() {
+        return hasSoldLand;
     }
 
-    public void setHasSecureRegister(Boolean hasSecureRegister) {
-        this.hasSecureRegister = hasSecureRegister;
+    public void setHasSoldLand(Boolean hasSoldLand) {
+        this.hasSoldLand = hasSoldLand;
+    }
+
+    public Boolean getIsSecureRegister() {
+        return isSecureRegister;
+    }
+
+    public void setIsSecureRegister(Boolean isSecureRegister) {
+        this.isSecureRegister = isSecureRegister;
     }
 
     public Map<String, String> getLinks() {
