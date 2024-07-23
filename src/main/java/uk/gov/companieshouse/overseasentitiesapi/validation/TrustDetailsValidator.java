@@ -36,7 +36,6 @@ public class TrustDetailsValidator {
             validateName(trustDataDto.getTrustName(), errors, loggingContext);
             validateCreationDate(trustDataDto.getCreationDate(), errors, loggingContext);
 
-
             if (isFullValidation) {
                 if (overseasEntitySubmissionDto.isForUpdateOrRemove()) {
                     // Validation of the ceased date should only be performed if full validation is running (just before the
@@ -45,7 +44,7 @@ public class TrustDetailsValidator {
                     validateCeasedDate(overseasEntitySubmissionDto, trustDataDto, errors, loggingContext);
                 } else if (!areBeneficialOwnersStillLinkedToThisTrust(overseasEntitySubmissionDto, trustDataDto.getTrustId())) {
                     // For Registration submissions it's just necessary to check that there are BOs assigned to the trust
-                    final String errorMessage = String.format(ValidationMessages.NO_BOS_FOR_TRUST, trustDataDto.getTrustName());
+                    final var errorMessage = String.format(ValidationMessages.NO_BOS_FOR_TRUST, trustDataDto.getTrustName());
                     setErrorMsgToLocation(errors, OverseasEntitySubmissionDto.TRUST_DATA, errorMessage);
                     ApiLogger.infoContext(loggingContext, errorMessage);
                 }
