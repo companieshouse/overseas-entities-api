@@ -22,6 +22,7 @@ public class ValidationMessages {
     public static final String NATIONALITY_NOT_ON_LIST_ERROR_MESSAGE = "%s is not on the list of nationalities";
     public static final String SECOND_NATIONALITY_SHOULD_BE_DIFFERENT = "%s should not be the same as the nationality given";
     public static final String DUPLICATE_TRUST_ID = "Duplicate Trust Id for %s";
+    public static final String NO_BOS_FOR_TRUST = "No beneficial owners are assigned to %s";
     public static final String CEASED_DATE_BEFORE_START_DATE_ERROR_MESSAGE = "%s must be on or after the appointed date";
     public static final String CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE = "%s must be on or after the creation date";
     public static final String CEASED_DATE_BEFORE_DATE_BECAME_INTERESTED_ERROR_MESSAGE = "%s must be on or after the date the entity became interested in the trust";
