@@ -291,20 +291,20 @@ public class OverseasEntitySubmissionDtoValidator {
         }
     }
 
-    private void validateIsSecureRegister(Boolean hasSecureRegister, boolean isFullRegistration, Errors errors, String loggingContext) {
+    private void validateIsSecureRegister(Boolean isSecureRegister, boolean isFullRegistration, Errors errors, String loggingContext) {
         if (!isRedisRemovalEnabled) {
             return;
         }
 
         String qualifiedFieldName = OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
 
-        if (isFullRegistration && hasSecureRegister == null) {
+        if (isFullRegistration && isSecureRegister == null) {
             var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }
 
-        if (Boolean.TRUE.equals(hasSecureRegister)) {
+        if (Boolean.TRUE.equals(isSecureRegister)) {
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);

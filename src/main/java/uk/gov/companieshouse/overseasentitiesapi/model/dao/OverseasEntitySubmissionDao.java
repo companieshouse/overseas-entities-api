@@ -239,8 +239,8 @@ public class OverseasEntitySubmissionDao {
         return isSecureRegister;
     }
 
-    public void setIsSecureRegister(Boolean hasSecureRegister) {
-        this.isSecureRegister = hasSecureRegister;
+    public void setIsSecureRegister(Boolean isSecureRegister) {
+        this.isSecureRegister = isSecureRegister;
     }
 
     public void setLinks(Map<String, String> links) {
