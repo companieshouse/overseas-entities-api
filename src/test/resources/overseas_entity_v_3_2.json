@@ -805,7 +805,8 @@
           },
           "date_became_interested_person" : "2022-06-10",
           "ceased_date" : "2024-02-29",
-          "is_individual_still_involved_in_trust" : false
+          "is_individual_still_involved_in_trust" : false,
+          "relevant_period": false
         }
       ],
       "corporates" : [
@@ -846,7 +847,8 @@
           "identification_registration_number" : "string",
           "date_became_interested_person" : "2022-06-10",
           "is_corporate_still_involved_in_trust" : false,
-          "ceased_date" : "2022-06-11"
+          "ceased_date" : "2022-06-11",
+          "relevant_period": true
         }
       ]
     }
