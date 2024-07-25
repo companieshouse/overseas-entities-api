@@ -126,6 +126,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), true, errors, loggingContext);
+
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
@@ -214,6 +216,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), false, errors, loggingContext);
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
@@ -285,6 +288,26 @@ public class OverseasEntitySubmissionDtoValidator {
                 setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
                 ApiLogger.infoContext(loggingContext, errorMessage);
             }
+        }
+    }
+
+    private void validateIsSecureRegister(Boolean isSecureRegister, boolean isFullRegistration, Errors errors, String loggingContext) {
+        if (!isRedisRemovalEnabled) {
+            return;
+        }
+
+        String qualifiedFieldName = OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
+
+        if (isFullRegistration && isSecureRegister == null) {
+            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+
+        if (Boolean.TRUE.equals(isSecureRegister)) {
+            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
         }
     }
 }

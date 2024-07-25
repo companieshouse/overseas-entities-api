@@ -384,6 +384,9 @@
           },
           "has_sold_land": {
             "type": "boolean"
+          },
+          "is_secure_register": {
+            "type": "boolean"
           }
         }
       },
