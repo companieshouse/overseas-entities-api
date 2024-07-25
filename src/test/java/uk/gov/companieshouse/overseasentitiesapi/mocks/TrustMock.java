@@ -30,6 +30,7 @@ public class TrustMock {
         TrustCorporateDao trustCorporateDao = getTrustCorporateDao();
         trustCorporateDaos.add(trustCorporateDao);
         trustDataDao.setCorporates(trustCorporateDaos);
+        trustDataDao.setRelevantPeriod(true);
     }
 
     public static TrustDataDao getTrustDataDao() {
@@ -137,6 +138,7 @@ public class TrustMock {
         TrustCorporateDto trustCorporateDto = getTrustCorporateDto();
         trustCorporateDtos.add(trustCorporateDto);
         trustDataDto.setCorporates(trustCorporateDtos);
+        trustDataDto.setRelevantPeriod(true);
     }
 
     public static TrustDataDto getTrustDataDto() {

@@ -55,6 +55,9 @@ public class TrustDataDto {
     @JsonProperty("CORPORATE")
     private List<TrustCorporateDto> corporates;
 
+    @JsonProperty(RELEVANT_PERIOD_FIELD)
+    private boolean relevantPeriod;
+
     public String getTrustId() {
         return trustId;
     }
@@ -130,4 +133,9 @@ public class TrustDataDto {
     public void setCorporates(List<TrustCorporateDto> trustCorporateDtos) {
         this.corporates = trustCorporateDtos;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod;
+    }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
  }
