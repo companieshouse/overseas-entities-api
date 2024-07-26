@@ -40,6 +40,7 @@ public class TrustIndividualDto {
     public static final String SA_ADDRESS_POSTAL_CODE_FIELD = "sa_address_postal_code";
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
     public static final String IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD = "is_individual_still_involved_in_trust";
+    public static final String RELEVANT_PERIOD_FIELD ="relevant_period";
 
     @JsonProperty(ID_FIELD)
     private String id;
@@ -164,6 +165,9 @@ public class TrustIndividualDto {
 
     @JsonProperty(IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD)
     private Boolean isIndividualStillInvolvedInTrust;
+
+    @JsonProperty(RELEVANT_PERIOD_FIELD)
+    private boolean relevantPeriod;
 
     public String getId() {
         return id;
@@ -458,4 +462,7 @@ public class TrustIndividualDto {
         isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
     }
 
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

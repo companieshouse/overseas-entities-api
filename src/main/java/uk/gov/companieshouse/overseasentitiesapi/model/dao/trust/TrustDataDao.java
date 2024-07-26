@@ -37,6 +37,10 @@ public class TrustDataDao {
     @Field("corporates")
     private List<TrustCorporateDao> corporates;
 
+    @Field("relevant_period")
+    private boolean relevantPeriod;
+
+
     public String getTrustId() {
         return trustId;
     }
@@ -112,4 +116,9 @@ public class TrustDataDao {
     public void setCorporates(List<TrustCorporateDao> corporates) {
         this.corporates = corporates;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
+
 }
