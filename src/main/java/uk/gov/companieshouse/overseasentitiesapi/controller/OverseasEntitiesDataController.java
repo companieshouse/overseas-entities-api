@@ -31,9 +31,6 @@ public class OverseasEntitiesDataController {
     PrivateDataRetrievalService privateDataRetrievalService;
     OverseasEntitiesService overseasEntitiesService;
 
-    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
-    private boolean isRoeUpdateEnabled;
-
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
 
@@ -62,8 +59,6 @@ public class OverseasEntitiesDataController {
             if (!submissionDto.isForUpdateOrRemove()) {
                 throw new ServiceException("Submission for overseas entity details must be for update or remove");
             }
-
-            isRoeUpdateFlagEnabled();
 
             return getOverseasEntityDataResponse(overseasEntityId, requestId, submissionDto, logMap);
 
@@ -120,7 +115,6 @@ public class OverseasEntitiesDataController {
         logMap.put(TRANSACTION_ID_KEY, transactionId);
         ApiLogger.infoContext(requestId, "Calling service to retrieve private beneficial owner information", logMap);
 
-        isRoeUpdateFlagEnabled();
         final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
         if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdateOrRemove()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
@@ -172,8 +166,6 @@ public class OverseasEntitiesDataController {
                 throw new ServiceException("Submission for overseas entity details must be for update or remove");
             }
 
-            isRoeUpdateFlagEnabled();
-
             return retrieveAndEvaluateManagingOfficerData(submissionDto, overseasEntityId, requestId, logMap);
         } else {
             ApiLogger.errorContext(requestId, "Could not find overseas entity submission for overseas entity " + overseasEntityId, null, logMap);
@@ -212,12 +204,6 @@ public class OverseasEntitiesDataController {
             managingOfficerData.setManagingOfficerAppointmentId(null);
         } catch (NoSuchAlgorithmException e) {
             throw new ServiceException("Cannot encode Managing Officer ID", e);
-        }
-    }
-
-    private void isRoeUpdateFlagEnabled() throws ServiceException {
-        if (!isRoeUpdateEnabled) {
-            throw new ServiceException("ROE Update feature must be enabled for get overseas entity details");
         }
     }
 

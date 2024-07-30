@@ -386,7 +386,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testErrorReportedForMissingPresenterFieldForUpdate() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
         overseasEntitySubmissionDto.setPresenter(null);
@@ -399,7 +398,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testErrorReportedForMissingPresenterFieldForNoChangeUpdate() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
         overseasEntitySubmissionDto.getUpdate().setNoChange(true);
@@ -531,7 +529,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidation() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
@@ -539,7 +536,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoUpdate() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
         overseasEntitySubmissionDto.setUpdate(null);
@@ -549,7 +545,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialRemoveValidationNoRemoveStatementFilingDateNotPresent() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
         overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -560,7 +555,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialRemoveValidationNoRemoveStatementFilingDateIsPresent() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
 
@@ -572,7 +566,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialRemoveValidationRemoveStatementPresentFilingDateNotPresent() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
 
         RemoveDto removeDto = new RemoveDto();
@@ -587,7 +580,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialRemoveValidationRemoveStatementPresentFilingDateIsPresent() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityRemoveSubmissionDto();
 
         RemoveDto removeDto = new RemoveDto();
@@ -604,7 +596,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoFilingDate() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111129");
         overseasEntitySubmissionDto.getUpdate().setFilingDate(null);
@@ -744,7 +735,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoEntity() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setEntity(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -754,7 +744,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationWithEntity() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         verify(entityDtoValidator, times(0)).validate(any(), any(), any());
@@ -763,7 +752,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationWithEntityNoEntityNumber() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -773,7 +761,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoDueDiligence() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
@@ -783,7 +770,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoAgentDueDiligence() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setDueDiligence(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -793,7 +779,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     @Test
     void testPartialUpdateValidationNoOverseasEntityDueDiligence() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -801,18 +786,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndUpdateFlagTrue() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
-        buildOverseasEntityUpdateSubmissionDtoWithFullDto();
-        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
-        verifyValidateFull(false);
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testRegistrationSubmissionCalledWithEntityNumberAndUpdateFlagFalse() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(false);
-        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+    void testRegistrationSubmissionCalledWhenEntityNumberIsNullAndOnUpdate() throws ServiceException {
         buildOverseasEntityUpdateSubmissionDtoWithFullDto();
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         verifyValidateFull(false);
@@ -946,7 +920,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     void testErrorNotReportedDuringUpdateForMissingHasSoldLandFieldForFullValidation() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(true);
-        setIsRoeUpdateEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
@@ -960,7 +933,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testErrorReportedDuringUpdateWhenHasSoldLandFieldIsTrueForFullValidation() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(true);
-        setIsRoeUpdateEnabledFeatureFlag(true);
 
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
@@ -1075,7 +1047,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
@@ -1094,7 +1065,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private Errors testFullUpdateRemoveValidationWithTrusts() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(true);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
@@ -1123,7 +1093,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private Errors testFullUpdateRemoveValidationWithoutBeneficialOwners() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(new ArrayList<>());
@@ -1139,7 +1108,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private Errors testFullUpdateRemoveValidationWithoutManagingOfficers() throws ServiceException {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setEntityNumber("OE111229");
@@ -1176,7 +1144,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(true);
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
@@ -1198,7 +1165,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     private void buildOverseasEntityUpdateSubmissionDtoWithFullDto() {
-        setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(true);
 
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
@@ -1210,10 +1176,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private void assertError(String qualifiedFieldName, String message, Errors errors) {
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
-    }
-
-    private void setIsRoeUpdateEnabledFeatureFlag(boolean value) {
-        ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isRoeUpdateEnabled", value);
     }
 
     private void setIsTrustWebEnabledFeatureFlag(boolean value) {

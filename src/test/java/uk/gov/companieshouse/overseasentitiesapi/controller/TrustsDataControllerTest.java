@@ -54,7 +54,6 @@ class TrustsDataControllerTest {
 
     @BeforeEach
     void setUp() {
-        setUpdateEnabledFeatureFlag(trustsDataController, true);
         lenient().when(overseasEntitySubmissionDto.isForUpdateOrRemove()).thenReturn(true);
         reset(privateDataRetrievalService, overseasEntitiesService);
         outputStreamCaptor = new ByteArrayOutputStream();
@@ -321,28 +320,6 @@ class TrustsDataControllerTest {
     }
 
     @Test
-    void retrievePrivateTrustData_updateEnabledFeatureFlagFalse() {
-
-        setUpdateEnabledFeatureFlag(trustsDataController, false);
-
-        when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
-                Optional.of(overseasEntitySubmissionDto));
-
-        var detailsThrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getTrustDetails("transactionId", "overseasEntityId", "requestId"));
-
-        var linksThrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getTrustLinks("transactionId", "overseasEntityId", "requestId"));
-
-        var corpTrusteeThrown = assertThrows(ServiceException.class,
-                () -> trustsDataController.getCorporateTrustees("transactionId", "overseasEntityId", "trustId", "requestId"));
-
-        assertEquals("ROE Update feature must be enabled for get overseas entity details", detailsThrown.getMessage());
-        assertEquals("ROE Update feature must be enabled for get overseas entity details", linksThrown.getMessage());
-        assertEquals("ROE Update feature must be enabled for get overseas entity details", corpTrusteeThrown.getMessage());
-    }
-
-    @Test
     void retrievePrivateTrustData_isForUpdateFalse() {
         when(overseasEntitiesService.getOverseasEntitySubmission(any())).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
@@ -405,9 +382,5 @@ class TrustsDataControllerTest {
         trustLinksApi.setId("1111");
         trustLinksApi.setCorporateBodyAppointmentId("8888");
         return trustLinksApi;
-    }
-
-    private void setUpdateEnabledFeatureFlag(TrustsDataController trustsDataController, boolean value) {
-        ReflectionTestUtils.setField(trustsDataController, "isRoeUpdateEnabled", value);
     }
 }

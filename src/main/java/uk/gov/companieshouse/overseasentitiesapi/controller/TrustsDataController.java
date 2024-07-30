@@ -37,8 +37,6 @@ public class TrustsDataController {
     private final PrivateDataRetrievalService privateDataRetrievalService;
     private final OverseasEntitiesService overseasEntitiesService;
 
-    @Value("${FEATURE_FLAG_ENABLE_ROE_UPDATE_24112022:false}")
-    private boolean isRoeUpdateEnabled;
     @Value("${PUBLIC_API_IDENTITY_HASH_SALT}")
     private String salt;
     private Map<String, Object> logMap;
@@ -138,10 +136,6 @@ public class TrustsDataController {
 
         if (!submissionDto.isForUpdateOrRemove()) {
             throw new ServiceException("Submission for overseas entity details must be for update or remove");
-        }
-        if (!isRoeUpdateEnabled) {
-            throw new ServiceException(
-                    "ROE Update feature must be enabled for get overseas entity details");
         }
 
         return submissionDto.getEntityNumber();
