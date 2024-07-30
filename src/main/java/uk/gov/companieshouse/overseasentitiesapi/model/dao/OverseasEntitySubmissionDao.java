@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
 
 import java.time.LocalDateTime;
@@ -77,6 +78,9 @@ public class OverseasEntitySubmissionDao {
 
     @Field("is_secure_register")
     private Boolean isSecureRegister;
+
+    @Field("who_is_registering")
+    private String whoIsRegistering;
 
     @Field("trusts")
     private List<TrustDataDao> trusts;
@@ -241,6 +245,16 @@ public class OverseasEntitySubmissionDao {
 
     public void setIsSecureRegister(Boolean isSecureRegister) {
         this.isSecureRegister = isSecureRegister;
+    }
+
+    public String getWhoIsRegistering() {
+        return whoIsRegistering;
+    }
+
+    public void setWhoIsRegistering(WhoIsRegisteringType whoIsRegistering) {
+        if (whoIsRegistering != null) {
+            this.whoIsRegistering = whoIsRegistering.getValue();
+        }
     }
 
     public void setLinks(Map<String, String> links) {

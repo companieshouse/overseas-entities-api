@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -127,6 +128,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), true, errors, loggingContext);
+        validateWhoIsRegistering(overseasEntitySubmissionDto.getWhoIsRegistering(), errors, loggingContext);
 
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -306,6 +308,20 @@ public class OverseasEntitySubmissionDtoValidator {
 
         if (Boolean.TRUE.equals(isSecureRegister)) {
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+    }
+
+    private void validateWhoIsRegistering(WhoIsRegisteringType whoIsRegistering, Errors errors, String loggingContext) {
+        if (!isRedisRemovalEnabled) {
+            return;
+        }
+
+        String qualifiedFieldName = OverseasEntitySubmissionDto.WHO_IS_REGISTERING;
+
+        if (whoIsRegistering == null) {
+            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }

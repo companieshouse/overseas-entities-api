@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -13,6 +13,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.UPDATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.WHO_IS_REGISTERING;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1074,6 +1075,66 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
     }
 
+    // WHO IS REGISTERING
+    // full validation
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToAgentForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering("agent");
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToSomeoneElseForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering("someone_else");
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = WHO_IS_REGISTERING;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToWrongValueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException
+    {
+        try {
+            setIsRedisRemovalEnabledFeatureFlag(true);
+            buildOverseasEntitySubmissionDto();
+            overseasEntitySubmissionDto.setWhoIsRegistering("wrong_value");
+
+        } catch(Exception e) {
+            assertEquals("No enum constant uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType.WRONG_VALUE", e.getMessage());
+        }
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+    ////////////
+
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
         setIsRoeUpdateEnabledFeatureFlag(true);
         setIsTrustWebEnabledFeatureFlag(false);
@@ -1173,6 +1234,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setUpdate(updateDto);
         overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
         overseasEntitySubmissionDto.setIsSecureRegister(false);
+        overseasEntitySubmissionDto.setWhoIsRegistering("agent");
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
@@ -1189,6 +1251,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
         overseasEntitySubmissionDto.setUpdate(updateDto);
         overseasEntitySubmissionDto.setIsSecureRegister(false);
+        overseasEntitySubmissionDto.setWhoIsRegistering("agent");
     }
 
     private void buildPartialOverseasEntityRemoveSubmissionDto() {
