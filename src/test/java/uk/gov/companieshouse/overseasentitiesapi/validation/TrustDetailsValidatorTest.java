@@ -280,6 +280,19 @@ class TrustDetailsValidatorTest {
     }
 
     @Test
+    void testErrorReportedWhenNoBosAssociatedWithTrustAndSubmissionIsARegistration() {
+        overseasEntitySubmissionDto.setEntityNumber(null);  // Make this submission a Registration
+
+        disassociateBosFromTrust();
+
+        Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);
+
+        String validationMessage = ValidationMessages.NO_BOS_FOR_TRUST.replace("%s", trustDataDtoList.get(0).getTrustName());
+
+        assertError(OverseasEntitySubmissionDto.TRUST_DATA, validationMessage, errors);
+    }
+
+    @Test
     void testErrorReportedWhenUnableToObtainAllTrustInfoFieldIsNull() {
         trustDataDtoList.getFirst().setUnableToObtainAllTrustInfo(null);
         Errors errors = trustDetailsValidator.validate(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, true);

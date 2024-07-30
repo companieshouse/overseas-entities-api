@@ -40,6 +40,7 @@ public class TrustMock {
         TrustCorporateDao trustCorporateDao = getTrustCorporateDao();
         trustCorporateDaos.add(trustCorporateDao);
         trustDataDao.setCorporates(trustCorporateDaos);
+        trustDataDao.setRelevantPeriod(true);
     }
 
     public static TrustDataDao getTrustDataDao() {
@@ -90,6 +91,7 @@ public class TrustMock {
         dao.setUsualResidentialAddress(AddressMock.getAddressDao());
         dao.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         dao.setType("Grantor");
+        dao.setRelevantPeriod(true);
 
         return dao;
     }
@@ -108,6 +110,7 @@ public class TrustMock {
         dao.setIdentificationRegistrationNumber("Registration Number");
         dao.setType("Beneficiary");
         dao.setOnRegisterInCountryFormedIn(true);
+        dao.setRelevantPeriod(false);
 
         return dao;
     }
@@ -145,6 +148,7 @@ public class TrustMock {
         TrustCorporateDto trustCorporateDto = getTrustCorporateDto();
         trustCorporateDtos.add(trustCorporateDto);
         trustDataDto.setCorporates(trustCorporateDtos);
+        trustDataDto.setRelevantPeriod(true);
     }
 
     public static TrustDataDto getTrustDataDto() {
@@ -195,6 +199,7 @@ public class TrustMock {
         Dto.setUsualResidentialAddress(AddressMock.getAddressDto());
         Dto.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         Dto.setType("Grantor");
+        Dto.setRelevantPeriod(true);
 
         return Dto;
     }
@@ -214,6 +219,7 @@ public class TrustMock {
         Dto.setType("Beneficiary");
         Dto.setOnRegisterInCountryFormedIn(true);
         Dto.setCorporateStillInvolvedInTrust(Boolean.TRUE);
+        Dto.setRelevantPeriod(false);
 
         return Dto;
     }

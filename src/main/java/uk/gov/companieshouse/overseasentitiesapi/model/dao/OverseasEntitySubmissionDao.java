@@ -75,6 +75,9 @@ public class OverseasEntitySubmissionDao {
     @Field("has_sold_land")
     private Boolean hasSoldLand;
 
+    @Field("is_secure_register")
+    private Boolean isSecureRegister;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -230,6 +233,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setHasSoldLand(Boolean hasSoldLand) {
         this.hasSoldLand = hasSoldLand;
+    }
+
+    public Boolean getIsSecureRegister() {
+        return isSecureRegister;
+    }
+
+    public void setIsSecureRegister(Boolean isSecureRegister) {
+        this.isSecureRegister = isSecureRegister;
     }
 
     public void setLinks(Map<String, String> links) {
