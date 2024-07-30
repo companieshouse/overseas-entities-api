@@ -49,6 +49,9 @@ public class TrustIndividualDao {
     @Field("is_individual_still_involved_in_trust")
     private Boolean isIndividualStillInvolvedInTrust;
 
+    @Field("relevant_period")
+    private boolean relevantPeriod;
+
     public String getId() {
         return id;
     }
@@ -160,4 +163,8 @@ public class TrustIndividualDao {
     public void setIndividualStillInvolvedInTrust(Boolean individualStillInvolvedInTrust) {
         isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

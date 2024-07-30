@@ -9,8 +9,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.ENTITY_NAME_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.UPDATE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -460,10 +462,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
         testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(false);
     }
 
-    void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialUpdateValidation() throws ServiceException {
-        testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(true);
-    }
-
     void testErrorNotReportedForMissingDueDiligenceFieldsAndOtherBlocksForPartialValidation(boolean isUpdateTest) throws ServiceException {
         buildOverseasEntitySubmissionDto();
         if (isUpdateTest) {
@@ -838,6 +836,216 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testErrorNotReportedDuringRegistrationForMissingHasSoldLandFieldForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    void testErrorReportedDuringRegistrationForMissingHasSoldLandFieldForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        String qualifiedFieldName = HAS_SOLD_LAND_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedDuringRegistrationWhenHasSoldLandFieldIsFalseForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorNotReportedDuringRegistrationWhenHasSoldLandFieldIsFalseForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenHasSoldLandFieldIsTrueForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        String qualifiedFieldName = HAS_SOLD_LAND_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    void testErrorReportedDuringRegistrationWhenHasSoldLandFieldIsTrueForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        String qualifiedFieldName = HAS_SOLD_LAND_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testErrorNotReportedDuringRegistrationWhenHasSoldLandFieldIsTrueForFullValidationButRedisRemovalFeatureNotEnabled() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    void testErrorNotReportedDuringUpdateForMissingHasSoldLandFieldForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setHasSoldLand(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringUpdateWhenHasSoldLandFieldIsTrueForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setEntityNumber("OE111229");
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.TRUE);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(),
+                LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    // HAS SECURE REGISTER
+    // full validation
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldIsFalseForFullValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForFullValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = IS_SECURE_REGISTER_FIELD;
+        String validationMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+        assertError(qualifiedFieldName, validationMessage, errors);
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForFullValidation() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = IS_SECURE_REGISTER_FIELD;
+    }
+
+    // partial validation
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldIsFalseForPartialValidation() throws ServiceException {
+        buildOverseasEntitySubmissionDto();
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForPartialValidation() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(true);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        String qualifiedFieldName = IS_SECURE_REGISTER_FIELD;
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setIsSecureRegister(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+    }
+
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
         setIsTrustWebEnabledFeatureFlag(false);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
@@ -931,6 +1139,8 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficerCorporateDtoList);
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
         overseasEntitySubmissionDto.setUpdate(updateDto);
+        overseasEntitySubmissionDto.setHasSoldLand(Boolean.FALSE);
+        overseasEntitySubmissionDto.setIsSecureRegister(false);
     }
 
     private void buildPartialOverseasEntityUpdateSubmissionDto() {
@@ -945,6 +1155,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(overseasEntityDueDiligenceDto);
         overseasEntitySubmissionDto.setTrusts(trustDataDtoList);
         overseasEntitySubmissionDto.setUpdate(updateDto);
+        overseasEntitySubmissionDto.setIsSecureRegister(false);
     }
 
     private void buildPartialOverseasEntityRemoveSubmissionDto() {
@@ -969,5 +1180,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
 
     private void setIsTrustWebEnabledFeatureFlag(boolean value) {
         ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isTrustWebEnabled", value);
+    }
+
+    private void setIsRedisRemovalEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(overseasEntitySubmissionDtoValidator, "isRedisRemovalEnabled", value);
     }
 }

@@ -39,6 +39,9 @@ public class OverseasEntitySubmissionDtoValidator {
     @Value("${FEATURE_FLAG_ENABLE_TRUSTS_WEB_07112022:false}")
     private boolean isTrustWebEnabled;
 
+    @Value("${FEATURE_FLAG_ENABLE_REDIS_REMOVAL_15072024:false}")
+    private boolean isRedisRemovalEnabled;
+
     @Autowired
     public OverseasEntitySubmissionDtoValidator(EntityNameValidator entityNameValidator,
                                                 EntityDtoValidator entityDtoValidator,
@@ -120,6 +123,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), true, errors, loggingContext);
+
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
@@ -131,6 +136,8 @@ public class OverseasEntitySubmissionDtoValidator {
                 loggingContext);
 
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateHasSoldLand(overseasEntitySubmissionDto.getHasSoldLand(), true, errors, loggingContext);
     }
 
     private void validateFullCommonDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
@@ -206,6 +213,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), false, errors, loggingContext);
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
@@ -218,6 +226,8 @@ public class OverseasEntitySubmissionDtoValidator {
         }
 
         errors = validatePartialCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
+
+        validateHasSoldLand(overseasEntitySubmissionDto.getHasSoldLand(), false, errors, loggingContext);
 
         return errors;
     }
@@ -256,6 +266,43 @@ public class OverseasEntitySubmissionDtoValidator {
             String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.UPDATE_FIELD,
                     UpdateDto.FILING_DATE);
             String errorMessage = ValidationMessages.SHOULD_NOT_BE_POPULATED_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+    }
+
+    private void validateHasSoldLand(Boolean hasSoldLand, boolean isFullValidation, Errors errors, String loggingContext) {
+        if (isRedisRemovalEnabled) {
+            // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
+            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
+
+            if (isFullValidation && hasSoldLand == null) {
+                var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+                ApiLogger.infoContext(loggingContext, errorMessage);
+            } else if (Boolean.TRUE.equals(hasSoldLand)) {
+                var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+                ApiLogger.infoContext(loggingContext, errorMessage);
+            }
+        }
+    }
+
+    private void validateIsSecureRegister(Boolean isSecureRegister, boolean isFullRegistration, Errors errors, String loggingContext) {
+        if (!isRedisRemovalEnabled) {
+            return;
+        }
+
+        String qualifiedFieldName = OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
+
+        if (isFullRegistration && isSecureRegister == null) {
+            var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
+        }
+
+        if (Boolean.TRUE.equals(isSecureRegister)) {
+            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
         }

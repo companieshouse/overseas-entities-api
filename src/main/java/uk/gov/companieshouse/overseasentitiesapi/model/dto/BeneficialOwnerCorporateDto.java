@@ -27,6 +27,7 @@ public class BeneficialOwnerCorporateDto {
     public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String CH_REFERENCE_FIELD = "ch_reference";
     public static final String ID_FIELD = "id";
+    public static final String RELEVANT_PERIOD_FIELD ="relevant_period";
 
     @JsonProperty(NAME_FIELD)
     private String name;
@@ -84,6 +85,9 @@ public class BeneficialOwnerCorporateDto {
 
     @JsonProperty(ID_FIELD)
     private String id;
+
+    @JsonProperty(RELEVANT_PERIOD_FIELD)
+    private boolean relevantPeriod;
 
     public String getName() {
         return name;
@@ -236,4 +240,8 @@ public class BeneficialOwnerCorporateDto {
     public void setId(String id) {
         this.id = id;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

@@ -62,6 +62,9 @@ public class BeneficialOwnerIndividualDao {
     @Field("id")
     private String id;
 
+    @Field("relevant_period")
+    private boolean relevantPeriod;
+
     public String getFirstName() {
         return firstName;
     }
@@ -201,4 +204,8 @@ public class BeneficialOwnerIndividualDao {
     public void setId(String id) {
         this.id = id;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
 }

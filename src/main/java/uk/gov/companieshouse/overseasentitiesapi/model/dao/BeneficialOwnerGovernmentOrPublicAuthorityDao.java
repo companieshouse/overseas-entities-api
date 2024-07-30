@@ -50,6 +50,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     @Field("id")
     private String id;
 
+    @Field("relevant_period")
+    private boolean relevantPeriod;
+
     public String getName() {
         return name;
     }
@@ -157,4 +160,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     public void setId(String id) {
         this.id = id;
     }
+
+    public boolean getRelevantPeriod() { return relevantPeriod; }
+
+    public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod;}
 }
