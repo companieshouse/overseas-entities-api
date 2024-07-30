@@ -33,6 +33,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -96,7 +97,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).createOverseasEntity(
@@ -128,7 +129,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).createOverseasEntity(
@@ -159,7 +160,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).createOverseasEntity(
@@ -192,7 +193,7 @@ class OverseasEntitiesControllerTest {
                     USER_ID,
                     mockHttpServletRequest);
 
-            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
 
             mockApiLogger.verify(
                     () -> ApiLogger.errorContext(
@@ -234,7 +235,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(2, responseErrors.size());
         assertTrue(responseErrors.containsError(errName));
         assertTrue(responseErrors.containsError(errAddress));
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
     }
 
     @Test
@@ -244,10 +245,10 @@ class OverseasEntitiesControllerTest {
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        assertInstanceOf(ValidationStatusResponse.class, response.getBody());
         ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
         assertTrue(validationStatusResponse.isValid());
-        assertEquals(null, validationStatusResponse.getValidationStatusError());
+        assertNull(validationStatusResponse.getValidationStatusError());
     }
 
     @Test
@@ -266,7 +267,7 @@ class OverseasEntitiesControllerTest {
 
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        assertInstanceOf(ValidationStatusResponse.class, response.getBody());
         ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
         assertTrue(validationStatusResponse.isValid());
         assertNull(validationStatusResponse.getValidationStatusError());
@@ -291,7 +292,7 @@ class OverseasEntitiesControllerTest {
 
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ValidationStatusResponse);
+        assertInstanceOf(ValidationStatusResponse.class, response.getBody());
         ValidationStatusResponse validationStatusResponse = (ValidationStatusResponse) response.getBody();
         assertFalse(validationStatusResponse.isValid());
         assertNotNull(validationStatusResponse.getValidationStatusError());
@@ -305,8 +306,6 @@ class OverseasEntitiesControllerTest {
         validationStatus.setValid(true);
         when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
-        final String errorLocation = "EXAMPLE_ERROR_LOCATION";
-        final String error = "EXAMPLE_ERROR";
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
                 any(Errors.class),
@@ -342,7 +341,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).updateOverseasEntity(
@@ -378,7 +377,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).updateOverseasEntity(
@@ -418,7 +417,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertEquals(UPDATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).updateOverseasEntity(
@@ -458,7 +457,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
 
         verify(overseasEntitiesService, never()).updateOverseasEntity(any(), any(), any(), any(), any());
     }
@@ -492,7 +491,7 @@ class OverseasEntitiesControllerTest {
                     USER_ID,
                     mockHttpServletRequest);
 
-            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+            assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
 
             mockApiLogger.verify(
                     () -> ApiLogger.errorContext(
@@ -539,7 +538,7 @@ class OverseasEntitiesControllerTest {
         assertEquals(2, responseErrors.size());
         assertTrue(responseErrors.containsError(errName));
         assertTrue(responseErrors.containsError(errAddress));
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
     }
 
     @Test
@@ -562,7 +561,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
         assertEquals(CREATED_SUCCESS_RESPONSE, response);
 
         verify(overseasEntitiesService).createOverseasEntityWithResumeLink(
@@ -595,7 +594,7 @@ class OverseasEntitiesControllerTest {
                 USER_ID,
                 mockHttpServletRequest);
 
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode().value());
     }
 
     @Test

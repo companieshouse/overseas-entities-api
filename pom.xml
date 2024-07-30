@@ -5,25 +5,36 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>1.3.1</version> <!-- lookup parent from repository -->
+        <version>2.1.6</version> <!-- lookup parent from repository -->
     </parent>
+
     <artifactId>overseas-entities-api</artifactId>
     <version>unversioned</version>
     <name>overseas-entities-api</name>
     <description>API for register an overseas entity service</description>
+
     <properties>
-        <java.version>11</java.version>
-        <spring-boot-dependencies.version>2.6.1</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>2.6.1</spring-boot-maven-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <structured-logging.version>1.9.14</structured-logging.version>
-        <api-security-java.version>0.4.3</api-security-java.version>
-        <log4j.version>2.17.2</log4j.version>
-        <org.mapstruct.version>1.5.0.RC1</org.mapstruct.version>
-        <rest-service-common-library-version>0.0.5</rest-service-common-library-version>
-        <dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
+        <java.version>21</java.version>
+        <spring-boot-dependencies.version>3.3.2</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.3.2</spring-boot-maven-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
+        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
+        <mockito-inline.version>5.2.0</mockito-inline.version>
+        <owasp.encoder.version>1.2.3</owasp.encoder.version>
+        <log4j.version>2.23.1</log4j.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <test-containers.version>1.20.0</test-containers.version>
+
+        <!-- internal dependencies -->
+        <api-sdk-java.version>6.0.9</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
+        <api-security-java.version>2.0.5</api-security-java.version>
+        <private-api-sdk-java.version>4.0.99</private-api-sdk-java.version>
+        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
+        <structured-logging.version>3.0.9</structured-logging.version>
     </properties>
+
     <profiles>
         <profile>
             <id>sonar-pr-analysis</id>
@@ -32,6 +43,7 @@
             </properties>
         </profile>
     </profiles>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -48,8 +60,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${test-containers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,17 +91,17 @@
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-java</artifactId>
-            <version>4.3.29</version>
+            <version>${api-sdk-java.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
-            <version>1.0.4</version>
+            <version>${api-sdk-manager-java-library.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>private-api-sdk-java</artifactId>
-            <version>2.0.319</version>
+            <version>${private-api-sdk-java.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -114,17 +134,22 @@
         <dependency>
             <groupId>org.owasp.encoder</groupId>
             <artifactId>encoder</artifactId>
-            <version>1.2.3</version>
+            <version>${owasp.encoder.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
-            <version>4.5.1</version>
+            <version>${mockito-inline.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -152,8 +177,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>
@@ -166,7 +191,7 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.1.4</version>
+                <version>${jib-maven-plugin.version}</version>
                 <configuration>
                     <container>
                         <expandClasspathDependencies>true</expandClasspathDependencies>
@@ -181,23 +206,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>${dependency-check-plugin.version}</version>
-                <configuration>
-                    <suppressionFiles>
-                        <suppressionFile>suppress.xml</suppressionFile>
-                    </suppressionFiles>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -10,7 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CompanyIdentificationChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.CorrespondenceAddressChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityEmailAddressChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.EntityNameChange;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.changes.PrincipalAddressChange;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntityChangeComparator;
 
 import java.io.ByteArrayOutputStream;
@@ -19,9 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.*;
 import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getExistingRegistrationAllData;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getNoChangeUpdateSubmission;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getUpdateSubmissionAllDataDifferent;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getUpdateSubmissionCompanyIdentificationDifferent;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getUpdateSubmissionCorrespondenceAddressDifferent;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getUpdateSubmissionEntityEmailDifferent;
+import static uk.gov.companieshouse.overseasentitiesapi.mocks.CollatedOverseasEntityDataMock.getUpdateSubmissionEntityNameDifferent;
 
 @ExtendWith(MockitoExtension.class)
 class OverseasEntityChangeServiceTest {
@@ -54,11 +64,11 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(5, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
-        assertTrue(result.get(1) instanceof PrincipalAddressChange);
-        assertTrue(result.get(2) instanceof CorrespondenceAddressChange);
-        assertTrue(result.get(3) instanceof CompanyIdentificationChange);
-        assertTrue(result.get(4) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityNameChange.class, result.get(0));
+        assertInstanceOf(PrincipalAddressChange.class, result.get(1));
+        assertInstanceOf(CorrespondenceAddressChange.class, result.get(2));
+        assertInstanceOf(CompanyIdentificationChange.class, result.get(3));
+        assertInstanceOf(EntityEmailAddressChange.class, result.get(4));
     }
 
     @Test
@@ -73,22 +83,18 @@ class OverseasEntityChangeServiceTest {
 
     @Test
     void testCollateOverseasEntityChangesBothInputsNullReturnsEmptyChangeList() {
-        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
-        OverseasEntitySubmissionDto updateSubmission = null;
-
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(null, null, logMap);
 
         assertEquals(0, result.size());
     }
 
     @Test
     void testCollateOverseasEntityChangesExistingRegistrationInputNullReturnsEmptyChangeList() {
-        Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = null;
         OverseasEntitySubmissionDto updateSubmission = getNoChangeUpdateSubmission();
 
         System.setOut(new PrintStream(outputStreamCaptor));
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(null, updateSubmission, logMap);
 
         assertEquals(0, result.size());
         assertTrue(outputStreamCaptor.toString().contains("No public and no private data found for overseas entity"));
@@ -97,9 +103,8 @@ class OverseasEntityChangeServiceTest {
     @Test
     void testCollateOverseasEntityChangesUpdateSubmissionInputNullReturnsEmptyChangeList() {
         Pair<CompanyProfileApi, OverseasEntityDataApi> existingRegistration = getExistingRegistrationAllData();
-        OverseasEntitySubmissionDto updateSubmission = null;
 
-        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
+        var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, null, logMap);
 
         assertEquals(0, result.size());
     }
@@ -112,7 +117,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
+        assertInstanceOf(EntityNameChange.class, result.getFirst());
     }
 
     @Test
@@ -123,7 +128,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
+        assertInstanceOf(CorrespondenceAddressChange.class, result.getFirst());
     }
 
     @Test
@@ -135,7 +140,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
+        assertInstanceOf(CorrespondenceAddressChange.class, result.getFirst());
     }
 
     @Test
@@ -146,7 +151,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof CorrespondenceAddressChange);
+        assertInstanceOf(CorrespondenceAddressChange.class, result.getFirst());
     }
 
     @Test
@@ -157,7 +162,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof CompanyIdentificationChange);
+        assertInstanceOf(CompanyIdentificationChange.class, result.getFirst());
     }
 
     @Test
@@ -168,7 +173,7 @@ class OverseasEntityChangeServiceTest {
         var result = overseasEntityChangeService.collateOverseasEntityChanges(existingRegistration, updateSubmission, logMap);
 
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityEmailAddressChange.class, result.getFirst());
     }
 
     @Test
@@ -183,11 +188,11 @@ class OverseasEntityChangeServiceTest {
         assertTrue(outputStreamCaptor.toString().contains("No public data found for overseas entity"));
         assertTrue(outputStreamCaptor.toString().contains("No private data found for overseas entity"));
         assertEquals(5, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
-        assertTrue(result.get(1) instanceof PrincipalAddressChange);
-        assertTrue(result.get(2) instanceof CorrespondenceAddressChange);
-        assertTrue(result.get(3) instanceof CompanyIdentificationChange);
-        assertTrue(result.get(4) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityNameChange.class, result.get(0));
+        assertInstanceOf(PrincipalAddressChange.class, result.get(1));
+        assertInstanceOf(CorrespondenceAddressChange.class, result.get(2));
+        assertInstanceOf(CompanyIdentificationChange.class, result.get(3));
+        assertInstanceOf(EntityEmailAddressChange.class, result.get(4));
     }
 
     @Test
@@ -202,11 +207,11 @@ class OverseasEntityChangeServiceTest {
 
         assertTrue(outputStreamCaptor.toString().contains("No public data found for overseas entity"));
         assertEquals(5, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
-        assertTrue(result.get(1) instanceof PrincipalAddressChange);
-        assertTrue(result.get(2) instanceof CorrespondenceAddressChange);
-        assertTrue(result.get(3) instanceof CompanyIdentificationChange);
-        assertTrue(result.get(4) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityNameChange.class, result.get(0));
+        assertInstanceOf(PrincipalAddressChange.class, result.get(1));
+        assertInstanceOf(CorrespondenceAddressChange.class, result.get(2));
+        assertInstanceOf(CompanyIdentificationChange.class, result.get(3));
+        assertInstanceOf(EntityEmailAddressChange.class, result.get(4));
     }
 
     @Test
@@ -221,11 +226,11 @@ class OverseasEntityChangeServiceTest {
 
         assertTrue(outputStreamCaptor.toString().contains("No private data found for overseas entity"));
         assertEquals(5, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
-        assertTrue(result.get(1) instanceof PrincipalAddressChange);
-        assertTrue(result.get(2) instanceof CorrespondenceAddressChange);
-        assertTrue(result.get(3) instanceof CompanyIdentificationChange);
-        assertTrue(result.get(4) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityNameChange.class, result.get(0));
+        assertInstanceOf(PrincipalAddressChange.class, result.get(1));
+        assertInstanceOf(CorrespondenceAddressChange.class, result.get(2));
+        assertInstanceOf(CompanyIdentificationChange.class, result.get(3));
+        assertInstanceOf(EntityEmailAddressChange.class, result.get(4));
     }
 
     @Test
@@ -241,10 +246,10 @@ class OverseasEntityChangeServiceTest {
         assertTrue(outputStreamCaptor.toString().contains("No public data found for overseas entity"));
         // Only 'Public' data changes
         assertEquals(4, result.size());
-        assertTrue(result.get(0) instanceof EntityNameChange);
-        assertTrue(result.get(1) instanceof PrincipalAddressChange);
-        assertTrue(result.get(2) instanceof CorrespondenceAddressChange);
-        assertTrue(result.get(3) instanceof CompanyIdentificationChange);
+        assertInstanceOf(EntityNameChange.class, result.get(0));
+        assertInstanceOf(PrincipalAddressChange.class, result.get(1));
+        assertInstanceOf(CorrespondenceAddressChange.class, result.get(2));
+        assertInstanceOf(CompanyIdentificationChange.class, result.get(3));
     }
 
     @Test
@@ -260,6 +265,6 @@ class OverseasEntityChangeServiceTest {
         assertTrue(outputStreamCaptor.toString().contains("No private data found for overseas entity"));
         // Only 'Private' data changes
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof EntityEmailAddressChange);
+        assertInstanceOf(EntityEmailAddressChange.class, result.getFirst());
     }
 }

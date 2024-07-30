@@ -82,7 +82,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getStatusCode().value());
     }
 
     @Test
@@ -98,7 +98,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"Could not find any individual trustee for overseas entity overseasEntityId"));
 
     }
@@ -118,7 +118,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getStatusCode().value());
     }
 
     @Test
@@ -134,7 +134,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),"Could not find any corporate trustee for overseas entity overseasEntityId"));
 
     }
@@ -152,9 +152,9 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getStatusCode().value());
         assertEquals(1, responseEntity.getBody().getData().size());
-        assertEquals(HASHED_ID, responseEntity.getBody().getData().get(0).getHashedId());
+        assertEquals(HASHED_ID, responseEntity.getBody().getData().getFirst().getHashedId());
     }
 
 
@@ -170,10 +170,10 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getStatusCode().value());
         assertEquals(1, responseEntity.getBody().getData().size());
-        assertEquals(HASHED_ID, responseEntity.getBody().getData().get(0).getHashedId());
-        assertEquals(CORP_BODY_HASHED_ID, responseEntity.getBody().getData().get(0).getHashedCorporateBodyAppointmentId());
+        assertEquals(HASHED_ID, responseEntity.getBody().getData().getFirst().getHashedId());
+        assertEquals(CORP_BODY_HASHED_ID, responseEntity.getBody().getData().getFirst().getHashedCorporateBodyAppointmentId());
     }
 
     @Test
@@ -184,7 +184,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateCorporateTrusteeListApi> responseEntity = trustsDataController.getCorporateTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
     }
 
     @Test
@@ -196,7 +196,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateIndividualTrusteeListApi> responseEntity = trustsDataController.getIndividualTrustees(
                 "transactionId", "overseasEntityId", "trustId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
     }
 
     @Test
@@ -209,7 +209,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust links for overseas entity overseasEntityId"));
         assertNull(responseEntity.getBody());
     }
@@ -223,7 +223,7 @@ class TrustsDataControllerTest {
         System.setOut(new PrintStream(outputStreamCaptor));
         ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),
                 "Could not find any trust details for overseas entity overseasEntityId"));
         assertNull(responseEntity.getBody());
@@ -240,7 +240,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "OE123456", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust links for overseas entity OE123456"));
         assertNull(responseEntity.getBody());
     }
@@ -258,7 +258,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "OE123456", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(),
                 "Could not find any trust details for overseas entity OE123456"));
         assertNull(responseEntity.getBody());
@@ -275,7 +275,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "OE123456", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Could not find any trust links for overseas entity OE123456"));
         assertNull(responseEntity.getBody());
     }
@@ -288,7 +288,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustDetailsListApi> responseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertNull(responseEntity.getBody());
     }
 
@@ -299,7 +299,7 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> responseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
         assertNull(responseEntity.getBody());
     }
 
@@ -314,8 +314,8 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustLinksListApi> linksResponseEntity = trustsDataController.getTrustLinks(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(404, responseEntity.getStatusCodeValue());
-        assertEquals(404, linksResponseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getStatusCode().value());
+        assertEquals(404, linksResponseEntity.getStatusCode().value());
         assertNull(responseEntity.getBody());
         assertNull(linksResponseEntity.getBody());
     }
@@ -378,8 +378,8 @@ class TrustsDataControllerTest {
         ResponseEntity<PrivateTrustDetailsListApi> linksResponseEntity = trustsDataController.getTrustDetails(
                 "transactionId", "overseasEntityId", "requestId");
 
-        assertEquals(500, responseEntity.getStatusCodeValue());
-        assertEquals(500, linksResponseEntity.getStatusCodeValue());
+        assertEquals(500, responseEntity.getStatusCode().value());
+        assertEquals(500, linksResponseEntity.getStatusCode().value());
     }
 
     private PrivateIndividualTrusteeApi createIndividualTrustApiMock() {

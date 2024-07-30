@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,8 +60,8 @@ class OverseasEntitiesServiceTest {
     private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String ENTITY_NAME = "MANSION HOLDINGS AG";
 
-    private OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
-    private OverseasEntitySubmissionDto submissionDto = new OverseasEntitySubmissionDto();
+    private final OverseasEntitySubmissionDao submissionDao = new OverseasEntitySubmissionDao();
+    private final OverseasEntitySubmissionDto submissionDto = new OverseasEntitySubmissionDto();
 
     @Mock
     private OverseasEntityDtoDaoMapper overseasEntityDtoDaoMapper;
@@ -85,7 +86,6 @@ class OverseasEntitiesServiceTest {
 
     @InjectMocks
     private OverseasEntitiesService overseasEntitiesService;
-    private Object responseBody;
 
     @Test
     void testOverseasEntitySubmissionCreatedSuccessfullyWithResumeLink() throws ServiceException {
@@ -644,7 +644,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntityWhenTransactionNotLinked() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSavedOverseasEntityWhenTransactionNotLinked() {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(false);
@@ -660,7 +660,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() {
         var transaction = buildTransaction();
         when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
                 .thenReturn(true);
@@ -717,7 +717,7 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
-        assertEquals(true, isUpdate);
+        assertTrue(isUpdate);
     }
 
     @Test
@@ -727,7 +727,7 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         boolean isRemove = overseasEntitiesService.isSubmissionARemove(REQUEST_ID,"testId1");
-        assertEquals(true, isRemove);
+        assertTrue(isRemove);
     }
 
     @Test
@@ -735,22 +735,18 @@ class OverseasEntitiesServiceTest {
         when(overseasEntityDtoDaoMapper.daoToDto(submissionDao)).thenReturn(submissionDto);
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.of(submissionDao));
         boolean isUpdate = overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID,"testId1");
-        assertEquals(false, isUpdate);
+        assertFalse(isUpdate);
     }
 
     @Test
     void checkSubmissionTypeServiceThrowsExceptionWhenNoSuchSubmission() {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(SubmissionNotFoundException.class, () -> {
-            overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1");
-        });
+        assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.getSubmissionType(REQUEST_ID, "testId1"));
     }
 
     @Test
     void checkIsSubmissionAnUpdateThrowsServiceExceptionWhenNoSuchSubmission() {
         when(overseasEntitySubmissionsRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(SubmissionNotFoundException.class, () -> {
-            overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1");
-        });
+        assertThrows(SubmissionNotFoundException.class, () -> overseasEntitiesService.isSubmissionAnUpdate(REQUEST_ID, "testId1"));
     }
 }

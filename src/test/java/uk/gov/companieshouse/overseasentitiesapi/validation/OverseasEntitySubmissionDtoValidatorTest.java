@@ -101,29 +101,29 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
     {
         beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
-    };
+    }
     private final List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
     {
         beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
-    };
+    }
     private final List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityDtoList = new ArrayList<>();
     {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.add(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
-    };
+    }
 
     private final List<ManagingOfficerIndividualDto> managingOfficerIndividualDtoList = new ArrayList<>();
     {
         managingOfficerIndividualDtoList.add(ManagingOfficerMock.getManagingOfficerIndividualDto());
-    };
+    }
     private final List<ManagingOfficerCorporateDto> managingOfficerCorporateDtoList = new ArrayList<>();
     {
         managingOfficerCorporateDtoList.add(ManagingOfficerMock.getManagingOfficerCorporateDto());
-    };
+    }
 
     private final List<TrustDataDto> trustDataDtoList = new ArrayList<>();
     {
         trustDataDtoList.add(TrustMock.getTrustDataDto());
-    };
+    }
 
     @Test
     void testOverseasEntitySubmissionValidatorWithDueDiligence() throws ServiceException {

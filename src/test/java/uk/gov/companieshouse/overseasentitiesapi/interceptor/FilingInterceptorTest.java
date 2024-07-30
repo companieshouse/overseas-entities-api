@@ -10,9 +10,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +40,7 @@ class FilingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsTrueWhenTransactionIsClosed() throws IOException {
+    void testInterceptorReturnsTrueWhenTransactionIsClosed() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -52,7 +51,7 @@ class FilingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsStillOpen() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsStillOpen() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -64,7 +63,7 @@ class FilingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenNoTransactionFound() throws IOException {
+    void testInterceptorReturnsFalseWhenNoTransactionFound() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
