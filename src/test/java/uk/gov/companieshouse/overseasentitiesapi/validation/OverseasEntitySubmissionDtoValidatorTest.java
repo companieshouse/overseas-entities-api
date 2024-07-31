@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -1029,7 +1030,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     // partial validation
     @Test
     void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldIsFalseForPartialValidation() throws ServiceException {
-        buildOverseasEntitySubmissionDto();
+        buildPartialOverseasEntityUpdateSubmissionDto();
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
@@ -1038,7 +1039,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(false);
-        buildOverseasEntitySubmissionDto();
+        buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setIsSecureRegister(true);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -1049,7 +1050,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testErrorReportedDuringRegistrationWhenIsSecureRegisterFieldSetToTrueForPartialValidation() throws ServiceException
     {
         setIsRedisRemovalEnabledFeatureFlag(true);
-        buildOverseasEntitySubmissionDto();
+        buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setIsSecureRegister(true);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -1060,7 +1061,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testNotErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException
     {
         setIsRedisRemovalEnabledFeatureFlag(false);
-        buildOverseasEntitySubmissionDto();
+        buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setIsSecureRegister(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -1069,7 +1070,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     @Test
     void testErrorReportedDuringRegistrationForMissingIsSecureRegisterFieldForPartialValidation() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(true);
-        buildOverseasEntitySubmissionDto();
+        buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.setIsSecureRegister(null);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
@@ -1078,7 +1079,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     // WHO IS REGISTERING
     // full validation
     @Test
-    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToAgentForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToAgentForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForFullValidation() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setWhoIsRegistering("agent");
@@ -1088,7 +1089,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToSomeoneElseForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException {
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToSomeoneElseForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForFullValidation() throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setWhoIsRegistering("someone_else");
@@ -1098,7 +1099,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException
+    void testErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForFullValidation() throws ServiceException
     {
         setIsRedisRemovalEnabledFeatureFlag(true);
         buildOverseasEntitySubmissionDto();
@@ -1111,7 +1112,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToWrongValueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrue() throws ServiceException
+    void testErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToWrongValueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForFullValidation() throws ServiceException
     {
         try {
             setIsRedisRemovalEnabledFeatureFlag(true);
@@ -1124,7 +1125,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     }
 
     @Test
-    void testNotErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException
+    void testNotErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalseForFullValidation() throws ServiceException
     {
         setIsRedisRemovalEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
@@ -1133,7 +1134,64 @@ class OverseasEntitySubmissionDtoValidatorTest {
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());
     }
-    ////////////
+
+    // partial validation
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToAgentForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering("agent");
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToSomeoneElseForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForPartialValidation() throws ServiceException {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering("someone_else");
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForPartialValidation() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(true);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    void testErrorReportedDuringRegistrationWhenWhoIsRegisteringFieldSetToWrongValueForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToTrueForPartialValidation() throws ServiceException
+    {
+        try {
+            setIsRedisRemovalEnabledFeatureFlag(true);
+            buildPartialOverseasEntityUpdateSubmissionDto();
+            overseasEntitySubmissionDto.setWhoIsRegistering("wrong_value");
+
+        } catch(Exception e) {
+            assertEquals("No enum constant uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType.WRONG_VALUE", e.getMessage());
+        }
+    }
+
+    @Test
+    void testNotErrorReportedDuringRegistrationForMissingWhoIsRegisteringFieldForFullValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalseForPartialValidation() throws ServiceException
+    {
+        setIsRedisRemovalEnabledFeatureFlag(false);
+        buildPartialOverseasEntityUpdateSubmissionDto();
+        overseasEntitySubmissionDto.setWhoIsRegistering(null);
+
+        Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
+        assertFalse(errors.hasErrors());
+    }
+
+    // end - WHO IS REGISTERING
 
     private Errors testFullUpdateRemoveValidationWithoutTrusts() throws ServiceException {
         setIsRoeUpdateEnabledFeatureFlag(true);

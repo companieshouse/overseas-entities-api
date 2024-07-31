@@ -128,7 +128,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), true, errors, loggingContext);
-        validateWhoIsRegistering(overseasEntitySubmissionDto.getWhoIsRegistering(), errors, loggingContext);
+        validateWhoIsRegistering(overseasEntitySubmissionDto.getWhoIsRegistering(), true, errors, loggingContext);
 
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
@@ -219,6 +219,7 @@ public class OverseasEntitySubmissionDtoValidator {
 
     public Errors validatePartialRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         validateIsSecureRegister(overseasEntitySubmissionDto.getIsSecureRegister(), false, errors, loggingContext);
+        validateWhoIsRegistering(overseasEntitySubmissionDto.getWhoIsRegistering(), false, errors, loggingContext);
 
         var entityNameDto = overseasEntitySubmissionDto.getEntityName();
         if (Objects.nonNull(entityNameDto)) {
@@ -313,14 +314,14 @@ public class OverseasEntitySubmissionDtoValidator {
         }
     }
 
-    private void validateWhoIsRegistering(WhoIsRegisteringType whoIsRegistering, Errors errors, String loggingContext) {
+    private void validateWhoIsRegistering(String whoIsRegistering, boolean isFullRegistration, Errors errors, String loggingContext) {
         if (!isRedisRemovalEnabled) {
             return;
         }
 
         String qualifiedFieldName = OverseasEntitySubmissionDto.WHO_IS_REGISTERING;
 
-        if (whoIsRegistering == null) {
+        if (isFullRegistration && whoIsRegistering == null) {
             var errorMessage = String.format(ValidationMessages.NOT_NULL_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);

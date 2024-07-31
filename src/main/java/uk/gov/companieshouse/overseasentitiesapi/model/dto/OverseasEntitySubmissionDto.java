@@ -91,7 +91,7 @@ public class OverseasEntitySubmissionDto {
     private Boolean isSecureRegister;
 
     @JsonProperty(WHO_IS_REGISTERING)
-    private WhoIsRegisteringType whoIsRegistering;
+    private String whoIsRegistering;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -255,13 +255,14 @@ public class OverseasEntitySubmissionDto {
         this.isSecureRegister = isSecureRegister;
     }
 
-    public WhoIsRegisteringType getWhoIsRegistering() {
+    public String getWhoIsRegistering() {
         return whoIsRegistering;
     }
 
     public void setWhoIsRegistering(String whoIsRegistering) {
         if (whoIsRegistering != null) {
-            this.whoIsRegistering = WhoIsRegisteringType.valueOf(whoIsRegistering.toUpperCase());
+            WhoIsRegisteringType.valueOf(whoIsRegistering.toUpperCase());
+            this.whoIsRegistering = whoIsRegistering;
             return;
         }
         this.whoIsRegistering = null;

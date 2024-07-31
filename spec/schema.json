@@ -387,6 +387,9 @@
           },
           "is_secure_register": {
             "type": "boolean"
+          },
+          "who_is_registering": {
+            "type": "string"
           }
         }
       },

@@ -251,10 +251,8 @@ public class OverseasEntitySubmissionDao {
         return whoIsRegistering;
     }
 
-    public void setWhoIsRegistering(WhoIsRegisteringType whoIsRegistering) {
-        if (whoIsRegistering != null) {
-            this.whoIsRegistering = whoIsRegistering.getValue();
-        }
+    public void setWhoIsRegistering(String whoIsRegistering) {
+        this.whoIsRegistering = whoIsRegistering;
     }
 
     public void setLinks(Map<String, String> links) {

@@ -4,13 +4,13 @@ public enum WhoIsRegisteringType {
     AGENT("agent"),
     SOMEONE_ELSE("someone_else");
 
-    private final String whoIsRegisteringType;
+    private final String whoIsRegistering;
 
-    WhoIsRegisteringType(String whoIsRegisteringType) {
-        this.whoIsRegisteringType = whoIsRegisteringType;
+    WhoIsRegisteringType(String whoIsRegistering) {
+        this.whoIsRegistering = whoIsRegistering;
     }
 
     public String getValue() {
-        return this.whoIsRegisteringType;
+        return this.whoIsRegistering;
     }
 }
