@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
+import uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class OverseasEntitySubmissionDto {
     public static final String REMOVE_FIELD = "remove";
     public static final String HAS_SOLD_LAND_FIELD = "has_sold_land";
     public static final String IS_SECURE_REGISTER_FIELD = "is_secure_register";
+    public static final String WHO_IS_REGISTERING = "who_is_registering";
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -87,6 +89,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(IS_SECURE_REGISTER_FIELD)
     private Boolean isSecureRegister;
+
+    @JsonProperty(WHO_IS_REGISTERING)
+    private String whoIsRegistering;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -248,6 +253,19 @@ public class OverseasEntitySubmissionDto {
 
     public void setIsSecureRegister(Boolean isSecureRegister) {
         this.isSecureRegister = isSecureRegister;
+    }
+
+    public String getWhoIsRegistering() {
+        return whoIsRegistering;
+    }
+
+    public void setWhoIsRegistering(String whoIsRegistering) {
+        if (whoIsRegistering != null) {
+            WhoIsRegisteringType.valueOf(whoIsRegistering.toUpperCase());
+            this.whoIsRegistering = whoIsRegistering;
+            return;
+        }
+        this.whoIsRegistering = null;
     }
 
     public Map<String, String> getLinks() {
