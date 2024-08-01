@@ -259,14 +259,7 @@ public class OverseasEntitySubmissionDto {
         return whoIsRegistering;
     }
 
-    public void setWhoIsRegistering(String whoIsRegistering) {
-        if (whoIsRegistering != null) {
-            WhoIsRegisteringType.valueOf(whoIsRegistering.toUpperCase());
-            this.whoIsRegistering = whoIsRegistering;
-            return;
-        }
-        this.whoIsRegistering = null;
-    }
+    public void setWhoIsRegistering(String whoIsRegistering) { this.whoIsRegistering = whoIsRegistering; }
 
     public Map<String, String> getLinks() {
         return links;
