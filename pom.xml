@@ -19,7 +19,7 @@
         <spring-boot-maven-plugin.version>3.3.2</spring-boot-maven-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
-        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
+        <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <owasp.encoder.version>1.2.3</owasp.encoder.version>
         <log4j.version>2.23.1</log4j.version>
