@@ -910,13 +910,14 @@ class OverseasEntitySubmissionDtoValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    // HAS SECURE REGISTER
+    // IS SECURE REGISTER
     // partial validation
-    @Test
-    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldIsFalseForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse() throws ServiceException {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void testNotErrorReportedDuringRegistrationWhenIsSecureRegisterFieldIsFalseOrTrueForPartialValidationAndIsRedisRemovalEnabledFeatureFlagSetToFalse(boolean isSecureRegister) throws ServiceException {
         setIsRedisRemovalEnabledFeatureFlag(false);
         buildOverseasEntitySubmissionDto();
-        overseasEntitySubmissionDto.setIsSecureRegister(false);
+        overseasEntitySubmissionDto.setIsSecureRegister(isSecureRegister);
 
         Errors errors = overseasEntitySubmissionDtoValidator.validatePartial(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);
         assertFalse(errors.hasErrors());

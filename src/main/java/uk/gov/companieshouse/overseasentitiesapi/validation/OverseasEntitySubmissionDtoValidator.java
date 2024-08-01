@@ -273,19 +273,21 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateHasSoldLand(Boolean hasSoldLand, Errors errors, String loggingContext) {
-        if (isRedisRemovalEnabled) {
-            if (Boolean.TRUE.equals(hasSoldLand)) {
-                // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
-                String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
-                var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
-                setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
-                ApiLogger.infoContext(loggingContext, errorMessage);
-            }
+        if (!isRedisRemovalEnabled || hasSoldLand == null) {
+            return;
+        }
+
+        if (Boolean.TRUE.equals(hasSoldLand)) {
+            // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
+            String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
+            var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
+            setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
+            ApiLogger.infoContext(loggingContext, errorMessage);
         }
     }
 
     private void validateIsSecureRegister(Boolean isSecureRegister, Errors errors, String loggingContext) {
-        if (!isRedisRemovalEnabled) {
+        if (!isRedisRemovalEnabled || isSecureRegister == null) {
             return;
         }
 
