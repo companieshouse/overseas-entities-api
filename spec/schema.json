@@ -1428,6 +1428,9 @@
           "no_change": {
             "type": "boolean"
           },
+          "relevant_period_no_change": {
+            "type": "boolean"
+          },
           "change_bo_relevant_period": {
             "$ref": "#/components/schemas/RelevantStatementsType"
           },

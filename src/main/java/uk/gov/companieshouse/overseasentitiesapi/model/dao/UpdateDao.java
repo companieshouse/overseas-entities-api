@@ -47,6 +47,9 @@ public class UpdateDao {
     @Field("review_trusts")
     private List<TrustDataToReviewDao> reviewTrusts;
 
+    @Field("relevant_period_no_change")
+    private boolean relevantPeriodNoChange;
+
     @Field("change_bo_relevant_period")
     private RelevantStatementsType changeBORelevantPeriod;
 
@@ -78,6 +81,14 @@ public class UpdateDao {
 
     public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
         this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
+    }
+
+    public boolean getRelevantPeriodNoChange() {
+        return relevantPeriodNoChange;
+    }
+
+    public void setRelevantPeriodNoChange(boolean relevantPeriodNoChange) {
+        this.relevantPeriodNoChange = relevantPeriodNoChange;
     }
 
     public LocalDate getDateOfCreation() {
