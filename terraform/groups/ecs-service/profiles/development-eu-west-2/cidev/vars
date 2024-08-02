@@ -1,0 +1,6 @@
+environment = "cidev"
+aws_profile = "development-eu-west-2"
+
+# service configs
+log_level = "debug"
+ 
