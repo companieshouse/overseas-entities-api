@@ -4,13 +4,13 @@ locals {
   name_prefix                = "${local.stack_name}-${var.environment}"
   global_prefix              = "global-${var.environment}"
   service_name               = "overseas-entities-api"
-  container_port             = "8080" --???
+  container_port             = "8080"
   eric_port                  = "10000"
   docker_repo                = "overseas-entities-api"
   kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
   lb_listener_rule_priority  = 64
-  lb_listener_paths          = ["/dissolution-request/*", "/dissolution-request", "/dissolution-request/*/payment", "/dissolution-request/healthcheck"]
-  healthcheck_path           = "/dissolution-request/healthcheck" #healthcheck path for dissolution api
+  lb_listener_paths          = ["/transactions/*/overseas-entity*", "/private/transactions/*/overseas-entity/*"]
+  healthcheck_path           = "/overseas-entity/healthcheck" #healthcheck path for dissolution api
   healthcheck_matcher        = "200"
   vpc_name                   = local.stack_secrets["vpc_name"]
   s3_config_bucket           = data.vault_generic_secret.shared_s3.data["config_bucket_name"]
@@ -18,7 +18,7 @@ locals {
   use_set_environment_files  = var.use_set_environment_files
   application_subnet_ids     = data.aws_subnets.application.ids
   application_subnet_pattern = local.stack_secrets["application_subnet_pattern"]
-  dissolutions_bucket_name   = local.service_secrets["dissolutions_bucket_name"]
+  # dissolutions_bucket_name   = local.service_secrets["dissolutions_bucket_name"]
 
   stack_secrets   = jsondecode(data.vault_generic_secret.stack_secrets.data_json)
   service_secrets = jsondecode(data.vault_generic_secret.service_secrets.data_json)
