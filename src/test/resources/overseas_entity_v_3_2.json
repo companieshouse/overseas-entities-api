@@ -739,7 +739,7 @@
         ]
       }
     ],
-    "relevant_period_no_change" : true,
+    "owned_land_relevant_period" : true,
     "change_bo_relevant_period" : "CHANGE_BO_RELEVANT_PERIOD",
     "trustee_involved_relevant_period" : "TRUSTEE_INVOLVED_RELEVANT_PERIOD",
     "change_beneficiary_relevant_period" : "CHANGE_BENEFICIARY_RELEVANT_PERIOD"
