@@ -1,9 +1,6 @@
 environment = "staging"
 aws_profile = "staging-eu-west-2"
 
-# service configs
-log_level = "info"
-
 # scaling configs
 service_autoscale_enabled  = true
 service_scaledown_schedule = "55 19 * * ? *"
