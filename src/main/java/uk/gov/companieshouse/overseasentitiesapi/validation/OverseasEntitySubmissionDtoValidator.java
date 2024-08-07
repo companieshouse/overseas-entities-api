@@ -127,6 +127,8 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateFullRegistrationDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        // Note that model fields used purely to support web journey navigation are not submitted with the filing and therefore aren't checked (e.g. hasSoldLand, isSecureRegister and whoIsRegistering)
+
         validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
         validateTrustDetails(overseasEntitySubmissionDto, errors, loggingContext, true);
