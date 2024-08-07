@@ -1,0 +1,3 @@
+environment = "cidev"
+aws_profile = "development-eu-west-2"
+ 
