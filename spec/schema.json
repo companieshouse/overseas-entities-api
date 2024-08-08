@@ -1428,7 +1428,7 @@
           "no_change": {
             "type": "boolean"
           },
-          "relevant_period_no_change": {
+          "owned_land_relevant_period": {
             "type": "boolean"
           },
           "change_bo_relevant_period": {
