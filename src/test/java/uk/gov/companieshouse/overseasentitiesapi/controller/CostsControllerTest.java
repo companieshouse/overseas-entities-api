@@ -43,7 +43,7 @@ class CostsControllerTest {
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
 
-        assertEquals(amount, response.getBody().get(0).getAmount());
+        assertEquals(amount, response.getBody().getFirst().getAmount());
         verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 
@@ -53,7 +53,7 @@ class CostsControllerTest {
                 new SubmissionNotFoundException("test"));
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(500, response.getStatusCode().value());
         verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 }

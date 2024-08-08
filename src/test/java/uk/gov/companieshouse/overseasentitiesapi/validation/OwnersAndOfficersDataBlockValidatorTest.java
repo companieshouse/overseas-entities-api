@@ -28,7 +28,6 @@ import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -480,7 +479,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     @Test
     void testPartialValidationNoErrorsReportedForBeneficialOwnerIndividualOnly() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var beneficialOwnersIndividualList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
+        var beneficialOwnersIndividualList = List.of(BeneficialOwnerAllFieldsMock.getBeneficialOwnerIndividualDto());
         overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnersIndividualList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
@@ -491,7 +490,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     @Test
     void testPartialValidationNoErrorsReportedForBeneficialOwnerCorporateOnly() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var beneficialOwnersCorporateList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
+        var beneficialOwnersCorporateList = List.of(BeneficialOwnerAllFieldsMock.getBeneficialOwnerCorporateDto());
         overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnersCorporateList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
@@ -502,7 +501,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     @Test
     void testPartialValidationNoErrorsReportedForBeneficialOwnerGovernmentOrPublicAuthorityOnly() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var beneficialOwnersGovernmentOrPublicAuthorityList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        var beneficialOwnersGovernmentOrPublicAuthorityList = List.of(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthorityList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
@@ -513,7 +512,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     @Test
     void testPartialValidationNoErrorsReportedForManagingOfficersIndividualOnly() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var managingOfficersIndividualList = Arrays.asList(ManagingOfficerMock.getManagingOfficerIndividualDto());
+        var managingOfficersIndividualList = List.of(ManagingOfficerMock.getManagingOfficerIndividualDto());
         overseasEntitySubmissionDto.setManagingOfficersIndividual(managingOfficersIndividualList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
@@ -524,7 +523,7 @@ class OwnersAndOfficersDataBlockValidatorTest {
     @Test
     void testPartialValidationNoErrorsReportedForManagingOfficersCorporateOnly() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
-        var managingOfficersCorporateList = Arrays.asList(ManagingOfficerMock.getManagingOfficerCorporateDto());
+        var managingOfficersCorporateList = List.of(ManagingOfficerMock.getManagingOfficerCorporateDto());
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);
@@ -536,9 +535,9 @@ class OwnersAndOfficersDataBlockValidatorTest {
     void testPartialValidationNoErrorsReportedForMultipleFields() {
         overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setPresenter(presenterDto);
-        var beneficialOwnersGovernmentOrPublicAuthorityList = Arrays.asList(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
+        var beneficialOwnersGovernmentOrPublicAuthorityList = List.of(BeneficialOwnerAllFieldsMock.getBeneficialOwnerGovernmentOrPublicAuthorityDto());
         overseasEntitySubmissionDto.setBeneficialOwnersGovernmentOrPublicAuthority(beneficialOwnersGovernmentOrPublicAuthorityList);
-        var managingOfficersCorporateList = Arrays.asList(ManagingOfficerMock.getManagingOfficerCorporateDto());
+        var managingOfficersCorporateList = List.of(ManagingOfficerMock.getManagingOfficerCorporateDto());
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateList);
         Errors errors = new Errors();
         ownersAndOfficersDataBlockValidator.validateOwnersAndOfficers(overseasEntitySubmissionDto, errors, LOGGING_CONTEXT);

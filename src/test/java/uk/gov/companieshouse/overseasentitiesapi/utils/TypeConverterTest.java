@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,7 +40,7 @@ class TypeConverterTest {
     constructor.setAccessible(true);
     InvocationTargetException e = assertThrows(InvocationTargetException.class,
         constructor::newInstance);
-    assertTrue(e.getTargetException() instanceof IllegalAccessError);
+      assertInstanceOf(IllegalAccessError.class, e.getTargetException());
   }
 
   @Test

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -73,9 +72,9 @@ class PublicPrivateDataCombinerTest {
       "]" +
       "}";
 
-  private String COMPANY_NUMBER = "OE123456";
+  private final String COMPANY_NUMBER = "OE123456";
 
-  private String PASS_THROUGH_TOKEN_HEADER = "abc123";
+  private final String PASS_THROUGH_TOKEN_HEADER = "abc123";
 
   private PublicDataRetrievalService publicDataRetrievalService;
   private PrivateDataRetrievalService privateDataRetrievalService;
@@ -112,7 +111,7 @@ class PublicPrivateDataCombinerTest {
    * Note: PscApi uses a hashed version of the ID whereas PrivateBoDataApi uses the unhashed version <br>
    * The value "12345" hashed is "Iq6hRNqa-Twx1eWhHv_FOwTb1i4"
    *
-   * @throws NoSuchAlgorithmException
+   * @throws ServiceException
    * @throws JsonProcessingException
    */
   @Test
@@ -155,7 +154,7 @@ class PublicPrivateDataCombinerTest {
     managingOfficerDataApi.setManagingOfficerAppointmentId("12345");
 
     OfficersApi officersApi = objectMapper.readValue(officersApiString, OfficersApi.class);
-    CompanyOfficerApi companyOfficerApi = officersApi.getItems().get(0);
+    CompanyOfficerApi companyOfficerApi = officersApi.getItems().getFirst();
 
     // Configure mock behavior
     when(privateDataRetrievalService.getManagingOfficerData(any())).thenReturn(

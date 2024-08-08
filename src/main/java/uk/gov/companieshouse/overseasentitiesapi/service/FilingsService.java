@@ -13,7 +13,20 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntity
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.PRESENTER_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.TRUST_DATA;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto.IS_NOT_PROPRIETOR_OF_LAND_FIELD;
-import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.*;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ADDITIONS_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.ANY_BOS_ADDED_CEASED_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.BENEFICIAL_OWNERS_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CESSATIONS_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGES_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGE_BENEFICIARY_RELEVANT_PERIOD_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.CHANGE_BO_RELEVANT_PERIOD_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.FILING_FOR_DATE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.TRUSTEE_INVOLVED_RELEVANT_PERIOD_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_DUE_DILIGENCE_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NAME_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_ENTITY_NUMBER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_PRESENTER_FIELD;
+import static uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.UpdateSubmission.UPDATE_USER_SUBMISSION_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_REMOVE;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY_UPDATE;
@@ -32,7 +45,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -406,7 +418,7 @@ public class FilingsService {
         throw new ServiceException("There are no trusts for the ID: " + trustId);
       }
 
-      trustsDataForBO.add(trustData.get(0));
+      trustsDataForBO.add(trustData.getFirst());
     }
 
     return trustsDataForBO;
@@ -429,23 +441,23 @@ public class FilingsService {
   private void setPaymentData(
           Map<String, Object> data,
           Transaction transaction,
-          String passthroughTokenHeader,
+          String passThroughTokenHeader,
           Map<String, Object> logMap)
           throws ServiceException {
     var paymentLink = transaction.getLinks().getPayment();
-    var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
-    var payment = getPayment(paymentReference, passthroughTokenHeader);
+    var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passThroughTokenHeader);
+    var payment = getPayment(paymentReference, passThroughTokenHeader);
 
     data.put("payment_reference", paymentReference);
     data.put("payment_method", payment.getPaymentMethod());
     ApiLogger.debug("Payment data has been set on filing", logMap);
   }
 
-  private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
+  private PaymentApi getPayment(String paymentReference, String passThroughTokenHeader)
           throws ServiceException {
     try {
       return apiClientService
-              .getOauthAuthenticatedClient(passthroughTokenHeader)
+              .getOauthAuthenticatedClient(passThroughTokenHeader)
               .payment()
               .get("/payments/" + paymentReference)
               .execute()
@@ -455,12 +467,12 @@ public class FilingsService {
     }
   }
 
-  private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
+  private String getPaymentReferenceFromTransaction(String uri, String passThroughTokenHeader)
           throws ServiceException {
     try {
       var transactionPaymentInfo =
               apiClientService
-                      .getOauthAuthenticatedClient(passthroughTokenHeader)
+                      .getOauthAuthenticatedClient(passThroughTokenHeader)
                       .transactions()
                       .getPayment(uri)
                       .execute();

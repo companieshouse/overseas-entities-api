@@ -13,7 +13,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.CorporateEntityBeneficialOwnerCessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualBeneficialOwnerCessation;
+import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.LegalPersonBeneficialOwnerCessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -35,15 +38,15 @@ public class BeneficialOwnerCessationService {
     cessations.addAll(getIndividualBeneficialOwners(overseasEntitySubmissionDto, combinedBoData, logMap)
             .stream()
             .flatMap(Optional::stream)
-            .collect(Collectors.toList()));
+            .toList());
     cessations.addAll(getCorporateEntityBeneficialOwnerCessations(overseasEntitySubmissionDto, combinedBoData, logMap)
             .stream()
             .flatMap(Optional::stream)
-            .collect(Collectors.toList()));
+            .toList());
     cessations.addAll(getLegalPersonBeneficialOwners(overseasEntitySubmissionDto, combinedBoData, logMap)
             .stream()
             .flatMap(Optional::stream)
-            .collect(Collectors.toList()));
+            .toList());
     return cessations;
   }
 

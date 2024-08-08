@@ -25,7 +25,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
     private final MongoConverter defaultMongoConverter;
 
-    private DocumentTransformerFactory transformerFactory;
+    private final DocumentTransformerFactory transformerFactory;
 
     public OverseasEntitySubmissionDaoConverter(MongoConverter defaultMongoConverter, DocumentTransformerFactory transformerFactory) {
         this.defaultMongoConverter = defaultMongoConverter;
@@ -43,9 +43,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
 
         // Note that a transformer may not be found - either because an older version of the model requires no
         // transformation or this document was saved with the latest version of the model structure
-        if (transformer.isPresent()) {
-            transformer.get().transform(document);
-        }
+        transformer.ifPresent(documentTransformer -> documentTransformer.transform(document));
 
         return defaultMongoConverter.read(OverseasEntitySubmissionDao.class, document);
     }

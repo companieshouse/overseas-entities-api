@@ -10,7 +10,7 @@ class Version2DocumentTransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 
-    private Version2DocumentTransformer transformer = new Version2DocumentTransformer();
+    private final Version2DocumentTransformer transformer = new Version2DocumentTransformer();
 
     @Test
     void testTransformation() {

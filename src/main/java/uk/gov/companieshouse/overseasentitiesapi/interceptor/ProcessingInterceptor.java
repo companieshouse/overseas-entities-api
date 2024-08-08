@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED_PENDING_PAYMENT;

@@ -8,7 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.mocks.Mocks.EMAIL_WITHOUT_LEADING_AND_TRAILING_SPACES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
@@ -109,7 +112,6 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.PublicPrivateDataCombiner
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
 
-    private static final String REQUEST_ID = "xyz987";
     private static final String OVERSEAS_ENTITY_ID = "abc123";
 
     private static final String TRANSACTION_ID = "3324324324-3243243-32424";
@@ -383,7 +385,7 @@ class FilingServiceTest {
         assertEquals("Test Public Company", filing.getData().get("entityName"));
 
         final List<Change> changesList = (List<Change>)filing.getData().get("changes");
-        final EntityNameChange entityNameChange = (EntityNameChange)changesList.get(0);
+        final EntityNameChange entityNameChange = (EntityNameChange)changesList.getFirst();
         assertEquals("New name", entityNameChange.getProposedCorporateBodyName());
         assertEquals("Joe Bloggs Ltd", updateSubmission.getEntityName());
 
@@ -997,10 +999,10 @@ class FilingServiceTest {
 
     private void checkTrustDataIsEmpty(FilingApi filing) {
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
-        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.getFirst();
         assertEquals("", beneficialOwnerIndividualDto.getTrustData());
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
-        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.get(0);
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.getFirst();
         assertEquals("", beneficialOwnerCorporateDto.getTrustData());
     }
 
@@ -1011,10 +1013,10 @@ class FilingServiceTest {
         assertNull(trustDataList);
 
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
-        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.getFirst();
         assertNull(beneficialOwnerIndividualDto.getTrustIds());
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
-        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.get(0);
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateFiling.getFirst();
         assertNull(beneficialOwnerCorporateDto.getTrustIds());
     }
 
@@ -1027,7 +1029,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+    private void checkTrustDataIndividualWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
         final TrustDataDto trustData = trustDataList.get(boIndex);
@@ -1038,12 +1040,12 @@ class FilingServiceTest {
         final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(boIndex);
         final List<String> trustsIdsList = beneficialOwnerIndividualDto.getTrustIds();
 
-        assertEquals(trustId, trustsIdsList.get(0));
+        assertEquals(trustId, trustsIdsList.getFirst());
     }
 
     private void checkTrustDataIndividualWithThreeTrusts(FilingApi filing) throws JSONException {
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
-        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.getFirst();
         final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerIndividualDto.getTrustData());
 
         final JSONObject trustDataJSON1 = trustsDataJSON.getJSONObject(0);
@@ -1059,10 +1061,10 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+    private void checkTrustDataIndividualWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
-        final TrustDataDto trustData1 = trustDataList.get(0);
+        final TrustDataDto trustData1 = trustDataList.getFirst();
         assertEquals("1", trustData1.getTrustId());
         assertEquals("Trust Name 1", trustData1.getTrustName());
 
@@ -1075,10 +1077,10 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustData3.getTrustName());
 
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
-        final BeneficialOwnerIndividualDto beneficialOwnerCorporateDto = beneficialOwnersIndividualInFiling.get(0);
+        final BeneficialOwnerIndividualDto beneficialOwnerCorporateDto = beneficialOwnersIndividualInFiling.getFirst();
         final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
 
-        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("1", trustsIdsList.getFirst());
         assertEquals("2", trustsIdsList.get(1));
         assertEquals("3", trustsIdsList.get(2));
     }
@@ -1092,7 +1094,7 @@ class FilingServiceTest {
         assertEquals("Trust Name " + trustId, trustDataJSON.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) throws JSONException {
+    private void checkTrustDataCorporateWithTrustFeatureFlagOn(FilingApi filing, int boIndex, String trustId) {
 
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
@@ -1105,13 +1107,13 @@ class FilingServiceTest {
         final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(boIndex);
         final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
 
-        assertEquals(trustId, trustsIdsList.get(0));
+        assertEquals(trustId, trustsIdsList.getFirst());
     }
 
 
     private void checkTrustDataCorporateWithThreeTrusts(FilingApi filing) throws JSONException {
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
-        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(0);
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.getFirst();
         final JSONArray trustsDataJSON = new JSONArray(beneficialOwnerCorporateDto.getTrustData());
 
         final JSONObject trustDataJSON1 = trustsDataJSON.getJSONObject(0);
@@ -1127,11 +1129,11 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustDataJSON3.get("trust_name"));
     }
 
-    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) throws JSONException {
+    private void checkTrustDataCorporateWithThreeTrustsWithTrustFeatureFlagOn(FilingApi filing) {
         final List<TrustDataDto> trustDataList = ((List<TrustDataDto>) filing.getData().get(TRUST_DATA));
 
 
-        final TrustDataDto trustData1 = trustDataList.get(0);
+        final TrustDataDto trustData1 = trustDataList.getFirst();
         assertEquals("1", trustData1.getTrustId());
         assertEquals("Trust Name 1", trustData1.getTrustName());
 
@@ -1144,10 +1146,10 @@ class FilingServiceTest {
         assertEquals("Trust Name 3", trustData3.getTrustName());
 
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateInFiling = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
-        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.get(0);
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateInFiling.getFirst();
         final List<String> trustsIdsList = beneficialOwnerCorporateDto.getTrustIds();
 
-        assertEquals("1", trustsIdsList.get(0));
+        assertEquals("1", trustsIdsList.getFirst());
         assertEquals("2", trustsIdsList.get(1));
         assertEquals("3", trustsIdsList.get(2));
 
@@ -1155,12 +1157,12 @@ class FilingServiceTest {
 
     private void checkManagingOfficers(FilingApi filing) {
         List<ManagingOfficerIndividualDto> managingOfficersIndividualDto = (List<ManagingOfficerIndividualDto>) filing.getData().get(MANAGING_OFFICERS_INDIVIDUAL_FIELD);
-        ManagingOfficerIndividualDto managingOfficerIndividualDto = managingOfficersIndividualDto.get(0);
+        ManagingOfficerIndividualDto managingOfficerIndividualDto = managingOfficersIndividualDto.getFirst();
         assertEquals("Walter", managingOfficerIndividualDto.getFirstName());
         assertEquals("Blanc", managingOfficerIndividualDto.getLastName());
         assertEquals("French", managingOfficerIndividualDto.getNationality());
         List<ManagingOfficerCorporateDto> managingOfficersCorporateDto = (List<ManagingOfficerCorporateDto>) filing.getData().get(MANAGING_OFFICERS_CORPORATE_FIELD);
-        ManagingOfficerCorporateDto managingOfficerCorporateDto = managingOfficersCorporateDto.get(0);
+        ManagingOfficerCorporateDto managingOfficerCorporateDto = managingOfficersCorporateDto.getFirst();
         assertEquals("Corporate Man", managingOfficerCorporateDto.getName());
         assertEquals("The Law", managingOfficerCorporateDto.getLawGoverned());
         assertEquals("Legal FM", managingOfficerCorporateDto.getLegalForm());
@@ -1171,19 +1173,19 @@ class FilingServiceTest {
         assertEquals(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS, beneficialOwnersStatement);
         final List<BeneficialOwnerIndividualDto> beneficialOwnersIndividualInFiling = ((List<BeneficialOwnerIndividualDto>) filing.getData().get(BENEFICIAL_OWNERS_INDIVIDUAL_FIELD));
         assertEquals(1, beneficialOwnersIndividualInFiling.size());
-        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.get(0);
+        final BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = beneficialOwnersIndividualInFiling.getFirst();
         assertEquals("Jack", beneficialOwnerIndividualDto.getFirstName());
         assertEquals("Jones", beneficialOwnerIndividualDto.getLastName());
         assertEquals("Welsh", beneficialOwnerIndividualDto.getNationality());
         List<BeneficialOwnerGovernmentOrPublicAuthorityDto> beneficialOwnerGovernmentOrPublicAuthorityInFiling = ((List<BeneficialOwnerGovernmentOrPublicAuthorityDto>) filing.getData().get(BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD));
         assertEquals(1, beneficialOwnerGovernmentOrPublicAuthorityInFiling.size());
-        final BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = beneficialOwnerGovernmentOrPublicAuthorityInFiling.get(0);
+        final BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto = beneficialOwnerGovernmentOrPublicAuthorityInFiling.getFirst();
         assertEquals("The Government", beneficialOwnerGovernmentOrPublicAuthorityDto.getName());
         assertEquals("Legal form", beneficialOwnerGovernmentOrPublicAuthorityDto.getLegalForm());
         assertEquals("The Law", beneficialOwnerGovernmentOrPublicAuthorityDto.getLawGoverned());
         final List<BeneficialOwnerCorporateDto> beneficialOwnersCorporateDto = ((List<BeneficialOwnerCorporateDto>) filing.getData().get(BENEFICIAL_OWNERS_CORPORATE_FIELD));
         assertEquals(1, beneficialOwnersIndividualInFiling.size());
-        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateDto.get(0);
+        final BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = beneficialOwnersCorporateDto.getFirst();
         assertEquals("Top Class", beneficialOwnerCorporateDto.getLegalForm());
         assertTrue(beneficialOwnerCorporateDto.getOnRegisterInCountryFormedIn());
         assertEquals(LocalDate.of(2020, 4, 23), beneficialOwnerCorporateDto.getStartDate());
@@ -1314,7 +1316,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1349,7 +1351,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOIndividualTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1385,7 +1387,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1420,7 +1422,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1456,7 +1458,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithThreeBOCorporateTrustAndThreeBOIndividualTrustAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1496,7 +1498,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOIndividualWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 
@@ -1532,7 +1534,7 @@ class FilingServiceTest {
 
     @Test
     void testFilingGenerationWhenSuccessfulWithOneBOCorporateWithThreeTrustsAndWithIdentityChecksWithTrustFeatureFlagOn()
-            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException, JSONException {
+            throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
 

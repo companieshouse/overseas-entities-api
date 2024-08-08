@@ -41,22 +41,22 @@ import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConve
  * If any of the tests in this class start failing it's likely due to a DTO model structure change which is an indication
  * of potential - current or future - issues for clients that still need to be able to work with Mongo records created
  * using older versions of the data model.
- *
+ * <p>
  * If the data model structure has been modified, consideration needs to be given to how the web - and other -
  * clients of the OE API end-points will deal with older versions of the model structure and ultimately how older
  * versions of the model structure can be loaded into the newly changed DAO and DTO models. Among other things, a new,
  * Mongo, custom 'transformer' class may need to be written.
- *
+ * <p>
  * If a non-breaking change to the model has been made - e.g. a new data field has simply been added to a DTO and DAO -
  * the 'current' test JSON file needs updating to avoid a null check failure (this essentially future-proofs the test,
  * which will potentially fail if the datatype of the newly added field ever changes).
- *
+ * <p>
  * If a breaking change to the model has been made - e.g. a data field has changed its type from String to a custom POJO -
  * after a new 'transformer' has been implemented and a new <code>SchemaVersion</> enum value added, a file with the new
  * JSON model structure should be added to the test resources folder and the <code>OLD_JSON_MODEL_FILENAMES</code> and
  * <code>CURRENT_JSON_MODEL_FILENAME</code> constants updated, in order that the new, up-to-date DAO/DTO structure is
  * fully tested.
- *
+ * <p>
  * Finally, note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not
  * loaded during this test (as the specific in-memory Mongo DB config needs to be picked up).
  */
@@ -149,7 +149,7 @@ class DtoModelChangeTest {
         // Not null checks on other fields are run for the current (up-to-date) JSON example using the
         // checkNoDtoModelFieldsAreNull() method.
 
-        OverseasEntitySubmissionDao dao = submissions.get(0);
+        OverseasEntitySubmissionDao dao = submissions.getFirst();
         assertNotNull(dao);
         assertNotNull(dao.getEntityName());
         assertEquals(ENTITY_NAME, dao.getEntityName().getName());
@@ -203,7 +203,7 @@ class DtoModelChangeTest {
                             if (nestedDtoObject instanceof Map) {
                                 ((Map) nestedDtoObject).forEach((key, value) -> checkNoDtoModelFieldsAreNull(value));
                             } else if (nestedDtoObject instanceof List) {
-                                ((List) nestedDtoObject).forEach((value) -> checkNoDtoModelFieldsAreNull(value));
+                                ((List) nestedDtoObject).forEach(this::checkNoDtoModelFieldsAreNull);
                             } else {
                                 checkNoDtoModelFieldsAreNull(nestedDtoObject);
                             }
@@ -217,11 +217,9 @@ class DtoModelChangeTest {
     }
 
     private boolean isAListOrMapOfStrings(Object dto) {
-        if (dto instanceof List) {
-            List list = (List) dto;
-            return !list.isEmpty() && list.get(0) instanceof String;
-        } else if (dto instanceof Map) {
-            Map map = (Map) dto;
+        if (dto instanceof List list) {
+            return !list.isEmpty() && list.getFirst() instanceof String;
+        } else if (dto instanceof Map map) {
             return !map.isEmpty() && map.get(map.keySet().iterator().next()) instanceof String;
         }
 
