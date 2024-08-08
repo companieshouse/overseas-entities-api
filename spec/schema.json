@@ -1431,6 +1431,9 @@
           "no_change": {
             "type": "boolean"
           },
+          "owned_land_relevant_period": {
+            "type": "boolean"
+          },
           "change_bo_relevant_period": {
             "$ref": "#/components/schemas/RelevantStatementsType"
           },

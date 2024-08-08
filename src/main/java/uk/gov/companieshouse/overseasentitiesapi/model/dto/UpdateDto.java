@@ -31,6 +31,8 @@ public class UpdateDto {
 
     public static final String REVIEW_TRUSTS_FIELD = "review_trusts";
 
+    public static final String OWNED_LAND_RELEVANT_PERIOD = "owned_land_relevant_period";
+
     private static final String CHANGE_BO_RELEVANT_PERIOD = "change_bo_relevant_period";
 
     private static final String TRUSTEE_INVOLVED_RELEVANT_PERIOD = "trustee_involved_relevant_period";
@@ -73,6 +75,9 @@ public class UpdateDto {
     @JsonProperty(REVIEW_TRUSTS_FIELD)
     private List<TrustDataToReviewDto> reviewTrusts;
 
+    @JsonProperty(OWNED_LAND_RELEVANT_PERIOD)
+    private boolean ownedLandRelevantPeriodNoChange;
+
     @JsonProperty(CHANGE_BO_RELEVANT_PERIOD)
     private RelevantStatementsType changeBORelevantPeriod;
 
@@ -105,6 +110,14 @@ public class UpdateDto {
 
     public void setChangeBeneficiaryRelevantPeriod(RelevantStatementsType changeBeneficiaryRelevantPeriod) {
         this.changeBeneficiaryRelevantPeriod = changeBeneficiaryRelevantPeriod;
+    }
+
+    public boolean isOwnedLandRelevantPeriodNoChange() {
+        return ownedLandRelevantPeriodNoChange;
+    }
+
+    public void setOwnedLandRelevantPeriodNoChange(boolean ownedLandRelevantPeriodNoChange) {
+        this.ownedLandRelevantPeriodNoChange = ownedLandRelevantPeriodNoChange;
     }
 
     public LocalDate getDateOfCreation() {
