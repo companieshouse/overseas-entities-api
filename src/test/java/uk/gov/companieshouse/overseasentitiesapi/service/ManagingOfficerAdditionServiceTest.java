@@ -56,7 +56,7 @@ class ManagingOfficerAdditionServiceTest {
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(2, additions.size());
-        assertIndividualManagingOfficerDetails((IndividualManagingOfficerAddition) additions.get(0));
+        assertIndividualManagingOfficerDetails((IndividualManagingOfficerAddition) additions.getFirst());
         assertCorporateManagingOfficerDetails((CorporateManagingOfficerAddition) additions.get(1));
     }
 
@@ -99,14 +99,14 @@ class ManagingOfficerAdditionServiceTest {
     @Test
     void testManagingOfficerAdditionsNoSecondNationalityInSubmissionReturnsNationality() {
         var individualManagingOfficers = getIndividualManagingOfficers();
-        individualManagingOfficers.get(0).setSecondNationality(null);
+        individualManagingOfficers.getFirst().setSecondNationality(null);
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(individualManagingOfficers);
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
 
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
 
         assertEquals(1, additions.size());
-        assertEquals("Irish", ((IndividualManagingOfficerAddition) additions.get(0)).getNationalityOther());
+        assertEquals("Irish", ((IndividualManagingOfficerAddition) additions.getFirst()).getNationalityOther());
     }
 
     private List<ManagingOfficerIndividualDto> getIndividualManagingOfficers() {
@@ -179,17 +179,17 @@ class ManagingOfficerAdditionServiceTest {
     @Test
     void testCorporateManagingOfficerAdditionsAddressSameAsFlagTrue() {
         var corporateManagingOfficers = getCorporateManagingOfficers();
-        corporateManagingOfficers.get(0).setServiceAddress(null);
-        corporateManagingOfficers.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+        corporateManagingOfficers.getFirst().setServiceAddress(null);
+        corporateManagingOfficers.getFirst().setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
-        corporateManagingOfficers.get(0).setServiceAddressSameAsPrincipalAddress(true);
+        corporateManagingOfficers.getFirst().setServiceAddressSameAsPrincipalAddress(true);
 
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
                 .thenReturn(corporateManagingOfficers);
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(Collections.emptyList());
 
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
-        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.get(0));
+        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.getFirst());
 
         assertEquals(1, additions.size());
         assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getResidentialAddress());
@@ -200,17 +200,17 @@ class ManagingOfficerAdditionServiceTest {
     @Test
     void testCorporateManagingOfficerAdditionsAddressSameAsFlagFalse() {
         var corporateManagingOfficers = getCorporateManagingOfficers();
-        corporateManagingOfficers.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
-        corporateManagingOfficers.get(0).setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
+        corporateManagingOfficers.getFirst().setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        corporateManagingOfficers.getFirst().setPrincipalAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
-        corporateManagingOfficers.get(0).setServiceAddressSameAsPrincipalAddress(false);
+        corporateManagingOfficers.getFirst().setServiceAddressSameAsPrincipalAddress(false);
 
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate())
                 .thenReturn(corporateManagingOfficers);
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual()).thenReturn(Collections.emptyList());
 
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
-        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.get(0));
+        var corporateManagingOfficerAddition = ((CorporateManagingOfficerAddition) additions.getFirst());
 
         assertEquals(1, additions.size());
         assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), corporateManagingOfficerAddition.getResidentialAddress());
@@ -221,17 +221,17 @@ class ManagingOfficerAdditionServiceTest {
     @Test
     void testIndividualManagingOfficerAdditionsAddressSameAsFlagTrue() {
         var individualManagingOfficers = getIndividualManagingOfficers();
-        individualManagingOfficers.get(0).setServiceAddress(null);
-        individualManagingOfficers.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
+        individualManagingOfficers.getFirst().setServiceAddress(null);
+        individualManagingOfficers.getFirst().setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
-        individualManagingOfficers.get(0).setServiceAddressSameAsUsualResidentialAddress(true);
+        individualManagingOfficers.getFirst().setServiceAddressSameAsUsualResidentialAddress(true);
 
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual())
                 .thenReturn(individualManagingOfficers);
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
 
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
-        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.get(0));
+        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.getFirst());
 
         assertEquals(1, additions.size());
         assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getResidentialAddress());
@@ -242,17 +242,17 @@ class ManagingOfficerAdditionServiceTest {
     @Test
     void testIndividualManagingOfficerAdditionsAddressSameAsFlagFalse() {
         var individualManagingOfficers = getIndividualManagingOfficers();
-        individualManagingOfficers.get(0).setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
-        individualManagingOfficers.get(0).setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
+        individualManagingOfficers.getFirst().setServiceAddress(AddressTestUtils.createDummyAddressDto(TEST_SERVICE_ADDRESS));
+        individualManagingOfficers.getFirst().setUsualResidentialAddress(AddressTestUtils.createDummyAddressDto(
                 TEST_RESIDENTIAL_ADDRESS));
-        individualManagingOfficers.get(0).setServiceAddressSameAsUsualResidentialAddress(false);
+        individualManagingOfficers.getFirst().setServiceAddressSameAsUsualResidentialAddress(false);
 
         when(overseasEntitySubmissionDto.getManagingOfficersIndividual())
                 .thenReturn(individualManagingOfficers);
         when(overseasEntitySubmissionDto.getManagingOfficersCorporate()).thenReturn(Collections.emptyList());
 
         List<Addition> additions = managingOfficerAdditionService.managingOfficerAdditions(overseasEntitySubmissionDto);
-        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.get(0));
+        var individualManagingOfficerAddition = ((IndividualManagingOfficerAddition) additions.getFirst());
 
         assertEquals(1, additions.size());
         assertEquals(AddressTestUtils.createDummyAddress(TEST_RESIDENTIAL_ADDRESS), individualManagingOfficerAddition.getResidentialAddress());

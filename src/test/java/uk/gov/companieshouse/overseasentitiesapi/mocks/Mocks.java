@@ -56,15 +56,14 @@ public class Mocks {
     }
 
     public static OverseasEntitySubmissionDao buildSubmissionDao() {
-        OverseasEntitySubmissionDao overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
-        return overseasEntitySubmissionDao;
+        return new OverseasEntitySubmissionDao();
     }
 
     public static OverseasEntitySubmissionDto buildSubmissionDtoWithBoIndividualTrust() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(1);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
         return overseasEntitySubmissionDto;
     }
 
@@ -72,7 +71,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(3);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1", "2", "3")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1", "2", "3")));
         return overseasEntitySubmissionDto;
     }
 
@@ -93,7 +92,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(2);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
 
         // Set both trusts to have same ID
         overseasEntitySubmissionDto.getTrusts().get(0).setTrustId("1");
@@ -106,15 +105,15 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(1);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("2")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("2")));
 
         return overseasEntitySubmissionDto;
     }
 
     public static OverseasEntitySubmissionDto buildSubmissionDtoWithBoIndividualTrustDataIsEmpty() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1")));
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
 
         return overseasEntitySubmissionDto;
     }
@@ -123,7 +122,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(1);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
         return overseasEntitySubmissionDto;
     }
 
@@ -131,7 +130,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling =buildTrustDataInFiling(3);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(new ArrayList<>(List.of("1", "2", "3")));
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().getFirst().setTrustIds(new ArrayList<>(List.of("1", "2", "3")));
         return overseasEntitySubmissionDto;
     }
 
@@ -171,7 +170,7 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(2);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
 
         // Set both trusts to have same ID
         overseasEntitySubmissionDto.getTrusts().get(0).setTrustId("1");
@@ -184,15 +183,15 @@ public class Mocks {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
         List<TrustDataDto> trustDataInFiling = buildTrustDataInFiling(1);
         overseasEntitySubmissionDto.setTrusts(trustDataInFiling);
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(new ArrayList<>(List.of("2")));
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().getFirst().setTrustIds(new ArrayList<>(List.of("2")));
 
         return overseasEntitySubmissionDto;
     }
 
     public static OverseasEntitySubmissionDto buildSubmissionDtoWithBoCorporateTrustDataIsEmpty() {
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = buildSubmissionDto();
-        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().get(0).setTrustIds(new ArrayList<>(List.of("1")));
-        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().get(0).setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersIndividual().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
+        overseasEntitySubmissionDto.getBeneficialOwnersCorporate().getFirst().setTrustIds(new ArrayList<>(List.of("1")));
 
         return overseasEntitySubmissionDto;
     }
@@ -306,7 +305,7 @@ public class Mocks {
     }
 
     private static List<ManagingOfficerIndividualDto> buildManagingOfficersIndividualInFiling() {
-        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = new ArrayList<ManagingOfficerIndividualDto>();
+        List<ManagingOfficerIndividualDto> managingOfficersIndividualInFiling = new ArrayList<>();
         ManagingOfficerIndividualDto managingOfficerIndividualDto = new ManagingOfficerIndividualDto();
         managingOfficerIndividualDto.setFirstName("Walter");
         managingOfficerIndividualDto.setLastName("Blanc");

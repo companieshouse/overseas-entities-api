@@ -1,7 +1,17 @@
 package uk.gov.companieshouse.overseasentitiesapi.mocks;
 
-import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.*;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.*;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.HistoricalBeneficialOwnerDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustCorporateDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataToReviewDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustIndividualDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustReviewStatusDao;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.HistoricalBeneficialOwnerDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustCorporateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataToReviewDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustIndividualDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustReviewStatusDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

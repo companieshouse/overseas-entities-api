@@ -263,8 +263,7 @@ class ManagingOfficerChangeServiceTest {
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
 
         assertNotNull(result);
         assertEquals("German,Irish",individualManagingOfficerChange.getOfficer().getNationalityOther());
@@ -300,8 +299,7 @@ class ManagingOfficerChangeServiceTest {
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
 
         assertNotNull(result);
         assertEquals("Darryl Joe",individualManagingOfficerChange.getOfficer().getFormerNames());
@@ -337,8 +335,7 @@ class ManagingOfficerChangeServiceTest {
 
         List<Change> result = managingOfficerChangeService.collateManagingOfficerChanges(
                 publicPrivateMo, overseasEntitySubmissionDto, logMap);
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
 
         assertNotNull(result);
         assertEquals(new PersonName("John", "DOE"),
@@ -574,10 +571,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.getFirst());
 
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
         assertEquals(new PersonName("John", "Doe"),
                 individualManagingOfficerChange.getOfficer().getPersonName());
     }
@@ -603,10 +599,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.getFirst());
 
-        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(
-                0);
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.getFirst();
         assertEquals("John Smith Corp", corporateManagingOfficerChange.getOfficer().getName());
     }
 
@@ -715,10 +710,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.getFirst());
 
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
         assertEquals("Individual Managing Officer",
                 individualManagingOfficerChange.getAppointmentType());
         assertEquals("123", individualManagingOfficerChange.getAppointmentId());
@@ -761,10 +755,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.getFirst());
 
-        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                0);
+        IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.getFirst();
         assertNull(individualManagingOfficerChange.getOfficer().getStartDate());
     }
 
@@ -788,10 +781,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.getFirst());
 
-        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(
-                0);
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.getFirst();
         assertNull(corporateManagingOfficerChange.getOfficer().getStartDate());
     }
 
@@ -835,11 +827,9 @@ class ManagingOfficerChangeServiceTest {
         assertEquals(1, result.size());
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertInstanceOf(IndividualManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(IndividualManagingOfficerChange.class, result.getFirst());
 
-        if (result.get(0) instanceof IndividualManagingOfficerChange) {
-            IndividualManagingOfficerChange individualManagingOfficerChange = (IndividualManagingOfficerChange) result.get(
-                    0);
+        if (result.getFirst() instanceof IndividualManagingOfficerChange individualManagingOfficerChange) {
 
             assertEquals(createDummyAddress(),
                     individualManagingOfficerChange.getOfficer().getResidentialAddress());
@@ -876,11 +866,9 @@ class ManagingOfficerChangeServiceTest {
         assertEquals(1, result.size());
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.getFirst());
 
-        if (result.get(0) instanceof CorporateManagingOfficerChange) {
-            CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(
-                    0);
+        if (result.getFirst() instanceof CorporateManagingOfficerChange corporateManagingOfficerChange) {
 
             assertEquals(createDummyAddress(), corporateManagingOfficerChange.getOfficer().getRegisteredOffice());
 
@@ -922,10 +910,9 @@ class ManagingOfficerChangeServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertFalse(result.isEmpty());
-        assertInstanceOf(CorporateManagingOfficerChange.class, result.get(0));
+        assertInstanceOf(CorporateManagingOfficerChange.class, result.getFirst());
 
-        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.get(
-                0);
+        CorporateManagingOfficerChange corporateManagingOfficerChange = (CorporateManagingOfficerChange) result.getFirst();
         assertEquals("Corporate Managing Officer",
                 corporateManagingOfficerChange.getAppointmentType());
         assertEquals("123", corporateManagingOfficerChange.getAppointmentId());

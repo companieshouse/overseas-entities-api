@@ -1,11 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.security.NoSuchAlgorithmException;
 import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 
 class HashHelperTest {
 

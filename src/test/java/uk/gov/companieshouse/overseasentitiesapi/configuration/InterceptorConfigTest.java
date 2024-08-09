@@ -18,7 +18,7 @@ import uk.gov.companieshouse.overseasentitiesapi.interceptor.UserAuthenticationI
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class InterceptorConfigTest {
@@ -52,8 +52,8 @@ class InterceptorConfigTest {
 
     @Test
     void addInterceptorsTest() {
-        when(interceptorRegistry.addInterceptor(any())).thenReturn(interceptorRegistration);
-        when(interceptorRegistration.addPathPatterns(any(String.class))).thenReturn(interceptorRegistration);
+        lenient().when(interceptorRegistry.addInterceptor(any())).thenReturn(interceptorRegistration);
+        lenient().when(interceptorRegistration.addPathPatterns(any(String.class))).thenReturn(interceptorRegistration);
 
         interceptorConfig.addInterceptors(interceptorRegistry);
 

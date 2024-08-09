@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +23,6 @@ class TransactionUtilsTest {
 
     @Mock
     private Transaction transaction;
-    @Mock
-    private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
 
     private final TransactionUtils transactionUtils = new TransactionUtils();
 
