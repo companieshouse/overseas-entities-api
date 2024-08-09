@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model;
 
 import org.bson.Document;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.gov.companieshouse.overseasentitiesapi.configuration.AbstractMongoConfig;
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.mapper.OverseasEntityDtoDaoMapper;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
@@ -60,10 +63,11 @@ import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConve
  * Finally, note the use of Spring profiles, to ensure that the (default) <code>MongoConfig</code> configuration is not
  * loaded during this test (as the specific in-memory Mongo DB config needs to be picked up).
  */
+@Testcontainers
 @AutoConfigureDataMongo
 @SpringBootTest
 @ActiveProfiles("test")
-class DtoModelChangeTest {
+class DtoModelChangeTest extends AbstractMongoConfig {
 
     private static final Logger LOGGER = Logger.getLogger(DtoModelChangeTest.class.getName());
 
@@ -99,6 +103,11 @@ class DtoModelChangeTest {
 
     @Autowired
     private DocumentTransformerFactory transformerFactory;
+
+    @BeforeAll
+    static void setup() {
+        mongoDBContainer.start();
+    }
 
     @BeforeEach
     void removeAllMongoRecords() {
