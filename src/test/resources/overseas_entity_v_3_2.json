@@ -842,6 +842,7 @@
             "po_box" : "string",
             "locality" : "string"
           },
+          "start_date": "2020-01-21",
           "is_on_register_in_country_formed_in" : true,
           "identification_country_registration" : "string",
           "identification_legal_authority" : "string",
