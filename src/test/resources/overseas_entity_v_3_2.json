@@ -842,6 +842,7 @@
             "po_box" : "string",
             "locality" : "string"
           },
+          "start_date": "2020-01-21",
           "is_on_register_in_country_formed_in" : true,
           "identification_country_registration" : "string",
           "identification_legal_authority" : "string",
@@ -852,44 +853,6 @@
           "is_corporate_still_involved_in_trust" : false,
           "ceased_date" : "2022-06-11",
           "relevant_period": false
-        },
-        {
-          "serviceAddressSameAsPrincipalAddress": true,
-          "corporateStillInvolvedInTrust": true,
-          "id": "59b4ac56-4abe-4786-9e23-d5df59e59b62",
-          "type": "BENEFICIARY",
-          "name": "string",
-          "registered_office_address": {
-            "property_name_number": "string",
-            "line_1": "string",
-            "line_2": "string",
-            "town": "FFF",
-            "county": "string",
-            "country": "string",
-            "postcode": "string",
-            "care_of": "string",
-            "po_box": "string",
-            "locality": "string"
-          },
-          "service_address": {
-            "property_name_number": "string",
-            "line_1": "string",
-            "line_2": "string",
-            "town": "FFF",
-            "county": "string",
-            "country": "string",
-            "postcode": "string",
-            "care_of": "string",
-            "po_box": "string",
-            "locality": "string"
-          },
-          "start_date": "2020-01-21",
-          "is_service_address_same_as_principal_address": true,
-          "identification_legal_authority": "string",
-          "identification_legal_form": "string",
-          "is_on_register_in_country_formed_in": false,
-          "is_corporate_still_involved_in_trust": true,
-          "relevant_period": true
         }
       ],
       "relevant_period": true
