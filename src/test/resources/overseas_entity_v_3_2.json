@@ -695,8 +695,7 @@
               "locality" : "string"
             },
             "date_became_interested_person" : "2022-06-10",
-            "ceased_date" : "2024-02-29",
-            "start_date" : "2020-01-21"
+            "ceased_date" : "2024-02-29"
           }
         ],
         "corporates" : [
@@ -782,6 +781,7 @@
           "date_of_birth" : "2022-06-10",
           "nationality" : "Italian",
           "second_nationality" : "Argentine",
+          "start_date" : "2022-02-20",
           "is_service_address_same_as_usual_residential_address" : false,
           "service_address" : {
             "property_name_number" : "string",
@@ -810,8 +810,7 @@
           "date_became_interested_person" : "2022-06-10",
           "ceased_date" : "2024-02-29",
           "is_individual_still_involved_in_trust" : false,
-          "relevant_period": false,
-          "start_date" : "2020-01-21"
+          "relevant_period": false
         }
       ],
       "corporates" : [
