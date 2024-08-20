@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -266,10 +268,11 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    @Test
-    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull() {
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull(boolean isUpdateOrRemove) {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -277,17 +280,19 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    @Test
-    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIs() {
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsTrueButServiceAddressIsNull(boolean isUpdateOrRemove) {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(true);
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddress(null);
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
 
         assertFalse(errors.hasErrors());
     }
 
-    @Test
-    void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFields() {
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFields(boolean isUpdateOrRemove) {
         var trustee = trustDataDtoList.getFirst().getIndividuals().getFirst();
         trustee.setServiceAddressSameAsUsualResidentialAddress(true);
         trustee.setUraAddressPremises("1");
@@ -295,7 +300,7 @@ class TrustIndividualValidatorTest {
         trustee.setUraAddressLocality("New York");
         trustee.setUraAddressCountry("USA");
 
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
 
         assertFalse(errors.hasErrors());
         assertEquals("1", trustee.getServiceAddress().getPropertyNameNumber());
@@ -358,14 +363,6 @@ class TrustIndividualValidatorTest {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
         trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
-
-        assertFalse(errors.hasErrors());
-    }
-
-    @Test
-    void testSameAsAddressFlagNotValidatedIfUpdateOrRemoveJourney() {
-        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
         assertFalse(errors.hasErrors());
     }
