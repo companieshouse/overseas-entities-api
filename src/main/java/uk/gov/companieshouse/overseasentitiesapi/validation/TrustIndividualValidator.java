@@ -64,8 +64,6 @@ public class TrustIndividualValidator {
                     validateAddress(TrustIndividualDto.USUAL_RESIDENTIAL_ADDRESS_FIELD,
                             trustIndividualDto.getUsualResidentialAddress(), errors, loggingContext);
 
-                    validateSameAsAddress(trustIndividualDto, errors, loggingContext);
-
                     conditionalJourneyValidation(trustIndividualDto, trustDataDto.getCreationDate(), errors, loggingContext, isForUpdateOrRemove);
                 }
             }
@@ -78,6 +76,9 @@ public class TrustIndividualValidator {
                                               Errors errors,
                                               String loggingContext,
                                               boolean isForUpdateOrRemove) {
+
+        validateSameAsAddress(trustIndividualDto, errors, loggingContext, isForUpdateOrRemove);
+
         if (isForUpdateOrRemove) {
             // Validating 'ceased date' doesn't make sense on the registration journey, as the option to enter
             // something in this field isn't present, so this is only validated on the update and remove journeys
@@ -174,9 +175,20 @@ public class TrustIndividualValidator {
         return UtilsValidators.isNotNull(same, qualifiedFieldName, errors, loggingContext);
     }
 
-    private void validateSameAsAddress(TrustIndividualDto trustIndividualDto, Errors errors, String loggingContext) {
-        boolean isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
-                trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
+    private void validateSameAsAddress(TrustIndividualDto trustIndividualDto, Errors errors, String loggingContext, boolean isForUpdateOrRemove) {
+        // Default value to true and if Dto is for a Registration, validate it properly.
+        // If Dto is for an Update or Remove then leave as true - this is because some data in mongo
+        // might already have been stored with a null value for Update/Remove before this validation was changed.
+        // If we try and refund a record with a null in the 'sameAs' field we don't want validation to now fail as
+        // it would have passed validation when it was stored on mongo originally.
+        boolean isSameAddressFlagValid = true;
+
+        // null 'sameAs' field not allowed for Registration
+        if (!isForUpdateOrRemove) {
+            isSameAddressFlagValid = validateServiceAddressSameAsUsualResidentialAddress(
+                    trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress(), errors, loggingContext);
+        }
+
         if (isSameAddressFlagValid
                 && Boolean.FALSE.equals(trustIndividualDto.getServiceAddressSameAsUsualResidentialAddress())) {
             validateAddress(TrustIndividualDto.SERVICE_ADDRESS_FIELD, trustIndividualDto.getServiceAddress(), errors,

@@ -268,11 +268,10 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"true", "false"})
-    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull(boolean isUpdateOrRemove) {
+    @Test
+    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNullWhenNotUpdateOrRemove() {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
-        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -280,9 +279,17 @@ class TrustIndividualValidatorTest {
         assertError(qualifiedFieldName, validationMessage, errors);
     }
 
+    @Test
+    void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNullForUpdateOrRemove() {
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
+        Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
+
+        assertFalse(errors.hasErrors());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"true", "false"})
-    void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsTrueButServiceAddressIsNull(boolean isUpdateOrRemove) {
+    void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsTrueButServiceAddressIsNull(boolean isUpdateOrRemove) {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(true);
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddress(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
