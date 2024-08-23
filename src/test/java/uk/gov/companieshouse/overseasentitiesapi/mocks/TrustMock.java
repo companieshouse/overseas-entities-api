@@ -110,6 +110,7 @@ public class TrustMock {
         dao.setIdentificationRegistrationNumber("Registration Number");
         dao.setType("Beneficiary");
         dao.setOnRegisterInCountryFormedIn(true);
+        dao.setStartDate(LocalDate.of(2020,1,21));
         dao.setRelevantPeriod(false);
 
         return dao;
@@ -219,6 +220,7 @@ public class TrustMock {
         Dto.setType("Beneficiary");
         Dto.setOnRegisterInCountryFormedIn(true);
         Dto.setCorporateStillInvolvedInTrust(Boolean.TRUE);
+        Dto.setStartDate(LocalDate.of(2020,1,21));
         Dto.setRelevantPeriod(false);
 
         return Dto;

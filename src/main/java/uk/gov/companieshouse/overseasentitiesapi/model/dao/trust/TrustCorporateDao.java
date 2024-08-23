@@ -21,6 +21,9 @@ public class TrustCorporateDao {
     @Field("service_address")
     private AddressDao serviceAddress;
 
+    @Field("start_date")
+    private LocalDate startDate;
+
     @Field("is_service_address_same_as_principal_address")
     private Boolean isServiceAddressSameAsPrincipalAddress;
 
@@ -177,4 +180,8 @@ public class TrustCorporateDao {
     public boolean getRelevantPeriod() { return relevantPeriod; }
 
     public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
+
+    public LocalDate getStartDate() { return startDate; }
+
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 }
