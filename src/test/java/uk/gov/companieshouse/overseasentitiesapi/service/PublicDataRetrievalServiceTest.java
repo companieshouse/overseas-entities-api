@@ -191,18 +191,14 @@ class PublicDataRetrievalServiceTest {
     void testServiceExceptionThrownWhenPublicDataForCompanyProfileDataThrowsURIValidationException() throws IOException, URIValidationException {
         when(companyGet.execute()).thenThrow(new URIValidationException(ERROR_MESSAGE));
 
-        assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
-        });
+        assertThrows(ServiceException.class, () -> publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER));
     }
 
     @Test
     void testServiceExceptionThrownWhenPublicDataForCompanyProfileDataThrowsIOException() throws IOException, URIValidationException {
         when(companyGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException(ERROR_MESSAGE)));
 
-        assertThrows(ServiceException.class, () -> {
-            publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER);
-        });
+        assertThrows(ServiceException.class, () -> publicDataRetrievalService.getCompanyProfile(COMPANY_REFERENCE, PASS_THROUGH_HEADER));
     }
 
     @Test
@@ -257,9 +253,7 @@ class PublicDataRetrievalServiceTest {
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenThrow(new URIValidationException("ERROR"));
 
-        assertThrows(ServiceException.class, () -> {
-            retrievePublicData();
-        });
+        assertThrows(ServiceException.class, this::retrievePublicData);
     }
 
     @Test
@@ -273,9 +267,7 @@ class PublicDataRetrievalServiceTest {
         when(officers.list(Mockito.anyString())).thenReturn(officersList);
         when(officersList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-        assertThrows(ServiceException.class, () -> {
-            retrievePublicData();
-        });
+        assertThrows(ServiceException.class, this::retrievePublicData);
     }
 
     @Test
@@ -299,9 +291,7 @@ class PublicDataRetrievalServiceTest {
         when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
         when(pscsList.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-        assertThrows(ServiceException.class, () -> {
-            retrievePublicData();
-        });
+        assertThrows(ServiceException.class, this::retrievePublicData);
     }
 
     @Test
@@ -325,8 +315,6 @@ class PublicDataRetrievalServiceTest {
         when(pscs.list(Mockito.anyString())).thenReturn(pscsList);
         when(pscsList.execute()).thenThrow(new URIValidationException("ERROR"));
 
-        assertThrows(ServiceException.class, () -> {
-            retrievePublicData();
-        });
+        assertThrows(ServiceException.class, this::retrievePublicData);
     }
 }

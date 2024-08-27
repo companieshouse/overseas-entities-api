@@ -14,7 +14,7 @@ public class FormerNameConcatenation {
 
         if (formerNames != null) {
             for (FormerNamesApi formerName : formerNames) {
-                if (allFormerNames.length() > 0) {
+                if (!allFormerNames.isEmpty()) {
                     allFormerNames.append(", ");
                 }
 

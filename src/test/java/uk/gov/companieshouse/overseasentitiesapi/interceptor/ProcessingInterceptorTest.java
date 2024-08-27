@@ -11,9 +11,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +41,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsClosed() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsClosed() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -53,7 +52,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsClosedPendingPaymentAndNotAGetRequest() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsClosedPendingPaymentAndNotAGetRequest() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -66,7 +65,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsDeleted() throws IOException {
+    void testInterceptorReturnsFalseWhenTransactionIsDeleted() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -78,7 +77,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsTrueWhenTransactionIsStillOpen() throws IOException {
+    void testInterceptorReturnsTrueWhenTransactionIsStillOpen() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -90,7 +89,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsTrueWhenTransactionIsClosedPendingPaymentAndAGetRequest() throws IOException {
+    void testInterceptorReturnsTrueWhenTransactionIsClosedPendingPaymentAndAGetRequest() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
@@ -103,7 +102,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenNoTransactionFound() throws IOException {
+    void testInterceptorReturnsFalseWhenNoTransactionFound() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 

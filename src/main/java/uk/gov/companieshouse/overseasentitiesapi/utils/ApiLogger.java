@@ -70,9 +70,7 @@ public class ApiLogger {
         if(dataMap == null) {
             dataMap = new HashMap<>();
         }
-        Map<String, Object> clonedMapData = new HashMap<>();
-        clonedMapData.putAll(dataMap);
 
-        return clonedMapData;
+        return new HashMap<>(dataMap);
     }
 }

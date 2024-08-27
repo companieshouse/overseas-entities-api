@@ -11,7 +11,7 @@ class Version1DocumentTransformerTest {
 
     private static final String ENTITY_NAME = "Test Name";
 
-    private Version1DocumentTransformer transformer = new Version1DocumentTransformer();
+    private final Version1DocumentTransformer transformer = new Version1DocumentTransformer();
 
     @Test
     void testTransformation() {

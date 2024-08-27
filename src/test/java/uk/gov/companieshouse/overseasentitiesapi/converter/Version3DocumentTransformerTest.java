@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Version3DocumentTransformerTest {
 
-    private Version3DocumentTransformer transformer = new Version3DocumentTransformer();
+    private final Version3DocumentTransformer transformer = new Version3DocumentTransformer();
 
     @Test
     void testTransformation() {

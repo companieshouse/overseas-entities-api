@@ -25,7 +25,7 @@ class OverseasEntityChangeComparatorTest {
     private final String UPDATED_PLACE_REGISTERED_VALUE = "NEW NAME";
     private final String UPDATED_PLACE_REGISTERED_JURISDICTION_VALUE = "NEW JURISDICTION";
     private final String UPDATED_REGISTRATION_NUMBER_VALUE = "NEW REGISTRATION NUMBER";
-    private OverseasEntityChangeComparator overseasEntityChangeComparator = new OverseasEntityChangeComparator();
+    private final OverseasEntityChangeComparator overseasEntityChangeComparator = new OverseasEntityChangeComparator();
 
     @Test
     void testCompareEntityNameChangeDifferentValueReturnsObject() {

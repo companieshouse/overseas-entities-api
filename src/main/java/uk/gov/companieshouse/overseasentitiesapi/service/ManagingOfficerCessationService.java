@@ -37,12 +37,12 @@ public class ManagingOfficerCessationService {
     cessations.addAll(
         getIndividualManagingOfficers(overseasEntitySubmissionDto, combinedMoData, logMap).stream()
             .flatMap(Optional::stream)
-            .collect(Collectors.toList()));
+            .toList());
     cessations.addAll(
         getCorporateManagingOfficersCessations(overseasEntitySubmissionDto, combinedMoData, logMap)
             .stream()
             .flatMap(Optional::stream)
-            .collect(Collectors.toList()));
+            .toList());
 
     return cessations;
   }

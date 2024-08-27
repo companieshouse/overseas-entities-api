@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
 public class NatureOfControlTypeMapping {
@@ -89,7 +88,7 @@ public class NatureOfControlTypeMapping {
       output.addAll(
           personNatureOfControlTypes.stream()
               .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
-              .collect(Collectors.toList())
+              .toList()
       );
     }
 
@@ -97,7 +96,7 @@ public class NatureOfControlTypeMapping {
       output.addAll(
           trusteesNatureOfControlTypes.stream()
               .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
-              .collect(Collectors.toList())
+              .toList()
       );
     }
 
@@ -105,7 +104,7 @@ public class NatureOfControlTypeMapping {
       output.addAll(
           firmNatureOfControlTypes.stream()
               .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
-              .collect(Collectors.toList())
+              .toList()
       );
     }
 

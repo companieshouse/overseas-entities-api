@@ -65,7 +65,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private ProcessingInterceptor processingInterceptor;
 
     /**
-     * Setup the interceptors to run against endpoints when the endpoints are called
+     * Set up the interceptors to run against endpoints when the endpoints are called
      * Interceptors are executed in the order they are added to the registry
      * @param registry The spring interceptor registry
      */

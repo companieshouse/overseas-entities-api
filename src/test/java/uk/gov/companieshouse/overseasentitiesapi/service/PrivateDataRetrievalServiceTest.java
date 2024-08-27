@@ -212,9 +212,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateBeneficialOwnerGet.execute()).thenThrow(
                     new URIValidationException("ERROR"));
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER));
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getBeneficialOwnersData((COMPANY_NUMBER)));
         }
 
         @Test
@@ -224,9 +222,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateBeneficialOwnerGet.execute()).thenThrow(
                     ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER);
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER));
         }
     }
 
@@ -271,9 +267,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateManagingOfficerDataGet.execute()).thenThrow(
                     new URIValidationException("ERROR"));
 
-            assertThrows(ServiceException.class, () -> {
-                retrievePrivateData();
-            });
+            assertThrows(ServiceException.class, PrivateDataRetrievalServiceTest.this::retrievePrivateData);
         }
 
         @Test
@@ -291,9 +285,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateManagingOfficerDataGet.execute()).thenThrow(
                     ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-            assertThrows(ServiceException.class, () -> {
-                retrievePrivateData();
-            });
+            assertThrows(ServiceException.class, PrivateDataRetrievalServiceTest.this::retrievePrivateData);
         }
     }
 
@@ -317,9 +309,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateOverseasEntityDataGet.execute()).thenThrow(
                     new URIValidationException("ERROR"));
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER)));
         }
 
         @Test
@@ -329,9 +319,7 @@ class PrivateDataRetrievalServiceTest {
             when(privateOverseasEntityDataGet.execute()).thenThrow(
                     ApiErrorResponseException.fromIOException(new IOException()));
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER));
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getOverseasEntityData((COMPANY_NUMBER)));
         }
 
         @Test
@@ -498,9 +486,6 @@ class PrivateDataRetrievalServiceTest {
             var overseasEntityApi = new OverseasEntityDataApi();
 
             //Note: If relevant models change in private-api-sdk-java then these tests may fail. Update local JSON to reflect changes in private-api-sdk-java.
-            var boDataListApi = objectMapper.readValue(
-                    PrivateBeneficialOwnersMock.jsonBeneficialOwnerString,
-                    PrivateBoDataListApi.class);
             var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString,
                     ManagingOfficerListDataApi.class);
 
@@ -529,8 +514,6 @@ class PrivateDataRetrievalServiceTest {
             var boDataListApi = objectMapper.readValue(
                     PrivateBeneficialOwnersMock.jsonBeneficialOwnerString,
                     PrivateBoDataListApi.class);
-            var managingOfficerDataApiListApi = objectMapper.readValue(jsonManagingOfficerString,
-                    ManagingOfficerListDataApi.class);
 
             when(privateOverseasEntityDataGet.execute()).thenReturn(overseasEntityDataResponse);
             when(overseasEntityDataResponse.getData()).thenReturn(overseasEntityApi);
@@ -578,10 +561,8 @@ class PrivateDataRetrievalServiceTest {
         @Test
         void testGetTrustDetailsReturnsNullTrustList()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
-            PrivateTrustDetailsListApi trustDetailsList = null;
-
             when(privateTrustDetailsGet.execute()).thenReturn(privateTrustDetailsDataResponse);
-            when(privateTrustDetailsDataResponse.getData()).thenReturn(trustDetailsList);
+            when(privateTrustDetailsDataResponse.getData()).thenReturn(null);
 
             var result = privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
 
@@ -609,9 +590,7 @@ class PrivateDataRetrievalServiceTest {
                     new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
             when(privateTrustDetailsGet.execute()).thenThrow(exception);
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER)));
         }
 
         @Test
@@ -619,9 +598,7 @@ class PrivateDataRetrievalServiceTest {
                 throws ApiErrorResponseException, URIValidationException {
             when(privateTrustDetailsGet.execute()).thenThrow(new URIValidationException("Error"));
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER));
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getTrustDetails((COMPANY_NUMBER)));
         }
     }
 
@@ -743,7 +720,7 @@ class PrivateDataRetrievalServiceTest {
 
         @Test
         void testGetCorporateTrusteesApiErrorResponseExceptionThrownCausesServiceException()
-                throws ApiErrorResponseException, URIValidationException, ServiceException {
+                throws ApiErrorResponseException, URIValidationException {
 
             trustDetailsStubbings();
 
@@ -757,14 +734,12 @@ class PrivateDataRetrievalServiceTest {
             
             when(privateCorporateTrusteeGet.execute()).thenThrow(exception);
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
         }
 
         @Test
         void testGetCorporateTrusteesURIValidationExceptionThrown()
-                throws ApiErrorResponseException, URIValidationException, ServiceException {
+                throws ApiErrorResponseException, URIValidationException {
             trustDetailsStubbings();
 
             var privateCorporateTrustee = new PrivateCorporateTrusteeApi();
@@ -776,9 +751,7 @@ class PrivateDataRetrievalServiceTest {
 
             System.setOut(new PrintStream(outputStreamCaptor));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Error Retrieving Corporate Trustee data for Trust Id " + HASHED_TRUST_ID));
             assertEquals("Error", thrown.getMessage());
@@ -796,9 +769,7 @@ class PrivateDataRetrievalServiceTest {
 
             when(hashHelper.encode(anyString())).thenThrow(new NoSuchAlgorithmException("Error"));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals("Cannot encode ID", thrown.getMessage());
         }
@@ -818,9 +789,7 @@ class PrivateDataRetrievalServiceTest {
 
             System.setOut(new PrintStream(outputStreamCaptor));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
             assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
@@ -856,10 +825,8 @@ class PrivateDataRetrievalServiceTest {
 
         @Test
         void testGetTrustLinksReturnsNullTrustList() throws ApiErrorResponseException, URIValidationException, ServiceException {
-            PrivateTrustLinksListApi trustLinksList = null;
-
             when(privateTrustLinksGet.execute()).thenReturn(privateTrustLinksDataResponse);
-            when(privateTrustLinksDataResponse.getData()).thenReturn(trustLinksList);
+            when(privateTrustLinksDataResponse.getData()).thenReturn(null);
 
             var result = privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
 
@@ -878,26 +845,22 @@ class PrivateDataRetrievalServiceTest {
         }
 
         @Test
-        void testGetTrustLinksApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustLinksApiErrorResponseExceptionThrownCausesServiceException() throws ApiErrorResponseException, URIValidationException {
             var exception = new ApiErrorResponseException(
                     new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
             when(privateTrustLinksGet.execute()).thenThrow(exception);
 
             assertThrows(
                     ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
-                    });
+                    () -> privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER)));
         }
         @Test
-        void testGetTrustLinksURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException, ServiceException {
+        void testGetTrustLinksURIValidationExceptionThrown() throws ApiErrorResponseException, URIValidationException {
             when(privateTrustLinksGet.execute()).thenThrow(new URIValidationException("Error"));
 
             assertThrows(
                     ServiceException.class,
-                    () -> {
-                        privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER));
-                    });
+                    () -> privateDataRetrievalService.getTrustLinks((COMPANY_NUMBER)));
                 }
         }
 
@@ -975,18 +938,6 @@ class PrivateDataRetrievalServiceTest {
             assertEquals(1, result.getData().size());
         }
 
-        void testGetIndividualTrusteesReturnsNullTrusteeList()
-                throws ApiErrorResponseException, URIValidationException, ServiceException {
-            trustDetailsStubbings();
-            individualTrusteesStubbing(null);
-
-            var result = privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID,
-                    COMPANY_NUMBER);
-
-            verify(apiClientService, times(2)).getInternalApiClient();
-            assertNull(result.getData());
-        }
-
         @Test
         void testGetIndividualTrusteesApiErrorResponseExceptionThrownNotFoundReturnsEmptyList()
                 throws ApiErrorResponseException, URIValidationException, ServiceException {
@@ -1012,7 +963,7 @@ class PrivateDataRetrievalServiceTest {
 
         @Test
         void testGetIndividualTrusteesApiErrorResponseExceptionThrownCausesServiceException()
-                throws ApiErrorResponseException, URIValidationException, ServiceException {
+                throws ApiErrorResponseException, URIValidationException {
 
             trustDetailsStubbings();
 
@@ -1026,14 +977,12 @@ class PrivateDataRetrievalServiceTest {
 
             when(privateIndividualTrusteeGet.execute()).thenThrow(exception);
 
-            assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            assertThrows(ServiceException.class, () -> privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
         }
 
         @Test
         void testGetIndividualTrusteesURIValidationExceptionThrown()
-                throws ApiErrorResponseException, URIValidationException, ServiceException {
+                throws ApiErrorResponseException, URIValidationException {
             trustDetailsStubbings();
 
             var privateIndividualTrustee = new PrivateIndividualTrusteeApi();
@@ -1045,9 +994,7 @@ class PrivateDataRetrievalServiceTest {
 
             System.setOut(new PrintStream(outputStreamCaptor));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals(1, StringUtils.countMatches(outputStreamCaptor.toString(), "Error Retrieving Individual Trustee data for Trust Id " + HASHED_TRUST_ID));
             assertEquals("Error", thrown.getMessage());
@@ -1065,9 +1012,7 @@ class PrivateDataRetrievalServiceTest {
 
             when(hashHelper.encode(anyString())).thenThrow(new NoSuchAlgorithmException("Error"));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals("Cannot encode ID", thrown.getMessage());
         }
@@ -1086,9 +1031,7 @@ class PrivateDataRetrievalServiceTest {
 
             System.setOut(new PrintStream(outputStreamCaptor));
 
-            ServiceException thrown =assertThrows(ServiceException.class, () -> {
-                privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER);
-            });
+            ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
             assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
             assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
