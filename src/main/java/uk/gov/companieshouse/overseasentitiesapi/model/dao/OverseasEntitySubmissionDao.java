@@ -78,6 +78,9 @@ public class OverseasEntitySubmissionDao {
     @Field("is_secure_register")
     private Boolean isSecureRegister;
 
+    @Field("who_is_registering")
+    private String whoIsRegistering;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -241,6 +244,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setIsSecureRegister(Boolean isSecureRegister) {
         this.isSecureRegister = isSecureRegister;
+    }
+
+    public String getWhoIsRegistering() {
+        return whoIsRegistering;
+    }
+
+    public void setWhoIsRegistering(String whoIsRegistering) {
+        this.whoIsRegistering = whoIsRegistering;
     }
 
     public void setLinks(Map<String, String> links) {

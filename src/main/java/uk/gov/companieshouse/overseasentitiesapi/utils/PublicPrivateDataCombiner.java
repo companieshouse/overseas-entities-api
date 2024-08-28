@@ -100,7 +100,7 @@ public class PublicPrivateDataCombiner {
     }
 
     private String retrieveHashedId(String officerId) throws ServiceException {
-        String hashedId = null;
+        String hashedId;
         try {
             hashedId = hashHelper.encode(officerId);
         } catch (NoSuchAlgorithmException e) {
@@ -131,7 +131,7 @@ public class PublicPrivateDataCombiner {
             }
 
             result.append("{");
-            result.append("\"Public Hashed ID\": \"" + publicMoId + "\", ");
+            result.append("\"Public Hashed ID\": \"").append(publicMoId).append("\", ");
 
             var privateOfficer = officer.getValue().getRight();
             String privateMoId;
@@ -141,8 +141,7 @@ public class PublicPrivateDataCombiner {
                 privateMoId = "null";
             }
 
-            result.append(
-                    "\"Private ID\": \"" + privateMoId + "\"");
+            result.append("\"Private ID\": \"").append(privateMoId).append("\"");
             result.append("}");
         }
         result.append("],");
@@ -178,8 +177,8 @@ public class PublicPrivateDataCombiner {
             }
 
             result.append("{");
-            result.append("\"Public Hashed ID\": \"" + publicBoId + "\", ");
-            result.append("\"Private ID\": \"" + privateBoId + "\"");
+            result.append("\"Public Hashed ID\": \"").append(publicBoId).append("\", ");
+            result.append("\"Private ID\": \"").append(privateBoId).append("\"");
             result.append("}");
         }
         result.append("],");
@@ -188,8 +187,8 @@ public class PublicPrivateDataCombiner {
     private void createOELog(StringBuilder result) {
         result.append("\"Overseas Entity Data\": {");
         if (this.combinedOEs != null && this.combinedOEs.getLeft() != null && this.combinedOEs.getRight() != null) {
-            result.append("\"Public Entity Number\": \"" + this.combinedOEs.getLeft().getCompanyNumber() + "\", ");
-            result.append("\"Private Email\": \"" + this.combinedOEs.getRight().getEmail() + "\"");
+            result.append("\"Public Entity Number\": \"").append(this.combinedOEs.getLeft().getCompanyNumber()).append("\", ");
+            result.append("\"Private Email\": \"").append(this.combinedOEs.getRight().getEmail()).append("\"");
         }
         result.append("}");
     }

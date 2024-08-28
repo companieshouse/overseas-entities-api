@@ -5,7 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
@@ -22,7 +26,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.*;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+
 
 @RestController
 @RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
@@ -77,7 +84,7 @@ public class OverseasEntitiesDataController {
 
         final String email = submissionDto.getEntity().getEmail();
 
-        OverseasEntityDataApi overseasEntityDataApi = null;
+        OverseasEntityDataApi overseasEntityDataApi;
 
         if (StringUtils.isBlank(email)) {
             String companyNumber = submissionDto.getEntityNumber();

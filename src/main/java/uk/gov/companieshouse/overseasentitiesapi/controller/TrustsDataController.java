@@ -172,8 +172,7 @@ public class TrustsDataController {
             String hashedId = hashHelper.encode(hashableData.getId());
             hashableData.setHashedId(hashedId);
             hashableData.setId(null);
-            if(hashableData instanceof PrivateTrustLinksApi){
-                var privateTrustLinksApi = (PrivateTrustLinksApi) hashableData;
+            if(hashableData instanceof PrivateTrustLinksApi privateTrustLinksApi){
                 String hashedCorporateBodyId = hashHelper.encode(privateTrustLinksApi.getCorporateBodyAppointmentId());
                 privateTrustLinksApi.setHashedCorporateBodyAppointmentId(hashedCorporateBodyId);
                 privateTrustLinksApi.setCorporateBodyAppointmentId(null);

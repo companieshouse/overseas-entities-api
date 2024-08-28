@@ -87,9 +87,7 @@ class TransactionServiceTest {
         when(transactionsResourceHandler.get(TRANSACTIONS_URL + TRANSACTION_ID)).thenReturn(transactionsGet);
         when(transactionsGet.execute()).thenThrow(new URIValidationException("ERROR"));
 
-        assertThrows(ServiceException.class, () -> {
-            transactionService.getTransaction(TRANSACTION_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
-        });
+        assertThrows(ServiceException.class, () -> transactionService.getTransaction(TRANSACTION_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT));
     }
 
     @Test
@@ -99,9 +97,7 @@ class TransactionServiceTest {
         when(transactionsResourceHandler.get(TRANSACTIONS_URL + TRANSACTION_ID)).thenReturn(transactionsGet);
         when(transactionsGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-        assertThrows(ServiceException.class, () -> {
-            transactionService.getTransaction(TRANSACTION_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT);
-        });
+        assertThrows(ServiceException.class, () -> transactionService.getTransaction(TRANSACTION_ID, PASSTHROUGH_HEADER, LOGGING_CONTEXT));
     }
 
     @Test
@@ -134,9 +130,7 @@ class TransactionServiceTest {
         when(privateTransactionPatch.execute()).thenReturn(apiPatchResponse);
         when(apiPatchResponse.getStatusCode()).thenReturn(401);
 
-        assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
-        });
+        assertThrows(ServiceException.class, () -> transactionService.updateTransaction(transaction, LOGGING_CONTEXT));
     }
 
     @Test
@@ -149,8 +143,6 @@ class TransactionServiceTest {
         when(privateTransactionResourceHandler.patch(PRIVATE_TRANSACTIONS_URL + TRANSACTION_ID, transaction)).thenReturn(privateTransactionPatch);
         when(privateTransactionPatch.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-        assertThrows(ServiceException.class, () -> {
-            transactionService.updateTransaction(transaction, LOGGING_CONTEXT);
-        });
+        assertThrows(ServiceException.class, () -> transactionService.updateTransaction(transaction, LOGGING_CONTEXT));
     }
 }

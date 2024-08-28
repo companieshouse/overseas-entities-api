@@ -29,7 +29,7 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 import uk.gov.companieshouse.service.rest.err.Errors;
 import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
@@ -50,9 +50,6 @@ public class OverseasEntitiesController {
 
     @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
     private boolean isValidationEnabled;
-
-    @Value("${FEATURE_FLAG_ENABLE_UPDATE_SAVE_AND_RESUME_07032023:false}")
-    private boolean isUpdateSaveAndResumeEnabled;
 
     @Autowired
     public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,

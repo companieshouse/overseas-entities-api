@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +141,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     private String getCompanyNumberInScope (HttpServletRequest request) {
         final Map<String, List<String>> privileges = getERICTokenPermissions(request);
         if (privileges.containsKey(COMPANY_NUMBER_KEY)) {
-            return privileges.get(COMPANY_NUMBER_KEY).get(0);
+            return privileges.get(COMPANY_NUMBER_KEY).getFirst();
         }
         return null;
     }
@@ -160,12 +160,12 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private Optional<String> getCompanyNumberInTransaction(HttpServletRequest request, String transactionId) throws ServiceException {
-        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         String reqId = request.getHeader(ERIC_REQUEST_ID_KEY);
         var logMap = new HashMap<String, Object>();
         logMap.put(TRANSACTION_ID_KEY, transactionId);
 
-        final var transaction = transactionService.getTransaction(transactionId, passthroughHeader, reqId);
+        final var transaction = transactionService.getTransaction(transactionId, passThroughHeader, reqId);
         if (transaction == null) {
             ApiLogger.debugContext(reqId, "Call to Transaction Service returned null transaction object " + transactionId, logMap);
             return Optional.empty();

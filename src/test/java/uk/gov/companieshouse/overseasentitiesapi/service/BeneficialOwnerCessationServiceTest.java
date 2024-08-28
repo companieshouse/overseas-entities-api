@@ -1,12 +1,16 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -17,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
-import uk.gov.companieshouse.api.model.officers.CompanyOfficerApi;
 import uk.gov.companieshouse.api.model.psc.PscApi;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -25,7 +28,6 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.Cessation;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.cessations.IndividualBeneficialOwnerCessation;
-import uk.gov.companieshouse.overseasentitiesapi.service.BeneficialOwnerCessationService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
 class BeneficialOwnerCessationServiceTest {
@@ -107,7 +109,7 @@ class BeneficialOwnerCessationServiceTest {
 
     assertEquals(3, cessations.size()); // Assuming only one beneficial owner satisfies the filter criteria
 
-    IndividualBeneficialOwnerCessation individualCessation = (IndividualBeneficialOwnerCessation) cessations.get(0);
+    IndividualBeneficialOwnerCessation individualCessation = (IndividualBeneficialOwnerCessation) cessations.getFirst();
     assertEquals("123", individualCessation.getAppointmentId());
     assertEquals(LocalDate.now(), individualCessation.getActionDate());
     assertEquals(LocalDate.of(1990, 5, 15), individualCessation.getBirthDate());

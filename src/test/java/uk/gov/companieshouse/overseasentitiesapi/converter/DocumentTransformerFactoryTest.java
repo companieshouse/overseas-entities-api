@@ -39,7 +39,7 @@ class DocumentTransformerFactoryTest {
         assertTrue(transformer.isEmpty());
     }
 
-    public class TestTransformer implements DocumentTransformer {
+    public static class TestTransformer implements DocumentTransformer {
 
         @Override
         public SchemaVersion forSchemaVersion() {

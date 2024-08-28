@@ -51,7 +51,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenForenameFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setForename(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setForename(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.FORENAME_FIELD);
@@ -62,7 +62,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenForenameFieldIsEmpty() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setForename(" ");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setForename(" ");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.FORENAME_FIELD);
@@ -73,7 +73,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenForenameFieldIsNotEmpty() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setForename("TESTY");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setForename("TESTY");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -81,7 +81,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenForenameFieldExceedsMaxLength() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setForename(StringUtils.repeat("A", 161));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setForename(StringUtils.repeat("A", 161));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.FORENAME_FIELD);
@@ -92,7 +92,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenForenameFieldContainsInvalidCharacters() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setForename("Дракон");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setForename("Дракон");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.FORENAME_FIELD);
@@ -104,7 +104,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenSurnameFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setSurname(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSurname(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.SURNAME_FIELD);
@@ -115,7 +115,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenSurnameFieldIsEmpty() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setSurname(" ");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSurname(" ");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.SURNAME_FIELD);
@@ -126,7 +126,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenSurnameFieldIsNotEmpty() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setSurname("TESTY");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSurname("TESTY");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -134,7 +134,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenSurnameFieldExceedsMaxLength() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setSurname(StringUtils.repeat("A", 161));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSurname(StringUtils.repeat("A", 161));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.SURNAME_FIELD);
@@ -145,7 +145,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenSurnameFieldContainsInvalidCharacters() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setSurname("Дракон");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSurname("Дракон");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.SURNAME_FIELD);
@@ -157,7 +157,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenBirthDateFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.DATE_OF_BIRTH_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -167,14 +167,14 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenBirthDateFieldIsInThePast() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(LocalDate.of(1970, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(LocalDate.of(1970, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenBirthDateIsInTheFuture() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(LocalDate.now().plusDays(1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(LocalDate.now().plusDays(1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.DATE_OF_BIRTH_FIELD);
@@ -185,7 +185,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenTypeFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.TYPE_FIELD);
@@ -196,7 +196,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenTypeFieldIsEmpty() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(" ");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(" ");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.TYPE_FIELD);
@@ -207,7 +207,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenTypeFieldValueIsNotExpected() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType("TESTY");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType("TESTY");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.TYPE_FIELD);
@@ -218,8 +218,8 @@ class TrustIndividualValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenTypeFieldVlaueIsExpected() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
+    void testNoErrorReportedWhenTypeFieldValueIsExpected() {
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.BENEFICIARY.getValue());
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -227,8 +227,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenDateBecomeInterestedPersonFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
                 TrustIndividualDto.DATE_BECAME_INTERESTED_PERSON_FIELD);
@@ -238,25 +238,25 @@ class TrustIndividualValidatorTest {
     }
 
     @Test
-    void testNoErrorReportedWhenTypeFieldIsNotIntestestedPersonAndDateBecomeInterestedPersonFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.BENEFICIARY.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(null);
+    void testNoErrorReportedWhenTypeFieldIsNotInterestedPersonAndDateBecomeInterestedPersonFieldIsNull() {
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.BENEFICIARY.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT,false);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testNoErrorReportedWhenDateBecomeInterestedPersonFieldIsInThePast() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.of(1970, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(LocalDate.of(1970, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenDateBecomeInterestedPersonIsInTheFuture() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.now().plusDays(1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(LocalDate.now().plusDays(1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
@@ -268,7 +268,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddressSameAsUsualResidentialAddress(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD);
@@ -279,8 +279,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIs() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddressSameAsUsualResidentialAddress(true);
-        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddress(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(true);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddress(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -288,7 +288,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFields() {
-        var trustee = trustDataDtoList.get(0).getIndividuals().get(0);
+        var trustee = trustDataDtoList.getFirst().getIndividuals().getFirst();
         trustee.setServiceAddressSameAsUsualResidentialAddress(true);
         trustee.setUraAddressPremises("1");
         trustee.setUraAddressLine1("Broadway");
@@ -316,8 +316,8 @@ class TrustIndividualValidatorTest {
                 eq(qualifiedFieldNameForSecondNationality), eq("Afghan"), eq("Afghan"), any(Errors.class),
                 eq(LOGGING_CONTEXT))).thenCallRealMethod();
 
-        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
-        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Afghan");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setNationality("Afghan");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSecondNationality("Afghan");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         String validationMessage = ValidationMessages.SECOND_NATIONALITY_SHOULD_BE_DIFFERENT.replace("%s", qualifiedFieldNameForSecondNationality);
@@ -337,8 +337,8 @@ class TrustIndividualValidatorTest {
                 eq(qualifiedFieldNameForSecondNationality), eq("Afghan"), eq("Spain"), any(Errors.class),
                 eq(LOGGING_CONTEXT))).thenCallRealMethod();
 
-        trustDataDtoList.get(0).getIndividuals().get(0).setNationality("Afghan");
-        trustDataDtoList.get(0).getIndividuals().get(0).setSecondNationality("Spain");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setNationality("Afghan");
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setSecondNationality("Spain");
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -346,8 +346,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorIsStillInvolvedTrueAndCeasedDateNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(true);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(true);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -355,8 +355,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorIsStillInvolvedFalseAndCeasedDateNotNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2001, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, false);
 
         assertFalse(errors.hasErrors());
@@ -364,7 +364,7 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testSameAsAddressFlagNotValidatedIfUpdateOrRemoveJourney() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setServiceAddressSameAsUsualResidentialAddress(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
         assertFalse(errors.hasErrors());
@@ -372,15 +372,15 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorIsStillInvolvedNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorIsStillInvolvedNullAndCeasedDateIsNotNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(null);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2020, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2020, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.CEASED_DATE_FIELD);
         String validationMessage = String.format(ValidationMessages.NULL_ERROR_MESSAGE, qualifiedFieldName);
@@ -389,8 +389,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorIsStillInvolvedTrueAndCeasedDateNotNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(true);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2001, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(true);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.CEASED_DATE_FIELD);
         String validationMessage = ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -400,8 +400,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorIsStillInvolvedFalseAndCeasedDateNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.CEASED_DATE_FIELD);
         String validationMessage = ValidationMessages.NOT_NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -411,8 +411,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorIsStillInvolvedFalseAndCeasedDateFuture() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.now().plusDays(1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.now().plusDays(1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.CEASED_DATE_FIELD);
         String validationMessage = ValidationMessages.DATE_NOT_IN_PAST_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -422,9 +422,9 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorIsStillInvolvedFalseAndCeasedDateBeforeTrustCreationDate() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).setCreationDate(LocalDate.of(2001, 1, 2));
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2001, 1, 1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().setCreationDate(LocalDate.of(2001, 1, 2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1, 1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD, TrustIndividualDto.CEASED_DATE_FIELD);
         String validationMessage = ValidationMessages.CEASED_DATE_BEFORE_CREATION_DATE_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
@@ -434,8 +434,8 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testErrorIsStillInvolvedTrueAndCeasedDateIsNull() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(true);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(null);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(true);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
         assertFalse(errors.hasErrors());
@@ -443,30 +443,30 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenCeasedDateIsAfterDateBecameInterestedPerson() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2001, 1,1));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1,1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testNoErrorReportedWhenCeasedDateIsOnDateBecameInterestedPerson() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2000, 1,2));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2000, 1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(LocalDate.of(2000,1,2));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenCeasedDateIsBeforeDateBecameInterestedPerson() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2000, 1,2));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateBecameInterestedPerson(LocalDate.of(2003,1,1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2000, 1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateBecameInterestedPerson(LocalDate.of(2003,1,1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,
@@ -478,30 +478,30 @@ class TrustIndividualValidatorTest {
 
     @Test
     void testNoErrorReportedWhenCeasedDateIsAfterDateOfBirth() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2001, 1,1));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(LocalDate.of(2000,1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2001, 1,1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(LocalDate.of(2000,1,2));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testNoErrorReportedWhenCeasedDateIsOnDateOfBirth() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2000, 1,2));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(LocalDate.of(2000,1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2000, 1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(LocalDate.of(2000,1,2));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
         assertFalse(errors.hasErrors());
     }
 
     @Test
     void testErrorReportedWhenCeasedDateIsBeforeDateOfBirth() {
-        trustDataDtoList.get(0).getIndividuals().get(0).setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
-        trustDataDtoList.get(0).getIndividuals().get(0).setIndividualStillInvolvedInTrust(false);
-        trustDataDtoList.get(0).getIndividuals().get(0).setCeasedDate(LocalDate.of(2000, 1,2));
-        trustDataDtoList.get(0).getIndividuals().get(0).setDateOfBirth(LocalDate.of(2003,1,1));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setType(BeneficialOwnerType.INTERESTED_PERSON.getValue());
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setIndividualStillInvolvedInTrust(false);
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setCeasedDate(LocalDate.of(2000, 1,2));
+        trustDataDtoList.getFirst().getIndividuals().getFirst().setDateOfBirth(LocalDate.of(2003,1,1));
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, true);
 
         String qualifiedFieldName = getQualifiedFieldName(PARENT_FIELD,

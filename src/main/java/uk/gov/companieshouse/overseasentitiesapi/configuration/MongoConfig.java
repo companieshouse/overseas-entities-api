@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import uk.gov.companieshouse.overseasentitiesapi.converter.DocumentTransformerFactory;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static uk.gov.companieshouse.overseasentitiesapi.configuration.MongoConverters.getMongoCustomConversions;
