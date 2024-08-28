@@ -138,7 +138,7 @@ public class PrivateDataRetrievalService {
                         logMap);
                 return new PrivateBoDataListApi(Collections.emptyList());
             }
-            ApiLogger.info(String.format("Error retrieving Beneficial Owners for Company Number %s", companyNumber), logMap);
+            ApiLogger.errorContext(String.format("Error retrieving Beneficial Owners for Company Number %s", companyNumber), e);
             throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
             var message = "Error Retrieving Beneficial Owner data for " + companyNumber;
