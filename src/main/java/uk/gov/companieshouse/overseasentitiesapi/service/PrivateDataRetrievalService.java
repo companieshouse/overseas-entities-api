@@ -126,6 +126,9 @@ public class PrivateDataRetrievalService {
                 int numberOfBOs = beneficialOwnerDataList.getBoPrivateData().size();
                 ApiLogger.info(String.format("Retrieved %d Beneficial Owners for Company Number %s",
                         numberOfBOs, companyNumber));
+            } else {
+                ApiLogger.info(String.format("Beneficial Owners list was either empty or null for Company Number %s",
+                        companyNumber), logMap);
             }
 
             return beneficialOwnerDataList;
@@ -135,6 +138,7 @@ public class PrivateDataRetrievalService {
                         logMap);
                 return new PrivateBoDataListApi(Collections.emptyList());
             }
+            ApiLogger.info(String.format("Error retrieving Beneficial Owners for Company Number %s", companyNumber), logMap);
             throw new ServiceException(e.getStatusMessage(), e);
         } catch (URIValidationException e) {
             var message = "Error Retrieving Beneficial Owner data for " + companyNumber;
