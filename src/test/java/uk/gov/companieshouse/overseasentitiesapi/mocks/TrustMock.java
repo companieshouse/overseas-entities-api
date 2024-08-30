@@ -91,6 +91,7 @@ public class TrustMock {
         dao.setUsualResidentialAddress(AddressMock.getAddressDao());
         dao.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         dao.setType("Grantor");
+        dao.setStartDate(LocalDate.of(2020, 1, 1));
         dao.setRelevantPeriod(true);
 
         return dao;
@@ -200,6 +201,7 @@ public class TrustMock {
         Dto.setUsualResidentialAddress(AddressMock.getAddressDto());
         Dto.setDateBecameInterestedPerson(LocalDate.of(1990, 1, 1));
         Dto.setType("Grantor");
+        Dto.setStartDate(LocalDate.of(2020, 1, 1));
         Dto.setRelevantPeriod(true);
 
         return Dto;

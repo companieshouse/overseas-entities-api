@@ -34,6 +34,9 @@ public class TrustIndividualDao {
     @Field("service_address")
     private AddressDao serviceAddress;
 
+    @Field("start_date")
+    private LocalDate startDate;
+
     @Field("is_service_address_same_as_usual_residential_address")
     private Boolean isServiceAddressSameAsUsualResidentialAddress;
 
@@ -162,6 +165,14 @@ public class TrustIndividualDao {
 
     public void setIndividualStillInvolvedInTrust(Boolean individualStillInvolvedInTrust) {
         isIndividualStillInvolvedInTrust = individualStillInvolvedInTrust;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     public boolean getRelevantPeriod() { return relevantPeriod; }
