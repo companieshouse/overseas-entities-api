@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
@@ -28,6 +29,9 @@ public class BeneficialOwnerIndividualValidator {
 
     private final AddressDtoValidator addressDtoValidator;
     private final NationalityValidator nationalityValidator;
+
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC}")
+    private boolean isPropertyAndLAndNocEnabled;
 
     @Autowired
     public BeneficialOwnerIndividualValidator(AddressDtoValidator addressDtoValidator,
@@ -67,6 +71,19 @@ public class BeneficialOwnerIndividualValidator {
             if (Objects.nonNull(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
+
+            if (isPropertyAndLAndNocEnabled) {
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes())) {
+                    fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes());
+                }
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction())) {
+                    fields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction());
+                }
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction())) {
+                    fields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction());
+                }
+            }
+
             validateNatureOfControl(fields, errors, loggingContext);
 
             if (Objects.nonNull(beneficialOwnerIndividualDto.getCeasedDate())) {
