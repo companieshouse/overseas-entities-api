@@ -699,6 +699,22 @@
             "required": [
               "non_legal_firm_members_nature_of_control_types"
             ]
+          },
+          {
+            "required": [
+              "trust_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_person_nature_of_control_jurisdictions",
+              "trust_ids"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_other_entity_nature_of_control_jurisdictions"
+            ]
           }
         ],
         "type": "object",
@@ -759,6 +775,24 @@
             }
           },
           "non_legal_firm_members_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "trust_control_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "owner_of_land_person_nature_of_control_jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "owner_of_land_other_entity_nature_of_control_jurisdictions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/NatureOfControlType"
