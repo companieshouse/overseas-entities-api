@@ -24,6 +24,9 @@ public class BeneficialOwnerIndividualDto {
     public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
     public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD = "trustees_nature_of_control_types";
     public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String TRUST_NATURE_OF_CONTROL_TYPES_FIELD = "trust_control_nature_of_control_types";
+    public static final String OWNER_OF_LAND_PERSON_NATURE_OF_CONTROL_JURISDICTION_FIELD = "owner_of_land_person_nature_of_control_jurisdictions";
+    public static final String OWNER_OF_LAND_OTHER_ENTITY_NATURE_OF_CONTROL_JURISDICTION_FIELD = "owner_of_land_other_entity_nature_of_control_jurisdictions";
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
     public static final String TRUST_IDS_FIELD = "trust_ids";
     public static final String TRUST_DATA_FIELD = "trust_data";
@@ -71,6 +74,15 @@ public class BeneficialOwnerIndividualDto {
 
     @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
+
+    @JsonProperty(TRUST_NATURE_OF_CONTROL_TYPES_FIELD)
+    private List<NatureOfControlType> trustNatureOfNatureOfControlTypes;
+
+    @JsonProperty(OWNER_OF_LAND_PERSON_NATURE_OF_CONTROL_JURISDICTION_FIELD)
+    private List<NatureOfControlType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
+
+    @JsonProperty(OWNER_OF_LAND_OTHER_ENTITY_NATURE_OF_CONTROL_JURISDICTION_FIELD)
+    private List<NatureOfControlType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
 
     @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
@@ -195,6 +207,30 @@ public class BeneficialOwnerIndividualDto {
 
     public void setNonLegalFirmMembersNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes) {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getTrustNatureOfNatureOfControlTypes() {
+        return trustNatureOfNatureOfControlTypes;
+    }
+
+    public void setTrustNatureOfNatureOfControlTypes(List<NatureOfControlType> trustNatureOfNatureOfControlTypes) {
+        this.trustNatureOfNatureOfControlTypes = trustNatureOfNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction() {
+        return ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
+    }
+
+    public void setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(List<NatureOfControlType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction) {
+        this.ownerOfLandPersonNatureOfNatureOfControlJurisdiction = ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
+    }
+
+    public List<NatureOfControlType> getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction() {
+        return ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
+    }
+
+    public void setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction(List<NatureOfControlType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction) {
+        this.ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction = ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
     }
 
     public Boolean getOnSanctionsList() {
