@@ -111,6 +111,15 @@
       "non_legal_firm_members_nature_of_control_types" : [
 
       ],
+      "trust_control_nature_of_control_types" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "owner_of_land_person_nature_of_control_jurisdictions" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "owner_of_land_other_entity_nature_of_control_jurisdictions" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
       "is_on_sanctions_list" : false
     }
   ],
