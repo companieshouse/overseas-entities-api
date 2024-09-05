@@ -181,7 +181,7 @@ public class TrustIndividualValidator {
         // might already have been stored with a null value for Update/Remove before this validation was changed.
         // If we try and refund a record with a null in the 'sameAs' field we don't want validation to now fail as
         // it would have passed validation when it was stored on mongo originally.
-        var isSameAddressFlagValid = true;
+        boolean isSameAddressFlagValid = true;
 
         // null 'sameAs' field not allowed for Registration
         if (!isForUpdateOrRemove) {
