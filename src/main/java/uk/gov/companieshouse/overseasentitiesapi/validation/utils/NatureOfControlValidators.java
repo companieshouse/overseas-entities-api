@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
@@ -12,9 +13,11 @@ public class NatureOfControlValidators {
 
     private NatureOfControlValidators() {}
 
-    public static boolean checkAtLeastOneFieldHasValue(List<NatureOfControlType> fields, String qualifiedFieldName, Errors errs, String loggingContext) {
+    //UAR-1595 remove last feature flag parameter when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+    public static boolean checkAtLeastOneFieldHasValue(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, String qualifiedFieldName, Errors errs, String loggingContext, boolean isPropertyAndLAndNocEnabled) {
 
-        if (fields.isEmpty()) {
+        boolean isInvalid = (isPropertyAndLAndNocEnabled)? fields.isEmpty() && jurisdictionFields.isEmpty() : fields.isEmpty();
+        if (isInvalid) {
             setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext , qualifiedFieldName + " Field is empty");
             return false;

@@ -63,6 +63,7 @@ public class BeneficialOwnerIndividualValidator {
             validateIsOnSanctionsList(beneficialOwnerIndividualDto.getOnSanctionsList(), errors, loggingContext);
 
             List<NatureOfControlType> fields = new ArrayList<>();
+            List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
             if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
             }
@@ -77,7 +78,6 @@ public class BeneficialOwnerIndividualValidator {
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes())) {
                     fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes());
                 }
-                List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction())) {
                     jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction());
                 }
@@ -86,7 +86,7 @@ public class BeneficialOwnerIndividualValidator {
                 }
             }
 
-            validateNatureOfControl(fields, errors, loggingContext);
+            validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
 
             if (Objects.nonNull(beneficialOwnerIndividualDto.getCeasedDate())) {
                 validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
@@ -173,9 +173,9 @@ public class BeneficialOwnerIndividualValidator {
         return UtilsValidators.isNotNull(isOnSanctionsList, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
+    private boolean validateNatureOfControl(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, NATURE_OF_CONTROL_FIELDS);
-        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
+        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, jurisdictionFields, qualifiedFieldName, errors, loggingContext, isPropertyAndLAndNocEnabled);
     }
 
     private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {

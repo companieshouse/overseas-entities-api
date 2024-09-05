@@ -112,11 +112,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
                 && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
-
-
     private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, NATURE_OF_CONTROL_FIELDS);
-        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
+        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, null, qualifiedFieldName, errors, loggingContext,false);
     }
 
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {

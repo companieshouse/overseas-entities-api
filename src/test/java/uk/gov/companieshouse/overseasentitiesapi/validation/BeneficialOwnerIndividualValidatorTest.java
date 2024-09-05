@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -368,6 +369,7 @@ class BeneficialOwnerIndividualValidatorTest {
         assertError(BeneficialOwnerIndividualValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
 
+    //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
     void testErrorReportedWhenNoNatureOfControlValuesAreAllNullWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
@@ -405,6 +407,7 @@ class BeneficialOwnerIndividualValidatorTest {
         assertError(BeneficialOwnerIndividualValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
 
+    //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
     void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
@@ -424,9 +427,9 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     /*
-       When FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed choose this or one of the three below
+       When FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed choose this or one of the three below
        do not need to keep all 4
-       Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+       Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
        but will need to remove the word "Existing" end flag suffix and setFeatureFlag
      */
     @Test
@@ -448,7 +451,7 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     /*
-      Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+      Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
       but will need to remove the word "Existing" end flag suffix and setFeatureFlag
     */
     @Test
@@ -469,8 +472,8 @@ class BeneficialOwnerIndividualValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    /*
-      Addded for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+      /*
+      Addded for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
       but will need to remove the word "Existing" end flag suffix and setFeatureFlag
     */
     @Test
@@ -484,7 +487,9 @@ class BeneficialOwnerIndividualValidatorTest {
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(trustNoc); // New NOC present
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(new ArrayList<>());
+        List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
+        jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(jurisdictionNoc); // New jurisdiction NOC present
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
@@ -496,8 +501,30 @@ class BeneficialOwnerIndividualValidatorTest {
         assertError(BeneficialOwnerIndividualValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
 
+     /*
+      Addded for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+      but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+    */
+    @Test
+    void testNoErrorReportedWhenNewJuriisdictionNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
+
+        // New NOCs
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
+        List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
+        jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(jurisdictionNoc);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction(new ArrayList<>());
+
+        Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
     /*
-       Added for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+       Added for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
        but will need to remove the word "Existing" end flag suffix and setFeatureFlag
      */
     @Test
