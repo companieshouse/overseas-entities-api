@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
 import java.time.LocalDate;
@@ -51,10 +52,10 @@ public class BeneficialOwnerIndividualDao {
     private List<NatureOfControlType> trustNatureOfNatureOfControlTypes;
 
     @Field("owner_of_land_person_nature_of_control_jurisdictions")
-    private List<NatureOfControlType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
+    private List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
 
     @Field("owner_of_land_other_entity_nature_of_control_jurisdictions")
-    private List<NatureOfControlType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
+    private List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
 
     @Field("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
@@ -186,19 +187,19 @@ public class BeneficialOwnerIndividualDao {
         this.trustNatureOfNatureOfControlTypes = trustNatureOfNatureOfControlTypes;
     }
 
-    public List<NatureOfControlType> getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction() {
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction() {
         return ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
     }
 
-    public void setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(List<NatureOfControlType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction) {
+    public void setOwnerOfLandPersonNatureOfNatureOfControlJurisdiction(List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfNatureOfControlJurisdiction) {
         this.ownerOfLandPersonNatureOfNatureOfControlJurisdiction = ownerOfLandPersonNatureOfNatureOfControlJurisdiction;
     }
 
-    public List<NatureOfControlType> getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction() {
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction() {
         return ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
     }
 
-    public void setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction(List<NatureOfControlType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction) {
+    public void setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction(List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction) {
         this.ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction = ownerOfLandOtherEntityNatureOfNatureOfControlJurisdiction;
     }
 

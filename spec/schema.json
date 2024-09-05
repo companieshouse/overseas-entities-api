@@ -707,8 +707,7 @@
           },
           {
             "required": [
-              "owner_of_land_person_nature_of_control_jurisdictions",
-              "trust_ids"
+              "owner_of_land_person_nature_of_control_jurisdictions"
             ]
           },
           {
@@ -789,13 +788,13 @@
           "owner_of_land_person_nature_of_control_jurisdictions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NatureOfControlType"
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
             }
           },
           "owner_of_land_other_entity_nature_of_control_jurisdictions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NatureOfControlType"
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
             }
           },
           "is_on_sanctions_list": {
@@ -1650,6 +1649,14 @@
           "OVER_25_PERCENT_OF_VOTING_RIGHTS",
           "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS",
           "SIGNIFICANT_INFLUENCE_OR_CONTROL"
+        ]
+      },
+      "NatureOfControlJurisdiction": {
+        "type": "string",
+        "enum": [
+          "ENGLAND_AND_WALES",
+          "SCOTLAND",
+          "NORTHERN_IRELAND"
         ]
       },
       "BeneficialOwnersStatementType": {

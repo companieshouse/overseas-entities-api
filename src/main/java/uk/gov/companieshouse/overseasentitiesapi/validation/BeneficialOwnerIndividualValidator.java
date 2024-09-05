@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -30,7 +31,7 @@ public class BeneficialOwnerIndividualValidator {
     private final AddressDtoValidator addressDtoValidator;
     private final NationalityValidator nationalityValidator;
 
-    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC}")
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024}")
     private boolean isPropertyAndLAndNocEnabled;
 
     @Autowired
@@ -76,11 +77,12 @@ public class BeneficialOwnerIndividualValidator {
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes())) {
                     fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes());
                 }
+                List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction())) {
-                    fields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction());
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction());
                 }
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction())) {
-                    fields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction());
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction());
                 }
             }
 
