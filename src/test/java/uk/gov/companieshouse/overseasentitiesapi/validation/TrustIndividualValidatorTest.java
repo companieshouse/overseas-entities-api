@@ -269,7 +269,7 @@ class TrustIndividualValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"true", "false"})
+    @ValueSource(booleans = {true, false})
     void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsNull(boolean isUpdateOrRemove) {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(null);
         Errors errors = trustIndividualValidator.validate(trustDataDtoList, new Errors(), LOGGING_CONTEXT, isUpdateOrRemove);
@@ -281,7 +281,7 @@ class TrustIndividualValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"true", "false"})
+    @ValueSource(booleans = {true, false})
     void testErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFieldIsTrueButServiceAddressIsNull(boolean isUpdateOrRemove) {
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddressSameAsUsualResidentialAddress(true);
         trustDataDtoList.getFirst().getIndividuals().getFirst().setServiceAddress(null);
@@ -291,7 +291,7 @@ class TrustIndividualValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"true", "false"})
+    @ValueSource(booleans = {true, false})
     void testNoErrorReportedWhenServiceAddressSameAsUsualResidentialAddressFields(boolean isUpdateOrRemove) {
         var trustee = trustDataDtoList.getFirst().getIndividuals().getFirst();
         trustee.setServiceAddressSameAsUsualResidentialAddress(true);
