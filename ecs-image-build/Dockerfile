@@ -6,5 +6,6 @@ WORKDIR /opt
 COPY /app .
 COPY docker_start.sh .
 
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 CMD ["./docker_start.sh"]
  

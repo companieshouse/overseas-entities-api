@@ -27,6 +27,7 @@ public class TrustCorporateDto {
     public static final String IS_ON_REGISTER_IN_COUNTRY_FORMED_IN_FIELD = "is_on_register_in_country_formed_in";
     public static final String IS_CORPORATE_STILL_INVOLVED_IN_TRUST_FIELD = "is_corporate_still_involved_in_trust";
     public static final String CEASED_DATE_FIELD = "ceased_date";
+    public static final String START_DATE_FIELD = "start_date";
     public static final String RELEVANT_PERIOD_FIELD = "relevant_period";
 
     @JsonProperty(ID_FIELD)
@@ -122,6 +123,9 @@ public class TrustCorporateDto {
     @JsonInclude(NON_NULL)
     @JsonProperty("sa_address_region")
     private String saAddressRegion;
+
+    @JsonProperty(START_DATE_FIELD)
+    private LocalDate startDate;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_PRINCIPAL_ADDRESS_FIELD)
@@ -474,4 +478,8 @@ public class TrustCorporateDto {
     }
 
     public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
+
+    public LocalDate getStartDate() { return startDate; }
+
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 }

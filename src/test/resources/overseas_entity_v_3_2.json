@@ -781,6 +781,7 @@
           "date_of_birth" : "2022-06-10",
           "nationality" : "Italian",
           "second_nationality" : "Argentine",
+          "start_date" : "2022-02-21",
           "is_service_address_same_as_usual_residential_address" : false,
           "service_address" : {
             "property_name_number" : "string",
@@ -842,6 +843,7 @@
             "po_box" : "string",
             "locality" : "string"
           },
+          "start_date": "2020-01-21",
           "is_on_register_in_country_formed_in" : true,
           "identification_country_registration" : "string",
           "identification_legal_authority" : "string",

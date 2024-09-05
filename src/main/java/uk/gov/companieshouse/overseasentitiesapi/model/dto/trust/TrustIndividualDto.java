@@ -41,6 +41,7 @@ public class TrustIndividualDto {
     public static final String IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD = "is_service_address_same_as_usual_residential_address";
     public static final String IS_INDIVIDUAL_STILL_INVOLVED_IN_TRUST_FIELD = "is_individual_still_involved_in_trust";
     public static final String RELEVANT_PERIOD_FIELD ="relevant_period";
+    public static final String START_DATE_FIELD = "start_date";
 
     @JsonProperty(ID_FIELD)
     private String id;
@@ -118,6 +119,9 @@ public class TrustIndividualDto {
     @JsonInclude(NON_NULL)
     @JsonProperty(SA_ADDRESS_REGION_FIELD)
     private String saAddressRegion;
+
+    @JsonProperty(START_DATE_FIELD)
+    private LocalDate startDate;
 
     @JsonInclude(NON_NULL)
     @JsonProperty(IS_SERVICE_ADDRESS_SAME_AS_USUAL_RESIDENTIAL_ADDRESS_FIELD)
@@ -465,4 +469,12 @@ public class TrustIndividualDto {
     public boolean getRelevantPeriod() { return relevantPeriod; }
 
     public void setRelevantPeriod(boolean relevantPeriod) { this.relevantPeriod = relevantPeriod; }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 }
