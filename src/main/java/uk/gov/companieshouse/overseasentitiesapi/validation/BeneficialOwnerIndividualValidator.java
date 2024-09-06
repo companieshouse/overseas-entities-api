@@ -78,11 +78,11 @@ public class BeneficialOwnerIndividualValidator {
                 if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes())) {
                     fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes());
                 }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdiction());
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdictions())) {
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdictions());
                 }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdiction());
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions())) {
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions());
                 }
             }
 
