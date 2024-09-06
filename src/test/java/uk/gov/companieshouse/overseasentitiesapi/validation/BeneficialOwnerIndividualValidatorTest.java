@@ -352,14 +352,14 @@ class BeneficialOwnerIndividualValidatorTest {
 
     //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllNullWhenNewNocsFlagIsFalse() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
@@ -371,14 +371,14 @@ class BeneficialOwnerIndividualValidatorTest {
 
     //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllNullWhenNewNocsFlagIsTrue() {
+    void ttestErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
@@ -390,14 +390,14 @@ class BeneficialOwnerIndividualValidatorTest {
 
     //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
@@ -409,14 +409,14 @@ class BeneficialOwnerIndividualValidatorTest {
 
     //Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD,
@@ -442,9 +442,9 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -464,9 +464,9 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -486,11 +486,11 @@ class BeneficialOwnerIndividualValidatorTest {
         // New NOCs
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(jurisdictionNoc); // New jurisdiction NOC present
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc); // New jurisdiction NOC present
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
@@ -513,11 +513,11 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(jurisdictionNoc);
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc);
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -537,9 +537,9 @@ class BeneficialOwnerIndividualValidatorTest {
         // New NOCs
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfNatureOfControlTypes(trustNoc); // New NOC present
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -564,7 +564,7 @@ class BeneficialOwnerIndividualValidatorTest {
     }
 
     private void setNewNocsEnabledFeatureFlag(boolean value) {
-        ReflectionTestUtils.setField(beneficialOwnerIndividualValidator, "isPropertyAndLAndNocEnabled", value);
+        ReflectionTestUtils.setField(beneficialOwnerIndividualValidator, "isPropertyAndLandNocEnabled", value);
     }
 
 }

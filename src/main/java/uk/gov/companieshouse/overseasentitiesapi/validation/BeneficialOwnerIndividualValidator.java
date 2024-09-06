@@ -32,7 +32,7 @@ public class BeneficialOwnerIndividualValidator {
     private final NationalityValidator nationalityValidator;
 
     @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024}")
-    private boolean isPropertyAndLAndNocEnabled;
+    private boolean isPropertyAndLandNocEnabled;
 
     @Autowired
     public BeneficialOwnerIndividualValidator(AddressDtoValidator addressDtoValidator,
@@ -74,15 +74,15 @@ public class BeneficialOwnerIndividualValidator {
                 fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
             }
 
-            if (isPropertyAndLAndNocEnabled) {
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes())) {
-                    fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfNatureOfControlTypes());
+            if (isPropertyAndLandNocEnabled) {
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes())) {
+                    fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes());
                 }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdictions())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfNatureOfControlJurisdictions());
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions());
                 }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions());
+                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
+                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
                 }
             }
 
@@ -175,7 +175,7 @@ public class BeneficialOwnerIndividualValidator {
 
     private boolean validateNatureOfControl(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, NATURE_OF_CONTROL_FIELDS);
-        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, jurisdictionFields, qualifiedFieldName, errors, loggingContext, isPropertyAndLAndNocEnabled);
+        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, jurisdictionFields, qualifiedFieldName, isPropertyAndLandNocEnabled, errors, loggingContext);
     }
 
     private boolean validateCeasedDate(LocalDate ceasedDate, LocalDate startDate, Errors errors, String loggingContext) {

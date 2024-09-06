@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
 import uk.gov.companieshouse.overseasentitiesapi.model.BeneficialOwnersStatementType;
-import uk.gov.companieshouse.overseasentitiesapi.model.WhoIsRegisteringType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.util.List;

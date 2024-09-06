@@ -49,13 +49,13 @@ public class BeneficialOwnerIndividualDao {
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
     @Field("trust_control_nature_of_control_types")
-    private List<NatureOfControlType> trustNatureOfNatureOfControlTypes;
+    private List<NatureOfControlType> trustNatureOfControlTypes;
 
     @Field("owner_of_land_person_nature_of_control_jurisdictions")
-    private List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfNatureOfControlJurisdictions;
+    private List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions;
 
     @Field("owner_of_land_other_entity_nature_of_control_jurisdictions")
-    private List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdictions;
+    private List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions;
 
     @Field("is_on_sanctions_list")
     private Boolean isOnSanctionsList;
@@ -179,28 +179,28 @@ public class BeneficialOwnerIndividualDao {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
     }
 
-    public List<NatureOfControlType> getTrustNatureOfNatureOfControlTypes() {
-        return trustNatureOfNatureOfControlTypes;
+    public List<NatureOfControlType> getTrustNatureOfControlTypes() {
+        return trustNatureOfControlTypes;
     }
 
-    public void setTrustNatureOfNatureOfControlTypes(List<NatureOfControlType> trustNatureOfNatureOfControlTypes) {
-        this.trustNatureOfNatureOfControlTypes = trustNatureOfNatureOfControlTypes;
+    public void setTrustNatureOfControlTypes(List<NatureOfControlType> trustNatureOfControlTypes) {
+        this.trustNatureOfControlTypes = trustNatureOfControlTypes;
     }
 
-    public List<NatureOfControlJurisdictionType> getOwnerOfLandPersonNatureOfNatureOfControlJurisdictions() {
-        return ownerOfLandPersonNatureOfNatureOfControlJurisdictions;
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandPersonNatureOfControlJurisdictions() {
+        return ownerOfLandPersonNatureOfControlJurisdictions;
     }
 
-    public void setOwnerOfLandPersonNatureOfNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfNatureOfControlJurisdictions) {
-        this.ownerOfLandPersonNatureOfNatureOfControlJurisdictions = ownerOfLandPersonNatureOfNatureOfControlJurisdictions;
+    public void setOwnerOfLandPersonNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions) {
+        this.ownerOfLandPersonNatureOfControlJurisdictions = ownerOfLandPersonNatureOfControlJurisdictions;
     }
 
-    public List<NatureOfControlJurisdictionType> getOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions() {
-        return ownerOfLandOtherEntityNatureOfNatureOfControlJurisdictions;
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandOtherEntityNatureOfControlJurisdictions() {
+        return ownerOfLandOtherEntityNatureOfControlJurisdictions;
     }
 
-    public void setOwnerOfLandOtherEntityNatureOfNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfNatureOfControlJurisdictions) {
-        this.ownerOfLandOtherEntityNatureOfNatureOfControlJurisdictions = ownerOfLandOtherEntityNatureOfNatureOfControlJurisdictions;
+    public void setOwnerOfLandOtherEntityNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions) {
+        this.ownerOfLandOtherEntityNatureOfControlJurisdictions = ownerOfLandOtherEntityNatureOfControlJurisdictions;
     }
 
     public Boolean getOnSanctionsList() {
