@@ -62,31 +62,7 @@ public class BeneficialOwnerIndividualValidator {
             validateStartDate(beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
             validateIsOnSanctionsList(beneficialOwnerIndividualDto.getOnSanctionsList(), errors, loggingContext);
 
-            List<NatureOfControlType> fields = new ArrayList<>();
-            List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
-            if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
-            }
-            if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
-            }
-            if (Objects.nonNull(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
-            }
-
-            if (isPropertyAndLandNocEnabled) {
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes())) {
-                    fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes());
-                }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions());
-                }
-                if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
-                    jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
-                }
-            }
-
-            validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
+            validateAllNatureOfControlFields(beneficialOwnerIndividualDto, errors, loggingContext);
 
             if (Objects.nonNull(beneficialOwnerIndividualDto.getCeasedDate())) {
                 validateCeasedDate(beneficialOwnerIndividualDto.getCeasedDate(), beneficialOwnerIndividualDto.getStartDate(), errors, loggingContext);
@@ -94,6 +70,34 @@ public class BeneficialOwnerIndividualValidator {
         }
 
         return errors;
+    }
+
+    private void validateAllNatureOfControlFields(BeneficialOwnerIndividualDto beneficialOwnerIndividualDto, Errors errors, String loggingContext) {
+        List<NatureOfControlType> fields = new ArrayList<>();
+        List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
+        if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
+        }
+        if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
+        }
+        if (Objects.nonNull(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
+        }
+
+        if (isPropertyAndLandNocEnabled) {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes());
+            }
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
+                jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions());
+            }
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
+                jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
+            }
+        }
+
+        validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
     }
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {
