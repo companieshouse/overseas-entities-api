@@ -78,9 +78,7 @@ public class BeneficialOwnerIndividualValidator {
         if (Objects.nonNull(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes())) {
             fields.addAll(beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes());
         }
-        if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
-            fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
-        }
+
         if (Objects.nonNull(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes())) {
             fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
         }
@@ -97,6 +95,10 @@ public class BeneficialOwnerIndividualValidator {
             }
             if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
                 jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
+            }
+        } else {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
             }
         }
 

@@ -374,7 +374,6 @@ class BeneficialOwnerIndividualValidatorTest {
     void ttestErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
@@ -395,7 +394,6 @@ class BeneficialOwnerIndividualValidatorTest {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
@@ -414,7 +412,6 @@ class BeneficialOwnerIndividualValidatorTest {
     void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
@@ -445,7 +442,6 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
@@ -463,12 +459,11 @@ class BeneficialOwnerIndividualValidatorTest {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
-        nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
+        List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
+        nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(nonLegalNoc);
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
@@ -489,7 +484,6 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
@@ -516,7 +510,6 @@ class BeneficialOwnerIndividualValidatorTest {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
 
         // New NOCs
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
