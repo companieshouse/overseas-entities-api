@@ -25,6 +25,7 @@ public class BeneficialOwnerIndividualDto {
     public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
     public static final String TRUSTEES_NATURE_OF_CONTROL_TYPES_FIELD = "trustees_nature_of_control_types";
     public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_CONTROL_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_control_nature_of_control_types";
     public static final String TRUST_NATURE_OF_CONTROL_TYPES_FIELD = "trust_control_nature_of_control_types";
     public static final String OWNER_OF_LAND_PERSON_NATURE_OF_CONTROL_JURISDICTIONS_FIELD = "owner_of_land_person_nature_of_control_jurisdictions";
     public static final String OWNER_OF_LAND_OTHER_ENTITY_NATURE_OF_CONTROL_JURISDICTIONS_FIELD = "owner_of_land_other_entity_nature_of_control_jurisdictions";
@@ -75,6 +76,9 @@ public class BeneficialOwnerIndividualDto {
 
     @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
+
+    @JsonProperty(NON_LEGAL_FIRM_CONTROL_NATURE_OF_CONTROL_TYPES_FIELD)
+    private List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes;
 
     @JsonProperty(TRUST_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> trustNatureOfControlTypes;
@@ -208,6 +212,14 @@ public class BeneficialOwnerIndividualDto {
 
     public void setNonLegalFirmMembersNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes) {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getNonLegalFirmControlNatureOfControlTypes() {
+        return nonLegalFirmControlNatureOfControlTypes;
+    }
+
+    public void setNonLegalFirmControlNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes) {
+        this.nonLegalFirmControlNatureOfControlTypes = nonLegalFirmControlNatureOfControlTypes;
     }
 
     public List<NatureOfControlType> getTrustNatureOfControlTypes() {

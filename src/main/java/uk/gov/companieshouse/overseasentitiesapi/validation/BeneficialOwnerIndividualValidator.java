@@ -86,6 +86,9 @@ public class BeneficialOwnerIndividualValidator {
         }
 
         if (isPropertyAndLandNocEnabled) {
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes());
+            }
             if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes());
             }

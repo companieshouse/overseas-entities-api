@@ -48,6 +48,9 @@ public class BeneficialOwnerIndividualDao {
     @Field("non_legal_firm_members_nature_of_control_types")
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
 
+    @Field("non_legal_firm_control_nature_of_control_types")
+    private List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes;
+
     @Field("trust_control_nature_of_control_types")
     private List<NatureOfControlType> trustNatureOfControlTypes;
 
@@ -177,6 +180,14 @@ public class BeneficialOwnerIndividualDao {
 
     public void setNonLegalFirmMembersNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes) {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getNonLegalFirmControlNatureOfControlTypes() {
+        return nonLegalFirmControlNatureOfControlTypes;
+    }
+
+    public void setNonLegalFirmControlNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes) {
+        this.nonLegalFirmControlNatureOfControlTypes = nonLegalFirmControlNatureOfControlTypes;
     }
 
     public List<NatureOfControlType> getTrustNatureOfControlTypes() {

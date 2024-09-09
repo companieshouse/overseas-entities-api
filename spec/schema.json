@@ -702,6 +702,11 @@
           },
           {
             "required": [
+              "non_legal_firm_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
               "trust_control_nature_of_control_types"
             ]
           },
@@ -774,6 +779,12 @@
             }
           },
           "non_legal_firm_members_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_control_nature_of_control_types": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/NatureOfControlType"
