@@ -101,8 +101,9 @@ public class BeneficialOwnerIndividualValidator {
                 fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
             }
         }
-
-        validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
+        if (NatureOfControlValidators.isUnexpectedFieldNull(beneficialOwnerIndividualDto, OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, isPropertyAndLandNocEnabled, errors, loggingContext)) {
+           validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
+        }
     }
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {

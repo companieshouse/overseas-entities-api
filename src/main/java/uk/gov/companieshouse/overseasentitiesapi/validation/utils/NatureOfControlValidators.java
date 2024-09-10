@@ -2,12 +2,14 @@ package uk.gov.companieshouse.overseasentitiesapi.validation.utils;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.service.rest.err.Errors;
 
 import java.util.List;
 
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.UtilsValidators.setErrorMsgToLocation;
+import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 public class NatureOfControlValidators {
 
@@ -19,6 +21,22 @@ public class NatureOfControlValidators {
         boolean isInvalid = (isPropertyAndLandNocEnabled)? fields.isEmpty() && jurisdictionFields.isEmpty() : fields.isEmpty();
         if (isInvalid) {
             setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
+            ApiLogger.infoContext(loggingContext , qualifiedFieldName + " Field is empty");
+            return false;
+        }
+        return true;
+    }
+
+    //UAR-1595 remove this whole method when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+    public static boolean isUnexpectedFieldNull(BeneficialOwnerIndividualDto beneficialOwnerIndividualDto, String qualifiedFieldNameRoot, boolean isPropertyAndLandNocEnabled, Errors errs, String loggingContext) {
+        boolean isInvalid = (isPropertyAndLandNocEnabled)? beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes() != null :
+                beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes() != null;
+
+        String qualifiedFieldName = (isPropertyAndLandNocEnabled)? getQualifiedFieldName(qualifiedFieldNameRoot, BeneficialOwnerIndividualDto.NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD) :
+                getQualifiedFieldName(qualifiedFieldNameRoot, BeneficialOwnerIndividualDto.NON_LEGAL_FIRM_CONTROL_NATURE_OF_CONTROL_TYPES_FIELD) ;
+
+        if (isInvalid) {
+            setErrorMsgToLocation(errs, qualifiedFieldName, ValidationMessages.NULL_ERROR_MESSAGE.replace("%s", qualifiedFieldName));
             ApiLogger.infoContext(loggingContext , qualifiedFieldName + " Field is empty");
             return false;
         }
