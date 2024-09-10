@@ -587,7 +587,7 @@ class BeneficialOwnerIndividualValidatorTest {
 
     // UAR-1595 remove last feature flag parameter when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
     @Test
-    void testErrorReportedWhenFirmMemberNocNotNullWhenNewNocsFlagIsFalse() {
+    void testErrorReportedWhenFirmControlNocNotNullWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
 
