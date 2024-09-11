@@ -13,7 +13,7 @@ public enum NatureOfControlJurisdictionType {
 
     public static NatureOfControlJurisdictionType findByNatureOfControlJurisdictionTypeString(String natureOfControlJurisdiction) {
         for (NatureOfControlJurisdictionType type: values()) {
-            if(type.natureOfControlJurisdiction.equals(natureOfControlJurisdiction)) {
+            if (type.natureOfControlJurisdiction.equals(natureOfControlJurisdiction)) {
                 return type;
             }
         }

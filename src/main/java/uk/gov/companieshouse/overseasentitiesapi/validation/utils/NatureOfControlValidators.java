@@ -15,7 +15,12 @@ public class NatureOfControlValidators {
 
     private NatureOfControlValidators() {}
 
-    //UAR-1595 remove last feature flag parameter when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+    // UAR-1595 Temporary wrapper method
+    public static boolean checkAtLeastOneFieldHasValue(List<NatureOfControlType> fields, String qualifiedFieldName, Errors errs, String loggingContext) {
+        return checkAtLeastOneFieldHasValue(fields, null, qualifiedFieldName, false, errs, loggingContext);
+    }
+
+    // UAR-1595 remove last feature flag parameter when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
     public static boolean checkAtLeastOneFieldHasValue(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, String qualifiedFieldName, boolean isPropertyAndLandNocEnabled, Errors errs, String loggingContext) {
 
         boolean isInvalid = (isPropertyAndLandNocEnabled)? fields.isEmpty() && jurisdictionFields.isEmpty() : fields.isEmpty();

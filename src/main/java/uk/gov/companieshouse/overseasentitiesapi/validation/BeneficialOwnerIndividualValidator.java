@@ -31,7 +31,7 @@ public class BeneficialOwnerIndividualValidator {
     private final AddressDtoValidator addressDtoValidator;
     private final NationalityValidator nationalityValidator;
 
-    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024}")
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024:false}")
     private boolean isPropertyAndLandNocEnabled;
 
     @Autowired
