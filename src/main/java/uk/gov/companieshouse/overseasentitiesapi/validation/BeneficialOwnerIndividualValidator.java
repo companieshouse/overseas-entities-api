@@ -83,6 +83,10 @@ public class BeneficialOwnerIndividualValidator {
             fields.addAll(beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes());
         }
 
+        if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
+        }
+
         if (isPropertyAndLandNocEnabled) {
             if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes());
@@ -96,14 +100,8 @@ public class BeneficialOwnerIndividualValidator {
             if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
                 jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
             }
-        } else {
-            if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes());
-            }
         }
-        if (NatureOfControlValidators.isUnexpectedFieldNull(beneficialOwnerIndividualDto, OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_INDIVIDUAL_FIELD, isPropertyAndLandNocEnabled, errors, loggingContext)) {
-           validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
-        }
+        validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
     }
 
     private boolean validateFirstName(String firstName, Errors errors, String loggingContext) {
