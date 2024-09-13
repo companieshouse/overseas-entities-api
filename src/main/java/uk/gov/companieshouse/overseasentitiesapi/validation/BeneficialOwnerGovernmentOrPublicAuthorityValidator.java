@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.overseasentitiesapi.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -27,6 +29,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
 
     private final AddressDtoValidator addressDtoValidator;
 
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024:false}")
+    private boolean isPropertyAndLandNocEnabled;
+
     @Autowired
     public BeneficialOwnerGovernmentOrPublicAuthorityValidator(AddressDtoValidator addressDtoValidator) {
         this.addressDtoValidator = addressDtoValidator;
@@ -50,14 +55,7 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
            
             validateStartDate(beneficialOwnerGovernmentOrPublicAuthorityDto.getStartDate(), errors, loggingContext);
 
-            List<NatureOfControlType> fields = new ArrayList<>();
-            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes());
-            }
-            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes());
-            }            
-            validateNatureOfControl(fields, errors, loggingContext);
+            validateAllNatureOfControlFields(beneficialOwnerGovernmentOrPublicAuthorityDto, errors, loggingContext);
 
             validateOnSanctionsList(beneficialOwnerGovernmentOrPublicAuthorityDto.getOnSanctionsList(), errors, loggingContext);
 
@@ -66,6 +64,35 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
             }
         }
         return errors;
+    }
+
+    private void validateAllNatureOfControlFields(BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerGovernmentOrPublicAuthorityDto, Errors errors, String loggingContext) {
+
+        List<NatureOfControlType> fields = new ArrayList<>();
+        List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
+        if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes());
+        }
+        if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes())) {
+            fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes());
+        }
+
+
+        if (isPropertyAndLandNocEnabled) {
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmControlNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmControlNatureOfControlTypes());
+            }
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustNatureOfControlTypes());
+            }
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
+                jurisdictionFields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandPersonNatureOfControlJurisdictions());
+            }
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())) {
+                jurisdictionFields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
+            }
+        }
+        validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
     }
 
     private boolean validateName(String name, Errors errors, String loggingContext) {
@@ -112,9 +139,9 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
                 && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
+    private boolean validateNatureOfControl(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD, NATURE_OF_CONTROL_FIELDS);
-        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
+        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, jurisdictionFields, qualifiedFieldName, isPropertyAndLandNocEnabled, errors, loggingContext);
     }
 
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {

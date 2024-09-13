@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.overseasentitiesapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
 import java.time.LocalDate;
@@ -17,6 +18,10 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
     public static final String START_DATE_FIELD = "start_date";
     public static final String BENEFICIAL_OWNER_NATURE_OF_CONTROL_TYPES_FIELD = "beneficial_owner_nature_of_control_types";
     public static final String NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_members_nature_of_control_types";
+    public static final String NON_LEGAL_FIRM_CONTROL_NATURE_OF_CONTROL_TYPES_FIELD = "non_legal_firm_control_nature_of_control_types";
+    public static final String TRUST_NATURE_OF_CONTROL_TYPES_FIELD = "trust_control_nature_of_control_types";
+    public static final String OWNER_OF_LAND_PERSON_NATURE_OF_CONTROL_JURISDICTIONS_FIELD = "owner_of_land_person_nature_of_control_jurisdictions";
+    public static final String OWNER_OF_LAND_OTHER_ENTITY_NATURE_OF_CONTROL_JURISDICTIONS_FIELD = "owner_of_land_other_entity_nature_of_control_jurisdictions";
     public static final String IS_ON_SANCTIONS_LIST_FIELD = "is_on_sanctions_list";
     public static final String CEASED_DATE_FIELD = "ceased_date";
     public static final String CH_REFERENCE_FIELD = "ch_reference";
@@ -49,6 +54,18 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
     @JsonProperty(NON_LEGAL_FIRM_MEMBERS_NATURE_OF_CONTROL_TYPES_FIELD)
     private List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes;
+
+    @JsonProperty(NON_LEGAL_FIRM_CONTROL_NATURE_OF_CONTROL_TYPES_FIELD)
+    private List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes;
+
+    @JsonProperty(TRUST_NATURE_OF_CONTROL_TYPES_FIELD)
+    private List<NatureOfControlType> trustNatureOfControlTypes;
+
+    @JsonProperty(OWNER_OF_LAND_PERSON_NATURE_OF_CONTROL_JURISDICTIONS_FIELD)
+    private List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions;
+
+    @JsonProperty(OWNER_OF_LAND_OTHER_ENTITY_NATURE_OF_CONTROL_JURISDICTIONS_FIELD)
+    private List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions;
 
     @JsonProperty(IS_ON_SANCTIONS_LIST_FIELD)
     private Boolean isOnSanctionsList;
@@ -135,6 +152,38 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDto {
 
     public void setNonLegalFirmMembersNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmMembersNatureOfControlTypes) {
         this.nonLegalFirmMembersNatureOfControlTypes = nonLegalFirmMembersNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getNonLegalFirmControlNatureOfControlTypes() {
+        return nonLegalFirmControlNatureOfControlTypes;
+    }
+
+    public void setNonLegalFirmControlNatureOfControlTypes(List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes) {
+        this.nonLegalFirmControlNatureOfControlTypes = nonLegalFirmControlNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlType> getTrustNatureOfControlTypes() {
+        return trustNatureOfControlTypes;
+    }
+
+    public void setTrustNatureOfControlTypes(List<NatureOfControlType> trustNatureOfControlTypes) {
+        this.trustNatureOfControlTypes = trustNatureOfControlTypes;
+    }
+
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandPersonNatureOfControlJurisdictions() {
+        return ownerOfLandPersonNatureOfControlJurisdictions;
+    }
+
+    public void setOwnerOfLandPersonNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions) {
+        this.ownerOfLandPersonNatureOfControlJurisdictions = ownerOfLandPersonNatureOfControlJurisdictions;
+    }
+
+    public List<NatureOfControlJurisdictionType> getOwnerOfLandOtherEntityNatureOfControlJurisdictions() {
+        return ownerOfLandOtherEntityNatureOfControlJurisdictions;
+    }
+
+    public void setOwnerOfLandOtherEntityNatureOfControlJurisdictions(List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions) {
+        this.ownerOfLandOtherEntityNatureOfControlJurisdictions = ownerOfLandOtherEntityNatureOfControlJurisdictions;
     }
 
     public Boolean getOnSanctionsList() {
