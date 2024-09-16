@@ -6,11 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.AddressMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsMock;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -22,7 +23,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -240,10 +240,14 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityDto.LAW_GOVERNED_FIELD, validationMessage, errors);
     }
 
+    // Changed for UAR-1598 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllNull() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsFalse() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
@@ -253,10 +257,15 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
 
+    // Added for UAR-1595 can remove suffix from test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmpty() {
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
+    void testErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
@@ -264,6 +273,165 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
 
         assertError(BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
+
+    }
+
+    // Changed for UAR-1598 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+    @Test
+    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
+    }
+
+    // Added for UAR-1595 can remove suffix from test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+    @Test
+    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS);
+        String validationMessage = String.format(ValidationMessages.NOT_EMPTY_ERROR_MESSAGE, qualifiedFieldName);
+
+        assertError(BeneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
+    }
+
+    /*
+      When FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed choose this or one of the three below
+      do not need to keep all 4
+      Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+      but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+     */
+    @Test
+    void testNoErrorReportedWhenExistingNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsFalse() {
+        setNewNocsEnabledFeatureFlag(false);
+
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
+        nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
+
+        // New NOCs
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    /*
+      Changed for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+      but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+    */
+    @Test
+    void testNoErrorReportedWhenExistingNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+
+        // New NOCs
+        List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
+        nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(nonLegalNoc);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    /*
+    Addded for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+    but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+  */
+    @Test
+    void testErrorReportedWhenNewNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsFalse() {
+        setNewNocsEnabledFeatureFlag(false);
+
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+
+        // New NOCs
+        List<NatureOfControlType> trustNoc = new ArrayList<>();
+        trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
+        List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
+        jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc); // New jurisdiction NOC present
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        String qualifiedFieldName = getQualifiedFieldName(
+                BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD,
+                BeneficialOwnerIndividualValidator.NATURE_OF_CONTROL_FIELDS);
+        String validationMessage = ValidationMessages.NOT_EMPTY_ERROR_MESSAGE.replace("%s", qualifiedFieldName);
+
+        assertError(beneficialOwnerGovernmentOrPublicAuthorityValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
+    }
+
+    /*
+     Addded for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+     but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+   */
+    @Test
+    void testNoErrorReportedWhenNewJurisdictionNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+
+        // New NOCs
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
+        List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
+        jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
+    }
+
+    /*
+       Added for UAR-1595 can keep when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024 is removed
+       but will need to remove the word "Existing" end flag suffix and setFeatureFlag
+     */
+    @Test
+    void testNoErrorReportedWhenNewNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(null);
+
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
+
+        // New NOCs
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
+        List<NatureOfControlType> trustNoc = new ArrayList<>();
+        trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
+
+        Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
+        assertFalse(errors.hasErrors());
     }
 
     @Test
@@ -367,5 +535,9 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         String qualifiedFieldName = BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD + "." + fieldName;
         Err err = Err.invalidBodyBuilderWithLocation(qualifiedFieldName).withError(message).build();
         assertTrue(errors.containsError(err));
+    }
+
+    private void setNewNocsEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(beneficialOwnerGovernmentOrPublicAuthorityValidator, "isPropertyAndLandNocEnabled", value);
     }
 }

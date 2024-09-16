@@ -350,14 +350,14 @@ class BeneficialOwnerIndividualValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    // Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+    // Changed for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
     void testErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
@@ -378,7 +378,7 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(null);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
@@ -390,7 +390,7 @@ class BeneficialOwnerIndividualValidatorTest {
         assertError(BeneficialOwnerIndividualValidator.NATURE_OF_CONTROL_FIELDS, validationMessage, errors);
     }
 
-    // Added for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
+    // Changed for UAR-1595 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
     void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
@@ -398,7 +398,7 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
@@ -419,7 +419,7 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerIndividualValidator.validate(beneficialOwnerIndividualDtoList, new Errors(), LOGGING_CONTEXT);
@@ -448,7 +448,7 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
@@ -472,7 +472,7 @@ class BeneficialOwnerIndividualValidatorTest {
         List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
         nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(nonLegalNoc);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
@@ -495,7 +495,7 @@ class BeneficialOwnerIndividualValidatorTest {
         // New NOCs
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc); // New jurisdiction NOC present
@@ -515,7 +515,7 @@ class BeneficialOwnerIndividualValidatorTest {
       but will need to remove the word "Existing" end flag suffix and setFeatureFlag
     */
     @Test
-    void testNoErrorReportedWhenNewJuriisdictionNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
+    void testNoErrorReportedWhenNewJurisdictionNocPresentButOtherNatureOfControlValuesAreAllEmptyAndNullWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
 
@@ -524,7 +524,7 @@ class BeneficialOwnerIndividualValidatorTest {
 
         // New NOCs
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc);
@@ -551,7 +551,7 @@ class BeneficialOwnerIndividualValidatorTest {
         beneficialOwnerIndividualDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerIndividualDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerIndividualDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerIndividualDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
