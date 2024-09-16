@@ -82,8 +82,8 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityValidator {
             if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmControlNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmControlNatureOfControlTypes());
             }
-            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustNatureOfControlTypes());
+            if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustControlNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getTrustControlNatureOfControlTypes());
             }
             if (Objects.nonNull(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
                 jurisdictionFields.addAll(beneficialOwnerGovernmentOrPublicAuthorityDto.getOwnerOfLandPersonNatureOfControlJurisdictions());

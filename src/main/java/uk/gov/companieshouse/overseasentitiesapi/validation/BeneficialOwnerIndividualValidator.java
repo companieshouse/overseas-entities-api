@@ -91,8 +91,8 @@ public class BeneficialOwnerIndividualValidator {
             if (Objects.nonNull(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes())) {
                 fields.addAll(beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes());
             }
-            if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes())) {
-                fields.addAll(beneficialOwnerIndividualDto.getTrustNatureOfControlTypes());
+            if (Objects.nonNull(beneficialOwnerIndividualDto.getTrustControlNatureOfControlTypes())) {
+                fields.addAll(beneficialOwnerIndividualDto.getTrustControlNatureOfControlTypes());
             }
             if (Objects.nonNull(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions())) {
                 jurisdictionFields.addAll(beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions());

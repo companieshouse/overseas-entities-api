@@ -12,7 +12,6 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.BeneficialOwnerAllFieldsM
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
 import uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationMessages;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_GOVERNMENT_OR_PUBLIC_AUTHORITY_FIELD;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
@@ -247,7 +245,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     void testErrorReportedWhenNatureOfControlValuesAreAllNullWhenNewNocsFlagIsFalse() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
@@ -265,7 +263,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(null);
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
@@ -283,7 +281,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
     void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
@@ -301,7 +299,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(new ArrayList<>());
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerGovernmentOrPublicAuthorityValidator.validate(beneficialOwnerGovernmentOrPublicAuthorityDtoList, new Errors(), LOGGING_CONTEXT);
@@ -329,7 +327,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(nonLegalNoc);
 
         // New NOCs
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
@@ -352,7 +350,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         List<NatureOfControlType> nonLegalNoc = new ArrayList<>();
         nonLegalNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(nonLegalNoc);
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 
@@ -374,7 +372,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         // New NOCs
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc); // New jurisdiction NOC present
@@ -402,7 +400,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
 
         // New NOCs
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(null);
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(null);
         List<NatureOfControlJurisdictionType> jurisdictionNoc = new ArrayList<>();
         jurisdictionNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(jurisdictionNoc);
@@ -428,7 +426,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
-        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustNatureOfControlTypes(trustNoc); // New NOC present
+        beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc); // New NOC present
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
 

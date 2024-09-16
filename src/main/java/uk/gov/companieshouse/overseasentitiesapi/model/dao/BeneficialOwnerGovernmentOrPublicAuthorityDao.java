@@ -40,7 +40,7 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
     private List<NatureOfControlType> nonLegalFirmControlNatureOfControlTypes;
 
     @Field("trust_control_nature_of_control_types")
-    private List<NatureOfControlType> trustNatureOfControlTypes;
+    private List<NatureOfControlType> trustControlNatureOfControlTypes;
 
     @Field("owner_of_land_person_nature_of_control_jurisdictions")
     private List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions;
@@ -146,12 +146,12 @@ public class BeneficialOwnerGovernmentOrPublicAuthorityDao {
         this.nonLegalFirmControlNatureOfControlTypes = nonLegalFirmControlNatureOfControlTypes;
     }
 
-    public List<NatureOfControlType> getTrustNatureOfControlTypes() {
-        return trustNatureOfControlTypes;
+    public List<NatureOfControlType> getTrustControlNatureOfControlTypes() {
+        return trustControlNatureOfControlTypes;
     }
 
-    public void setTrustNatureOfControlTypes(List<NatureOfControlType> trustNatureOfControlTypes) {
-        this.trustNatureOfControlTypes = trustNatureOfControlTypes;
+    public void setTrustControlNatureOfControlTypes(List<NatureOfControlType> trustControlNatureOfControlTypes) {
+        this.trustControlNatureOfControlTypes = trustControlNatureOfControlTypes;
     }
 
     public List<NatureOfControlJurisdictionType> getOwnerOfLandPersonNatureOfControlJurisdictions() {
