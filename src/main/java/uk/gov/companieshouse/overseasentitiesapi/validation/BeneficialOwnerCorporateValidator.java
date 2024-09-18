@@ -84,8 +84,8 @@ public class BeneficialOwnerCorporateValidator {
                 .collect(Collectors.toList()));
 
                 jurisdictionFields.addAll(Stream.of(
-                         beneficialOwnerCorporateDto.getOwnerOfLandPersonNatureOfControlJurisdictionsField(),
-                         beneficialOwnerCorporateDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictionsField())
+                         beneficialOwnerCorporateDto.getOwnerOfLandPersonNatureOfControlJurisdictions(),
+                         beneficialOwnerCorporateDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
                 .filter(Objects::nonNull).flatMap(Collection::stream)
                 .collect(Collectors.toList()));
             }

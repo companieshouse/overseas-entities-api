@@ -248,8 +248,8 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
@@ -268,8 +268,8 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(null);
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
@@ -288,8 +288,8 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
@@ -308,8 +308,8 @@ class BeneficialOwnerCorporateValidatorTest {
         beneficialOwnerCorporateDtoList.get(0).setTrusteesNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(new ArrayList<>());
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 BENEFICIAL_OWNERS_CORPORATE_FIELD,
@@ -336,8 +336,8 @@ class BeneficialOwnerCorporateValidatorTest {
 
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -360,8 +360,8 @@ class BeneficialOwnerCorporateValidatorTest {
 
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -382,8 +382,8 @@ class BeneficialOwnerCorporateValidatorTest {
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
@@ -411,8 +411,8 @@ class BeneficialOwnerCorporateValidatorTest {
         List<NatureOfControlType> trustNoc = new ArrayList<>();
         trustNoc.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(trustNoc);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(null);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(null);
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
@@ -432,10 +432,10 @@ class BeneficialOwnerCorporateValidatorTest {
 
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmControlNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setTrustControlNatureOfControlTypes(null);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictionsField(new ArrayList<>());
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandPersonNatureOfControlJurisdictions(new ArrayList<>());
         List<NatureOfControlJurisdictionType> jurisdictionOtherNoc = new ArrayList<>();
         jurisdictionOtherNoc.add(NatureOfControlJurisdictionType.ENGLAND_AND_WALES);
-        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictionsField(jurisdictionOtherNoc);
+        beneficialOwnerCorporateDtoList.get(0).setOwnerOfLandOtherEntityNatureOfControlJurisdictions(jurisdictionOtherNoc);
 
         Errors errors = beneficialOwnerCorporateValidator.validate(beneficialOwnerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         assertFalse(errors.hasErrors());
