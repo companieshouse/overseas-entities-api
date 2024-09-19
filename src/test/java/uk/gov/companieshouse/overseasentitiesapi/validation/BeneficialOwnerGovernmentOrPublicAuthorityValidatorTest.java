@@ -278,7 +278,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
 
     // Changed for UAR-1598 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setTrustControlNatureOfControlTypes(new ArrayList<>());
@@ -295,7 +295,7 @@ class BeneficialOwnerGovernmentOrPublicAuthorityValidatorTest {
 
     // Added for UAR-1598 can remove suffix from test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerGovernmentOrPublicAuthorityDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());

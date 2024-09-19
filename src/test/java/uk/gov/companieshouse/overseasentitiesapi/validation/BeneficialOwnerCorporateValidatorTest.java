@@ -281,7 +281,7 @@ class BeneficialOwnerCorporateValidatorTest {
 
     // Changed for UAR-1597 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsFalse() {
         setNewNocsEnabledFeatureFlag(false);
         beneficialOwnerCorporateDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
@@ -301,7 +301,7 @@ class BeneficialOwnerCorporateValidatorTest {
 
     // Added for UAR-1597 can remove test when FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC is removed
     @Test
-    void testErrorReportedWhenNoNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
+    void testErrorReportedWhenNatureOfControlValuesAreAllEmptyWhenNewNocsFlagIsTrue() {
         setNewNocsEnabledFeatureFlag(true);
         beneficialOwnerCorporateDtoList.get(0).setBeneficialOwnerNatureOfControlTypes(new ArrayList<>());
         beneficialOwnerCorporateDtoList.get(0).setNonLegalFirmMembersNatureOfControlTypes(new ArrayList<>());
