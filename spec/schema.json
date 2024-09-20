@@ -699,6 +699,26 @@
             "required": [
               "non_legal_firm_members_nature_of_control_types"
             ]
+          },
+          {
+            "required": [
+              "non_legal_firm_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trust_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_person_nature_of_control_jurisdictions"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_other_entity_nature_of_control_jurisdictions"
+            ]
           }
         ],
         "type": "object",
@@ -762,6 +782,30 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_control_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "trust_control_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "owner_of_land_person_nature_of_control_jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
+            }
+          },
+          "owner_of_land_other_entity_nature_of_control_jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
             }
           },
           "is_on_sanctions_list": {
@@ -922,6 +966,26 @@
             "required": [
               "non_legal_firm_members_nature_of_control_types"
             ]
+          },
+          {
+            "required": [
+              "non_legal_firm_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "trust_control_nature_of_control_types"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_person_nature_of_control_jurisdictions"
+            ]
+          },
+          {
+            "required": [
+              "owner_of_land_other_entity_nature_of_control_jurisdictions"
+            ]
           }
         ],
         "type": "object",
@@ -965,6 +1029,30 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "non_legal_firm_control_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "trust_control_nature_of_control_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlType"
+            }
+          },
+          "owner_of_land_person_nature_of_control_jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
+            }
+          },
+          "owner_of_land_other_entity_nature_of_control_jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatureOfControlJurisdiction"
             }
           },
           "is_on_sanctions_list": {
@@ -1616,6 +1704,14 @@
           "OVER_25_PERCENT_OF_VOTING_RIGHTS",
           "APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS",
           "SIGNIFICANT_INFLUENCE_OR_CONTROL"
+        ]
+      },
+      "NatureOfControlJurisdiction": {
+        "type": "string",
+        "enum": [
+          "ENGLAND_AND_WALES",
+          "SCOTLAND",
+          "NORTHERN_IRELAND"
         ]
       },
       "BeneficialOwnersStatementType": {

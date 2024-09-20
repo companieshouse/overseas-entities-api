@@ -136,6 +136,18 @@
       "non_legal_firm_members_nature_of_control_types" : [
         "OVER_25_PERCENT_OF_SHARES"
       ],
+      "non_legal_firm_control_nature_of_control_types" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "trust_control_nature_of_control_types" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "owner_of_land_person_nature_of_control_jurisdictions" : [
+        "ENGLAND_AND_WALES"
+      ],
+      "owner_of_land_other_entity_nature_of_control_jurisdictions" : [
+        "ENGLAND_AND_WALES"
+      ],
       "is_on_sanctions_list" : false,
       "trust_ids" : [
         "1",
@@ -237,6 +249,18 @@
       ],
       "non_legal_firm_members_nature_of_control_types" : [
         "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "non_legal_firm_control_nature_of_control_types" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "trust_control_nature_of_control_types" : [
+        "OVER_25_PERCENT_OF_SHARES"
+      ],
+      "owner_of_land_person_nature_of_control_jurisdictions" : [
+        "ENGLAND_AND_WALES"
+      ],
+      "owner_of_land_other_entity_nature_of_control_jurisdictions" : [
+        "ENGLAND_AND_WALES"
       ],
       "is_on_sanctions_list" : false,
       "trust_ids" : [
@@ -382,6 +406,18 @@
         ],
         "non_legal_firm_members_nature_of_control_types" : [
           "OVER_25_PERCENT_OF_VOTING_RIGHTS"
+        ],
+        "non_legal_firm_control_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "trust_control_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "owner_of_land_person_nature_of_control_jurisdictions" : [
+          "ENGLAND_AND_WALES"
+        ],
+        "owner_of_land_other_entity_nature_of_control_jurisdictions" : [
+          "ENGLAND_AND_WALES"
         ],
         "is_on_sanctions_list" : true,
         "trust_ids" : [
@@ -535,6 +571,18 @@
         ],
         "non_legal_firm_members_nature_of_control_types" : [
           "OVER_25_PERCENT_OF_VOTING_RIGHTS"
+        ],
+        "non_legal_firm_control_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "trust_control_nature_of_control_types" : [
+          "OVER_25_PERCENT_OF_SHARES"
+        ],
+        "owner_of_land_person_nature_of_control_jurisdictions" : [
+          "ENGLAND_AND_WALES"
+        ],
+        "owner_of_land_other_entity_nature_of_control_jurisdictions" : [
+          "ENGLAND_AND_WALES"
         ],
         "is_on_sanctions_list" : false,
         "trust_ids" : [
@@ -781,6 +829,7 @@
           "date_of_birth" : "2022-06-10",
           "nationality" : "Italian",
           "second_nationality" : "Argentine",
+          "start_date" : "2022-02-21",
           "is_service_address_same_as_usual_residential_address" : false,
           "service_address" : {
             "property_name_number" : "string",
@@ -842,6 +891,7 @@
             "po_box" : "string",
             "locality" : "string"
           },
+          "start_date": "2020-01-21",
           "is_on_register_in_country_formed_in" : true,
           "identification_country_registration" : "string",
           "identification_legal_authority" : "string",
