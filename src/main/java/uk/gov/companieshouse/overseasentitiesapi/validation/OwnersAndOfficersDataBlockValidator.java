@@ -127,23 +127,28 @@ public class OwnersAndOfficersDataBlockValidator {
     }
 
     public boolean validateRegistrableBeneficialOwnerStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        var emptyBeneficialOwnerArray = false;
-        var anyIndividualsAddedOrCeased = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
-        var anyCorporateAddedOrCeased = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
-        var anyGovOrPublicAuthorityAddedOrCeased = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null) : emptyBeneficialOwnerArray;
-        var anyBeneficialOwnersAddedOrCeased = (anyIndividualsAddedOrCeased || anyCorporateAddedOrCeased || anyGovOrPublicAuthorityAddedOrCeased);
+        var isRegistrableBeneficialOwnersAddedOrCeased = isRegistrableBeneficialOwnersAddedOrCeased(overseasEntitySubmissionDto, errors, loggingContext);
         if (!overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner()) {
-            if (anyBeneficialOwnersAddedOrCeased){
+            if (isRegistrableBeneficialOwnersAddedOrCeased){
                 logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "Benefical owners have been added or ceased"));
                 return false;
             }
         } else {
-            if (!anyBeneficialOwnersAddedOrCeased){
+            if (!isRegistrableBeneficialOwnersAddedOrCeased){
                 logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "No beneficial owners have been added or ceased"));
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isRegistrableBeneficialOwnersAddedOrCeased(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+        var emptyBeneficialOwnerArray = false;
+        var anyIndividualsAddedOrCeased = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
+        var anyCorporateAddedOrCeased = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
+        var anyGovOrPublicAuthorityAddedOrCeased = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
+        var anyBeneficialOwnersAddedOrCeased = (anyIndividualsAddedOrCeased || anyCorporateAddedOrCeased || anyGovOrPublicAuthorityAddedOrCeased);
+        return anyBeneficialOwnersAddedOrCeased;
     }
 
     private boolean hasActiveBeneficialOwners(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
