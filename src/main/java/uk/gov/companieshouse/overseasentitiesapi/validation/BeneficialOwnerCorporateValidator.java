@@ -3,13 +3,16 @@ package uk.gov.companieshouse.overseasentitiesapi.validation;
 import static uk.gov.companieshouse.overseasentitiesapi.validation.utils.ValidationUtils.getQualifiedFieldName;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
@@ -27,6 +30,9 @@ public class BeneficialOwnerCorporateValidator {
     public static final String NATURE_OF_CONTROL_FIELDS = "nature_of_control";
 
     private final AddressDtoValidator addressDtoValidator;
+
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024:false}")
+    private boolean isPropertyAndLandNocEnabled;
 
     @Autowired
     public BeneficialOwnerCorporateValidator(AddressDtoValidator addressDtoValidator) {
@@ -68,7 +74,23 @@ public class BeneficialOwnerCorporateValidator {
                     .filter(Objects::nonNull).flatMap(Collection::stream)
                     .collect(Collectors.toList());
 
-            validateNatureOfControl(fields, errors, loggingContext);
+            List<NatureOfControlJurisdictionType> jurisdictionFields = new ArrayList<>();
+
+            if (isPropertyAndLandNocEnabled) {
+                fields.addAll(Stream.of(
+                        beneficialOwnerCorporateDto.getNonLegalFirmControlNatureOfControlTypes(),
+                        beneficialOwnerCorporateDto.getTrustControlNatureOfControlTypes())
+                .filter(Objects::nonNull).flatMap(Collection::stream)
+                .collect(Collectors.toList()));
+
+                jurisdictionFields.addAll(Stream.of(
+                         beneficialOwnerCorporateDto.getOwnerOfLandPersonNatureOfControlJurisdictions(),
+                         beneficialOwnerCorporateDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
+                .filter(Objects::nonNull).flatMap(Collection::stream)
+                .collect(Collectors.toList()));
+            }
+
+            validateNatureOfControl(fields, jurisdictionFields, errors, loggingContext);
 
             validateOnSanctionsList(beneficialOwnerCorporateDto.getOnSanctionsList(), errors, loggingContext);
 
@@ -154,9 +176,9 @@ public class BeneficialOwnerCorporateValidator {
                 && DateValidators.isDateInPast(startDate, qualifiedFieldName, errors, loggingContext);
     }
 
-    private boolean validateNatureOfControl(List<NatureOfControlType> fields, Errors errors, String loggingContext) {
+    private boolean validateNatureOfControl(List<NatureOfControlType> fields, List<NatureOfControlJurisdictionType> jurisdictionFields, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.BENEFICIAL_OWNERS_CORPORATE_FIELD, NATURE_OF_CONTROL_FIELDS);
-        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, qualifiedFieldName, errors, loggingContext);
+        return NatureOfControlValidators.checkAtLeastOneFieldHasValue(fields, jurisdictionFields, qualifiedFieldName, isPropertyAndLandNocEnabled, errors, loggingContext);
     }
 
     private boolean validateOnSanctionsList(Boolean onSanctionsList, Errors errors, String loggingContext) {
