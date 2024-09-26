@@ -33,6 +33,7 @@ public class OwnersAndOfficersDataBlockValidator {
     private final BeneficialOwnerGovernmentOrPublicAuthorityValidator beneficialOwnerGovernmentOrPublicAuthorityValidator;
     private final ManagingOfficerIndividualValidator managingOfficerIndividualValidator;
     private final ManagingOfficerCorporateValidator managingOfficerCorporateValidator;
+    private final Boolean falseValue = false;
 
     @Autowired
     public OwnersAndOfficersDataBlockValidator(BeneficialOwnersStatementValidator beneficialOwnersStatementValidator,
@@ -127,10 +128,10 @@ public class OwnersAndOfficersDataBlockValidator {
     }
 
     public boolean validateRegistrableBeneficialOwnerStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        var isRegistrableBeneficialOwnersAddedOrCeased = isRegistrableBeneficialOwnersAddedOrCeased(overseasEntitySubmissionDto, errors, loggingContext);
+        var isRegistrableBeneficialOwnersAddedOrCeased = isRegistrableBeneficialOwnersAddedOrCeased(overseasEntitySubmissionDto);
         if (!overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner()) {
             if (isRegistrableBeneficialOwnersAddedOrCeased){
-                logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "Benefical owners have been added or ceased"));
+                logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "Beneficial owners have been added or ceased"));
                 return false;
             }
         } else {
@@ -142,10 +143,10 @@ public class OwnersAndOfficersDataBlockValidator {
         return true;
     }
 
-    public boolean isRegistrableBeneficialOwnersAddedOrCeased(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
+    public boolean isRegistrableBeneficialOwnersAddedOrCeased(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var emptyBeneficialOwnerArray = false;
-        var anyIndividualsAddedOrCeased = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
-        var anyCorporateAddedOrCeased = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
+        var anyIndividualsAddedOrCeased = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> falseValue == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
+        var anyCorporateAddedOrCeased = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> falseValue == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
         var anyGovOrPublicAuthorityAddedOrCeased = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> Boolean.FALSE == o.getRelevantPeriod() && (StringUtils.isEmpty(o.getChipsReference()) || o.getCeasedDate() != null)) : emptyBeneficialOwnerArray;
         var anyBeneficialOwnersAddedOrCeased = (anyIndividualsAddedOrCeased || anyCorporateAddedOrCeased || anyGovOrPublicAuthorityAddedOrCeased);
         return anyBeneficialOwnersAddedOrCeased;
@@ -153,9 +154,9 @@ public class OwnersAndOfficersDataBlockValidator {
 
     private boolean hasActiveBeneficialOwners(OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
         var emptyBeneficialOwnerArray = false;
-        var anyActiveIndividuals = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
-        var anyActiveCorporate = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
-        var anyActiveGovernmentOrPublicAuthority = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
+        var anyActiveIndividuals = hasIndividualBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()) ? overseasEntitySubmissionDto.getBeneficialOwnersIndividual().stream().anyMatch(o -> falseValue == o.getRelevantPeriod() && o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
+        var anyActiveCorporate = hasCorporateBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()) ? overseasEntitySubmissionDto.getBeneficialOwnersCorporate().stream().anyMatch(o -> falseValue == o.getRelevantPeriod() && o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
+        var anyActiveGovernmentOrPublicAuthority = hasGovernmentOrPublicAuthorityBeneficialOwnersPresent(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()) ? overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority().stream().anyMatch(o -> falseValue == o.getRelevantPeriod() && o.getCeasedDate() == null) : emptyBeneficialOwnerArray;
         return (anyActiveCorporate || anyActiveGovernmentOrPublicAuthority || anyActiveIndividuals);
     }
 
@@ -164,7 +165,6 @@ public class OwnersAndOfficersDataBlockValidator {
         var anyActiveCorporateManagingOfficers = hasCorporateManagingOfficersPresent(overseasEntitySubmissionDto.getManagingOfficersCorporate()) ? overseasEntitySubmissionDto.getManagingOfficersCorporate().stream().anyMatch(o -> o.getResignedOn() == null) : emptyManagingOfficerArray;
         var anyActiveIndividualManagingOfficers = hasIndividualManagingOfficersPresent(overseasEntitySubmissionDto.getManagingOfficersIndividual()) ? overseasEntitySubmissionDto.getManagingOfficersIndividual().stream().anyMatch(o -> o.getResignedOn() == null) : emptyManagingOfficerArray;
         return (anyActiveCorporateManagingOfficers || anyActiveIndividualManagingOfficers);
-            
     }
 
     private  boolean hasIndividualBeneficialOwnersPresent(List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList) {
