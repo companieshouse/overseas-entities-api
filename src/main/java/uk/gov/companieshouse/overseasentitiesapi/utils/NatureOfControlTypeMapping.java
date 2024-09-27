@@ -128,89 +128,58 @@ public class NatureOfControlTypeMapping {
     throw new IllegalAccessError("Use the static method designation");
   }
 
-  /**
-   * Collects the nature of control types from the dto and maps them to the api values
-   *
-   * @param personNatureOfControlTypes
-   * @param trusteesNatureOfControlTypes
-   * @param firmNatureOfControlTypes
-   * @return a list of nature of control types
-   */
-  public static List<String> collectAllNatureOfControlsIntoSingleList(
-          List<NatureOfControlType> personNatureOfControlTypes,
-          List<NatureOfControlType> trusteesNatureOfControlTypes,
-          List<NatureOfControlType> firmNatureOfControlTypes) {
-
-    return collectAllNatureOfControlsIntoSingleList(
-            personNatureOfControlTypes,
-            trusteesNatureOfControlTypes,
-            firmNatureOfControlTypes,
-            null,
-            null,
-            null,
-            null,
-            false);
-  }
 
   public static List<String> collectAllNatureOfControlsIntoSingleList(
-      List<NatureOfControlType> personNatureOfControlTypes,
-      List<NatureOfControlType> trusteesNatureOfControlTypes,
-      List<NatureOfControlType> firmNatureOfControlTypes,
-      List<NatureOfControlType> trustControlNatureOfControlTypes,
-      List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions,
-      List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions,
-      List<NatureOfControlType> firmControlNatureOfControlTypes,
-      boolean isPropertyAndLandNocEnabled
-  ) {
+          NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection) {
 
     List<String> output = new ArrayList<>();
 
-    if (personNatureOfControlTypes != null) {
+    if (naturesOfControlCollection.getPersonNatureOfControlTypes() != null) {
 
-        output.addAll(personNatureOfControlTypes.stream()
+        output.addAll(naturesOfControlCollection.getPersonNatureOfControlTypes().stream()
                 .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
                 .collect(Collectors.toList())
         );
     }
 
-    if (trusteesNatureOfControlTypes != null) {
-          output.addAll(trusteesNatureOfControlTypes.stream()
+    if (naturesOfControlCollection.getTrusteesNatureOfControlTypes() != null) {
+          output.addAll(naturesOfControlCollection.getTrusteesNatureOfControlTypes().stream()
                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
                   .collect(Collectors.toList())
          );
     }
 
-    if (firmNatureOfControlTypes != null) {
-      output.addAll(firmNatureOfControlTypes.stream()
+    if (naturesOfControlCollection.getFirmNatureOfControlTypes() != null) {
+      output.addAll(naturesOfControlCollection.getFirmNatureOfControlTypes().stream()
               .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
               .collect(Collectors.toList())
       );
     }
 
-    if (isPropertyAndLandNocEnabled) {
-       if (trustControlNatureOfControlTypes != null) {
-           output.addAll(trustControlNatureOfControlTypes.stream()
+    if (naturesOfControlCollection.isPropertyAndLandNocEnabled()) {
+       if (naturesOfControlCollection.getTrustControlNatureOfControlTypes() != null) {
+           output.addAll(naturesOfControlCollection.getTrustControlNatureOfControlTypes().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP::get)
                    .collect(Collectors.toList())
            );
        }
 
-       if (ownerOfLandPersonNatureOfControlJurisdictions != null) {
-           output.addAll(ownerOfLandPersonNatureOfControlJurisdictions.stream()
+       if (naturesOfControlCollection.getOwnerOfLandPersonNatureOfControlJurisdictions() != null) {
+           output.addAll(naturesOfControlCollection.getOwnerOfLandPersonNatureOfControlJurisdictions().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP::get)
                    .collect(Collectors.toList())
            );
        }
 
-       if (ownerOfLandOtherEntityNatureOfControlJurisdictions != null) {
-           output.addAll(ownerOfLandOtherEntityNatureOfControlJurisdictions.stream()
+       if (naturesOfControlCollection.getOwnerOfLandOtherEntityNatureOfControlJurisdictions() != null) {
+           output.addAll(naturesOfControlCollection.getOwnerOfLandOtherEntityNatureOfControlJurisdictions().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP::get)
                    .collect(Collectors.toList())
            );
        }
 
-       if (firmControlNatureOfControlTypes != null) {
-           output.addAll(firmControlNatureOfControlTypes.stream()
+       if (naturesOfControlCollection.getFirmControlNatureOfControlTypes() != null) {
+           output.addAll(naturesOfControlCollection.getFirmControlNatureOfControlTypes().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP::get)
                    .collect(Collectors.toList())
            );

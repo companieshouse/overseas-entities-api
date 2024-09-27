@@ -19,6 +19,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.additions.LegalPersonBeneficialOwnerAddition;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.CompanyIdentification;
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
+import uk.gov.companieshouse.overseasentitiesapi.utils.NaturesOfControlCollectionBuilder;
 
 @Service
 public class BeneficialOwnerAdditionService {
@@ -79,16 +80,21 @@ public class BeneficialOwnerAdditionService {
                 Boolean.TRUE.equals(bo.getServiceAddressSameAsUsualResidentialAddress())
                         ? residentialAddress
                         : bo.getServiceAddress();
-        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
-                bo.getBeneficialOwnerNatureOfControlTypes(),
-                bo.getTrusteesNatureOfControlTypes(),
-                bo.getNonLegalFirmMembersNatureOfControlTypes(),
-                bo.getTrustControlNatureOfControlTypes(),
-                bo.getOwnerOfLandPersonNatureOfControlJurisdictions(),
-                bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions(),
-                bo.getNonLegalFirmControlNatureOfControlTypes(),
-                isPropertyAndLandNocEnabled
-        );
+
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
+                        .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
+                        .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
+                        .addTrustType(bo.getTrustControlNatureOfControlTypes())
+                        .addOwnerOfLandPerson(bo.getOwnerOfLandPersonNatureOfControlJurisdictions())
+                        .addOwnerOfLandOtherEntity(bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
+                        .addFirmControlType(bo.getNonLegalFirmControlNatureOfControlTypes())
+                        .addFeatureFlag(isPropertyAndLandNocEnabled)
+                        .build();
+
+
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
         var isOnSanctionsList = bo.getOnSanctionsList();
 
         var individualBeneficialOwnerAddition =
@@ -123,11 +129,15 @@ public class BeneficialOwnerAdditionService {
                 Boolean.TRUE.equals(bo.getServiceAddressSameAsPrincipalAddress())
                         ? registeredOffice
                         : bo.getServiceAddress();
-        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
-                bo.getBeneficialOwnerNatureOfControlTypes(),
-                bo.getTrusteesNatureOfControlTypes(),
-                bo.getNonLegalFirmMembersNatureOfControlTypes()
-        );
+
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
+                        .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
+                        .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
+                        .build();
+
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
         var isOnSanctionsList = bo.getOnSanctionsList();
 
         var corporateEntityBeneficialOwnerAddition =
@@ -170,11 +180,13 @@ public class BeneficialOwnerAdditionService {
                         ? registeredOffice
                         : bo.getServiceAddress();
 
-        var natureOfControls = collectAllNatureOfControlsIntoSingleList(
-                bo.getBeneficialOwnerNatureOfControlTypes(),
-                null,
-                bo.getNonLegalFirmMembersNatureOfControlTypes()
-        );
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
+                        .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
+                        .build();
+
+        var natureOfControls = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
         var isOnSanctionsList = bo.getOnSanctionsList();
 
         var legalPersonBeneficialOwnerAddition =

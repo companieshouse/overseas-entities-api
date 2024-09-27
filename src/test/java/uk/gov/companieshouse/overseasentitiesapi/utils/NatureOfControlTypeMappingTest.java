@@ -58,15 +58,19 @@ class NatureOfControlTypeMappingTest {
                 Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                false);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addTrustType(trustControlNatureOfControlTypes)
+                        .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                        .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                        .addFirmControlType(firmControlNatureOfControlTypes)
+                        .addFeatureFlag(false)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(12, result.size());
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", result.get(0));
@@ -105,15 +109,19 @@ class NatureOfControlTypeMappingTest {
                 Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                true);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                .addPersonType(personNatureOfControlTypes)
+                .addTrusteesType(trusteesNatureOfControlTypes)
+                .addFirmType(firmNatureOfControlTypes)
+                .addTrustType(trustControlNatureOfControlTypes)
+                .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                .addFirmControlType(firmControlNatureOfControlTypes)
+                .addFeatureFlag(true)
+                .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(26, result.size());
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", result.get(0));
@@ -154,10 +162,15 @@ class NatureOfControlTypeMappingTest {
                 Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addFeatureFlag(false)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(8, result.size());
     }
@@ -172,10 +185,15 @@ class NatureOfControlTypeMappingTest {
                 Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addFeatureFlag(false)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(8, result.size());
     }
@@ -190,10 +208,15 @@ class NatureOfControlTypeMappingTest {
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
         List<NatureOfControlType> firmNatureOfControlTypes = null;
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addFeatureFlag(false)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(8, result.size());
     }
@@ -204,10 +227,15 @@ class NatureOfControlTypeMappingTest {
         List<NatureOfControlType> trusteesNatureOfControlTypes = null;
         List<NatureOfControlType> firmNatureOfControlTypes = null;
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addFeatureFlag(false)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(0, result.size());
     }
@@ -234,15 +262,19 @@ class NatureOfControlTypeMappingTest {
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                true);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addTrustType(trustControlNatureOfControlTypes)
+                        .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                        .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                        .addFirmControlType(firmControlNatureOfControlTypes)
+                        .addFeatureFlag(true)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(22, result.size());
     }
@@ -270,15 +302,19 @@ class NatureOfControlTypeMappingTest {
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                true);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addTrustType(trustControlNatureOfControlTypes)
+                        .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                        .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                        .addFirmControlType(firmControlNatureOfControlTypes)
+                        .addFeatureFlag(true)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(23, result.size());
     }
@@ -306,15 +342,19 @@ class NatureOfControlTypeMappingTest {
                         APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
 
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                true);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addTrustType(trustControlNatureOfControlTypes)
+                        .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                        .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                        .addFirmControlType(firmControlNatureOfControlTypes)
+                        .addFeatureFlag(true)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(23, result.size());
     }
@@ -341,15 +381,19 @@ class NatureOfControlTypeMappingTest {
         List<NatureOfControlType> firmControlNatureOfControlTypes = null;
 
 
-        var result = collectAllNatureOfControlsIntoSingleList(
-                personNatureOfControlTypes,
-                trusteesNatureOfControlTypes,
-                firmNatureOfControlTypes,
-                trustControlNatureOfControlTypes,
-                ownerOfLandPersonNatureOfControlJurisdictions,
-                ownerOfLandOtherEntityNatureOfControlJurisdictions,
-                firmControlNatureOfControlTypes,
-                true);
+        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+                NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                        .addPersonType(personNatureOfControlTypes)
+                        .addTrusteesType(trusteesNatureOfControlTypes)
+                        .addFirmType(firmNatureOfControlTypes)
+                        .addTrustType(trustControlNatureOfControlTypes)
+                        .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                        .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                        .addFirmControlType(firmControlNatureOfControlTypes)
+                        .addFeatureFlag(true)
+                        .build();
+
+        var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(22, result.size());
     }
