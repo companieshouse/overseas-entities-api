@@ -183,6 +183,7 @@ public class BeneficialOwnerAdditionService {
         NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
+                        .addTrusteesType(null)
                         .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
                         .build();
 
