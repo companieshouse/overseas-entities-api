@@ -90,6 +90,26 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setTrusteesNatureOfControlTypes(naturesOfControl);
         dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
         dto.setOnSanctionsList(false);
+        dto.setRelevantPeriod(false);
+        return dto;
+    }
+
+    public static BeneficialOwnerIndividualDto getRelevantPeriodBeneficialOwnerIndividualDto()  {
+        BeneficialOwnerIndividualDto dto = new BeneficialOwnerIndividualDto();
+        dto.setFirstName("Rptest");
+        dto.setLastName("Bo");
+        dto.setDateOfBirth(LocalDate.of(1990,1,1));
+        dto.setNationality("French");
+        dto.setServiceAddressSameAsUsualResidentialAddress(true);
+        dto.setStartDate(LocalDate.of(2020,1,1));
+        List<NatureOfControlType> naturesOfControl = new ArrayList<>();
+        naturesOfControl.add(NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS);
+        naturesOfControl.add(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        naturesOfControl.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        dto.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
+        dto.setTrusteesNatureOfControlTypes(naturesOfControl);
+        dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
+        dto.setOnSanctionsList(false);
         dto.setRelevantPeriod(true);
         return dto;
     }
@@ -103,6 +123,28 @@ public class BeneficialOwnerAllFieldsMock {
         dto.setOnRegisterInCountryFormedIn(true);
         dto.setPublicRegisterName("Test Register");
         dto.setRegistrationNumber("abc123");
+        dto.setStartDate(LocalDate.of(2020,1,1));
+        List<NatureOfControlType> naturesOfControl = new ArrayList<>();
+        naturesOfControl.add(NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS);
+        naturesOfControl.add(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        naturesOfControl.add(NatureOfControlType.OVER_25_PERCENT_OF_SHARES);
+        dto.setBeneficialOwnerNatureOfControlTypes(naturesOfControl);
+        dto.setTrusteesNatureOfControlTypes(naturesOfControl);
+        dto.setNonLegalFirmMembersNatureOfControlTypes(naturesOfControl);
+        dto.setOnSanctionsList(false);
+        dto.setRelevantPeriod(false);
+        return dto;
+    }
+
+    public static BeneficialOwnerCorporateDto getRelevantPeriodBeneficialOwnerCorporateDto()  {
+        BeneficialOwnerCorporateDto dto = new BeneficialOwnerCorporateDto();
+        dto.setName("TestRPBo");
+        dto.setServiceAddressSameAsPrincipalAddress(true);
+        dto.setLegalForm("Test Legal");
+        dto.setLawGoverned("Test Laws");
+        dto.setOnRegisterInCountryFormedIn(true);
+        dto.setPublicRegisterName("Test Register");
+        dto.setRegistrationNumber("abc321");
         dto.setStartDate(LocalDate.of(2020,1,1));
         List<NatureOfControlType> naturesOfControl = new ArrayList<>();
         naturesOfControl.add(NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS);

@@ -387,6 +387,28 @@ class OwnersAndOfficersDataBlockValidatorTest {
     }
 
     @Test
+    void testRelevantPeriodBeneficialOwnerIndividualValidatorIsNotCalled() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
+        beneficialOwnerIndividualDtoList.add(BeneficialOwnerAllFieldsMock.getRelevantPeriodBeneficialOwnerIndividualDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersIndividual(beneficialOwnerIndividualDtoList);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(beneficialOwnerIndividualValidator, times(0)).validate(eq(beneficialOwnerIndividualDtoList), any(), any());
+    }
+
+    @Test
+    void testRelevantPeriodBeneficialOwnerCorporateValidatorIsNotCalled() {
+        buildOverseasEntitySubmissionDto();
+        overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
+        List<BeneficialOwnerCorporateDto> beneficialOwnerCorporateDtoList = new ArrayList<>();
+        beneficialOwnerCorporateDtoList.add(BeneficialOwnerAllFieldsMock.getRelevantPeriodBeneficialOwnerCorporateDto());
+        overseasEntitySubmissionDto.setBeneficialOwnersCorporate(beneficialOwnerCorporateDtoList);
+        ownersAndOfficersDataBlockValidator.validateOwnersAndOfficersAgainstStatement(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT);
+        verify(beneficialOwnerCorporateValidator, times(0)).validate(eq(beneficialOwnerCorporateDtoList), any(), any());
+    }
+
+    @Test
     void testFullValidationBeneficialOwnerCorporateValidatorIsCalled() {
         buildOverseasEntitySubmissionDto();
         overseasEntitySubmissionDto.setBeneficialOwnersStatement(BeneficialOwnersStatementType.ALL_IDENTIFIED_ALL_DETAILS);
