@@ -167,56 +167,53 @@ public class NatureOfControlTypeMapping {
 
     if (personNatureOfControlTypes != null) {
 
-       var personList = personNatureOfControlTypes.stream()
-           .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
-           .collect(Collectors.toList());
-
-       output.addAll(personList);
+        output.addAll(personNatureOfControlTypes.stream()
+                .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
+                .collect(Collectors.toList())
+        );
     }
 
     if (trusteesNatureOfControlTypes != null) {
-      output.addAll(
-          trusteesNatureOfControlTypes.stream()
-              .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
-              .collect(Collectors.toList())
-      );
+          output.addAll(trusteesNatureOfControlTypes.stream()
+                  .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
+                  .collect(Collectors.toList())
+         );
     }
 
     if (firmNatureOfControlTypes != null) {
-      output.addAll(
-              firmNatureOfControlTypes.stream()
-                 .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
-                 .collect(Collectors.toList())
+      output.addAll(firmNatureOfControlTypes.stream()
+              .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
+              .collect(Collectors.toList())
       );
     }
 
     if (isPropertyAndLandNocEnabled) {
        if (trustControlNatureOfControlTypes != null) {
-           var trustControlList = trustControlNatureOfControlTypes.stream()
-                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP::get)
-                    .collect(Collectors.toList());
-           output.addAll(trustControlList);
+           output.addAll(trustControlNatureOfControlTypes.stream()
+                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP::get)
+                   .collect(Collectors.toList())
+           );
        }
 
        if (ownerOfLandPersonNatureOfControlJurisdictions != null) {
-           var ownerOfLandPersonList = ownerOfLandPersonNatureOfControlJurisdictions.stream()
-                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP::get)
-                    .collect(Collectors.toList());
-           output.addAll(ownerOfLandPersonList);
+           output.addAll(ownerOfLandPersonNatureOfControlJurisdictions.stream()
+                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP::get)
+                   .collect(Collectors.toList())
+           );
        }
 
        if (ownerOfLandOtherEntityNatureOfControlJurisdictions != null) {
-           var ownerOfLandOtherEntityList = ownerOfLandOtherEntityNatureOfControlJurisdictions.stream()
-                     .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP::get)
-                     .collect(Collectors.toList());
-           output.addAll(ownerOfLandOtherEntityList);
+           output.addAll(ownerOfLandOtherEntityNatureOfControlJurisdictions.stream()
+                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP::get)
+                   .collect(Collectors.toList())
+           );
        }
 
        if (firmControlNatureOfControlTypes != null) {
-           var firmControlList = firmControlNatureOfControlTypes.stream()
-                     .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP::get)
-                     .collect(Collectors.toList());
-           output.addAll(firmControlList);
+           output.addAll(firmControlNatureOfControlTypes.stream()
+                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP::get)
+                   .collect(Collectors.toList())
+           );
        }
     }
     return output;
