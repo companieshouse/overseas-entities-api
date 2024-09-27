@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
@@ -165,46 +166,57 @@ public class NatureOfControlTypeMapping {
     List<String> output = new ArrayList<>();
 
     if (personNatureOfControlTypes != null) {
-        for (NatureOfControlType noc : personNatureOfControlTypes) {
-            output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP.get(noc));
-        }
+
+       var personList = personNatureOfControlTypes.stream()
+           .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
+           .collect(Collectors.toList());
+
+       output.addAll(personList);
     }
 
     if (trusteesNatureOfControlTypes != null) {
-        for (NatureOfControlType noc : trusteesNatureOfControlTypes) {
-            output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP.get(noc));
-        }
+      output.addAll(
+          trusteesNatureOfControlTypes.stream()
+              .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
+              .collect(Collectors.toList())
+      );
     }
 
     if (firmNatureOfControlTypes != null) {
-        for (NatureOfControlType noc : firmNatureOfControlTypes) {
-            output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP.get(noc));
-        }
+      output.addAll(
+              firmNatureOfControlTypes.stream()
+                 .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
+                 .collect(Collectors.toList())
+      );
     }
 
     if (isPropertyAndLandNocEnabled) {
        if (trustControlNatureOfControlTypes != null) {
-           for (NatureOfControlType noc : trustControlNatureOfControlTypes) {
-               output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP.get(noc));
-           }
+           var trustControlList = trustControlNatureOfControlTypes.stream()
+                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP::get)
+                    .collect(Collectors.toList());
+           output.addAll(trustControlList);
        }
 
        if (ownerOfLandPersonNatureOfControlJurisdictions != null) {
-           for (NatureOfControlJurisdictionType noc : ownerOfLandPersonNatureOfControlJurisdictions) {
-               output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP.get(noc));
-           }
+           var ownerOfLandPersonList = ownerOfLandPersonNatureOfControlJurisdictions.stream()
+                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP::get)
+                    .collect(Collectors.toList());
+           output.addAll(ownerOfLandPersonList);
        }
 
        if (ownerOfLandOtherEntityNatureOfControlJurisdictions != null) {
-           for (NatureOfControlJurisdictionType noc : ownerOfLandOtherEntityNatureOfControlJurisdictions) {
-               output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP.get(noc));
-           }
+           var ownerOfLandOtherEntityList = ownerOfLandOtherEntityNatureOfControlJurisdictions.stream()
+                     .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP::get)
+                     .collect(Collectors.toList());
+           output.addAll(ownerOfLandOtherEntityList);
        }
 
        if (firmControlNatureOfControlTypes != null) {
-           for (NatureOfControlType noc : firmControlNatureOfControlTypes) {
-               output.add(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP.get(noc));
-           }
+           var firmControlList = firmControlNatureOfControlTypes.stream()
+                     .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP::get)
+                     .collect(Collectors.toList());
+           output.addAll(firmControlList);
        }
     }
     return output;
