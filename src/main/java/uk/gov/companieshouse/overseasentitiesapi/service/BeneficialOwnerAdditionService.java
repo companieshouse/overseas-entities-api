@@ -6,6 +6,8 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter.addr
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerGovernmentOrPublicAuthorityDto;
@@ -20,6 +22,9 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 
 @Service
 public class BeneficialOwnerAdditionService {
+
+    @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024:false}")
+    private boolean isPropertyAndLandNocEnabled;
 
     public List<Addition> beneficialOwnerAdditions(
             OverseasEntitySubmissionDto overseasEntitySubmissionDto) {
@@ -77,7 +82,12 @@ public class BeneficialOwnerAdditionService {
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(
                 bo.getBeneficialOwnerNatureOfControlTypes(),
                 bo.getTrusteesNatureOfControlTypes(),
-                bo.getNonLegalFirmMembersNatureOfControlTypes()
+                bo.getNonLegalFirmMembersNatureOfControlTypes(),
+                bo.getTrustControlNatureOfControlTypes(),
+                bo.getOwnerOfLandPersonNatureOfControlJurisdictions(),
+                bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions(),
+                bo.getNonLegalFirmControlNatureOfControlTypes(),
+                isPropertyAndLandNocEnabled
         );
         var isOnSanctionsList = bo.getOnSanctionsList();
 
