@@ -211,4 +211,146 @@ class NatureOfControlTypeMappingTest {
 
         assertEquals(0, result.size());
     }
+
+    @Test
+    void collectAllNatureOfControlsIntoSingleTrustControlNull() {
+        List<NatureOfControlType> personNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> trusteesNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> firmNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+        List<NatureOfControlType> trustControlNatureOfControlTypes = null;
+        List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlType> firmControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+
+        var result = collectAllNatureOfControlsIntoSingleList(
+                personNatureOfControlTypes,
+                trusteesNatureOfControlTypes,
+                firmNatureOfControlTypes,
+                trustControlNatureOfControlTypes,
+                ownerOfLandPersonNatureOfControlJurisdictions,
+                ownerOfLandOtherEntityNatureOfControlJurisdictions,
+                firmControlNatureOfControlTypes,
+                true);
+
+        assertEquals(22, result.size());
+    }
+
+    @Test
+    void collectAllNatureOfControlsIntoSingleOwnerOfLandPersonNull() {
+        List<NatureOfControlType> personNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> trusteesNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> firmNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+        List<NatureOfControlType> trustControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions = null;
+        List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlType> firmControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+
+        var result = collectAllNatureOfControlsIntoSingleList(
+                personNatureOfControlTypes,
+                trusteesNatureOfControlTypes,
+                firmNatureOfControlTypes,
+                trustControlNatureOfControlTypes,
+                ownerOfLandPersonNatureOfControlJurisdictions,
+                ownerOfLandOtherEntityNatureOfControlJurisdictions,
+                firmControlNatureOfControlTypes,
+                true);
+
+        assertEquals(23, result.size());
+    }
+
+    @Test
+    void collectAllNatureOfControlsIntoSingleOwnerOfLandOtherNull() {
+        List<NatureOfControlType> personNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> trusteesNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> firmNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+        List<NatureOfControlType> trustControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions = null;
+        List<NatureOfControlType> firmControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+
+        var result = collectAllNatureOfControlsIntoSingleList(
+                personNatureOfControlTypes,
+                trusteesNatureOfControlTypes,
+                firmNatureOfControlTypes,
+                trustControlNatureOfControlTypes,
+                ownerOfLandPersonNatureOfControlJurisdictions,
+                ownerOfLandOtherEntityNatureOfControlJurisdictions,
+                firmControlNatureOfControlTypes,
+                true);
+
+        assertEquals(23, result.size());
+    }
+
+    @Test
+    void collectAllNatureOfControlsIntoSingleFirmControlNull() {
+        List<NatureOfControlType> personNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> trusteesNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlType> firmNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+
+        List<NatureOfControlType> trustControlNatureOfControlTypes =
+                Arrays.asList(OVER_25_PERCENT_OF_SHARES, OVER_25_PERCENT_OF_VOTING_RIGHTS,
+                        APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS, SIGNIFICANT_INFLUENCE_OR_CONTROL);
+        List<NatureOfControlJurisdictionType> ownerOfLandPersonNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlJurisdictionType> ownerOfLandOtherEntityNatureOfControlJurisdictions =
+                Arrays.asList(ENGLAND_AND_WALES, SCOTLAND, NORTHERN_IRELAND);
+        List<NatureOfControlType> firmControlNatureOfControlTypes = null;
+
+
+        var result = collectAllNatureOfControlsIntoSingleList(
+                personNatureOfControlTypes,
+                trusteesNatureOfControlTypes,
+                firmNatureOfControlTypes,
+                trustControlNatureOfControlTypes,
+                ownerOfLandPersonNatureOfControlJurisdictions,
+                ownerOfLandOtherEntityNatureOfControlJurisdictions,
+                firmControlNatureOfControlTypes,
+                true);
+
+        assertEquals(22, result.size());
+    }
 }
