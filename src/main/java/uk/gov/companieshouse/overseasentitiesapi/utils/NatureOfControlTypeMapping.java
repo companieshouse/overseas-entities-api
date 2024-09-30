@@ -128,7 +128,11 @@ public class NatureOfControlTypeMapping {
     throw new IllegalAccessError("Use the static method designation");
   }
 
-
+    /**
+     * Collects the nature of control types from the dto and maps them to the api values
+     * @param naturesOfControlCollection
+     * @return
+     */
   public static List<String> collectAllNatureOfControlsIntoSingleList(
           NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection) {
 
