@@ -81,7 +81,7 @@ public class BeneficialOwnerAdditionService {
                         ? residentialAddress
                         : bo.getServiceAddress();
 
-        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+        var naturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
@@ -130,7 +130,7 @@ public class BeneficialOwnerAdditionService {
                         ? registeredOffice
                         : bo.getServiceAddress();
 
-        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+        var naturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
@@ -180,7 +180,7 @@ public class BeneficialOwnerAdditionService {
                         ? registeredOffice
                         : bo.getServiceAddress();
 
-        NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+        var naturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(null)

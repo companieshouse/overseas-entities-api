@@ -75,7 +75,7 @@ public class NaturesOfControlCollectionBuilder {
        }
 
        public NaturesOfControlCollection build() {
-           NaturesOfControlCollection naturesOfControlCollection = new NaturesOfControlCollection();
+           var naturesOfControlCollection = new NaturesOfControlCollection();
            naturesOfControlCollection.setPersonNatureOfControlTypes(personNatureOfControlTypes);
            naturesOfControlCollection.setTrusteesNatureOfControlTypes(trusteesNatureOfControlTypes);
            naturesOfControlCollection.setFirmNatureOfControlTypes(firmNatureOfControlTypes);

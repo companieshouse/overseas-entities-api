@@ -183,7 +183,7 @@ public class BeneficialOwnerChangeService {
     var trusteesNatureOfControlTypes = beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes();
 
-    NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+    var naturesOfControlCollection =
             NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addTrusteesType(trusteesNatureOfControlTypes)
@@ -290,7 +290,7 @@ public class BeneficialOwnerChangeService {
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes();
 
-    NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+    var naturesOfControlCollection =
             NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
@@ -385,7 +385,7 @@ public class BeneficialOwnerChangeService {
     var nonLegalFirmControlNatureOfControlTypes = beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes();
 
 
-    NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection =
+    var naturesOfControlCollection =
             NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addTrusteesType(trusteesNatureOfControlTypes)

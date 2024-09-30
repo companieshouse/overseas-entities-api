@@ -73,18 +73,7 @@ class NatureOfControlTypeMappingTest {
         var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(12, result.size());
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", result.get(0));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON", result.get(1));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_PERSON", result.get(2));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_PERSON", result.get(3));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_TRUST", result.get(4));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_TRUST", result.get(5));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", result.get(6));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_TRUST", result.get(7));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_FIRM", result.get(8));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", result.get(9));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM", result.get(10));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_FIRM", result.get(11));
+        assertNatureOfControlValues(result);
     }
 
     @Test
@@ -124,32 +113,10 @@ class NatureOfControlTypeMappingTest {
         var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(26, result.size());
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", result.get(0));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON", result.get(1));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_PERSON", result.get(2));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_PERSON", result.get(3));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_TRUST", result.get(4));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_TRUST", result.get(5));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", result.get(6));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_TRUST", result.get(7));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_FIRM", result.get(8));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", result.get(9));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM", result.get(10));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_FIRM", result.get(11));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_CONTROLOVERTRUST", result.get(12));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_CONTROLOVERTRUST", result.get(13));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERTRUST", result.get(14));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERTRUST", result.get(15));
-        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_ENGLANDWALES", result.get(16));
-        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", result.get(17));
-        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_NORTHERNIRELAND", result.get(18));
-        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", result.get(19));
-        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_SCOTLAND", result.get(20));
-        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_NORTHERNIRELAND", result.get(21));
-        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", result.get(22));
-        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", result.get(23));
-        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERFIRM", result.get(24));
-        assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM", result.get(25));
+
+        assertNatureOfControlValues(result);
+        assertControlNatureOfControlValues(result);
+        assertNatureOfControlJurisdictionValues(result);
     }
 
     @Test
@@ -396,5 +363,42 @@ class NatureOfControlTypeMappingTest {
         var result = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
         assertEquals(22, result.size());
+    }
+
+
+    private void assertNatureOfControlValues(List<String> result) {
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", result.get(0));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_PERSON", result.get(1));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_PERSON", result.get(2));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_PERSON", result.get(3));
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_TRUST", result.get(4));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_TRUST", result.get(5));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_TRUST", result.get(6));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_TRUST", result.get(7));
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_FIRM", result.get(8));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", result.get(9));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_FIRM", result.get(10));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_FIRM", result.get(11));
+    }
+
+    private void assertControlNatureOfControlValues(List<String> result) {
+
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_CONTROLOVERTRUST", result.get(12));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_CONTROLOVERTRUST", result.get(13));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERTRUST", result.get(14));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERTRUST", result.get(15));
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", result.get(22));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", result.get(23));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERFIRM", result.get(24));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM", result.get(25));
+    }
+
+    private void assertNatureOfControlJurisdictionValues(List<String>  result) {
+        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_ENGLANDWALES", result.get(16));
+        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", result.get(17));
+        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_NORTHERNIRELAND", result.get(18));
+        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", result.get(19));
+        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_SCOTLAND", result.get(20));
+        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_NORTHERNIRELAND", result.get(21));
     }
 }
