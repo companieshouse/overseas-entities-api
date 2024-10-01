@@ -43,13 +43,13 @@ public class NatureOfControlTypeMapping {
           Map.entry("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERTRUST", "right-to-appoint-and-remove-directors-as-control-over-trust-registered-overseas-entity"),
           Map.entry("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERTRUST", "significant-influence-or-control-as-control-over-trust-registered-overseas-entity"),
 
-          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_ENGLANDWALES", "registered-owner-as-jurisdiction-person-england-and-wales"),
-          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", "registered-owner-as-jurisdiction-person-scotland"),
-          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_NORTHERNIRELAND", "registered-owner-as-jurisdiction-person-northern-ireland"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_ENGLANDWALES", "registered-owner-as-nominee-person-england-wales"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", "registered-owner-as-nominee-person-scotland"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEPERSON_NORTHERNIRELAND", "registered-owner-as-nominee-person-northern-ireland"),
 
-          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", "registered-owner-as-jurisdiction-other-entity-england-and-wales"),
-          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_SCOTLAND", "registered-owner-as-jurisdiction-other-entity-scotland"),
-          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_NORTHERNIRELAND", "registered-owner-as-jurisdiction-other-entity-northern-ireland"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", "registered-owner-as-nominee-another-entity-england-wales"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_SCOTLAND", "registered-owner-as-nominee-another-entity-scotland"),
+          Map.entry("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_NORTHERNIRELAND", "registered-owner-as-nominee-another-entity-northern-ireland"),
 
           Map.entry("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", "ownership-of-shares-more-than-25-percent-as-control-over-firm-registered-overseas-entity"),
           Map.entry("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_CONTROLOVERFIRM", "voting-rights-more-than-25-percent-as-control-over-firm-registered-overseas-entity"),
