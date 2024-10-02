@@ -134,7 +134,7 @@ public class NatureOfControlTypeMapping {
      * @return
      */
   public static List<String> collectAllNatureOfControlsIntoSingleList(
-          NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection) {
+      NaturesOfControlCollectionBuilder.NaturesOfControlCollection naturesOfControlCollection) {
 
     List<String> output = new ArrayList<>();
 
