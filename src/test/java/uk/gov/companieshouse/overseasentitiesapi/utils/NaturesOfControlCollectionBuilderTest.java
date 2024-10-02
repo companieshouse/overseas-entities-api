@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 class NaturesOfControlCollectionBuilderTest {
 
 
@@ -47,7 +48,5 @@ class NaturesOfControlCollectionBuilderTest {
         assertNull(secondNaturesOfControlCollection.getOwnerOfLandPersonNatureOfControlJurisdictions());
         assertNull(secondNaturesOfControlCollection.getOwnerOfLandOtherEntityNatureOfControlJurisdictions());
         assertNull(secondNaturesOfControlCollection.getFirmControlNatureOfControlTypes());
-
-
     }
 }
