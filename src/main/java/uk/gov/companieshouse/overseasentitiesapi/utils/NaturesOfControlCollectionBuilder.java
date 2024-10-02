@@ -19,9 +19,7 @@ public class NaturesOfControlCollectionBuilder {
        private boolean isPropertyAndLandNocEnabled;
 
        public static NaturesOfControlCollectionBuilder createNaturesOfControlCollectionBuilder() {
-           if (naturesOfControlCollectionBuilder == null) {
-                  naturesOfControlCollectionBuilder = new NaturesOfControlCollectionBuilder();
-           }
+           naturesOfControlCollectionBuilder = new NaturesOfControlCollectionBuilder();
            return naturesOfControlCollectionBuilder;
        }
 
