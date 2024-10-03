@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.psc.Identification;
@@ -34,6 +35,7 @@ import uk.gov.companieshouse.overseasentitiesapi.utils.ChangeManager;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ComparisonHelper;
 import uk.gov.companieshouse.overseasentitiesapi.utils.NationalityOtherMapping;
 import uk.gov.companieshouse.overseasentitiesapi.utils.NatureOfControlTypeMapping;
+import uk.gov.companieshouse.overseasentitiesapi.utils.NaturesOfControlCollectionBuilder;
 import uk.gov.companieshouse.overseasentitiesapi.utils.TypeConverter;
 
 @Service
@@ -44,6 +46,9 @@ public class BeneficialOwnerChangeService {
   public static final String NO_PRIVATE_BO_DATA_FOUND = "No private data found for beneficial owner - changes cannot be created";
   private Map<String, Pair<PscApi, PrivateBoDataApi>> publicPrivateBo;
   private OverseasEntitySubmissionDto overseasEntitySubmissionDto;
+
+  @Value("${FEATURE_FLAG_ENABLE_PROPERTY_OR_LAND_OWNER_NOC_30082024:false}")
+  private boolean isPropertyAndLandNocEnabled;
 
   /**
    * Gathers all changes in beneficial ownership across different types of owners.
@@ -178,9 +183,14 @@ public class BeneficialOwnerChangeService {
     var trusteesNatureOfControlTypes = beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes();
 
-    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(
-        beneficialOwnerNatureOfControlTypes,
-        trusteesNatureOfControlTypes, nonLegalFirmMembersNatureOfControlTypes);
+    var naturesOfControlCollection =
+            NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                    .addPersonType(beneficialOwnerNatureOfControlTypes)
+                    .addTrusteesType(trusteesNatureOfControlTypes)
+                    .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
+                    .build();
+
+    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerCorporateDto.getServiceAddress(),
@@ -280,9 +290,13 @@ public class BeneficialOwnerChangeService {
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getBeneficialOwnerNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerGovernmentOrPublicAuthorityDto.getNonLegalFirmMembersNatureOfControlTypes();
 
-    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(
-        beneficialOwnerNatureOfControlTypes,
-        null, nonLegalFirmMembersNatureOfControlTypes);
+    var naturesOfControlCollection =
+            NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                    .addPersonType(beneficialOwnerNatureOfControlTypes)
+                    .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
+                    .build();
+
+    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerGovernmentOrPublicAuthorityDto.getServiceAddress(),
@@ -365,10 +379,25 @@ public class BeneficialOwnerChangeService {
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerIndividualDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerIndividualDto.getTrusteesNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerIndividualDto.getNonLegalFirmMembersNatureOfControlTypes();
+    var trustControlNatureOfControlTypes = beneficialOwnerIndividualDto.getTrustControlNatureOfControlTypes();
+    var ownerOfLandPersonNatureOfControlJurisdictions = beneficialOwnerIndividualDto.getOwnerOfLandPersonNatureOfControlJurisdictions();
+    var ownerOfLandOtherEntityNatureOfControlJurisdictions = beneficialOwnerIndividualDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions();
+    var nonLegalFirmControlNatureOfControlTypes = beneficialOwnerIndividualDto.getNonLegalFirmControlNatureOfControlTypes();
 
-    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(
-        beneficialOwnerNatureOfControlTypes,
-        trusteesNatureOfControlTypes, nonLegalFirmMembersNatureOfControlTypes);
+
+    var naturesOfControlCollection =
+            NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
+                    .addPersonType(beneficialOwnerNatureOfControlTypes)
+                    .addTrusteesType(trusteesNatureOfControlTypes)
+                    .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
+                    .addTrustType(trustControlNatureOfControlTypes)
+                    .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                    .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                    .addFirmControlType(nonLegalFirmControlNatureOfControlTypes)
+                    .addFeatureFlag(isPropertyAndLandNocEnabled)
+                    .build();
+
+    var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
 
     boolean hasChange = setCommonAttributes(changeManager,
         beneficialOwnerIndividualDto.getServiceAddress(),
