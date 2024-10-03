@@ -135,6 +135,11 @@ public class BeneficialOwnerAdditionService {
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
                         .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
+                        .addTrustType(bo.getTrustControlNatureOfControlTypes())
+                        .addOwnerOfLandPerson(bo.getOwnerOfLandPersonNatureOfControlJurisdictions())
+                        .addOwnerOfLandOtherEntity(bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
+                        .addFirmControlType(bo.getNonLegalFirmControlNatureOfControlTypes())
+                        .addFeatureFlag(isPropertyAndLandNocEnabled)
                         .build();
 
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
