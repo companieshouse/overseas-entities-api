@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.psc.Identification;
 import uk.gov.companieshouse.api.model.psc.PscApi;
@@ -140,11 +143,17 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testConvertBeneficialOwnerCorporateChangeThroughCollateChanges() {
+    void testConvertBeneficialOwnerCorporateChangeThroughCollateChangesEnabledFlagFalse() {
+        setNewNocsEnabledFeatureFlag(false);
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setName("John Smith");
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
         beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
+        beneficialOwnerCorporateDto.setNonLegalFirmMembersNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+        beneficialOwnerCorporateDto.setNonLegalFirmControlNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+
 
         when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
                 mockPublicPrivateBoPair);
@@ -164,6 +173,44 @@ class BeneficialOwnerChangeServiceTest {
                     0);
             assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
             assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
+            assertTrue(CollectionUtils.isEqualCollection(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
+                    corporateBeneficialOwnerChange.getPsc().getNatureOfControls()));
+        }
+    }
+
+
+    @Test
+    void testConvertBeneficialOwnerCorporateChangeThroughCollateChangesEnabledFlagTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setName("John Smith");
+        beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(new ArrayList<>());
+        beneficialOwnerCorporateDto.setNonLegalFirmMembersNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+        beneficialOwnerCorporateDto.setNonLegalFirmControlNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+
+        when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+                List.of(beneficialOwnerCorporateDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(CorporateBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof CorporateBeneficialOwnerChange) {
+            CorporateBeneficialOwnerChange corporateBeneficialOwnerChange = (CorporateBeneficialOwnerChange) result.get(
+                    0);
+            assertEquals("John Smith", corporateBeneficialOwnerChange.getPsc().getCorporateName());
+            assertEquals("123", corporateBeneficialOwnerChange.getAppointmentId());
+            assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM", "OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM"),
+                    corporateBeneficialOwnerChange.getPsc().getNatureOfControls());
         }
     }
 
@@ -211,7 +258,7 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testCovertBeneficialOwnerCorporateServiceAddressAndRegistrationAddress() {
+    void testConvertBeneficialOwnerCorporateServiceAddressAndRegistrationAddress() {
 
         BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
         beneficialOwnerCorporateDto.setChipsReference("1234567890");
@@ -249,7 +296,8 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testConvertBeneficialOwnerIndividualToChangeThroughCollateChanges() {
+    void testConvertBeneficialOwnerIndividualToChangeThroughCollateChangesEnabledFlagFalse() {
+        setNewNocsEnabledFeatureFlag(false);
         BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
         beneficialOwnerIndividualDto.setChipsReference("1234567890");
         beneficialOwnerIndividualDto.setFirstName("John");
@@ -258,6 +306,8 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
         beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
         beneficialOwnerIndividualDto.setNonLegalFirmMembersNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+        beneficialOwnerIndividualDto.setNonLegalFirmControlNatureOfControlTypes(
                 List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
         beneficialOwnerIndividualDto.setOnSanctionsList(true);
 
@@ -283,6 +333,48 @@ class BeneficialOwnerChangeServiceTest {
                     individualBeneficialOwnerChange.getPsc().getNationalityOther());
             assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM"),
                     individualBeneficialOwnerChange.getPsc().getNatureOfControls());
+            assertTrue(individualBeneficialOwnerChange.getPsc().getIsOnSanctionsList());
+            assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
+        }
+    }
+
+    @Test
+    void testConvertBeneficialOwnerIndividualToChangeThroughCollateChangesEnabledFlagTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567890");
+        beneficialOwnerIndividualDto.setFirstName("John");
+        beneficialOwnerIndividualDto.setLastName("Doe");
+        beneficialOwnerIndividualDto.setNationality("Bangladeshi");
+        beneficialOwnerIndividualDto.setSecondNationality("Indonesian");
+        beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
+        beneficialOwnerIndividualDto.setNonLegalFirmMembersNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+        beneficialOwnerIndividualDto.setNonLegalFirmControlNatureOfControlTypes(
+                List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL));
+        beneficialOwnerIndividualDto.setOnSanctionsList(true);
+
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(1, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertInstanceOf(IndividualBeneficialOwnerChange.class, result.get(0));
+
+        if (result.get(0) instanceof IndividualBeneficialOwnerChange) {
+            IndividualBeneficialOwnerChange individualBeneficialOwnerChange = (IndividualBeneficialOwnerChange) result.get(
+                    0);
+            assertEquals(new PersonName("John", "Doe"),
+                    individualBeneficialOwnerChange.getPsc().getPersonName());
+            assertEquals("Bangladeshi,Indonesian",
+                    individualBeneficialOwnerChange.getPsc().getNationalityOther());
+            assertEquals(List.of("OE_SIGINFLUENCECONTROL_AS_FIRM", "OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM"), individualBeneficialOwnerChange.getPsc().getNatureOfControls());
             assertTrue(individualBeneficialOwnerChange.getPsc().getIsOnSanctionsList());
             assertEquals("123", individualBeneficialOwnerChange.getAppointmentId());
         }
@@ -413,7 +505,7 @@ class BeneficialOwnerChangeServiceTest {
 
 
     @Test
-    void testCovertBeneficialOwnerOtherChangeThroughCollateChanges() {
+    void testCovertBeneficialOwnerOtherChangeThroughCollateChangesEnabledFlagFalse() {
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerOtherDto.setName("John Doe");
         beneficialOwnerOtherDto.setChipsReference("1234567890");
@@ -487,7 +579,7 @@ class BeneficialOwnerChangeServiceTest {
     }
 
     @Test
-    void testCovertBeneficialOwnerOtherChageServiceAddressAndRegistrationAddress() {
+    void testCovertBeneficialOwnerOtherChangeServiceAddressAndRegistrationAddress() {
 
         BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
         beneficialOwnerOtherDto.setChipsReference("1234567890");
@@ -979,4 +1071,7 @@ class BeneficialOwnerChangeServiceTest {
         assertTrue(result.isEmpty());
     }
 
+    private void setNewNocsEnabledFeatureFlag(boolean value) {
+        ReflectionTestUtils.setField(beneficialOwnerChangeService, "isPropertyAndLandNocEnabled", value);
+    }
 }
