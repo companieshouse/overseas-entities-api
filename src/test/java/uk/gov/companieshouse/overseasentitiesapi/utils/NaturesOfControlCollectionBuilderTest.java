@@ -19,7 +19,7 @@ class NaturesOfControlCollectionBuilderTest {
                         .addPersonType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
                         .addTrusteesType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
                         .addFirmType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS))
-                        .addTrustType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
+                        .addTrustControlType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
                         .addOwnerOfLandPerson(Arrays.asList(NatureOfControlJurisdictionType.SCOTLAND))
                         .addOwnerOfLandOtherEntity(Arrays.asList(NatureOfControlJurisdictionType.ENGLAND_AND_WALES))
                         .addFirmControlType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))

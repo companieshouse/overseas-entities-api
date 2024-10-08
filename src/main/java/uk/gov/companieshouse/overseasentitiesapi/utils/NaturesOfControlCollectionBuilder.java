@@ -41,7 +41,7 @@ public class NaturesOfControlCollectionBuilder {
           }
           return naturesOfControlCollectionBuilder;
        }
-       public NaturesOfControlCollectionBuilder addTrustType(List<NatureOfControlType> trustControlNatureOfControlTypes) {
+       public NaturesOfControlCollectionBuilder addTrustControlType(List<NatureOfControlType> trustControlNatureOfControlTypes) {
            if (naturesOfControlCollectionBuilder != null) {
                 naturesOfControlCollectionBuilder.trustControlNatureOfControlTypes = trustControlNatureOfControlTypes;
            }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.AddressDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
@@ -34,6 +33,9 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJur
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.SCOTLAND;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.ENGLAND_AND_WALES;
 
 @ExtendWith(MockitoExtension.class)
 class BeneficialOwnerAdditionServiceTest {
@@ -73,7 +75,26 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals(3, additions.size());
         assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
         assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
-        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2), false);
+    }
+
+    @Test
+    void testLegalPersonBeneficialOwnerAdditionsNocsNewNocsEnabledFlagTrue() {
+        setNewNocsEnabledFeatureFlag(true);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual())
+                .thenReturn(getIndividualBeneficialOwners());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate())
+                .thenReturn(getCorporateBeneficialOwners());
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority())
+                .thenReturn(getLegalPersonBeneficialOwners());
+
+        List<Addition> additions = beneficialOwnerAdditionService.beneficialOwnerAdditions(overseasEntitySubmissionDto);
+
+        assertEquals(3, additions.size());
+        assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
+        assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2), true);
     }
 
     @Test
@@ -95,7 +116,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals(3, additions.size());
         assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
         assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
-        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2), false);
         IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition = (IndividualBeneficialOwnerAddition) additions.get(0);
         assertEquals(trustIds, individualBeneficialOwnerAddition.getTrustIds());
         CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition = (CorporateEntityBeneficialOwnerAddition) additions.get(1);
@@ -120,7 +141,7 @@ class BeneficialOwnerAdditionServiceTest {
         assertEquals(3, additions.size());
         assertIndividualBeneficialOwnerDetails((IndividualBeneficialOwnerAddition) additions.get(0));
         assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
-        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2));
+        assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2), false);
         IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition = (IndividualBeneficialOwnerAddition) additions.get(0);
         assertEquals(null, individualBeneficialOwnerAddition.getTrustIds());
         CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition = (CorporateEntityBeneficialOwnerAddition) additions.get(1);
@@ -423,6 +444,10 @@ class BeneficialOwnerAdditionServiceTest {
         legalPersonBeneficialOwner.setPrincipalAddress(TEST_ADDRESS_DTO);
         legalPersonBeneficialOwner.setBeneficialOwnerNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_SHARES));
         legalPersonBeneficialOwner.setNonLegalFirmMembersNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_VOTING_RIGHTS));
+        legalPersonBeneficialOwner.setTrustControlNatureOfControlTypes(List.of(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
+        legalPersonBeneficialOwner.setOwnerOfLandPersonNatureOfControlJurisdictions(List.of(SCOTLAND));
+        legalPersonBeneficialOwner.setOwnerOfLandOtherEntityNatureOfControlJurisdictions(List.of(ENGLAND_AND_WALES));
+        legalPersonBeneficialOwner.setNonLegalFirmControlNatureOfControlTypes(List.of(SIGNIFICANT_INFLUENCE_OR_CONTROL));
         legalPersonBeneficialOwner.setName("Government Authority");
         legalPersonBeneficialOwner.setLegalForm("Legal form");
         legalPersonBeneficialOwner.setLawGoverned("Governing law");
@@ -432,13 +457,25 @@ class BeneficialOwnerAdditionServiceTest {
         return List.of(legalPersonBeneficialOwner);
     }
 
-    private void assertLegalPersonBeneficialOwnerDetails(LegalPersonBeneficialOwnerAddition legalPersonBeneficialOwnerAddition) {
+    private void assertLegalPersonBeneficialOwnerDetails(LegalPersonBeneficialOwnerAddition legalPersonBeneficialOwnerAddition, boolean isNewNocsEnabled) {
         assertEquals(LocalDate.of(2020, 1, 1), legalPersonBeneficialOwnerAddition.getActionDate());
         assertEquals(LocalDate.of(2023, 1, 1), legalPersonBeneficialOwnerAddition.getCeasedDate());
         assertEquals("Some country", legalPersonBeneficialOwnerAddition.getServiceAddress().getCountry());
         assertEquals("Some country", legalPersonBeneficialOwnerAddition.getRegisteredOffice().getCountry());
+
         assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(0));
         assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(1));
+
+        if (isNewNocsEnabled) {
+            assertEquals(6, legalPersonBeneficialOwnerAddition.getNatureOfControls().size());
+            assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERTRUST", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(2));
+            assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(3));
+            assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(4));
+            assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM", legalPersonBeneficialOwnerAddition.getNatureOfControls().get(5));
+        } else {
+            assertEquals(2, legalPersonBeneficialOwnerAddition.getNatureOfControls().size());
+        }
+
         assertEquals("Government Authority", legalPersonBeneficialOwnerAddition.getCorporateName());
         assertEquals("Legal form", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getLegalForm());
         assertEquals("Governing law", legalPersonBeneficialOwnerAddition.getCompanyIdentification().getGoverningLaw());

@@ -47,6 +47,13 @@ import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changeli
 import uk.gov.companieshouse.overseasentitiesapi.model.updatesubmission.changelist.commonmodels.PersonName;
 import utils.AddressTestUtils;
 
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_SHARES;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.SCOTLAND;
+import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.ENGLAND_AND_WALES;
+
 class BeneficialOwnerChangeServiceTest {
 
     @InjectMocks
@@ -700,6 +707,72 @@ class BeneficialOwnerChangeServiceTest {
                 CorporateBeneficialOwnerChange corporateBeneficialOwnerChange =  (CorporateBeneficialOwnerChange) result.get(2);
                 assertEquals(corporateBeneficialOwnerChange.getPsc().getAddedTrustIds(), trustIds);
         }
+    }
+
+    @Test
+    void testCollateAllBeneficialOwnerOtherChangesWithAllNocs() {
+        setNewNocsEnabledFeatureFlag(true);
+
+        List<String> trustIds = List.of("1","2","3");
+        // setup corporate DTO
+        BeneficialOwnerCorporateDto beneficialOwnerCorporateDto = new BeneficialOwnerCorporateDto();
+        beneficialOwnerCorporateDto.setName("John Smith");
+        beneficialOwnerCorporateDto.setChipsReference("1234567890");
+        beneficialOwnerCorporateDto.setTrustIds(trustIds);
+
+        // setup individual DTO
+        BeneficialOwnerIndividualDto beneficialOwnerIndividualDto = new BeneficialOwnerIndividualDto();
+        beneficialOwnerIndividualDto.setChipsReference("1234567891");
+        beneficialOwnerIndividualDto.setFirstName("John");
+        beneficialOwnerIndividualDto.setLastName("Doe");
+        beneficialOwnerIndividualDto.setTrustIds(trustIds);
+
+        // setup other DTO
+        BeneficialOwnerGovernmentOrPublicAuthorityDto beneficialOwnerOtherDto = new BeneficialOwnerGovernmentOrPublicAuthorityDto();
+        beneficialOwnerOtherDto.setName("John Doe");
+        beneficialOwnerOtherDto.setChipsReference("1234567892");
+        beneficialOwnerOtherDto.setBeneficialOwnerNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_SHARES));
+        beneficialOwnerOtherDto.setNonLegalFirmMembersNatureOfControlTypes(List.of(OVER_25_PERCENT_OF_VOTING_RIGHTS));
+        beneficialOwnerOtherDto.setTrustControlNatureOfControlTypes(List.of(APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS));
+        beneficialOwnerOtherDto.setOwnerOfLandPersonNatureOfControlJurisdictions(List.of(SCOTLAND));
+        beneficialOwnerOtherDto.setOwnerOfLandOtherEntityNatureOfControlJurisdictions(List.of(ENGLAND_AND_WALES));
+        beneficialOwnerOtherDto.setNonLegalFirmControlNatureOfControlTypes(List.of(SIGNIFICANT_INFLUENCE_OR_CONTROL));
+
+        when(publicPrivateBo.get(beneficialOwnerCorporateDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(publicPrivateBo.get(beneficialOwnerIndividualDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+        when(publicPrivateBo.get(beneficialOwnerOtherDto.getChipsReference())).thenReturn(
+                mockPublicPrivateBoPair);
+
+        when(overseasEntitySubmissionDto.getBeneficialOwnersCorporate()).thenReturn(
+                List.of(beneficialOwnerCorporateDto));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersIndividual()).thenReturn(
+                List.of(beneficialOwnerIndividualDto));
+        when(overseasEntitySubmissionDto.getBeneficialOwnersGovernmentOrPublicAuthority()).thenReturn(
+                List.of(beneficialOwnerOtherDto));
+
+        List<Change> result = beneficialOwnerChangeService.collateBeneficialOwnerChanges(
+                publicPrivateBo, overseasEntitySubmissionDto, logMap);
+
+        assertEquals(3, result.size());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertTrue(result.stream().anyMatch(CorporateBeneficialOwnerChange.class::isInstance));
+        assertTrue(result.stream().anyMatch(IndividualBeneficialOwnerChange.class::isInstance));
+        assertTrue(result.stream().anyMatch(OtherBeneficialOwnerChange.class::isInstance));
+
+        OtherBeneficialOwnerChange otherBeneficialOwnerChange = (OtherBeneficialOwnerChange) result.get(1);
+        List<String> nocs = otherBeneficialOwnerChange.getPsc().getNatureOfControls();
+
+        assertEquals(6, nocs.size());
+
+        assertEquals("OE_OWNERSHIPOFSHARES_MORETHAN25PERCENT_AS_PERSON", nocs.get(0));
+        assertEquals("OE_VOTINGRIGHTS_MORETHAN25PERCENT_AS_FIRM", nocs.get(1));
+        assertEquals("OE_RIGHTTOAPPOINTANDREMOVEDIRECTORS_AS_CONTROLOVERTRUST", nocs.get(2));
+        assertEquals("OE_REGOWNER_AS_NOMINEEPERSON_SCOTLAND", nocs.get(3));
+        assertEquals("OE_REGOWNER_AS_NOMINEEANOTHERENTITY_ENGLANDWALES", nocs.get(4));
+        assertEquals("OE_SIGINFLUENCECONTROL_AS_CONTROLOVERFIRM", nocs.get(5));
     }
 
     @Test

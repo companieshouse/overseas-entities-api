@@ -86,7 +86,7 @@ public class BeneficialOwnerAdditionService {
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
                         .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
-                        .addTrustType(bo.getTrustControlNatureOfControlTypes())
+                        .addTrustControlType(bo.getTrustControlNatureOfControlTypes())
                         .addOwnerOfLandPerson(bo.getOwnerOfLandPersonNatureOfControlJurisdictions())
                         .addOwnerOfLandOtherEntity(bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
                         .addFirmControlType(bo.getNonLegalFirmControlNatureOfControlTypes())
@@ -135,7 +135,7 @@ public class BeneficialOwnerAdditionService {
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
                         .addTrusteesType(bo.getTrusteesNatureOfControlTypes())
                         .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
-                        .addTrustType(bo.getTrustControlNatureOfControlTypes())
+                        .addTrustControlType(bo.getTrustControlNatureOfControlTypes())
                         .addOwnerOfLandPerson(bo.getOwnerOfLandPersonNatureOfControlJurisdictions())
                         .addOwnerOfLandOtherEntity(bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
                         .addFirmControlType(bo.getNonLegalFirmControlNatureOfControlTypes())
@@ -188,8 +188,12 @@ public class BeneficialOwnerAdditionService {
         var naturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                         .addPersonType(bo.getBeneficialOwnerNatureOfControlTypes())
-                        .addTrusteesType(null)
                         .addFirmType(bo.getNonLegalFirmMembersNatureOfControlTypes())
+                        .addTrustControlType(bo.getTrustControlNatureOfControlTypes())
+                        .addOwnerOfLandPerson(bo.getOwnerOfLandPersonNatureOfControlJurisdictions())
+                        .addOwnerOfLandOtherEntity(bo.getOwnerOfLandOtherEntityNatureOfControlJurisdictions())
+                        .addFirmControlType(bo.getNonLegalFirmControlNatureOfControlTypes())
+                        .addFeatureFlag(isPropertyAndLandNocEnabled)
                         .build();
 
         var natureOfControls = collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
