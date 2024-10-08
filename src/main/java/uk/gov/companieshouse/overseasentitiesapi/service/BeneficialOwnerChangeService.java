@@ -182,12 +182,21 @@ public class BeneficialOwnerChangeService {
     var beneficialOwnerNatureOfControlTypes = beneficialOwnerCorporateDto.getBeneficialOwnerNatureOfControlTypes();
     var trusteesNatureOfControlTypes = beneficialOwnerCorporateDto.getTrusteesNatureOfControlTypes();
     var nonLegalFirmMembersNatureOfControlTypes = beneficialOwnerCorporateDto.getNonLegalFirmMembersNatureOfControlTypes();
+    var trustControlNatureOfControlTypes = beneficialOwnerCorporateDto.getTrustControlNatureOfControlTypes();
+    var ownerOfLandPersonNatureOfControlJurisdictions = beneficialOwnerCorporateDto.getOwnerOfLandPersonNatureOfControlJurisdictions();
+    var ownerOfLandOtherEntityNatureOfControlJurisdictions = beneficialOwnerCorporateDto.getOwnerOfLandOtherEntityNatureOfControlJurisdictions();
+    var nonLegalFirmControlNatureOfControlTypes = beneficialOwnerCorporateDto.getNonLegalFirmControlNatureOfControlTypes();
 
     var naturesOfControlCollection =
             NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addTrusteesType(trusteesNatureOfControlTypes)
                     .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
+                    .addTrustControlType(trustControlNatureOfControlTypes)
+                    .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
+                    .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
+                    .addFirmControlType(nonLegalFirmControlNatureOfControlTypes)
+                    .addFeatureFlag(isPropertyAndLandNocEnabled)
                     .build();
 
     var collectedNatureOfControl = NatureOfControlTypeMapping.collectAllNatureOfControlsIntoSingleList(naturesOfControlCollection);
@@ -298,7 +307,7 @@ public class BeneficialOwnerChangeService {
             NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
-                    .addTrustType(trustControlNatureOfControlTypes)
+                    .addTrustControlType(trustControlNatureOfControlTypes)
                     .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
                     .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
                     .addFirmControlType(nonLegalFirmControlNatureOfControlTypes)
@@ -399,7 +408,7 @@ public class BeneficialOwnerChangeService {
                     .addPersonType(beneficialOwnerNatureOfControlTypes)
                     .addTrusteesType(trusteesNatureOfControlTypes)
                     .addFirmType(nonLegalFirmMembersNatureOfControlTypes)
-                    .addTrustType(trustControlNatureOfControlTypes)
+                    .addTrustControlType(trustControlNatureOfControlTypes)
                     .addOwnerOfLandPerson(ownerOfLandPersonNatureOfControlJurisdictions)
                     .addOwnerOfLandOtherEntity(ownerOfLandOtherEntityNatureOfControlJurisdictions)
                     .addFirmControlType(nonLegalFirmControlNatureOfControlTypes)
