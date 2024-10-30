@@ -32,7 +32,7 @@
         <api-security-java.version>2.0.8</api-security-java.version>
         <private-api-sdk-java.version>4.0.99</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
-        <structured-logging.version>3.0.9</structured-logging.version>
+        <structured-logging.version>3.0.19</structured-logging.version>
     </properties>
 
     <profiles>
