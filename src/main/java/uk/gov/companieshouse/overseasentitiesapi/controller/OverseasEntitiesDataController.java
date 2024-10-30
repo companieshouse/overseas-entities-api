@@ -115,7 +115,7 @@ public class OverseasEntitiesDataController {
     public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, NoSuchAlgorithmException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws NoSuchAlgorithmException {
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);

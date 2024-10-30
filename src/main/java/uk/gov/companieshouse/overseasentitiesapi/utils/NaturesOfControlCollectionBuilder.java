@@ -86,7 +86,7 @@ public class NaturesOfControlCollectionBuilder {
        }
 
 
-       public class NaturesOfControlCollection {
+       public static class NaturesOfControlCollection {
 
               private List<NatureOfControlType> personNatureOfControlTypes;
               private List<NatureOfControlType> trusteesNatureOfControlTypes;

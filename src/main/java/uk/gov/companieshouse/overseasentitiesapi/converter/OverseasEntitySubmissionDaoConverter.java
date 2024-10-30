@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
+import org.springframework.lang.NonNull;
 import uk.gov.companieshouse.overseasentitiesapi.model.SchemaVersion;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntitySubmissionDao;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -15,7 +16,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.dao.OverseasEntity
 
 /**
  * Converts a Mongo (binary) JSON document into an instance of a <code>OverseasEntitySubmissionDao</code>.
- *
  * Achieved by using the default Mongo converter, but if the document is deemed to have been created using an
  * older version of the model structure it will first be transformed into a BSON document that represents the
  * current structure, ahead of conversion.
@@ -33,7 +33,7 @@ public class OverseasEntitySubmissionDaoConverter implements Converter<Document,
     }
 
     @Override
-    public OverseasEntitySubmissionDao convert(final Document document) {
+    public OverseasEntitySubmissionDao convert(@NonNull final Document document) {
 
         var schemaVersion = getSchemaVersion(document);
 

@@ -52,9 +52,8 @@ public class TrustCorporateValidator {
         validateName(trustCorporateDto.getName(), errors, loggingContext);
 
         String type = trustCorporateDto.getType();
-        if (validateType(type, errors, loggingContext) && BeneficialOwnerType
-                .findByBeneficialOwnerTypeString(type)
-                .equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+        if (validateType(type, errors, loggingContext) && Objects.equals(BeneficialOwnerType
+                .findByBeneficialOwnerTypeString(type), BeneficialOwnerType.INTERESTED_PERSON)) {
 
             validateDateBecameInterestedPerson(
                     trustCorporateDto.getDateBecameInterestedPerson(),
