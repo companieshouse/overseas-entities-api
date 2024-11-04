@@ -92,6 +92,7 @@ module "ecs-service" {
   app_environment_filename  = local.app_environment_filename
   use_set_environment_files = local.use_set_environment_files
   read_only_root_filesystem = false
+  
 
   # eric options for eric running API module
   use_eric_reverse_proxy    = true
