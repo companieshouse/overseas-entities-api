@@ -9,7 +9,7 @@ locals {
   docker_repo                = "overseas-entities-api"
   kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
   lb_listener_rule_priority  = 64
-  lb_listener_paths          = ["/transactions/*/overseas-entity*", "/private/transactions/*/overseas-entity/*", "/overseas-entity/healthcheck"]
+  lb_listener_paths          = ["/transactions/*/overseas-entity*", "/private/transactions/*/overseas-entity/*"]
   healthcheck_path           = "/overseas-entity/healthcheck" #healthcheck path for overseas-entities-api
   healthcheck_matcher        = "200"
   vpc_name                   = local.stack_secrets["vpc_name"]
