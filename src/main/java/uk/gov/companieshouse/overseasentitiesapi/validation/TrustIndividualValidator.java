@@ -51,8 +51,8 @@ public class TrustIndividualValidator {
                     validateDateOfBirth(trustIndividualDto.getDateOfBirth(), errors, loggingContext);
 
                     String type = trustIndividualDto.getType();
-                    if (validateType(type, errors, loggingContext) && BeneficialOwnerType
-                            .findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                    if (validateType(type, errors, loggingContext) && Objects.equals(BeneficialOwnerType
+                            .findByBeneficialOwnerTypeString(type), BeneficialOwnerType.INTERESTED_PERSON)) {
                         validateDateBecameInterestedPerson(trustIndividualDto.getDateBecameInterestedPerson(), errors,
                                 loggingContext);
                     }
@@ -207,7 +207,7 @@ public class TrustIndividualValidator {
                     errors, loggingContext);
             String type = trustIndividualDto.getType();
             if (validateType(type, errors, loggingContext)
-                    && BeneficialOwnerType.findByBeneficialOwnerTypeString(type).equals(BeneficialOwnerType.INTERESTED_PERSON)) {
+                    && Objects.equals(BeneficialOwnerType.findByBeneficialOwnerTypeString(type), BeneficialOwnerType.INTERESTED_PERSON)) {
                 DateValidators.isCeasedDateOnOrAfterDateBecameInterestedPerson(ceasedDate, trustIndividualDto.getDateBecameInterestedPerson(),
                         qualifiedFieldNameCeasedDate, errors, loggingContext);
             }

@@ -58,7 +58,7 @@ public class PrivateDataRetrievalService {
                     && managingOfficerDataList.getManagingOfficerData() != null
                     && !managingOfficerDataList.getManagingOfficerData().isEmpty()) {
                 logMap.put(MANAGING_OFFICER_APPOINTMENT_ID,
-                        managingOfficerDataList.getManagingOfficerData().get(0)
+                        managingOfficerDataList.getManagingOfficerData().getFirst()
                                 .getManagingOfficerAppointmentId());
             }
 

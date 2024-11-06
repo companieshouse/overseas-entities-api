@@ -142,21 +142,21 @@ public class NatureOfControlTypeMapping {
 
         output.addAll(naturesOfControlCollection.getPersonNatureOfControlTypes().stream()
                 .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_MAP::get)
-                .collect(Collectors.toList())
+                .toList()
         );
     }
 
     if (naturesOfControlCollection.getTrusteesNatureOfControlTypes() != null) {
           output.addAll(naturesOfControlCollection.getTrusteesNatureOfControlTypes().stream()
                   .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_TRUST_MAP::get)
-                  .collect(Collectors.toList())
+                  .toList()
          );
     }
 
     if (naturesOfControlCollection.getFirmNatureOfControlTypes() != null) {
       output.addAll(naturesOfControlCollection.getFirmNatureOfControlTypes().stream()
               .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_FIRM_MAP::get)
-              .collect(Collectors.toList())
+              .toList()
       );
     }
 
@@ -164,28 +164,28 @@ public class NatureOfControlTypeMapping {
        if (naturesOfControlCollection.getTrustControlNatureOfControlTypes() != null) {
            output.addAll(naturesOfControlCollection.getTrustControlNatureOfControlTypes().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_TRUST_MAP::get)
-                   .collect(Collectors.toList())
+                   .toList()
            );
        }
 
        if (naturesOfControlCollection.getOwnerOfLandPersonNatureOfControlJurisdictions() != null) {
            output.addAll(naturesOfControlCollection.getOwnerOfLandPersonNatureOfControlJurisdictions().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_PERSON_JURISDICTIONS_MAP::get)
-                   .collect(Collectors.toList())
+                   .toList()
            );
        }
 
        if (naturesOfControlCollection.getOwnerOfLandOtherEntityNatureOfControlJurisdictions() != null) {
            output.addAll(naturesOfControlCollection.getOwnerOfLandOtherEntityNatureOfControlJurisdictions().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_OTHER_ENTITY_JURISDICTIONS_MAP::get)
-                   .collect(Collectors.toList())
+                   .toList()
            );
        }
 
        if (naturesOfControlCollection.getFirmControlNatureOfControlTypes() != null) {
            output.addAll(naturesOfControlCollection.getFirmControlNatureOfControlTypes().stream()
                    .map(NatureOfControlTypeMapping.OVERSEAS_ENTITIES_CONTROL_OVER_FIRM_MAP::get)
-                   .collect(Collectors.toList())
+                   .toList()
            );
        }
     }

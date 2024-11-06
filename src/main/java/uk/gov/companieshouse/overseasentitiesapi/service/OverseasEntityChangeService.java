@@ -122,15 +122,16 @@ public class OverseasEntityChangeService {
 
         AddressDto updatedAddress;
 
+        assert entityDto != null;
         if (Optional.of(entityDto)
                 .map(EntityDto::getServiceAddressSameAsPrincipalAddress)
                 .orElse(false)) {
 
-            updatedAddress = Optional.ofNullable(entityDto)
+            updatedAddress = Optional.of(entityDto)
                     .map(EntityDto::getPrincipalAddress)
                     .orElse(null);
         } else {
-            updatedAddress = Optional.ofNullable(entityDto)
+            updatedAddress = Optional.of(entityDto)
                     .map(EntityDto::getServiceAddress)
                     .orElse(null);
         }
