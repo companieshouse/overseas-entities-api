@@ -834,6 +834,12 @@
     "is_not_proprietor_of_land" : true
   },
   "has_sold_land" : true,
+  "payment" : {
+    "resource" : "string",
+    "state" : "string",
+    "redirectUri" : "string",
+    "reference" : "string"
+  },
   "trusts" : [
     {
       "_id" : "string",

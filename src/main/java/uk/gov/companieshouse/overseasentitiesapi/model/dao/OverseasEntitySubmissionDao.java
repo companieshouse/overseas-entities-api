@@ -81,6 +81,9 @@ public class OverseasEntitySubmissionDao {
     @Field("who_is_registering")
     private String whoIsRegistering;
 
+    @Field("payment")
+    private PaymentDao payment;
+
     @Field("trusts")
     private List<TrustDataDao> trusts;
 
@@ -252,6 +255,14 @@ public class OverseasEntitySubmissionDao {
 
     public void setWhoIsRegistering(String whoIsRegistering) {
         this.whoIsRegistering = whoIsRegistering;
+    }
+
+    public PaymentDao getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentDao payment) {
+        this.payment = payment;
     }
 
     public void setLinks(Map<String, String> links) {

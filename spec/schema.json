@@ -390,6 +390,9 @@
           },
           "who_is_registering": {
             "type": "string"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/Payment"
           }
         }
       },
@@ -1579,6 +1582,29 @@
         "properties": {
           "is_not_proprietor_of_land": {
             "type": "boolean"
+          }
+        }
+      },
+      "Payment": {
+        "type":"object",
+        "required":[
+          "resource",
+          "state",
+          "redirectUri",
+          "reference"
+        ],
+        "properties": {
+          "resource": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "redirectUri": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
           }
         }
       },
