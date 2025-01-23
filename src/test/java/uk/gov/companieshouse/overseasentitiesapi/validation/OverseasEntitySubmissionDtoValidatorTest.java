@@ -93,8 +93,6 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private UpdateValidator updateValidator;
     @Mock
     private RemoveValidator removeValidator;
-    @Mock
-    private PaymentValidator paymentValidator;
 
     private final EntityNameDto entityNameDto = EntityNameMock.getEntityNameDto();
     private final EntityDto entityDto = EntityMock.getEntityDto();
