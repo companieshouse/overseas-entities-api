@@ -837,7 +837,7 @@
   "payment" : {
     "resource" : "string",
     "state" : "string",
-    "redirectUri" : "string",
+    "redirect_uri" : "string",
     "reference" : "string"
   },
   "trusts" : [
