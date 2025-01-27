@@ -10,7 +10,7 @@ public class PaymentDao {
     @Field("state")
     private String state;
 
-    @Field("redirect_uri")
+    @Field("redirectUri")
     private String redirectUri;
 
     @Field("reference")
