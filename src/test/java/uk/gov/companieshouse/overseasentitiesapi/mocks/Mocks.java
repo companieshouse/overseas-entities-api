@@ -13,6 +13,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmiss
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.DueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PaymentDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataDto;
 
 import java.time.LocalDate;
@@ -51,6 +52,8 @@ public class Mocks {
         overseasEntitySubmissionDto.setManagingOfficersCorporate(managingOfficersCorporateInFiling);
         UpdateDto updateDto = UpdateMock.getUpdateDto();
         overseasEntitySubmissionDto.setUpdate(updateDto);
+        PaymentDto paymentDto = PaymentMock.getPaymentDto();
+        overseasEntitySubmissionDto.setPayment(paymentDto);
 
         return overseasEntitySubmissionDto;
     }

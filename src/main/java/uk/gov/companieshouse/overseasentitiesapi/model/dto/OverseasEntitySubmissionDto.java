@@ -33,6 +33,7 @@ public class OverseasEntitySubmissionDto {
     public static final String HAS_SOLD_LAND_FIELD = "has_sold_land";
     public static final String IS_SECURE_REGISTER_FIELD = "is_secure_register";
     public static final String WHO_IS_REGISTERING = "who_is_registering";
+    public static final String PAYMENT_FIELD = "payment";
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -91,6 +92,9 @@ public class OverseasEntitySubmissionDto {
 
     @JsonProperty(WHO_IS_REGISTERING)
     private String whoIsRegistering;
+
+    @JsonProperty(PAYMENT_FIELD)
+    private PaymentDto payment;
 
     @JsonProperty("links")
     private Map<String, String> links;
@@ -259,6 +263,14 @@ public class OverseasEntitySubmissionDto {
     }
 
     public void setWhoIsRegistering(String whoIsRegistering) { this.whoIsRegistering = whoIsRegistering; }
+
+    public PaymentDto getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentDto payment) {
+        this.payment = payment;
+    }
 
     public Map<String, String> getLinks() {
         return links;

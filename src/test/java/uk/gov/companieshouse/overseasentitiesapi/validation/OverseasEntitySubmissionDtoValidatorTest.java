@@ -36,6 +36,7 @@ import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.EntityNameMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.ManagingOfficerMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.OverseasEntityDueDiligenceMock;
+import uk.gov.companieshouse.overseasentitiesapi.mocks.PaymentMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PresenterMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.TrustMock;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.UpdateMock;
@@ -50,6 +51,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorpor
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntityDueDiligenceDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
+import uk.gov.companieshouse.overseasentitiesapi.model.dto.PaymentDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.PresenterDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.RemoveDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.UpdateDto;
@@ -100,6 +102,7 @@ class OverseasEntitySubmissionDtoValidatorTest {
     private final DueDiligenceDto dueDiligenceDto = DueDiligenceMock.getDueDiligenceDto();
 
     private final UpdateDto updateDto = UpdateMock.getUpdateDto();
+    private final PaymentDto paymentDto = PaymentMock.getPaymentDto();
 
     private final List<BeneficialOwnerIndividualDto> beneficialOwnerIndividualDtoList = new ArrayList<>();
     {
