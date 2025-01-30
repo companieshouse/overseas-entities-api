@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataToReviewDao;
@@ -112,6 +113,11 @@ public class UpdateDao {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
     public boolean isNoChange() {
+        if (Objects.equals(changeBORelevantPeriod.getValue(), "change_bo_relevant_period") ||
+            Objects.equals(trusteeInvolvedRelevantPeriod.getValue(), "trustee_involved_relevant_period") ||
+            Objects.equals(changeBeneficiaryRelevantPeriod.getValue(), "change_beneficiary_relevant_period")) {
+            return true;
+        }
         return noChange;
     }
 
