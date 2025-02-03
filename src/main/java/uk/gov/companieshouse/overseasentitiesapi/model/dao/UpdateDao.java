@@ -113,11 +113,6 @@ public class UpdateDao {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
     public boolean isNoChange() {
-        if (Objects.equals(changeBORelevantPeriod.getValue(), "change_bo_relevant_period") ||
-            Objects.equals(trusteeInvolvedRelevantPeriod.getValue(), "trustee_involved_relevant_period") ||
-            Objects.equals(changeBeneficiaryRelevantPeriod.getValue(), "change_beneficiary_relevant_period")) {
-            return true;
-        }
         return noChange;
     }
 

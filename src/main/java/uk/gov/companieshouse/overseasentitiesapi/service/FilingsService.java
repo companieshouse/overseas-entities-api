@@ -168,7 +168,7 @@ public class FilingsService {
                     ));
 
     if (submissionDto.isForUpdate()) {
-      boolean isNoChange = submissionDto.getUpdate().isNoChange();
+      boolean isNoChange = submissionDto.getUpdate().isNoChange() && submissionDto.getUpdate().isNoChangeRelevantPeriod();
       ApiLogger.debug("Value of 'isNoChange' flag for Update is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
