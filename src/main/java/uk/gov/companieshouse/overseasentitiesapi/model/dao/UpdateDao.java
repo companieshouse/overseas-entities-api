@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dao.trust.TrustDataToReviewDao;
