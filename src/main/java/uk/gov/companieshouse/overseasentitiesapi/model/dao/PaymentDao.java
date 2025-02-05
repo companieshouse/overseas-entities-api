@@ -5,46 +5,46 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PaymentDao {
 
     @Field("resource")
-    private String paymentResource;
+    private String resource;
 
     @Field("state")
-    private String paymentState;
+    private String state;
 
     @Field("redirect_uri")
-    private String paymentRedirectUri;
+    private String redirectUri;
 
     @Field("reference")
-    private String paymentReference;
+    private String reference;
 
-    public String getPaymentResource() {
-        return paymentResource;
+    public String getResource() {
+        return resource;
     }
 
-    public void setPaymentResource(String paymentResource) {
-        this.paymentResource = paymentResource;
+    public void setResource(String resource) {
+        this.resource = resource;
     }
 
-    public String getPaymentState() {
-        return paymentState;
+    public String getState() {
+        return state;
     }
 
-    public void setPaymentState(String paymentState) {
-        this.paymentState = paymentState;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getPaymentRedirectUri() {
-        return paymentRedirectUri;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
-    public void setPaymentRedirectUri(String paymentRedirectUri) {
-        this.paymentRedirectUri = paymentRedirectUri;
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 
-    public String getPaymentReference() {
-        return paymentReference;
+    public String getReference() {
+        return reference;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

@@ -10,46 +10,46 @@ public class PaymentDto {
     public static final String REFERENCE = "reference";
 
     @JsonProperty(RESOURCE)
-    private String paymentResource;
+    private String resource;
 
     @JsonProperty(STATE)
-    private String paymentState;
+    private String state;
 
     @JsonProperty(REDIRECT_URI)
-    private String paymentRedirectUri;
+    private String redirectUri;
 
     @JsonProperty(REFERENCE)
-    private String paymentReference;
+    private String reference;
 
-    public String getPaymentResource() {
-        return paymentResource;
+    public String getResource() {
+        return resource;
     }
 
-    public void setPaymentResource(String resource) {
-        this.paymentResource = resource;
+    public void setResource(String resource) {
+        this.resource = resource;
     }
 
-    public String getPaymentState() {
-        return paymentState;
+    public String getState() {
+        return state;
     }
 
-    public void setPaymentState(String paymentState) {
-        this.paymentState = paymentState;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getPaymentRedirectUri() {
-        return paymentRedirectUri;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
-    public void setPaymentRedirectUri(String paymentRedirectUri) {
-        this.paymentRedirectUri = paymentRedirectUri;
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 
-    public String getPaymentReference() {
-        return paymentReference;
+    public String getReference() {
+        return reference;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }
