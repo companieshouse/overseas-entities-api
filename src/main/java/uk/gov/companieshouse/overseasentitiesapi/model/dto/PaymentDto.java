@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PaymentDto {
     
-    public static final String RESOURCE = "resource";
-    public static final String STATE = "state";
+    public static final String RESOURCE_FIELD = "resource";
+    public static final String STATE_FIELD = "state";
     public static final String REDIRECT_URI = "redirectUri";
-    public static final String REFERENCE = "reference";
+    public static final String REFERENCE_FIELD = "reference";
 
-    @JsonProperty(RESOURCE)
+    @JsonProperty(RESOURCE_FIELD)
     private String resource;
 
-    @JsonProperty(STATE)
+    @JsonProperty(STATE_FIELD)
     private String state;
 
     @JsonProperty(REDIRECT_URI)
     private String redirectUri;
 
-    @JsonProperty(REFERENCE)
+    @JsonProperty(REFERENCE_FIELD)
     private String reference;
 
     public String getResource() {
