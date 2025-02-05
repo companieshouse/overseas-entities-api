@@ -6,7 +6,7 @@ public class PaymentDto {
     
     public static final String RESOURCE_FIELD = "resource";
     public static final String STATE_FIELD = "state";
-    public static final String REDIRECT_URI = "redirectUri";
+    public static final String REDIRECT_URI_FIELD = "redirectUri";
     public static final String REFERENCE_FIELD = "reference";
 
     @JsonProperty(RESOURCE_FIELD)
@@ -15,7 +15,7 @@ public class PaymentDto {
     @JsonProperty(STATE_FIELD)
     private String state;
 
-    @JsonProperty(REDIRECT_URI)
+    @JsonProperty(REDIRECT_URI_FIELD)
     private String redirectUri;
 
     @JsonProperty(REFERENCE_FIELD)
