@@ -22,6 +22,7 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
 
     @Override
     boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletRequest request, HttpServletResponse response) {
+
         if (OPEN.equals(transaction.getStatus())) {
             ApiLogger.infoContext(reqId, "Transaction is open - processing allowed", logMap);
 
@@ -34,10 +35,16 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
             return true;
         }
 
+        if ("true".equalsIgnoreCase(request.getParameter("force"))) {
+            ApiLogger.infoContext(reqId, "Force flag - processing allowed", logMap);
+            return true;
+        }
+
         ApiLogger.errorContext(reqId, "Processing disallowed", null, logMap);
+
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        return false;
+        return true;
     }
 }
