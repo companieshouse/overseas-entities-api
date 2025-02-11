@@ -22,7 +22,6 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
 
     @Override
     boolean handleTransactionStatus(Transaction transaction, String reqId, HashMap<String, Object> logMap, HttpServletRequest request, HttpServletResponse response) {
-
         if (OPEN.equals(transaction.getStatus())) {
             ApiLogger.infoContext(reqId, "Transaction is open - processing allowed", logMap);
 
@@ -45,6 +44,6 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        return true;
+        return false;
     }
 }
