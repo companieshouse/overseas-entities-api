@@ -140,7 +140,7 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsTrueWhenForceFlagIsFalse() {
+    void testInterceptorReturnsFalseWhenForceFlagIsFalse() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
 
