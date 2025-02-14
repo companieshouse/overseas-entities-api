@@ -34,7 +34,13 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
             return true;
         }
 
+        if ("true".equalsIgnoreCase(request.getParameter("force")) && (request.getMethod().equals(HttpMethod.PUT.name()) || request.getMethod().equals(HttpMethod.GET.name()))) {
+            ApiLogger.infoContext(reqId, "Force flag - processing allowed", logMap);
+            return true;
+        }
+
         ApiLogger.errorContext(reqId, "Processing disallowed", null, logMap);
+
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
