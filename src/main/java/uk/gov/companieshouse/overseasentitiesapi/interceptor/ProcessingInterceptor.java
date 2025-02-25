@@ -39,9 +39,6 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
             return true;
         }
 
-        ApiLogger.infoContext(reqId, " force flag for Redis " +request.getParameter("force"));
-        ApiLogger.infoContext(reqId, " Method name for Redis " +request.getMethod());
-
         ApiLogger.errorContext(reqId, "Processing disallowed", null, logMap);
 
 
