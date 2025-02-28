@@ -810,6 +810,9 @@ class OverseasEntitySubmissionDtoValidatorTest {
     void testOverseasEntityUpdateSubmissionValidatorNoChange() throws ServiceException {
         buildPartialOverseasEntityUpdateSubmissionDto();
         overseasEntitySubmissionDto.getUpdate().setNoChange(true);
+        overseasEntitySubmissionDto.getUpdate().setChangeBeneficiaryRelevantPeriod(null);
+        overseasEntitySubmissionDto.getUpdate().setChangeBORelevantPeriod(null);
+        overseasEntitySubmissionDto.getUpdate().setTrusteeInvolvedRelevantPeriod(null);
         overseasEntitySubmissionDto.setDueDiligence(null);
         overseasEntitySubmissionDto.setOverseasEntityDueDiligence(null);
         Errors errors = overseasEntitySubmissionDtoValidator.validateFull(overseasEntitySubmissionDto, new Errors(), LOGGING_CONTEXT, PASS_THROUGH_HEADER);

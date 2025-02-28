@@ -87,7 +87,7 @@ public class OverseasEntitySubmissionDtoValidator {
     }
 
     private void validateUpdateDetails(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
-        if (!overseasEntitySubmissionDto.getUpdate().isNoChange()) {
+        if (!overseasEntitySubmissionDto.getUpdate().isNoChange() || !overseasEntitySubmissionDto.getUpdate().isNoChangeRelevantPeriod()) {
 
             validateFullCommonDetails(overseasEntitySubmissionDto, errors, loggingContext);
 
