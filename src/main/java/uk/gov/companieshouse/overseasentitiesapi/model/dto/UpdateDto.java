@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import uk.gov.companieshouse.overseasentitiesapi.model.RelevantStatementsType;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.trust.TrustDataToReviewDto;
@@ -143,6 +145,13 @@ public class UpdateDto {
         return noChange;
     }
 
+    public boolean isNoChangeRelevantPeriod() {
+        return Stream.of(
+                Objects.equals(changeBORelevantPeriod, RelevantStatementsType.CHANGE_BO_RELEVANT_PERIOD),
+                Objects.equals(changeBeneficiaryRelevantPeriod, RelevantStatementsType.CHANGE_BENEFICIARY_RELEVANT_PERIOD),
+                Objects.equals(trusteeInvolvedRelevantPeriod, RelevantStatementsType.TRUSTEE_INVOLVED_RELEVANT_PERIOD)
+        ).noneMatch(flag -> flag);
+    }
     public void setNoChange(boolean noChange) {
         this.noChange = noChange;
     }
@@ -186,7 +195,7 @@ public class UpdateDto {
     public void setReviewManagingOfficersIndividual(List<ManagingOfficerIndividualDto> reviewManagingOfficersIndividual) {
         this.reviewManagingOfficersIndividual = reviewManagingOfficersIndividual;
     }
-    
+
     public List<ManagingOfficerCorporateDto> getReviewManagingOfficersCorporate() {
         return reviewManagingOfficersCorporate;
     }
