@@ -145,9 +145,11 @@ public class UpdateDto {
     }
 
     public boolean isNoChangeRelevantPeriod() {
-        return !(Objects.equals(changeBORelevantPeriod, RelevantStatementsType.CHANGE_BO_RELEVANT_PERIOD) ||
-                Objects.equals(changeBeneficiaryRelevantPeriod, RelevantStatementsType.CHANGE_BENEFICIARY_RELEVANT_PERIOD) ||
-                Objects.equals(trusteeInvolvedRelevantPeriod, RelevantStatementsType.TRUSTEE_INVOLVED_RELEVANT_PERIOD));
+        return Stream.of(
+                Objects.equals(changeBORelevantPeriod, RelevantStatementsType.CHANGE_BO_RELEVANT_PERIOD),
+                Objects.equals(changeBeneficiaryRelevantPeriod, RelevantStatementsType.CHANGE_BENEFICIARY_RELEVANT_PERIOD),
+                Objects.equals(trusteeInvolvedRelevantPeriod, RelevantStatementsType.TRUSTEE_INVOLVED_RELEVANT_PERIOD)
+        ).noneMatch(flag -> flag);
     }
     public void setNoChange(boolean noChange) {
         this.noChange = noChange;
