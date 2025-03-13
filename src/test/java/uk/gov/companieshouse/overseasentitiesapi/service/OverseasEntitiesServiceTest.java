@@ -45,6 +45,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OLD_FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
@@ -245,6 +246,32 @@ class OverseasEntitiesServiceTest {
         transaction.setId(TRANSACTION_ID);
         Resource resource = new Resource();
         resource.setKind(FILING_KIND_OVERSEAS_ENTITY);
+        Map<String, Resource> resourceMap = new HashMap<>();
+        resourceMap.put(String.format("/transactions/%s/overseas-entity/%s", TRANSACTION_ID, SUBMISSION_ID), resource);
+        transaction.setResources(resourceMap);
+
+        OverseasEntitySubmissionDto overseasEntitySubmissionDto = new OverseasEntitySubmissionDto();
+
+        // make the call to test
+        var response = overseasEntitiesService.createOverseasEntity(
+                transaction,
+                overseasEntitySubmissionDto,
+                REQUEST_ID,
+                USER_ID);
+
+        // assert response
+        var responseBody = response.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format("Transaction id: %s has an existing Overseas Entity submission", TRANSACTION_ID), responseBody);
+    }
+
+    @Deprecated
+    @Test
+    void testOverseasEntitySubmissionCannotBeCreatedWhenExistingOldOverseasEntitySubmissionInTransaction() throws ServiceException {
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        Resource resource = new Resource();
+        resource.setKind(OLD_FILING_KIND_OVERSEAS_ENTITY);
         Map<String, Resource> resourceMap = new HashMap<>();
         resourceMap.put(String.format("/transactions/%s/overseas-entity/%s", TRANSACTION_ID, SUBMISSION_ID), resource);
         transaction.setResources(resourceMap);

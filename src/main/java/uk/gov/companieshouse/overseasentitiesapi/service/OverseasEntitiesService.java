@@ -2,6 +2,7 @@ package uk.gov.companieshouse.overseasentitiesapi.service;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.COSTS_URI_SUFFIX;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.CURRENT_MONGO_SCHEMA_VERSION;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OLD_FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_SELF;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.RESUME_JOURNEY_URI_PATTERN;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -193,7 +195,11 @@ public class OverseasEntitiesService {
 
     private boolean hasExistingOverseasEntitySubmission(Transaction transaction) {
         if (transaction.getResources() != null) {
-            return transaction.getResources().entrySet().stream().anyMatch(resourceEntry -> FILING_KIND_OVERSEAS_ENTITY.equals(resourceEntry.getValue().getKind()));
+            return transaction.getResources().entrySet().stream()
+                    .map(Entry::getValue)
+                    .map(Resource::getKind)
+                    .anyMatch(kind -> FILING_KIND_OVERSEAS_ENTITY.equals(kind)
+                    || OLD_FILING_KIND_OVERSEAS_ENTITY.equals(kind));
         }
         return false;
     }

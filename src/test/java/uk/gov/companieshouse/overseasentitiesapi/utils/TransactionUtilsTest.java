@@ -13,6 +13,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OLD_FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.FILING_KIND_OVERSEAS_ENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.LINK_RESOURCE;
 
@@ -78,6 +79,22 @@ class TransactionUtilsTest {
         Map<String, Resource> transactionResources = new HashMap<>();
         Resource overseasEntityResource = new Resource();
         overseasEntityResource.setKind(FILING_KIND_OVERSEAS_ENTITY);
+        Map<String, String> overseasEntityResourceLinks = new HashMap<>();
+        overseasEntityResourceLinks.put(LINK_RESOURCE, OVERSEAS_ENTITY_SELF_LINK);
+        overseasEntityResource.setLinks(overseasEntityResourceLinks);
+        transactionResources.put(OVERSEAS_ENTITY_SELF_LINK, overseasEntityResource);
+        when(transaction.getResources()).thenReturn(transactionResources);
+
+        var result = transactionUtils.isTransactionLinkedToOverseasEntitySubmission(transaction, OVERSEAS_ENTITY_SELF_LINK);
+        assertTrue(result);
+    }
+
+    @Deprecated
+    @Test
+    void testIsTransactionLinkedToOldOverseasEntitySubmissionReturnsTrueIfOverseasEntityMatchFound() {
+        Map<String, Resource> transactionResources = new HashMap<>();
+        Resource overseasEntityResource = new Resource();
+        overseasEntityResource.setKind(OLD_FILING_KIND_OVERSEAS_ENTITY);
         Map<String, String> overseasEntityResourceLinks = new HashMap<>();
         overseasEntityResourceLinks.put(LINK_RESOURCE, OVERSEAS_ENTITY_SELF_LINK);
         overseasEntityResource.setLinks(overseasEntityResourceLinks);
