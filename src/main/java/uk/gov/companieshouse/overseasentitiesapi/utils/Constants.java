@@ -40,9 +40,9 @@ public class Constants {
     public static final String UPDATE_RESUME_JOURNEY_URI_PATTERN = "/update-an-overseas-entity/transaction/%s/overseas-entity/%s/resume";
 
     // Filings
-    public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity";
-    public static final String FILING_KIND_OVERSEAS_ENTITY_UPDATE = "overseas-entity-update";
-    public static final String FILING_KIND_OVERSEAS_ENTITY_REMOVE = "overseas-entity-remove";
+    public static final String FILING_KIND_OVERSEAS_ENTITY = "overseas-entity#registration";
+    public static final String FILING_KIND_OVERSEAS_ENTITY_UPDATE = "overseas-entity#update";
+    public static final String FILING_KIND_OVERSEAS_ENTITY_REMOVE = "overseas-entity#cessation";
 
     public static final String LINK_SELF = "self";
     public static final String LINK_RESOURCE = "resource";
