@@ -33,6 +33,13 @@
         <private-api-sdk-java.version>4.0.99</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
         <structured-logging.version>3.0.20</structured-logging.version>
+
+        <!--  Sonar -->
+        <sonar.projectName>overseas-entities-api</sonar.projectName>
+        <sonar.projectKey>uk.gov.companieshouse:overseas-entities-api</sonar.projectKey>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
     </properties>
 
     <profiles>
