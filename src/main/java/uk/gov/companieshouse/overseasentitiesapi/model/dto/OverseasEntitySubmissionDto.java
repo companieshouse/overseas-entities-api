@@ -34,6 +34,8 @@ public class OverseasEntitySubmissionDto {
     public static final String IS_SECURE_REGISTER_FIELD = "is_secure_register";
     public static final String WHO_IS_REGISTERING = "who_is_registering";
     public static final String PAYMENT_FIELD = "payment";
+    public static final String HAS_ANSWERED_RELEVANT_PERIOD_QUESTION = "has_answered_relevant_period_question";
+
 
     @JsonProperty(ENTITY_NAME_FIELD)
     private EntityNameDto entityName;
@@ -113,6 +115,10 @@ public class OverseasEntitySubmissionDto {
     public boolean isForUpdateOrRemove() {
         return isForUpdate() || isForRemove();
     }
+
+    @JsonProperty(HAS_ANSWERED_RELEVANT_PERIOD_QUESTION)
+    private boolean hasAnsweredRelevantPeriodQuestion;
+
 
     public EntityNameDto getEntityName() {
         return entityName;
@@ -278,5 +284,13 @@ public class OverseasEntitySubmissionDto {
 
     public void setLinks(Map<String, String> links) {
         this.links = links;
+    }
+
+    public boolean isHasAnsweredRelevantPeriodQuestion() {
+        return hasAnsweredRelevantPeriodQuestion;
+    }
+
+    public void setHasAnsweredRelevantPeriodQuestion(boolean hasAnsweredRelevantPeriodQuestion) {
+        this.hasAnsweredRelevantPeriodQuestion = hasAnsweredRelevantPeriodQuestion;
     }
 }

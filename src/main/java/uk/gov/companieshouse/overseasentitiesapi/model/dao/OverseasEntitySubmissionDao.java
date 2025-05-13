@@ -78,6 +78,9 @@ public class OverseasEntitySubmissionDao {
     @Field("is_secure_register")
     private Boolean isSecureRegister;
 
+    @Field("has_answered_relevant_period_question")
+    private boolean hasAnsweredRelevantPeriodQuestion;
+
     @Field("who_is_registering")
     private String whoIsRegistering;
 
@@ -299,5 +302,13 @@ public class OverseasEntitySubmissionDao {
 
     public void setSchemaVersion(String schemaVersion) {
         this.schemaVersion = schemaVersion;
+    }
+
+    public boolean isHasAnsweredRelevantPeriodQuestion() {
+        return hasAnsweredRelevantPeriodQuestion;
+    }
+
+    public void setHasAnsweredRelevantPeriodQuestion(boolean hasAnsweredRelevantPeriodQuestion) {
+        this.hasAnsweredRelevantPeriodQuestion = hasAnsweredRelevantPeriodQuestion;
     }
 }
