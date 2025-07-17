@@ -5,7 +5,8 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.6</version> <!-- lookup parent from repository -->
+        <version>2.1.12</version>
+        <relativePath/>
     </parent>
 
     <artifactId>overseas-entities-api</artifactId>
