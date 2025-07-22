@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.officers.FormerNamesApi;
 
