@@ -3,7 +3,7 @@ package uk.gov.companieshouse.overseasentitiesapi.utils;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class NationalityOtherMapping {
     private NationalityOtherMapping() {

@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.overseasentitiesapi.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 

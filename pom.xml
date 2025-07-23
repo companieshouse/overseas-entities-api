@@ -16,24 +16,24 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.3.5</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.3.5</spring-boot-maven-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
-        <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
-        <mockito-inline.version>5.2.0</mockito-inline.version>
+        <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.5.3</spring-boot-maven-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
+        <mockito-core.version>5.18.0</mockito-core.version>
         <encoder.version>1.3.1</encoder.version>
-        <log4j.version>2.24.1</log4j.version>
-        <mapstruct.version>1.6.2</mapstruct.version>
-        <testcontainers.version>1.20.3</testcontainers.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
+        <opentelemetry-instrumentation-bom.version>2.17.0</opentelemetry-instrumentation-bom.version>
 
         <!-- internal dependencies -->
-        <api-sdk-java.version>6.0.9</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
-        <api-security-java.version>2.0.8</api-security-java.version>
-        <private-api-sdk-java.version>4.0.99</private-api-sdk-java.version>
-        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
-        <structured-logging.version>3.0.20</structured-logging.version>
+        <api-sdk-java.version>6.3.4</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.8</api-sdk-manager-java-library.version>
+        <api-security-java.version>2.0.10</api-security-java.version>
+        <private-api-sdk-java.version>4.0.328</private-api-sdk-java.version>
+        <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
+        <structured-logging.version>3.0.36</structured-logging.version>
 
         <!--  Sonar -->
         <sonar.projectName>overseas-entities-api</sonar.projectName>
@@ -54,6 +54,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${opentelemetry-instrumentation-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -99,6 +106,11 @@
         </dependency>
 
         <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
@@ -114,12 +126,24 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-java</artifactId>
             <version>${api-sdk-java.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-context</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-context</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -168,8 +192,8 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>${mockito-inline.version}</version>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -183,6 +207,13 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- manual override for CVE-2025-48924 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
         </dependency>
     </dependencies>
 
