@@ -829,7 +829,7 @@ class BeneficialOwnerChangeServiceTest {
         beneficialOwnerIndividualDto.setChipsReference("1234567891");
         beneficialOwnerIndividualDto.setFirstName("John");
         beneficialOwnerIndividualDto.setLastName("Doe");
-        
+
         beneficialOwnerIndividualDto.setTrustIds(new ArrayList<>());
 
         // setup other DTO
