@@ -732,7 +732,7 @@ class PrivateDataRetrievalServiceTest {
 
             var exception = new ApiErrorResponseException(
                     new HttpResponseException.Builder(401, "unauthorised", new HttpHeaders()));
-            
+
             when(privateCorporateTrusteeGet.execute()).thenThrow(exception);
 
             assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
@@ -792,7 +792,7 @@ class PrivateDataRetrievalServiceTest {
 
             ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getCorporateTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
-            assertTrue(StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID) >= 3);
+            assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "IllegalArgumentException: Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
             assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
 
         }
@@ -1034,7 +1034,7 @@ class PrivateDataRetrievalServiceTest {
 
             ServiceException thrown =assertThrows(ServiceException.class, () -> privateDataRetrievalService.getIndividualTrustees(HASHED_TRUST_ID, COMPANY_NUMBER));
 
-            assertTrue(StringUtils.countMatches(outputStreamCaptor.toString(), "Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID) >= 3);
+            assertEquals(3, StringUtils.countMatches(outputStreamCaptor.toString(), "IllegalArgumentException: Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID));
             assertEquals("Non-hashed ID could not be found for Hashed ID: " + HASHED_TRUST_ID, thrown.getMessage());
         }
     }
