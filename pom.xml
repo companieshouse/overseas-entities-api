@@ -26,14 +26,15 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <testcontainers.version>1.21.3</testcontainers.version>
         <opentelemetry-instrumentation-bom.version>2.17.0</opentelemetry-instrumentation-bom.version>
+        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
 
         <!-- internal dependencies -->
-        <api-sdk-java.version>6.3.4</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.8</api-sdk-manager-java-library.version>
+        <api-sdk-java.version>6.3.5</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.9</api-sdk-manager-java-library.version>
         <api-security-java.version>2.0.10</api-security-java.version>
         <private-api-sdk-java.version>4.0.328</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
-        <structured-logging.version>3.0.36</structured-logging.version>
+        <structured-logging.version>3.0.37</structured-logging.version>
 
         <!--  Sonar -->
         <sonar.projectName>overseas-entities-api</sonar.projectName>
@@ -103,6 +104,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--
+            Temporary override to commons-lang3 version 3.18.0 to eliminate CVE present in 3.17.0.
+            Remove this override once the upstream library ( spring-boot-dependencies:3.5.3 ) updates its dependency.
+        -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
         </dependency>
 
         <dependency>
