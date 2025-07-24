@@ -68,6 +68,12 @@ module "ecs-service" {
   container_version = var.overseas_entities_api_version
   container_port    = local.container_port
 
+  # Pass health check configuration, including optional startPeriod
+  task_healthcheck_interval     = var.task_healthcheck_interval
+  task_healthcheck_timeout      = var.task_healthcheck_timeout
+  task_healthcheck_retries      = var.task_healthcheck_retries
+  task_healthcheck_start_period  = var.task_healthcheck_start_period
+
   # Service configuration
   service_name                       = local.service_name
   name_prefix                        = local.name_prefix
