@@ -40,12 +40,12 @@ variable "max_task_count" {
 variable "required_cpus" {
   type        = number
   description = "The required cpu resource for this service. 1024 here is 1 vCPU"
-  default     = 768 # defaulted minimum required for fargate services, override for production
+  default     = 256 # defaulted minimum required for fargate services, override for production
 }
 variable "required_memory" {
   type        = number
   description = "The required memory for this service"
-  default     = 1536 # defaulted minimum required for fargate services, override for production
+  default     = 512 # defaulted minimum required for fargate services, override for production
 }
 
 variable "use_fargate" {
@@ -138,23 +138,4 @@ variable "eric_version" {
   type        = string
   description = "The version of the eric container to run."
 }
-
-variable "task_healthcheck_interval" {
-  type        = number
-  description = "Health check interval configuration for ECS task definitions."
-}
-
-variable "task_healthcheck_timeout" {
-  type        = number
-  description = "Health check timeout configuration for ECS task definitions."
-}
-
-variable "task_healthcheck_retries" {
-  type        = number
-  description = "Health check retries configuration for ECS task definitions."
-}
-
-variable "task_healthcheck_start_period" {
-  type        = number
-  description = "Health check start period configuration for ECS task definitions."
-}
+ 
