@@ -447,7 +447,7 @@ public class FilingsService {
     var paymentLink = transaction.getLinks().getPayment();
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passThroughTokenHeader);
 
-    ApiLogger.debug("Retrieving payment data for filing", logMap);
+    ApiLogger.debug("Retrieving payment data for filing with payment reference " + paymentReference, logMap);
 
     var payment = getPayment(paymentReference, passThroughTokenHeader);
 
