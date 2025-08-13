@@ -446,6 +446,9 @@ public class FilingsService {
           throws ServiceException {
     var paymentLink = transaction.getLinks().getPayment();
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passThroughTokenHeader);
+
+    ApiLogger.debug("Retrieving payment data for filing with payment reference " + paymentReference, logMap);
+
     var payment = getPayment(paymentReference, passThroughTokenHeader);
 
     data.put("payment_reference", paymentReference);
@@ -455,6 +458,11 @@ public class FilingsService {
 
   private PaymentApi getPayment(String paymentReference, String passThroughTokenHeader)
           throws ServiceException {
+
+    if (paymentReference == null || paymentReference.trim().isEmpty()) {
+      throw new ServiceException("paymentReference cannot be null or empty");
+    }
+
     try {
       return apiClientService
               .getOauthAuthenticatedClient(passThroughTokenHeader)

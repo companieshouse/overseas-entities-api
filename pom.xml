@@ -80,6 +80,20 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- CVE-2025-52520 -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>11.0.9</version>
+        </dependency>
+
+        <!-- CVE-2025-52520 -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>11.0.9</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>

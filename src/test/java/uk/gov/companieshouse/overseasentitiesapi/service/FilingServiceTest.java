@@ -1355,6 +1355,29 @@ class FilingServiceTest {
     }
 
     @Test
+    void testThrowsServiceExceptionWhenPaymentReferenceIsNull() throws Exception {
+        var transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference(null);
+        var transactionApiResponse = new ApiResponse<>(200, null, transactionPayment);
+
+        when(apiClientService.getOauthAuthenticatedClient(PASS_THROUGH_HEADER)).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenReturn(transactionApiResponse);
+
+        OverseasEntitySubmissionDto submissionDto = Mocks.buildSubmissionDto();
+        Optional<OverseasEntitySubmissionDto> submissionOpt = Optional.of(submissionDto);
+        when(overseasEntitiesService.getOverseasEntitySubmission(OVERSEAS_ENTITY_ID)).thenReturn(submissionOpt);
+
+        ServiceException serviceEx = assertThrows(
+                ServiceException.class,
+                () -> filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)
+        );
+
+        assertEquals("paymentReference cannot be null or empty", serviceEx.getMessage());
+    }
+
+    @Test
     void testFilingGenerationWhenSuccessfulWithoutTrustsAndWithIdentityChecksWithTrustFeatureFlag() throws SubmissionNotFoundException, ServiceException, IOException, URIValidationException {
 
         setValidationEnabledFeatureFlag(true);
