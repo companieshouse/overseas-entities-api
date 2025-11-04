@@ -79,12 +79,12 @@ class ManagingOfficerCorporateValidatorTest {
 
     @Test
     void testErrorReportedWhenNameFieldExceedsMaxLength() {
-        managingOfficerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 51));
+        managingOfficerCorporateDtoList.get(0).setName(StringUtils.repeat("A", 161));
         Errors errors = managingOfficerCorporateValidator.validate(managingOfficerCorporateDtoList, new Errors(), LOGGING_CONTEXT);
         String qualifiedFieldName = getQualifiedFieldName(
                 MANAGING_OFFICERS_CORPORATE_FIELD,
                 ManagingOfficerCorporateDto.NAME_FIELD);
-        String validationMessage = qualifiedFieldName + " must be 50 characters or less";
+        String validationMessage = qualifiedFieldName + " must be 160 characters or less";
         assertError(ManagingOfficerCorporateDto.NAME_FIELD, validationMessage, errors);
     }
 

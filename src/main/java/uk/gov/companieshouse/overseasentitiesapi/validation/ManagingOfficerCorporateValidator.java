@@ -79,7 +79,7 @@ public class ManagingOfficerCorporateValidator {
     private boolean validateName(String name, Errors errors, String loggingContext) {
         String qualifiedFieldName = getQualifiedFieldName(OverseasEntitySubmissionDto.MANAGING_OFFICERS_CORPORATE_FIELD, ManagingOfficerCorporateDto.NAME_FIELD);
         return StringValidators.isNotBlank (name, qualifiedFieldName, errors, loggingContext)
-                && StringValidators.isLessThanOrEqualToMaxLength(name, 50, qualifiedFieldName, errors, loggingContext)
+                && StringValidators.isLessThanOrEqualToMaxLength(name, 160, qualifiedFieldName, errors, loggingContext)
                 && StringValidators.isValidCharacters(name, qualifiedFieldName, errors, loggingContext);
     }
 
