@@ -276,13 +276,13 @@ public class OverseasEntitySubmissionDtoValidator {
             return;
         }
 
-        if (Boolean.TRUE.equals(hasSoldLand)) {
+      /*  if (Boolean.TRUE.equals(hasSoldLand)) {
             // The 'has_sold_land' field is a top-level field in the submission and therefore has no parent
             String qualifiedFieldName = OverseasEntitySubmissionDto.HAS_SOLD_LAND_FIELD;
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
-        }
+        }*/
     }
 
     private void validateIsSecureRegister(Boolean isSecureRegister, Errors errors, String loggingContext) {
@@ -290,12 +290,12 @@ public class OverseasEntitySubmissionDtoValidator {
             return;
         }
 
-        if (Boolean.TRUE.equals(isSecureRegister)) {
+        /*if (Boolean.TRUE.equals(isSecureRegister)) {
             String qualifiedFieldName = OverseasEntitySubmissionDto.IS_SECURE_REGISTER_FIELD;
             var errorMessage = String.format(ValidationMessages.NOT_VALID_ERROR_MESSAGE, qualifiedFieldName);
             setErrorMsgToLocation(errors, qualifiedFieldName, errorMessage);
             ApiLogger.infoContext(loggingContext, errorMessage);
-        }
+        }*/
     }
 
     private void validateWhoIsRegistering(String whoIsRegistering, Errors errors, String loggingContext) {
