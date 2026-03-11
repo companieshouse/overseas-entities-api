@@ -175,6 +175,13 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-spring-boot-starter</artifactId>
+            <!-- kotlin-stdlib-common is deprecated/removed in Kotlin 2.x (content merged into kotlin-stdlib); exclude to avoid CVE-2020-29582 false positive -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
