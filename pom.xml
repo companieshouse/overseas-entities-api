@@ -29,12 +29,12 @@
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
 
         <!-- internal dependencies -->
-        <api-sdk-java.version>6.3.5</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.9</api-sdk-manager-java-library.version>
-        <api-security-java.version>2.0.10</api-security-java.version>
-        <private-api-sdk-java.version>4.0.328</private-api-sdk-java.version>
-        <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
-        <structured-logging.version>3.0.37</structured-logging.version>
+        <api-sdk-java.version>6.6.8</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.16</api-sdk-manager-java-library.version>
+        <api-security-java.version>2.0.24</api-security-java.version>
+        <private-api-sdk-java.version>4.0.476</private-api-sdk-java.version>
+        <rest-service-common-library-version>2.0.10</rest-service-common-library-version>
+        <structured-logging.version>3.0.51</structured-logging.version>
 
         <!--  Sonar -->
         <sonar.projectName>overseas-entities-api</sonar.projectName>
@@ -55,6 +55,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- CVE-2025-41249 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>6.2.11</version>
+            </dependency>
+            <!-- CVE-2026-24400 -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.27.7</version>
+            </dependency>
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
@@ -80,18 +92,18 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- CVE-2025-52520 -->
+        <!-- CVE-2025-52520, CVE-2025-55752 -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
-            <version>11.0.9</version>
+            <version>11.0.11</version>
         </dependency>
 
-        <!-- CVE-2025-52520 -->
+        <!-- CVE-2025-52520, CVE-2025-55752 -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
-            <version>11.0.9</version>
+            <version>11.0.11</version>
         </dependency>
 
         <dependency>
