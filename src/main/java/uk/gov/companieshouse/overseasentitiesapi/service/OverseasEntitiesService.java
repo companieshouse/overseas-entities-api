@@ -148,6 +148,10 @@ public class OverseasEntitiesService {
             if (!entityNumber.equals(transaction.getCompanyNumber())) {
                 transaction.setCompanyNumber(entityNumber);
                 transaction.setCompanyName(overseasEntitySubmissionDto.getEntityName().getName());
+
+                String resumeJourneyUri = String.format(UPDATE_RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+                transaction.setResumeJourneyUri(resumeJourneyUri);
+
                 transactionService.updateTransaction(transaction, requestId);
             }
         } else {
