@@ -49,10 +49,10 @@ public class UpdateDto {
     private boolean boMoDataFetched;
 
     @JsonProperty(REGISTRABLE_BENEFICIAL_OWNER)
-    private boolean registrableBeneficialOwner;
+    private Boolean registrableBeneficialOwner;
 
     @JsonProperty(NO_CHANGE_SCENARIO)
-    private boolean noChange;
+    private Boolean noChange;
 
     @JsonProperty(TRUST_DATA_FETCHED)
     private boolean trustDataFetched;
@@ -133,15 +133,15 @@ public class UpdateDto {
         this.boMoDataFetched = boMoDataFetched;
     }
 
-    public boolean isRegistrableBeneficialOwner() {
+    public Boolean getRegistrableBeneficialOwner() {
         return registrableBeneficialOwner;
     }
 
-    public void setRegistrableBeneficialOwner(boolean registrableBeneficialOwner) {
+    public void setRegistrableBeneficialOwner(Boolean registrableBeneficialOwner) {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
 
-    public boolean isNoChange() {
+    public Boolean getNoChange() {
         return noChange;
     }
 
@@ -152,7 +152,7 @@ public class UpdateDto {
                 Objects.equals(trusteeInvolvedRelevantPeriod, RelevantStatementsType.TRUSTEE_INVOLVED_RELEVANT_PERIOD)
         ).noneMatch(flag -> flag);
     }
-    public void setNoChange(boolean noChange) {
+    public void setNoChange(Boolean noChange) {
         this.noChange = noChange;
     }
 
