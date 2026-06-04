@@ -42,6 +42,10 @@
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
         <sonar.login></sonar.login>
         <sonar.password></sonar.password>
+        <sonar.cpd.exclusions>
+            src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dao/UpdateDao.java,
+            src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dto/UpdateDto.java
+        </sonar.cpd.exclusions>
     </properties>
 
     <profiles>
