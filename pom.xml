@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.12</version>
+        <version>2.1.14</version>
         <relativePath/>
     </parent>
 
@@ -16,25 +16,25 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.5.3</spring-boot-maven-plugin.version>
+        <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
-        <mockito-core.version>5.18.0</mockito-core.version>
-        <encoder.version>1.3.1</encoder.version>
+        <mockito-core.version>5.23.0</mockito-core.version>
+        <encoder.version>1.4.0</encoder.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <testcontainers.version>1.21.3</testcontainers.version>
-        <opentelemetry-instrumentation-bom.version>2.17.0</opentelemetry-instrumentation-bom.version>
-        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+        <opentelemetry-instrumentation-bom.version>2.28.1</opentelemetry-instrumentation-bom.version>
+        <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
 
         <!-- internal dependencies -->
-        <api-sdk-java.version>6.6.8</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.16</api-sdk-manager-java-library.version>
-        <api-security-java.version>2.0.24</api-security-java.version>
-        <private-api-sdk-java.version>4.0.476</private-api-sdk-java.version>
-        <rest-service-common-library-version>2.0.10</rest-service-common-library-version>
-        <structured-logging.version>3.0.51</structured-logging.version>
+        <api-sdk-java.version>6.6.23</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.23</api-sdk-manager-java-library.version>
+        <api-security-java.version>2.0.27</api-security-java.version>
+        <private-api-sdk-java.version>6.0.23</private-api-sdk-java.version>
+        <rest-service-common-library-version>2.0.14</rest-service-common-library-version>
+        <structured-logging.version>3.0.57</structured-logging.version>
 
         <!--  Sonar -->
         <sonar.projectName>overseas-entities-api</sonar.projectName>
@@ -55,11 +55,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- CVE-2025-41249 -->
+            <!--  CVE-2026-22740, CVE-2026-22737, CVE-2026-22745 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>6.2.11</version>
+                <version>6.2.18</version>
             </dependency>
             <!-- CVE-2026-24400 -->
             <dependency>
@@ -67,17 +67,26 @@
                 <artifactId>assertj-core</artifactId>
                 <version>3.27.7</version>
             </dependency>
-            <!-- CVE-2025-68161 -->
+            <!-- CVE-2026-34477, CVE-2026-34479 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>2.25.3</version>
+                <version>2.25.4</version>
             </dependency>
-            <!-- CVE-2025-68161 -->
+            <!-- CVE-2026-34477, CVE-2026-34479 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-to-slf4j</artifactId>
-                <version>2.25.3</version>
+                <version>2.25.4</version>
+            </dependency>
+            <!--
+                Temporary override to commons-lang3 version to eliminate CVE present in 3.17.0.
+                Remove this override once the upstream library updates its dependency.
+            -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.20.0</version>
             </dependency>
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
@@ -104,38 +113,25 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- CVE-2025-52520, CVE-2025-55752, CVE-2025-61795 -->
+        <!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-32990, CVE-2026-34500 -->
+        <!-- CVE-2026-34487, CVE-2026-29145, CVE-2026-29146, CVE-2026-34483 -->
+        <!-- CVE-2026-43513, CVE-2026-24880, CVE-2026-43512, CVE-2026-42498 -->
+        <!-- CVE-2026-29129, CVE-2026-43515, CVE-2026-25854 -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
-            <version>11.0.18</version>
+            <version>11.0.22</version>
         </dependency>
 
-        <!-- CVE-2025-52520, CVE-2025-55752, CVE-2025-61795 -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
-            <version>11.0.18</version>
+            <version>11.0.22</version>
         </dependency>
 
-        <!-- CVE-2020-29582 -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>2.1.21</version>
-        </dependency>
-
-        <!-- CVE-2020-29582 -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk7</artifactId>
-            <version>2.1.21</version>
-        </dependency>
-
-        <!-- CVE-2020-29582 -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>2.1.21</version>
         </dependency>
 
@@ -163,16 +159,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!--
-            Temporary override to commons-lang3 version 3.18.0 to eliminate CVE present in 3.17.0.
-            Remove this override once the upstream library ( spring-boot-dependencies:3.5.3 ) updates its dependency.
-        -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
         </dependency>
 
         <dependency>
@@ -208,7 +194,7 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-context</artifactId>
-            <version>1.73.0</version>
+            <version>1.81.0</version>
         </dependency>
 
         <dependency>
