@@ -168,7 +168,7 @@ public class FilingsService {
                     ));
 
     if (submissionDto.isForUpdate()) {
-      boolean isNoChange = submissionDto.getUpdate().isNoChange() && submissionDto.getUpdate().isNoChangeRelevantPeriod();
+      boolean isNoChange = Boolean.TRUE.equals(submissionDto.getUpdate().getNoChange()) && submissionDto.getUpdate().isNoChangeRelevantPeriod();
       ApiLogger.debug("Value of 'isNoChange' flag for Update is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
@@ -179,8 +179,8 @@ public class FilingsService {
       // Note that most of the remove details are saved under the 'UpdateDTO' and an 'UpdateSubmission' object is still
       // used to record the data changes, just before the filing data is returned.
       // Cost is not set on a remove submission to prevent automatic refunds.
-      boolean isNoChange = submissionDto.getUpdate().isNoChange();
-      ApiLogger.debug("Value of 'isNoChange' flag for Remove is :" + isNoChange, logMap);
+      boolean isNoChange = Boolean.TRUE.equals(submissionDto.getUpdate().getNoChange());
+      ApiLogger.debug("Value of 'getNoChange' flag for Remove is :" + isNoChange, logMap);
       var updateSubmission = new UpdateSubmission();
       collectUpdateSubmissionData(updateSubmission, submissionDto, passThroughTokenHeader, isNoChange, logMap);
       setRemoveSubmissionData(userSubmission, updateSubmission, isNoChange, submissionDto.getRemove().getIsNotProprietorOfLand(), logMap);

@@ -129,7 +129,7 @@ public class OwnersAndOfficersDataBlockValidator {
 
     public boolean validateRegistrableBeneficialOwnerStatement(OverseasEntitySubmissionDto overseasEntitySubmissionDto, Errors errors, String loggingContext) {
         var isRegistrableBeneficialOwnersAddedOrCeased = isRegistrableBeneficialOwnersAddedOrCeased(overseasEntitySubmissionDto);
-        if (!overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner()) {
+        if (!Boolean.TRUE.equals(overseasEntitySubmissionDto.getUpdate().getRegistrableBeneficialOwner())) {
             if (isRegistrableBeneficialOwnersAddedOrCeased){
                 logValidationErrorMessage(errors, loggingContext, String.format("%s for statement", "Beneficial owners have been added or ceased"));
                 return false;

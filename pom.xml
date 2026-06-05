@@ -24,7 +24,7 @@
         <mockito-core.version>5.23.0</mockito-core.version>
         <encoder.version>1.4.0</encoder.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <testcontainers.version>1.21.3</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <opentelemetry-instrumentation-bom.version>2.28.1</opentelemetry-instrumentation-bom.version>
         <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
 
@@ -42,6 +42,10 @@
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
         <sonar.login></sonar.login>
         <sonar.password></sonar.password>
+        <sonar.cpd.exclusions>
+            src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dao/UpdateDao.java,
+            src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dto/UpdateDto.java
+        </sonar.cpd.exclusions>
     </properties>
 
     <profiles>

@@ -138,7 +138,7 @@ public class PopulateUpdateSubmission {
         Optional.ofNullable(overseasEntitySubmissionDto.getBeneficialOwnersStatement())
                 .ifPresent(updateSubmission::setBeneficialOwnerStatement);
 
-        Optional.of(overseasEntitySubmissionDto.getUpdate().isRegistrableBeneficialOwner())
+        Optional.of(Boolean.TRUE.equals(overseasEntitySubmissionDto.getUpdate().getRegistrableBeneficialOwner()))
                 .ifPresent(updateSubmission::setAnyBOsOrMOsAddedOrCeased);
 
         Optional.ofNullable(overseasEntitySubmissionDto.getUpdate().getChangeBeneficiaryRelevantPeriod())

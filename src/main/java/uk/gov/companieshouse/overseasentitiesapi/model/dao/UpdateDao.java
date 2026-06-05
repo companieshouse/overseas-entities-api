@@ -21,10 +21,10 @@ public class UpdateDao {
     private boolean boMoDataFetched;
 
     @Field("registrable_beneficial_owner")
-    private boolean registrableBeneficialOwner;
+    private Boolean registrableBeneficialOwner;
 
     @Field("no_change")
-    private boolean noChange;
+    private Boolean noChange;
 
     @Field("trust_data_fetched")
     private boolean trustDataFetched;
@@ -104,18 +104,18 @@ public class UpdateDao {
         this.boMoDataFetched = boMoDataFetched;
     }
 
-    public boolean isRegistrableBeneficialOwner() {
+    public Boolean getRegistrableBeneficialOwner() {
         return registrableBeneficialOwner;
     }
 
-    public void setRegistrableBeneficialOwner(boolean registrableBeneficialOwner) {
+    public void setRegistrableBeneficialOwner(Boolean registrableBeneficialOwner) {
         this.registrableBeneficialOwner = registrableBeneficialOwner;
     }
-    public boolean isNoChange() {
+    public Boolean getNoChange() {
         return noChange;
     }
 
-    public void setNoChange(boolean noChange) {
+    public void setNoChange(Boolean noChange) {
         this.noChange = noChange;
     }
 

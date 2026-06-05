@@ -447,8 +447,8 @@ class DtoDaoMappingTest {
         assertEquals(updateDto.getDateOfCreation(), updateDao.getDateOfCreation());
         assertEquals(updateDto.getFilingDate(), updateDao.getFilingDate());
         assertEquals(updateDto.isBoMoDataFetched(), updateDao.isBoMoDataFetched());
-        assertEquals(updateDto.isRegistrableBeneficialOwner(), updateDao.isRegistrableBeneficialOwner());
-        assertEquals(updateDto.isNoChange(), updateDao.isNoChange());
+        assertEquals(updateDto.getRegistrableBeneficialOwner(), updateDao.getRegistrableBeneficialOwner());
+        assertEquals(updateDto.getNoChange(), updateDao.getNoChange());
         assertEquals(updateDto.isTrustDataFetched(), updateDao.isTrustDataFetched());
         assertTrustsToReviewAreEqual(updateDto, updateDao);
     }
@@ -486,7 +486,7 @@ class DtoDaoMappingTest {
         assertEquals(dto.getOtherForenames(), dao.getOtherForenames());
         assertEquals(dto.getSurname(), dao.getSurname());
         assertEquals(dto.getCorporateName(), dao.getCorporateName());
-        assertEquals(dto.isCorporateIndicator(), dao.isCorporateIndicator());      
+        assertEquals(dto.isCorporateIndicator(), dao.isCorporateIndicator());
         assertEquals(dto.getCeasedDate(), dao.getCeasedDate());
         assertEquals(dto.getNotifiedDate(), dao.getNotifiedDate());
     }
