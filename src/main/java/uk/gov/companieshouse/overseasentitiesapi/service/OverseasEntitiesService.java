@@ -174,9 +174,9 @@ public class OverseasEntitiesService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<Object> getSavedOverseasEntity(Transaction transaction,
-                                                         String submissionId,
-                                                         String requestId) throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    public Optional<OverseasEntitySubmissionDto> getSavedOverseasEntity(Transaction transaction,
+                                                                        String submissionId,
+                                                                        String requestId) throws SubmissionNotLinkedToTransactionException {
         ApiLogger.debugContext(requestId, "Called getSavedOverseasEntity(...)");
 
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
@@ -186,13 +186,7 @@ public class OverseasEntitiesService {
                     "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), submissionId));
         }
 
-        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(submissionId);
-        OverseasEntitySubmissionDto submissionDto = submissionOpt
-                .orElseThrow(() ->
-                        new SubmissionNotFoundException(
-                                String.format("Empty submission returned when generating filing for %s", submissionId)));
-
-        return ResponseEntity.ok().body(submissionDto);
+        return getOverseasEntitySubmission(submissionId);
     }
 
     private boolean hasExistingOverseasEntitySubmission(Transaction transaction) {

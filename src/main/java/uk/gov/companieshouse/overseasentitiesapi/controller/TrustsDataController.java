@@ -2,8 +2,9 @@ package uk.gov.companieshouse.overseasentitiesapi.controller;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
-import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -11,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.trustees.corporatetrustee.PrivateCorporateTrusteeListApi;
 import uk.gov.companieshouse.api.model.trustees.individualtrustee.PrivateIndividualTrusteeListApi;
 import uk.gov.companieshouse.api.model.trusts.PrivateTrustDetailsListApi;
@@ -24,6 +28,7 @@ import uk.gov.companieshouse.api.model.trusts.PrivateTrustLinksListApi;
 import uk.gov.companieshouse.api.model.utils.Hashable;
 import uk.gov.companieshouse.api.model.utils.PrivateDataList;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
@@ -50,11 +55,13 @@ public class TrustsDataController {
 
    @GetMapping("/details")
     public ResponseEntity<PrivateTrustDetailsListApi> getTrustDetails(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, SubmissionNotLinkedToTransactionException {
+        String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+
+        String companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
@@ -65,11 +72,13 @@ public class TrustsDataController {
 
     @GetMapping("/beneficial-owners/links")
     public ResponseEntity<PrivateTrustLinksListApi> getTrustLinks(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, SubmissionNotLinkedToTransactionException {
+        String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNumber = getCompanyNumber(overseasEntityId, requestId);
+
+        String companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
@@ -80,16 +89,18 @@ public class TrustsDataController {
 
     @GetMapping("/{trust_id}/corporate-trustees")
     public ResponseEntity<PrivateCorporateTrusteeListApi> getCorporateTrustees(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
-            throws ServiceException {
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
 
         privateDataRetrievalService.setHashHelper(new HashHelper(salt));
 
+        String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNo = getCompanyNumber(overseasEntityId, requestId);
+
+        String companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
@@ -99,16 +110,18 @@ public class TrustsDataController {
 
     @GetMapping("/{trust_id}/individual-trustees")
     public ResponseEntity<PrivateIndividualTrusteeListApi> getIndividualTrustees(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
-            throws ServiceException {
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
 
         privateDataRetrievalService.setHashHelper(new HashHelper(salt));
 
+        String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNo = getCompanyNumber(overseasEntityId, requestId);
+
+        String companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
@@ -116,14 +129,30 @@ public class TrustsDataController {
                 trustId, companyNo), requestId, "individual trustee");
     }
 
-    public String getCompanyNumber(String overseasEntityId, String requestId)
-            throws ServiceException {
+    /**
+     * Handles SubmissionNotLinkedToTransactionException by returning 400 BAD_REQUEST.
+     * This controller-level handler takes precedence over the GlobalExceptionHandler,
+     * ensuring that transaction-linkage failures return a 400 rather than a 500.
+     */
+    @ExceptionHandler(SubmissionNotLinkedToTransactionException.class)
+    public ResponseEntity<Void> handleSubmissionNotLinked(
+            SubmissionNotLinkedToTransactionException ex, HttpServletRequest request) {
+        String requestId = request.getHeader(ERIC_REQUEST_ID_KEY);
+        ApiLogger.errorContext(requestId, ex);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    public String getCompanyNumber(Transaction transaction, String overseasEntityId, String requestId)
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
 
         ApiLogger.infoContext(requestId,
                 "Calling Overseas Entities Service to retrieve private trust data for overseas entity "
                         + overseasEntityId, logMap);
-        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(
-                overseasEntityId);
+
+        final var submissionDtoOptional = overseasEntitiesService.getSavedOverseasEntity(
+                transaction,
+                overseasEntityId,
+                requestId);
 
         if (submissionDtoOptional.isEmpty()) {
             ApiLogger.errorContext(requestId,

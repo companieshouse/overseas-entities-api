@@ -14,7 +14,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
@@ -542,12 +541,12 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsSuccessful() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsSuccessful() throws SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
                 REQUEST_ID
-                )).thenReturn(ResponseEntity.ok().body(overseasEntitySubmissionDto));
+                )).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         var response = overseasEntitiesController.getSubmission(
                 transaction,
@@ -560,7 +559,7 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotLinkedToTransaction() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotLinkedToTransaction() throws SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
@@ -576,13 +575,12 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotFound() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void testGetSubmissionIsNotSuccessfulWhenSubmissionNotFound() throws SubmissionNotLinkedToTransactionException {
         when(overseasEntitiesService.getSavedOverseasEntity(
                 transaction,
                 SUBMISSION_ID,
                 REQUEST_ID
-        )).thenThrow(new SubmissionNotFoundException(String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID)));
-
+        )).thenReturn(Optional.empty());
         var response = overseasEntitiesController.getSubmission(
                 transaction,
                 SUBMISSION_ID,

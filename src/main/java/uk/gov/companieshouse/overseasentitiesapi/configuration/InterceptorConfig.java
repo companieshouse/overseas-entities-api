@@ -19,6 +19,7 @@ import uk.gov.companieshouse.overseasentitiesapi.interceptor.UserAuthenticationI
 public class InterceptorConfig implements WebMvcConfigurer {
 
     static final String TRANSACTIONS = "/transactions/**";
+    static final String PRIVATE_TRANSACTIONS = "/private/transactions/**";
     static final String FILINGS = "/private/**/filings";
     static final String COSTS = TRANSACTIONS + "/costs";
 
@@ -28,7 +29,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     static final String TRUST_DETAILS_PRIVATE_DATA = "/private/**/trusts/details";
     static final String CORPORATE_TRUSTEES_PRIVATE_DATA = "/private/**/corporate-trustees";
     static final String INDIVIDUAL_TRUSTEES_PRIVATE_DATA = "/private/**/individual-trustees";
-    static final String TRUST_LINKS_PRIVATE_DATA = "/private/**/trusts/beneficial-owner/links";
+    static final String TRUST_LINKS_PRIVATE_DATA = "/private/**/trusts/beneficial-owners/links";
 
     static final String[] USER_AUTH_ENDPOINTS = {
             TRANSACTIONS,
@@ -112,7 +113,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
-                .addPathPatterns(TRANSACTIONS, FILINGS);
+                .addPathPatterns(TRANSACTIONS, PRIVATE_TRANSACTIONS, FILINGS);
     }
 
     /**
