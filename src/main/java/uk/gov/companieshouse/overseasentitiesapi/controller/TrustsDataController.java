@@ -4,6 +4,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQ
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -55,17 +57,11 @@ public class TrustsDataController {
     public ResponseEntity<PrivateTrustDetailsListApi> getTrustDetails(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, SubmissionNotLinkedToTransactionException {
         String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNumber;
-        try {
-            companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
-        } catch (SubmissionNotLinkedToTransactionException e) {
-            ApiLogger.errorContext(requestId, e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
+        String companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
@@ -78,18 +74,11 @@ public class TrustsDataController {
     public ResponseEntity<PrivateTrustLinksListApi> getTrustLinks(
             @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException, SubmissionNotLinkedToTransactionException {
         String transactionId = transaction.getId();
         logMap = makeLogMap(transactionId, overseasEntityId);
 
-        String companyNumber;
-        try {
-            companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
-        } catch (SubmissionNotLinkedToTransactionException e) {
-            ApiLogger.errorContext(requestId, e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+        String companyNumber = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNumber == null) {
             return ResponseEntity.notFound().build();
         }
@@ -104,20 +93,14 @@ public class TrustsDataController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
-            throws ServiceException {
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
 
         privateDataRetrievalService.setHashHelper(new HashHelper(salt));
 
         String transactionId = transaction.getId();
-
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNo;
-        try {
-            companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
-        } catch (SubmissionNotLinkedToTransactionException e) {
-            ApiLogger.errorContext(requestId, e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+
+        String companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
@@ -131,25 +114,32 @@ public class TrustsDataController {
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @PathVariable(Constants.TRUST_ID) String trustId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId)
-            throws ServiceException {
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
 
         privateDataRetrievalService.setHashHelper(new HashHelper(salt));
 
         String transactionId = transaction.getId();
-
         logMap = makeLogMap(transactionId, overseasEntityId);
-        String companyNo;
-        try {
-            companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
-        } catch (SubmissionNotLinkedToTransactionException e) {
-            ApiLogger.errorContext(requestId, e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+
+        String companyNo = getCompanyNumber(transaction, overseasEntityId, requestId);
         if (companyNo == null) {
             return ResponseEntity.notFound().build();
         }
         return retrievePrivateTrustData(() -> privateDataRetrievalService.getIndividualTrustees(
                 trustId, companyNo), requestId, "individual trustee");
+    }
+
+    /**
+     * Handles SubmissionNotLinkedToTransactionException by returning 400 BAD_REQUEST.
+     * This controller-level handler takes precedence over the GlobalExceptionHandler,
+     * ensuring that transaction-linkage failures return a 400 rather than a 500.
+     */
+    @ExceptionHandler(SubmissionNotLinkedToTransactionException.class)
+    public ResponseEntity<Void> handleSubmissionNotLinked(
+            SubmissionNotLinkedToTransactionException ex, HttpServletRequest request) {
+        String requestId = request.getHeader(ERIC_REQUEST_ID_KEY);
+        ApiLogger.errorContext(requestId, ex);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public String getCompanyNumber(Transaction transaction, String overseasEntityId, String requestId)
