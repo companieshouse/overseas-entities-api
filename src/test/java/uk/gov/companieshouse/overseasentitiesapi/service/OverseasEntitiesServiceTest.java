@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -589,7 +590,7 @@ class OverseasEntitiesServiceTest {
     }
 
     @Test
-    void testGetSavedOverseasEntityWhenSubmissionFoundSuccessfully() throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException  {
+    void testGetSavedOverseasEntityWhenSubmissionFoundSuccessfully() throws SubmissionNotLinkedToTransactionException  {
         var overseasEntitySubmissionDao = new OverseasEntitySubmissionDao();
         var overseasEntitySubmissionDto = Mocks.buildSubmissionDto();
         var transaction = buildTransaction();
@@ -604,11 +605,11 @@ class OverseasEntitiesServiceTest {
                 transaction,
                 SUBMISSION_ID,
                 REQUEST_ID);
-        var responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Joe Bloggs", ((OverseasEntitySubmissionDto)responseBody).getPresenter().getFullName());
-        assertEquals("user@domain.roe", ((OverseasEntitySubmissionDto)responseBody).getPresenter().getEmail());
+
+        OverseasEntitySubmissionDto responseDto = response.orElseGet(() -> fail());
+
+        assertEquals("Joe Bloggs", responseDto.getPresenter().getFullName());
+        assertEquals("user@domain.roe", responseDto.getPresenter().getEmail());
     }
 
     @Test
@@ -625,24 +626,6 @@ class OverseasEntitiesServiceTest {
         String actualMessage = exception.getMessage();
         var expectedMessage = String.format("Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", TRANSACTION_ID, SUBMISSION_ID);
         assertEquals(expectedMessage, actualMessage);
-    }
-
-    @Test
-    void testGetSavedOverseasEntitySubmissionNotFoundSuccessfully() {
-        var transaction = buildTransaction();
-        when(transactionUtils.isTransactionLinkedToOverseasEntitySubmission(eq(transaction), any(String.class)))
-                .thenReturn(true);
-        when(overseasEntitySubmissionsRepository.findById(SUBMISSION_ID)
-        ).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(SubmissionNotFoundException.class, () ->
-                overseasEntitiesService.getSavedOverseasEntity(
-                        transaction,
-                        SUBMISSION_ID,
-                        REQUEST_ID));
-        String actualMessage = exception.getMessage();
-        var expectedMessage = String.format("Empty submission returned when generating filing for %s", SUBMISSION_ID);
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     private Transaction buildTransaction() {

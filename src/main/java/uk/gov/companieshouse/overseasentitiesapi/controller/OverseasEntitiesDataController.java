@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +15,10 @@ import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
 import uk.gov.companieshouse.overseasentitiesapi.service.PrivateDataRetrievalService;
@@ -29,6 +32,7 @@ import java.util.Optional;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.OVERSEAS_ENTITY_ID_KEY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_ID_KEY;
+import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACTION_KEY;
 
 
 @RestController
@@ -51,16 +55,25 @@ public class OverseasEntitiesDataController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<OverseasEntityDataApi> getOverseasEntityDetails (
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+    public ResponseEntity<Object> getOverseasEntityDetails (
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
+        String transactionId = transaction.getId();
         HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
 
         ApiLogger.infoContext(requestId, "Calling service to check the overseas entity submission", logMap);
 
-        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        final Optional<OverseasEntitySubmissionDto> submissionDtoOptional;
+        try {
+            submissionDtoOptional = overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, requestId);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+        }
+
         if (submissionDtoOptional.isPresent()) {
             OverseasEntitySubmissionDto submissionDto = submissionDtoOptional.get();
             if (!submissionDto.isForUpdateOrRemove()) {
@@ -74,9 +87,10 @@ public class OverseasEntitiesDataController {
             ApiLogger.errorContext(requestId, message, null, logMap);
             return ResponseEntity.notFound().build();
         }
+
     }
 
-    private ResponseEntity<OverseasEntityDataApi> getOverseasEntityDataResponse(
+    private ResponseEntity<Object> getOverseasEntityDataResponse(
             String overseasEntityId,
             String requestId,
             OverseasEntitySubmissionDto submissionDto,
@@ -112,17 +126,27 @@ public class OverseasEntitiesDataController {
     }
 
     @GetMapping("/beneficial-owners")
-    public ResponseEntity<PrivateBoDataListApi> getOverseasEntityBeneficialOwners(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+    public ResponseEntity<Object> getOverseasEntityBeneficialOwners(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws NoSuchAlgorithmException {
+
+        String transactionId = transaction.getId();
 
         final var logMap = new HashMap<String, Object>();
         logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
         logMap.put(TRANSACTION_ID_KEY, transactionId);
         ApiLogger.infoContext(requestId, "Calling service to retrieve private beneficial owner information", logMap);
 
-        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        final Optional<OverseasEntitySubmissionDto> overseasEntitySubmissionDto;
+        try {
+            overseasEntitySubmissionDto = overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, requestId);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+        }
+
         if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdateOrRemove()) {
             String entityNumber = overseasEntitySubmissionDto.get().getEntityNumber();
             try {
@@ -156,15 +180,23 @@ public class OverseasEntitiesDataController {
     }
 
     @GetMapping("/managing-officers")
-    public ResponseEntity<ManagingOfficerListDataApi> getManagingOfficers(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+    public ResponseEntity<Object> getManagingOfficers(
+            @RequestAttribute(TRANSACTION_KEY) Transaction transaction,
             @PathVariable(OVERSEAS_ENTITY_ID_KEY) String overseasEntityId,
             @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId) throws ServiceException {
 
+        String transactionId = transaction.getId();
         HashMap<String, Object> logMap = createLogMap(transactionId, overseasEntityId);
         ApiLogger.infoContext(requestId, "Calling Overseas Entities Service to retrieve private MO data for overseas entity " + overseasEntityId, logMap);
 
-        final var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId);
+        final Optional<OverseasEntitySubmissionDto> submissionDtoOptional;
+        try {
+            submissionDtoOptional = overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, requestId);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+        }
 
         if (submissionDtoOptional.isPresent()) {
             final var submissionDto = submissionDtoOptional.get();
@@ -180,7 +212,7 @@ public class OverseasEntitiesDataController {
         }
     }
 
-    private ResponseEntity<ManagingOfficerListDataApi> retrieveAndEvaluateManagingOfficerData(OverseasEntitySubmissionDto submissionDto, String overseasEntityId, String requestId, HashMap<String, Object> logMap) {
+    private ResponseEntity<Object> retrieveAndEvaluateManagingOfficerData(OverseasEntitySubmissionDto submissionDto, String overseasEntityId, String requestId, HashMap<String, Object> logMap) {
         try {
             ManagingOfficerListDataApi managingOfficerDataList = privateDataRetrievalService.getManagingOfficerData(submissionDto.getEntityNumber());
 

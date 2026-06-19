@@ -17,8 +17,10 @@ import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataApi;
 import uk.gov.companieshouse.api.model.beneficialowner.PrivateBoDataListApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerDataApi;
 import uk.gov.companieshouse.api.model.managingofficerdata.ManagingOfficerListDataApi;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.update.OverseasEntityDataApi;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.mocks.PrivateBeneficialOwnersMock;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.EntityDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -50,8 +52,6 @@ class OverseasEntitiesDataControllerTest {
     private static final String overseasEntityId = "123456778";
     private static final String email = "TEST@MAILINATOR.COM";
 
-    private static final String transactionId = "123456";
-
     private static final String COMPANY_NUMBER = "OE111129";
 
     @Mock
@@ -59,6 +59,9 @@ class OverseasEntitiesDataControllerTest {
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
+
+    @Mock
+    private Transaction transaction;
     
     @InjectMocks
     private OverseasEntitiesDataController overseasEntitiesDataController;
@@ -69,15 +72,15 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsSuccessfully() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsSuccessfully() throws ServiceException, SubmissionNotLinkedToTransactionException {
         OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
         overseasEntityDataApi.setEmail(email);
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(overseasEntityDataApi);
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
 
-
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -85,18 +88,18 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsSubmissionEmailSuccessfullyForUpdate() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsSubmissionEmailSuccessfullyForUpdate() throws ServiceException, SubmissionNotLinkedToTransactionException {
         final var cachedEmail = "alice@test.com";
         OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
         overseasEntityDataApi.setEmail(cachedEmail);
 
         OverseasEntitySubmissionDto submissionDto = createOverseasEntityUpdateSubmissionMock();
         submissionDto.getEntity().setEmail(cachedEmail);
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(submissionDto));
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(0)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -104,18 +107,18 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsSubmissionEmailSuccessfullyForRemove() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsSubmissionEmailSuccessfullyForRemove() throws ServiceException, SubmissionNotLinkedToTransactionException {
         final var cachedEmail = "alice@test.com";
         OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
         overseasEntityDataApi.setEmail(cachedEmail);
 
         OverseasEntitySubmissionDto submissionDto = createOverseasEntityRemoveSubmissionMock();
         submissionDto.getEntity().setEmail(cachedEmail);
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(submissionDto));
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(0)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -123,42 +126,42 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException, SubmissionNotLinkedToTransactionException {
         Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getOverseasEntityData(COMPANY_NUMBER);
 
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertNull(response.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenRegistration() {
+    void testGetOverseasEntityDetailsReturnsInternalServerErrorWhenRegistration() throws SubmissionNotLinkedToTransactionException {
 
         OverseasEntitySubmissionDto overseasEntitySubmissionDto = createOverseasEntityUpdateSubmissionMock();
         overseasEntitySubmissionDto.setEntityNumber(null);
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(overseasEntitySubmissionDto));
 
         assertThrows(ServiceException.class,
                 () -> overseasEntitiesDataController.getOverseasEntityDetails(
-                        transactionId,
+                        transaction,
                         overseasEntityId,
                         ERIC_REQUEST_ID));
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsNotFoundWhenNoSubmissionFound() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsNotFoundWhenNoSubmissionFound() throws ServiceException, SubmissionNotLinkedToTransactionException {
 
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.empty());
 
         var response = overseasEntitiesDataController.getOverseasEntityDetails(
-                transactionId,
+                transaction,
                 overseasEntityId,
                 ERIC_REQUEST_ID);
 
@@ -166,98 +169,98 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsNotFoundForNoDetails() throws ServiceException {
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+    void testGetOverseasEntityDetailsReturnsNotFoundForNoDetails() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(null);
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsNotFoundForNoEmailInDetails() throws ServiceException {
+    void testGetOverseasEntityDetailsReturnsNotFoundForNoEmailInDetails() throws ServiceException, SubmissionNotLinkedToTransactionException {
         OverseasEntityDataApi overseasEntityDataApi = new OverseasEntityDataApi();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
         when(privateDataRetrievalService.getOverseasEntityData(any())).thenReturn(overseasEntityDataApi);
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityDetails(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityDetails(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getOverseasEntityData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void testGetManagingOfficersReturnsSuccessfullyForUpdate() throws ServiceException {
+    void testGetManagingOfficersReturnsSuccessfullyForUpdate() throws ServiceException, SubmissionNotLinkedToTransactionException {
         List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
         ManagingOfficerDataApi officerDataApi = new ManagingOfficerDataApi();
         managingOfficers.add(officerDataApi);
         ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
 
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(managingOfficerListDataApi);
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(managingOfficerListDataApi, response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsSuccessfullyForRemove() throws ServiceException {
+    void testGetManagingOfficersReturnsSuccessfullyForRemove() throws ServiceException, SubmissionNotLinkedToTransactionException {
         List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
         ManagingOfficerDataApi officerDataApi = new ManagingOfficerDataApi();
         managingOfficers.add(officerDataApi);
         ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
 
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityRemoveSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(managingOfficerListDataApi);
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(managingOfficerListDataApi, response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenNoOfficersFound() throws ServiceException {
+    void testGetManagingOfficersReturnsNotFoundWhenNoOfficersFound() throws ServiceException, SubmissionNotLinkedToTransactionException {
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(null);
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenOfficersListEmpty() throws ServiceException {
+    void testGetManagingOfficersReturnsNotFoundWhenOfficersListEmpty() throws ServiceException, SubmissionNotLinkedToTransactionException {
         List<ManagingOfficerDataApi> managingOfficers = new ArrayList<>();
 
         ManagingOfficerListDataApi managingOfficerListDataApi = new ManagingOfficerListDataApi(managingOfficers);
 
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
@@ -265,97 +268,97 @@ class OverseasEntitiesDataControllerTest {
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(managingOfficerListDataApi);
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException {
+    void testGetManagingOfficersReturnsInternalServerErrorWhenExceptionThrown() throws ServiceException, SubmissionNotLinkedToTransactionException {
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenThrow(new ServiceException("error occurred"));
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenSubmissionNotFound() throws ServiceException {
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+    void testGetManagingOfficersReturnsNotFoundWhenSubmissionNotFound() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenManagingOfficerDataEmpty() throws ServiceException {
+    void testGetManagingOfficersReturnsNotFoundWhenManagingOfficerDataEmpty() throws ServiceException, SubmissionNotLinkedToTransactionException {
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
         String entityNumber = submissionDtoMock.getEntityNumber();
         when(privateDataRetrievalService.getManagingOfficerData(entityNumber))
                 .thenReturn(new ManagingOfficerListDataApi(Collections.emptyList()));
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers("TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenNoSubmissionDto() throws ServiceException {
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+    void testGetManagingOfficersReturnsNotFoundWhenNoSubmissionDto() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.empty());
 
 
-        ResponseEntity<ManagingOfficerListDataApi> response = overseasEntitiesDataController.getManagingOfficers(
-                "TransactionID", overseasEntityId, "requestId");
+        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(
+                transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
     }
 
     @Test
-    void testGetManagingOfficersThrowsExceptionWhenIsForUpdateIsFalse() {
+    void testGetManagingOfficersThrowsExceptionWhenIsForUpdateIsFalse() throws SubmissionNotLinkedToTransactionException {
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
         submissionDtoMock.setEntityNumber(null);
 
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId))
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
                 .thenReturn(Optional.of(submissionDtoMock));
 
 
         assertThrows(ServiceException.class,
                 () -> overseasEntitiesDataController.getManagingOfficers(
-                        transactionId,
+                        transaction,
                         overseasEntityId,
                         ERIC_REQUEST_ID),
                 "Submission for overseas entity details must be for update");
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDetailsSuccessfullyForUpdate() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException {
+    void testGetPrivateBeneficialOwnerDetailsSuccessfullyForUpdate() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
         var objectMapper = new ObjectMapper();
         var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
         PrivateBoDataListApi privateBoDataListApi = new PrivateBoDataListApi(boDataListApi.getBoPrivateData());
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
 
         when(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER)).thenReturn(boDataListApi);
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getBeneficialOwnersData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -363,17 +366,17 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDetailsSuccessfullyForRemove() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException {
+    void testGetPrivateBeneficialOwnerDetailsSuccessfullyForRemove() throws ServiceException, JsonProcessingException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
         var objectMapper = new ObjectMapper();
         var boDataListApi = objectMapper.readValue(PrivateBeneficialOwnersMock.jsonBeneficialOwnerString, PrivateBoDataListApi.class );
         PrivateBoDataListApi privateBoDataListApi = new PrivateBoDataListApi(boDataListApi.getBoPrivateData());
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityRemoveSubmissionMock()));
 
         when(privateDataRetrievalService.getBeneficialOwnersData(COMPANY_NUMBER)).thenReturn(boDataListApi);
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getBeneficialOwnersData(COMPANY_NUMBER);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -381,13 +384,13 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoBoData() throws ServiceException, NoSuchAlgorithmException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoBoData() throws NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
-            when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+            when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                     Optional.of(createOverseasEntityUpdateSubmissionMock()));
 
-            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
             assertNull(response.getBody());
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
@@ -399,27 +402,29 @@ class OverseasEntitiesDataControllerTest {
                             any()),
                     times(1)
             );
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Test
-    void testGetBeneficialOwnersReturnInternalServerErrorWhenExceptionThrown() throws ServiceException, NoSuchAlgorithmException {
+    void testGetBeneficialOwnersReturnInternalServerErrorWhenExceptionThrown() throws ServiceException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
         Mockito.doThrow(new ServiceException("Exception thrown")).when(privateDataRetrievalService).getBeneficialOwnersData(COMPANY_NUMBER);
 
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         assertNull(response.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws ServiceException, NoSuchAlgorithmException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntity() throws NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
-            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
             assertNull(response.getBody());
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
@@ -435,13 +440,13 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntityNumber() throws ServiceException, NoSuchAlgorithmException {
+    void testGetPrivateBeneficialOwnerDataReturnsNotFoundWhenNoOverseasEntityNumber() throws NoSuchAlgorithmException {
         try (MockedStatic<ApiLogger> mockApiLogger = mockStatic(ApiLogger.class)) {
 
-            when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+            when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                     Optional.of(createOverseasNullEntitySubmissionMocks()));
 
-            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+            var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
             assertNull(response.getBody());
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
@@ -453,19 +458,21 @@ class OverseasEntitiesDataControllerTest {
                             any()),
                     times(1)
             );
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Test
-    void testGetOverseasEntityDetailsReturnsNotFoundForEmptyBo() throws ServiceException, NoSuchAlgorithmException {
+    void testGetOverseasEntityDetailsReturnsNotFoundForEmptyBo() throws ServiceException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
         List<PrivateBoDataApi> privateBoDataApiList = Collections.emptyList();
         var boDataListApi = new PrivateBoDataListApi(privateBoDataApiList);
-        when(overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)).thenReturn(
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID)).thenReturn(
                 Optional.of(createOverseasEntityUpdateSubmissionMock()));
         when(privateDataRetrievalService.getBeneficialOwnersData(any())).thenReturn(boDataListApi);
 
 
-        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transactionId, overseasEntityId, ERIC_REQUEST_ID);
+        var response = overseasEntitiesDataController.getOverseasEntityBeneficialOwners(transaction, overseasEntityId, ERIC_REQUEST_ID);
 
         verify(privateDataRetrievalService, times(1)).getBeneficialOwnersData(COMPANY_NUMBER);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

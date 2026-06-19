@@ -31,6 +31,7 @@ import uk.gov.companieshouse.service.rest.response.ChResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Optional;
 
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.ERIC_REQUEST_ID_KEY;
@@ -195,7 +196,14 @@ public class OverseasEntitiesController {
 
         try {
             ApiLogger.infoContext(requestId, "Calling service to get the overseas entity submission", logMap);
-            return overseasEntitiesService.getSavedOverseasEntity(transaction, submissionId, requestId);
+            Optional<OverseasEntitySubmissionDto> submissionOpt = overseasEntitiesService.getSavedOverseasEntity(transaction, submissionId, requestId);
+
+            OverseasEntitySubmissionDto submissionDto = submissionOpt
+                .orElseThrow(() ->
+                        new SubmissionNotFoundException(
+                                String.format("Empty submission returned when generating filing for %s", submissionId)));
+
+            return ResponseEntity.ok().body(submissionDto);
         } catch (SubmissionNotLinkedToTransactionException e) {
             ApiLogger.errorContext(requestId, e);
             return ResponseEntity.badRequest().body(String.format(
