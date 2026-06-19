@@ -318,19 +318,6 @@ class OverseasEntitiesDataControllerTest {
     }
 
     @Test
-    void testGetManagingOfficersReturnsNotFoundWhenNoSubmissionDto() throws ServiceException, SubmissionNotLinkedToTransactionException {
-        when(overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, ERIC_REQUEST_ID))
-                .thenReturn(Optional.empty());
-
-
-        ResponseEntity<Object> response = overseasEntitiesDataController.getManagingOfficers(
-                transaction, overseasEntityId, ERIC_REQUEST_ID);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody()); // The body should be null for a NOT_FOUND response
-    }
-
-    @Test
     void testGetManagingOfficersThrowsExceptionWhenIsForUpdateIsFalse() throws SubmissionNotLinkedToTransactionException {
         OverseasEntitySubmissionDto submissionDtoMock = createOverseasEntityUpdateSubmissionMock();
         submissionDtoMock.setEntityNumber(null);

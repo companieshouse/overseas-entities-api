@@ -109,7 +109,7 @@ class OverseasEntitiesDataControllerTransactionLinkingTest {
 
         @Test
         @DisplayName("Should return BAD_REQUEST when overseas_entity_id is not linked to the transaction_id")
-        void getBeneficialOwners_rejectsMismatchedTransactionAndSubmission() throws ServiceException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
+        void getBeneficialOwners_rejectsMismatchedTransactionAndSubmission() throws NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
             // Arrange: getSavedOverseasEntity throws because the submission is not linked to this transaction
             when(overseasEntitiesService.getSavedOverseasEntity(attackerTransaction, VICTIM_OVERSEAS_ENTITY_ID, ERIC_REQUEST_ID))
                     .thenThrow(new SubmissionNotLinkedToTransactionException(
@@ -127,7 +127,7 @@ class OverseasEntitiesDataControllerTransactionLinkingTest {
 
         @Test
         @DisplayName("Must not return 200 OK with victim BO data for a mismatched transaction")
-        void getBeneficialOwners_mustNotReturnOkForMismatchedTransaction() throws ServiceException, NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
+        void getBeneficialOwners_mustNotReturnOkForMismatchedTransaction() throws NoSuchAlgorithmException, SubmissionNotLinkedToTransactionException {
             // Arrange: getSavedOverseasEntity throws for mismatched transaction/submission
             when(overseasEntitiesService.getSavedOverseasEntity(attackerTransaction, VICTIM_OVERSEAS_ENTITY_ID, ERIC_REQUEST_ID))
                     .thenThrow(new SubmissionNotLinkedToTransactionException("Not linked"));

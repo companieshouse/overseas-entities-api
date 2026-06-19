@@ -39,6 +39,7 @@ import static uk.gov.companieshouse.overseasentitiesapi.utils.Constants.TRANSACT
 @RequestMapping("/private/transactions/{transaction_id}/overseas-entity/{overseas_entity_id}")
 public class OverseasEntitiesDataController {
 
+    private static final String TRANSACTION_NOT_LINKED_ERROR_MESSAGE = "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s";
     PrivateDataRetrievalService privateDataRetrievalService;
     OverseasEntitiesService overseasEntitiesService;
 
@@ -71,7 +72,7 @@ public class OverseasEntitiesDataController {
         } catch (SubmissionNotLinkedToTransactionException e) {
             ApiLogger.errorContext(requestId, e);
             return ResponseEntity.badRequest().body(String.format(
-                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+                    TRANSACTION_NOT_LINKED_ERROR_MESSAGE, transaction.getId(), overseasEntityId));
         }
 
         if (submissionDtoOptional.isPresent()) {
@@ -144,7 +145,7 @@ public class OverseasEntitiesDataController {
         } catch (SubmissionNotLinkedToTransactionException e) {
             ApiLogger.errorContext(requestId, e);
             return ResponseEntity.badRequest().body(String.format(
-                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+                    TRANSACTION_NOT_LINKED_ERROR_MESSAGE, transaction.getId(), overseasEntityId));
         }
 
         if (overseasEntitySubmissionDto.isPresent() && overseasEntitySubmissionDto.get().isForUpdateOrRemove()) {
@@ -195,7 +196,7 @@ public class OverseasEntitiesDataController {
         } catch (SubmissionNotLinkedToTransactionException e) {
             ApiLogger.errorContext(requestId, e);
             return ResponseEntity.badRequest().body(String.format(
-                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transaction.getId(), overseasEntityId));
+                    TRANSACTION_NOT_LINKED_ERROR_MESSAGE, transaction.getId(), overseasEntityId));
         }
 
         if (submissionDtoOptional.isPresent()) {
