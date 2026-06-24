@@ -20,6 +20,7 @@ import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndivi
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.ManagingOfficerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.service.TransactionService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -58,6 +59,9 @@ class OverseasEntitiesControllerTest {
 
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
+
+    @Mock
+    private TransactionService transactionService;
 
     @Mock
     private Transaction transaction;
@@ -238,8 +242,10 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFound() {
-        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+    void testValidationStatusResponseWhenSubmissionIsFound()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(transactionService.getTransaction(TRANSACTION_ID,PASS_THROUGH_HEADER, REQUEST_ID)).thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
 
@@ -251,12 +257,14 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass() throws ServiceException {
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndAllChecksPass()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
         setValidationEnabledFeatureFlag(true);
 
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
-        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(transactionService.getTransaction(TRANSACTION_ID,PASS_THROUGH_HEADER, REQUEST_ID)).thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
@@ -273,12 +281,14 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails() throws ServiceException {
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndCheckFails()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
         setValidationEnabledFeatureFlag(true);
 
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
-        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(transactionService.getTransaction(TRANSACTION_ID,PASS_THROUGH_HEADER, REQUEST_ID)).thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         final String errorLocation = "EXAMPLE_ERROR_LOCATION";
         final String error = "EXAMPLE_ERROR";
@@ -298,12 +308,14 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndServiceExceptionIsThrown() throws ServiceException {
+    void testValidationStatusResponseWhenSubmissionIsFoundWithValidationEnabledAndServiceExceptionIsThrown()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
         setValidationEnabledFeatureFlag(true);
 
         ValidationStatusResponse validationStatus = new ValidationStatusResponse();
         validationStatus.setValid(true);
-        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
+        when(transactionService.getTransaction(TRANSACTION_ID,PASS_THROUGH_HEADER, REQUEST_ID)).thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID)).thenReturn(Optional.of(overseasEntitySubmissionDto));
 
         when(overseasEntitySubmissionDtoValidator.validateFull(
                 eq(overseasEntitySubmissionDto),
@@ -317,10 +329,58 @@ class OverseasEntitiesControllerTest {
     }
 
     @Test
-    void testValidationStatusResponseWhenSubmissionNotFound() {
-        when(overseasEntitiesService.getOverseasEntitySubmission(SUBMISSION_ID)).thenReturn(Optional.empty());
+    void testValidationStatusResponseWhenSubmissionNotFound()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(transactionService.getTransaction(TRANSACTION_ID,PASS_THROUGH_HEADER, REQUEST_ID)).thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID)).thenReturn(Optional.empty());
         var response = overseasEntitiesController.getValidationStatus(SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
         assertEquals(ResponseEntity.notFound().build(), response);
+    }
+
+    // -------------------------------------------------------------------------
+    // Security regression tests — IDOR fix for validation-status endpoint
+    //
+    // These tests confirm that getValidationStatus uses the transaction-scoped
+    // getSavedOverseasEntity and correctly rejects cross-tenant requests.
+    // -------------------------------------------------------------------------
+
+    @Test
+    void testValidationStatusReturnsBadRequestWhenSubmissionNotLinkedToTransaction()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
+        // Arrange: getSavedOverseasEntity enforces transaction-to-submission linkage.
+        // When the overseas_entity_id does not belong to the transaction in the path,
+        // it throws SubmissionNotLinkedToTransactionException.
+        when(transactionService.getTransaction(TRANSACTION_ID, PASS_THROUGH_HEADER, REQUEST_ID))
+                .thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID))
+                .thenThrow(new SubmissionNotLinkedToTransactionException(
+                        "Transaction " + TRANSACTION_ID + " does not have a resource matching " + SUBMISSION_ID));
+
+        var response = overseasEntitiesController.getValidationStatus(
+                SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
+
+        // Mismatched transaction/submission must be rejected with 400, not 200 with victim data
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testValidationStatusUsesTransactionScopedLookup_neverUnscopedLookup()
+            throws ServiceException, SubmissionNotLinkedToTransactionException {
+        // Arrange: scoped lookup returns a valid submission
+        when(transactionService.getTransaction(TRANSACTION_ID, PASS_THROUGH_HEADER, REQUEST_ID))
+                .thenReturn(transaction);
+        when(overseasEntitiesService.getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID))
+                .thenReturn(Optional.of(overseasEntitySubmissionDto));
+
+        overseasEntitiesController.getValidationStatus(
+                SUBMISSION_ID, TRANSACTION_ID, REQUEST_ID, mockHttpServletRequest);
+
+        // Scoped method must be called — it performs the transaction-linkage ownership check
+        verify(overseasEntitiesService).getSavedOverseasEntity(transaction, SUBMISSION_ID, REQUEST_ID);
+
+        // Unscoped method must NEVER be called — it performs no ownership check and
+        // would allow any caller to read any submission by id (IDOR)
+        verify(overseasEntitiesService, never()).getOverseasEntitySubmission(SUBMISSION_ID);
     }
 
     @Test

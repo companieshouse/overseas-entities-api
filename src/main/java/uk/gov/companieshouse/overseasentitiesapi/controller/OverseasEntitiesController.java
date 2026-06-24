@@ -23,6 +23,7 @@ import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundExc
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 import uk.gov.companieshouse.overseasentitiesapi.service.OverseasEntitiesService;
+import uk.gov.companieshouse.overseasentitiesapi.service.TransactionService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.overseasentitiesapi.validation.OverseasEntitySubmissionDtoValidator;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
@@ -48,15 +49,18 @@ public class OverseasEntitiesController {
 
     private final OverseasEntitiesService overseasEntitiesService;
     private final OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator;
+    private final TransactionService transactionService;
 
     @Value("${FEATURE_FLAG_ENABLE_VALIDATION_25082022}")
     private boolean isValidationEnabled;
 
     @Autowired
     public OverseasEntitiesController(OverseasEntitiesService overseasEntitiesService,
-                                      OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator) {
+                                      OverseasEntitySubmissionDtoValidator overseasEntitySubmissionDtoValidator,
+            TransactionService transactionService) {
         this.overseasEntitiesService = overseasEntitiesService;
         this.overseasEntitySubmissionDtoValidator = overseasEntitySubmissionDtoValidator;
+        this.transactionService = transactionService;
     }
 
     @PostMapping
@@ -152,15 +156,16 @@ public class OverseasEntitiesController {
         logMap.put(TRANSACTION_ID_KEY, transactionId);
 
         try {
+            String passThroughTokenHeader = getPassThroughTokenHeader(request);
+
+            Transaction transaction = transactionService.getTransaction(transactionId, passThroughTokenHeader, requestId);
             ApiLogger.infoContext(requestId, "Calling service to get the overseas entity submission", logMap);
-            var submissionDtoOptional = overseasEntitiesService.getOverseasEntitySubmission(submissionId);
+            var submissionDtoOptional = overseasEntitiesService.getSavedOverseasEntity(transaction, submissionId, requestId);
             if (submissionDtoOptional.isPresent()) {
                 var validationStatus = new ValidationStatusResponse();
                 validationStatus.setValid(true);
 
                 if (isValidationEnabled) {
-                    String passThroughTokenHeader = getPassThroughTokenHeader(request);
-
                     var validationErrors = overseasEntitySubmissionDtoValidator.validateFull(
                             submissionDtoOptional.get(), new Errors(), requestId, passThroughTokenHeader);
 
@@ -181,6 +186,10 @@ public class OverseasEntitiesController {
         } catch (ServiceException e) {
             ApiLogger.errorContext(requestId, "Error validating the Overseas Entity Submission", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().body(String.format(
+                    "Transaction id: %s does not have a resource that matches Overseas Entity submission id: %s", transactionId, submissionId));
         }
     }
 
