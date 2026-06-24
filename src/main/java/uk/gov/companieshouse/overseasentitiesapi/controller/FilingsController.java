@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.service.FilingsService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
@@ -46,8 +47,11 @@ public class FilingsController {
         ApiLogger.infoContext(requestId, "Calling service to retrieve filing", logMap);
         ApiLogger.infoContext(requestId, "Transaction id is " + transaction.getId(), logMap);
         try {
-            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId, transaction, passThroughTokenHeader);
+            FilingApi filing = filingService.generateOverseasEntityFiling(overseasEntityId, transaction, passThroughTokenHeader, requestId);
             return ResponseEntity.ok(new FilingApi[] { filing });
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, e);
+            return ResponseEntity.badRequest().build();
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, e.getMessage(), e, logMap);
             return ResponseEntity.notFound().build();
