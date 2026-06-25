@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
 import java.util.Collections;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 
 @Service
 public class CostsService {
@@ -44,10 +46,21 @@ public class CostsService {
         this.overseasEntitiesService = overseasEntitiesService;
     }
 
-    public Cost getCosts(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        if (overseasEntitiesService.isSubmissionAnUpdate(requestId, overseasEntityId)) {
+    public Cost getCosts(Transaction transaction, String requestId, String overseasEntityId)
+            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+
+        var submissionOpt = overseasEntitiesService.getSavedOverseasEntity(
+                transaction, overseasEntityId, requestId);
+
+        if (submissionOpt.isEmpty()) {
+            throw new SubmissionNotFoundException(
+                    "Cannot determine costs: submission not found for " + overseasEntityId);
+        }
+        var submission = submissionOpt.get();
+
+        if (overseasEntitiesService.isSubmissionAnUpdate(requestId, submission)) {
             return getCostsForUpdate();
-        } else if (overseasEntitiesService.isSubmissionARemove(requestId, overseasEntityId)) {
+        } else if (overseasEntitiesService.isSubmissionARemove(requestId, submission)) {
             return getCostsForRemove();
         } else {
             return getCostsForRegistration();

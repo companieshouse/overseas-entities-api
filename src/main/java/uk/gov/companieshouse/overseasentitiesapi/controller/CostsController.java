@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.payment.Cost;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.overseasentitiesapi.utils.ApiLogger;
 
@@ -47,9 +48,12 @@ public class CostsController {
         ApiLogger.infoContext(requestId, "Calling CostsService to retrieve costs", logMap);
 
         try {
-            var cost = costsService.getCosts(requestId, overseasEntityId);
+            var cost = costsService.getCosts(transaction, requestId, overseasEntityId);
 
             return ResponseEntity.ok(Collections.singletonList(cost));
+        } catch (SubmissionNotLinkedToTransactionException e) {
+            ApiLogger.errorContext(requestId, "Submission not linked to transaction", e, logMap);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (SubmissionNotFoundException e) {
             ApiLogger.errorContext(requestId, "Error determining submission costs", e, logMap);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

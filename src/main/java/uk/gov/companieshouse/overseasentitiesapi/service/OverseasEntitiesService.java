@@ -57,27 +57,22 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public boolean isSubmissionAnUpdate(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.UPDATE;
+    public boolean isSubmissionAnUpdate(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, submission) == SubmissionType.UPDATE;
     }
 
-    public boolean isSubmissionARemove(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        return getSubmissionType(requestId, overseasEntityId) == SubmissionType.REMOVE;
+    public boolean isSubmissionARemove(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
+        return getSubmissionType(requestId, submission) == SubmissionType.REMOVE;
     }
 
-    SubmissionType getSubmissionType(String requestId, String overseasEntityId) throws SubmissionNotFoundException {
-        Optional<OverseasEntitySubmissionDto> submissionOpt = getOverseasEntitySubmission(
-                overseasEntityId);
-        if (submissionOpt.isEmpty()) {
-            throw new SubmissionNotFoundException("Cannot determine submission type");
-        }
+    SubmissionType getSubmissionType(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
 
-        String entityNumber = submissionOpt.get().getEntityNumber();
-        if (submissionOpt.get().isForUpdate()) {
+        String entityNumber = submission.getEntityNumber();
+        if (submission.isForUpdate()) {
             ApiLogger.infoContext(requestId, String.format("Update submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.UPDATE;
-        } else if (submissionOpt.get().isForRemove()) {
+        } else if (submission.isForRemove()) {
             ApiLogger.infoContext(requestId, String.format("Remove submission with overseas entity number %s found",
                     entityNumber));
             return SubmissionType.REMOVE;

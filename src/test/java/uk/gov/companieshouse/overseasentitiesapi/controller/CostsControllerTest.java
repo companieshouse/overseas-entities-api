@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.service.CostsService;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
@@ -35,25 +36,27 @@ class CostsControllerTest {
     }
 
     @Test
-    void testGetCostsReturnsCosts() throws SubmissionNotFoundException {
+    void testGetCostsReturnsCosts()
+            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
         final String amount = "13.00";
         Cost cost = new Cost();
         cost.setAmount(amount);
-        when(costsService.getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID)).thenReturn(cost);
+        when(costsService.getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID)).thenReturn(cost);
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
 
         assertEquals(amount, response.getBody().getFirst().getAmount());
-        verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
+        verify(costsService, times(1)).getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 
     @Test
-    void testGetCostsSubmissionException() throws SubmissionNotFoundException {
-        when(costsService.getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID)).thenThrow(
+    void testGetCostsSubmissionException()
+            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(costsService.getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID)).thenThrow(
                 new SubmissionNotFoundException("test"));
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
         assertEquals(500, response.getStatusCode().value());
-        verify(costsService, times(1)).getCosts(REQUEST_ID, OVERSEAS_ENTITY_ID);
+        verify(costsService, times(1)).getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 }
