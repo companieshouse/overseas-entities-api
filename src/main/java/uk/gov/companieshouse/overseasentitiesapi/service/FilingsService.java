@@ -166,7 +166,6 @@ public class FilingsService {
 
     OverseasEntitySubmissionDto submissionDto =
             overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, requestId)
-            //overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)
                     .orElseThrow(() -> new SubmissionNotFoundException(
                             String.format("Empty submission returned when generating filing for %s", overseasEntityId)
                     ));

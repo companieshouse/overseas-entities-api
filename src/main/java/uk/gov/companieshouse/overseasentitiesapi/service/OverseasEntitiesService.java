@@ -57,15 +57,15 @@ public class OverseasEntitiesService {
         this.dateTimeNowSupplier = dateTimeNowSupplier;
     }
 
-    public boolean isSubmissionAnUpdate(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
+    public boolean isSubmissionAnUpdate(String requestId, OverseasEntitySubmissionDto submission) {
         return getSubmissionType(requestId, submission) == SubmissionType.UPDATE;
     }
 
-    public boolean isSubmissionARemove(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
+    public boolean isSubmissionARemove(String requestId, OverseasEntitySubmissionDto submission) {
         return getSubmissionType(requestId, submission) == SubmissionType.REMOVE;
     }
 
-    SubmissionType getSubmissionType(String requestId, OverseasEntitySubmissionDto submission) throws SubmissionNotFoundException {
+    SubmissionType getSubmissionType(String requestId, OverseasEntitySubmissionDto submission) {
 
         String entityNumber = submission.getEntityNumber();
         if (submission.isForUpdate()) {

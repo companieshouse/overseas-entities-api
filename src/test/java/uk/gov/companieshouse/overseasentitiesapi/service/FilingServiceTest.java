@@ -1733,7 +1733,6 @@ class FilingServiceTest {
             throws SubmissionNotLinkedToTransactionException {
 
         // A victim submission that would be returned by the unscoped lookup
-        OverseasEntitySubmissionDto victimSubmission = Mocks.buildSubmissionDto();
         String victimOeId = "victim-submission-id-bbb";
 
         // Attacker's own transaction — does NOT include victimOeId in its resources
