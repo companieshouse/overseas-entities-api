@@ -68,4 +68,13 @@ class FilingsControllerTest {
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
+
+    @Test
+    void testGetFilingSubmissionNotLinkedToTransactionException()
+            throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER, ERIC_REQUEST_ID)).thenThrow(SubmissionNotLinkedToTransactionException.class);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
+        assertNull(result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
 }

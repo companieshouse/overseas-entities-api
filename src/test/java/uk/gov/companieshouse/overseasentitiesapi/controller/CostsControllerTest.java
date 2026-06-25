@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
@@ -56,7 +57,18 @@ class CostsControllerTest {
                 new SubmissionNotFoundException("test"));
 
         var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
-        assertEquals(500, response.getStatusCode().value());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(costsService, times(1)).getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID);
+    }
+
+    @Test
+    void testGetCostsSubmissionNotLinkedToTransactionException()
+            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+        when(costsService.getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID)).thenThrow(
+                new SubmissionNotLinkedToTransactionException("test"));
+
+        var response = costsController.getCosts(transaction, OVERSEAS_ENTITY_ID, REQUEST_ID);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         verify(costsService, times(1)).getCosts(transaction, REQUEST_ID, OVERSEAS_ENTITY_ID);
     }
 }
