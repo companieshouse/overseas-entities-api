@@ -13,6 +13,7 @@ import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.service.FilingsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,10 +49,11 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingReturnsSuccessfully() throws SubmissionNotFoundException, ServiceException {
+    void testGetFilingReturnsSuccessfully()
+            throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenReturn(filing);
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER, ERIC_REQUEST_ID)).thenReturn(filing);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
@@ -59,10 +61,20 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingSubmissionNotFound() throws SubmissionNotFoundException, ServiceException {
-        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER)).thenThrow(SubmissionNotFoundException.class);
+    void testGetFilingSubmissionNotFound()
+            throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER, ERIC_REQUEST_ID)).thenThrow(SubmissionNotFoundException.class);
         var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
         assertNull(result.getBody());
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    void testGetFilingSubmissionNotLinkedToTransactionException()
+            throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
+        when(filingsService.generateOverseasEntityFiling(OVERSEAS_ENTITY_ID, transaction, PASS_THROUGH_HEADER, ERIC_REQUEST_ID)).thenThrow(SubmissionNotLinkedToTransactionException.class);
+        var result = filingsController.getFiling(transaction, OVERSEAS_ENTITY_ID, TRANSACTION_ID, ERIC_REQUEST_ID, mockHttpServletRequest);
+        assertNull(result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 }
