@@ -9,13 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
+import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED;
 import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.CLOSED_PENDING_PAYMENT;
 import static uk.gov.companieshouse.api.model.transaction.TransactionStatus.OPEN;
 
 /**
  * A request interceptor class that checks if a web request made to the OE API is allowed - for this to be true a
  * transaction must be present in the request attributes and that transaction must still be 'open' OR this must be
- * a GET request and the transaction status must be 'closed pending payment'.
+ * a GET request and the transaction status must be 'closed pending payment' or 'closed'.
  */
 @Component
 public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor {
@@ -28,14 +29,9 @@ public class ProcessingInterceptor extends AbstractTransactionStatusInterceptor 
             return true;
         }
 
-        if (CLOSED_PENDING_PAYMENT.equals(transaction.getStatus()) && request.getMethod().equals(HttpMethod.GET.name())) {
-            ApiLogger.infoContext(reqId, "Transaction is closed pending payment and a GET request - processing allowed", logMap);
+        if ((CLOSED_PENDING_PAYMENT.equals(transaction.getStatus()) || CLOSED.equals(transaction.getStatus())) && request.getMethod().equals(HttpMethod.GET.name())) {
+            ApiLogger.infoContext(reqId, "Transaction is closed pending payment or closed and a GET request - processing allowed", logMap);
 
-            return true;
-        }
-
-        if ("true".equalsIgnoreCase(request.getParameter("force")) && (request.getMethod().equals(HttpMethod.PUT.name()) || request.getMethod().equals(HttpMethod.GET.name()))) {
-            ApiLogger.infoContext(reqId, "Force flag - processing allowed", logMap);
             return true;
         }
 

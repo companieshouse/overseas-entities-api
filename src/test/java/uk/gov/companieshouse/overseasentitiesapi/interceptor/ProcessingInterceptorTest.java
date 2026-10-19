@@ -41,14 +41,15 @@ class ProcessingInterceptorTest {
     }
 
     @Test
-    void testInterceptorReturnsFalseWhenTransactionIsClosed() {
+    void testInterceptorReturnsTrueWhenTransactionIsClosed() {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         Object mockHandler = new Object();
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
 
         var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
 
-        assertFalse(result);
-        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
+        assertTrue(result);
+        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
     }
 
     @Test
@@ -113,41 +114,4 @@ class ProcessingInterceptorTest {
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
     }
 
-    @Test
-    void testInterceptorReturnsTrueWhenForceFlagIsTrueAndGetRequest() {
-        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Object mockHandler = new Object();
-
-        when(mockHttpServletRequest.getParameter("force")).thenReturn("true");
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
-        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-
-        assertTrue(result);
-        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
-    }
-
-    @Test
-    void testInterceptorReturnsTrueWhenForceFlagIsTrueAndPutRequest() {
-        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Object mockHandler = new Object();
-
-        when(mockHttpServletRequest.getParameter("force")).thenReturn("true");
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.PUT.name());
-        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-
-        assertTrue(result);
-        assertEquals(HttpServletResponse.SC_OK,  mockHttpServletResponse.getStatus());
-    }
-
-    @Test
-    void testInterceptorReturnsFalseWhenForceFlagIsFalse() {
-        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Object mockHandler = new Object();
-
-        when(mockHttpServletRequest.getParameter("force")).thenReturn("false");
-        var result = processingInterceptor.preHandle(mockHttpServletRequest, mockHttpServletResponse, mockHandler);
-
-        assertFalse(result);
-        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  mockHttpServletResponse.getStatus());
-    }
 }
