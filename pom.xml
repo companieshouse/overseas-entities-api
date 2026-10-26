@@ -22,10 +22,10 @@
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <jib-maven-plugin.version>3.5.2</jib-maven-plugin.version>
         <mockito-core.version>5.24.0</mockito-core.version>
-        <encoder.version>1.4.0</encoder.version>
+        <encoder.version>1.6.0</encoder.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <testcontainers.version>2.0.5</testcontainers.version>
-        <opentelemetry-instrumentation-bom.version>2.32.0</opentelemetry-instrumentation-bom.version>
+        <opentelemetry-instrumentation-bom.version>2.33.0</opentelemetry-instrumentation-bom.version>
         <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
 
