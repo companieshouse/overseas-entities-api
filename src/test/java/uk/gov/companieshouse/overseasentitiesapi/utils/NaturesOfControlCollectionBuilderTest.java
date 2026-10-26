@@ -5,9 +5,10 @@ import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdicti
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class NaturesOfControlCollectionBuilderTest {
 
@@ -16,13 +17,13 @@ class NaturesOfControlCollectionBuilderTest {
     void testThereAreNoDuplicateBuilds() {
         var firstNaturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
-                        .addPersonType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
-                        .addTrusteesType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
-                        .addFirmType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS))
-                        .addTrustControlType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
-                        .addOwnerOfLandPerson(Arrays.asList(NatureOfControlJurisdictionType.SCOTLAND))
-                        .addOwnerOfLandOtherEntity(Arrays.asList(NatureOfControlJurisdictionType.ENGLAND_AND_WALES))
-                        .addFirmControlType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
+                        .addPersonType(List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
+                        .addTrusteesType(List.of(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
+                        .addFirmType(List.of(NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS))
+                        .addTrustControlType(List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
+                        .addOwnerOfLandPerson(List.of(NatureOfControlJurisdictionType.SCOTLAND))
+                        .addOwnerOfLandOtherEntity(List.of(NatureOfControlJurisdictionType.ENGLAND_AND_WALES))
+                        .addFirmControlType(List.of(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
                         .addFeatureFlag(true)
                         .build();
         assertNotNull(firstNaturesOfControlCollection.getPersonNatureOfControlTypes());
@@ -35,9 +36,9 @@ class NaturesOfControlCollectionBuilderTest {
 
         var secondNaturesOfControlCollection =
                 NaturesOfControlCollectionBuilder.createNaturesOfControlCollectionBuilder()
-                        .addPersonType(Arrays.asList(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
-                        .addTrusteesType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
-                        .addFirmType(Arrays.asList(NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS))
+                        .addPersonType(List.of(NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL))
+                        .addTrusteesType(List.of(NatureOfControlType.OVER_25_PERCENT_OF_SHARES))
+                        .addFirmType(List.of(NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS))
                         .addFeatureFlag(true)
                         .build();
 
