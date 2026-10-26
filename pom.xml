@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.14</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
 
@@ -16,32 +16,30 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
-        <mockito-core.version>5.23.0</mockito-core.version>
+        <spring-boot-dependencies.version>3.5.16</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.5.16</spring-boot-maven-plugin.version>
+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <jib-maven-plugin.version>3.5.2</jib-maven-plugin.version>
+        <mockito-core.version>5.24.0</mockito-core.version>
         <encoder.version>1.4.0</encoder.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <testcontainers.version>1.21.4</testcontainers.version>
-        <opentelemetry-instrumentation-bom.version>2.28.1</opentelemetry-instrumentation-bom.version>
-        <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
+        <opentelemetry-instrumentation-bom.version>2.32.0</opentelemetry-instrumentation-bom.version>
+        <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
 
         <!-- internal dependencies -->
-        <api-sdk-java.version>6.6.23</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.23</api-sdk-manager-java-library.version>
-        <api-security-java.version>2.0.27</api-security-java.version>
-        <private-api-sdk-java.version>6.0.23</private-api-sdk-java.version>
-        <rest-service-common-library-version>2.0.14</rest-service-common-library-version>
-        <structured-logging.version>3.0.57</structured-logging.version>
+        <api-sdk-java.version>7.2.9</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.35</api-sdk-manager-java-library.version>
+        <api-security-java.version>2.0.30</api-security-java.version>
+        <private-api-sdk-java.version>7.2.43</private-api-sdk-java.version>
+        <rest-service-common-library-version>2.0.15</rest-service-common-library-version>
+        <structured-logging.version>4.0.6</structured-logging.version>
 
         <!--  Sonar -->
         <sonar.projectName>overseas-entities-api</sonar.projectName>
         <sonar.projectKey>uk.gov.companieshouse:overseas-entities-api</sonar.projectKey>
-        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login></sonar.login>
-        <sonar.password></sonar.password>
         <sonar.cpd.exclusions>
             src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dao/UpdateDao.java,
             src/main/java/uk/gov/companieshouse/overseasentitiesapi/model/dto/UpdateDto.java
@@ -59,30 +57,48 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--  CVE-2026-22740, CVE-2026-22737, CVE-2026-22745 -->
+            <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>6.2.18</version>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.86</version>
             </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/tools.jackson/jackson-bom -->
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>3.2.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.22.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- CVE-2026-24400 -->
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>3.27.7</version>
             </dependency>
+
             <!-- CVE-2026-34477, CVE-2026-34479 -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-bom -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>2.25.4</version>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.26.1</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-            <!-- CVE-2026-34477, CVE-2026-34479 -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-to-slf4j</artifactId>
-                <version>2.25.4</version>
-            </dependency>
+
             <!--
                 Temporary override to commons-lang3 version to eliminate CVE present in 3.17.0.
                 Remove this override once the upstream library updates its dependency.
@@ -90,8 +106,9 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.20.0</version>
+                <version>3.21.0</version>
             </dependency>
+
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
@@ -99,13 +116,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot-dependencies.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>2.4.20</version>
             </dependency>
+
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
@@ -113,31 +130,93 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>11.0.27</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>11.0.27</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.6.2</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-bom -->
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-bom</artifactId>
+                <version>5.13.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.7.2-jre</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-bom -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-bom</artifactId>
+                <version>1.17.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>9.11.1</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>3.0.0</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-        <!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-32990, CVE-2026-34500 -->
-        <!-- CVE-2026-34487, CVE-2026-29145, CVE-2026-29146, CVE-2026-34483 -->
-        <!-- CVE-2026-43513, CVE-2026-24880, CVE-2026-43512, CVE-2026-42498 -->
-        <!-- CVE-2026-29129, CVE-2026-43515, CVE-2026-25854 -->
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>11.0.22</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-websocket</artifactId>
-            <version>11.0.22</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>2.1.21</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -147,12 +226,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -198,7 +271,7 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-context</artifactId>
-            <version>1.81.0</version>
+            <version>1.84.3</version>
         </dependency>
 
         <dependency>
@@ -235,6 +308,20 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20260814</version>
             <scope>test</scope>
         </dependency>
 

@@ -24,9 +24,10 @@ import utils.AddressTestUtils;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.ENGLAND_AND_WALES;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.SCOTLAND;
@@ -34,8 +35,6 @@ import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlTyp
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.OVER_25_PERCENT_OF_VOTING_RIGHTS;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.APPOINT_OR_REMOVE_MAJORITY_BOARD_DIRECTORS;
 import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType.SIGNIFICANT_INFLUENCE_OR_CONTROL;
-import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.SCOTLAND;
-import static uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType.ENGLAND_AND_WALES;
 
 @ExtendWith(MockitoExtension.class)
 class BeneficialOwnerAdditionServiceTest {
@@ -143,9 +142,9 @@ class BeneficialOwnerAdditionServiceTest {
         assertCorporateBeneficialOwnerDetails((CorporateEntityBeneficialOwnerAddition) additions.get(1));
         assertLegalPersonBeneficialOwnerDetails((LegalPersonBeneficialOwnerAddition) additions.get(2), false);
         IndividualBeneficialOwnerAddition individualBeneficialOwnerAddition = (IndividualBeneficialOwnerAddition) additions.get(0);
-        assertEquals(null, individualBeneficialOwnerAddition.getTrustIds());
+        assertNull(individualBeneficialOwnerAddition.getTrustIds());
         CorporateEntityBeneficialOwnerAddition corporateEntityBeneficialOwnerAddition = (CorporateEntityBeneficialOwnerAddition) additions.get(1);
-        assertEquals(null, corporateEntityBeneficialOwnerAddition.getTrustIds());
+        assertNull(corporateEntityBeneficialOwnerAddition.getTrustIds());
     }
 
     @Test
