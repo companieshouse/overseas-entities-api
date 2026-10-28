@@ -55,7 +55,6 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.client.ApiClientService;
 import uk.gov.companieshouse.overseasentitiesapi.exception.ServiceException;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerCorporateDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.BeneficialOwnerIndividualDto;
 import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
@@ -142,11 +141,10 @@ public class FilingsService {
   public FilingApi generateOverseasEntityFiling(
           String overseasEntityId,
           Transaction transaction,
-          String passThroughTokenHeader,
-          String requestId)
-          throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
+          String passThroughTokenHeader)
+          throws SubmissionNotFoundException, ServiceException {
     var filing = new FilingApi();
-    setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader, requestId);
+    setFilingApiData(filing, overseasEntityId, transaction, passThroughTokenHeader);
     return filing;
   }
 
@@ -154,9 +152,8 @@ public class FilingsService {
           FilingApi filing,
           String overseasEntityId,
           Transaction transaction,
-          String passThroughTokenHeader,
-          String requestId)
-          throws SubmissionNotFoundException, ServiceException, SubmissionNotLinkedToTransactionException {
+          String passThroughTokenHeader)
+          throws SubmissionNotFoundException, ServiceException {
 
     var logMap = new HashMap<String, Object>();
     logMap.put(OVERSEAS_ENTITY_ID_KEY, overseasEntityId);
@@ -165,7 +162,7 @@ public class FilingsService {
     Map<String, Object> userSubmission = new HashMap<>();
 
     OverseasEntitySubmissionDto submissionDto =
-            overseasEntitiesService.getSavedOverseasEntity(transaction, overseasEntityId, requestId)
+            overseasEntitiesService.getOverseasEntitySubmission(overseasEntityId)
                     .orElseThrow(() -> new SubmissionNotFoundException(
                             String.format("Empty submission returned when generating filing for %s", overseasEntityId)
                     ));
