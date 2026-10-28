@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.overseasentitiesapi.service;
 
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,10 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotFoundException;
-import uk.gov.companieshouse.overseasentitiesapi.exception.SubmissionNotLinkedToTransactionException;
-import uk.gov.companieshouse.overseasentitiesapi.model.dto.OverseasEntitySubmissionDto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -26,9 +22,6 @@ class CostsServiceTest {
     @Mock
     private OverseasEntitiesService overseasEntitiesService;
 
-    @Mock
-    private Transaction transaction;
-
     private CostsService costService;
 
     @BeforeEach
@@ -40,15 +33,11 @@ class CostsServiceTest {
     }
 
     @Test
-    void getRegistrationCosts()
-            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void getRegistrationCosts() throws SubmissionNotFoundException {
 
-        OverseasEntitySubmissionDto overseasEntitiesRegistrationSubmission = new OverseasEntitySubmissionDto();
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(false);
 
-        when(overseasEntitiesService.getSavedOverseasEntity(transaction, TEST_OVERSEAS_ENTITY_ID, TEST_REQUEST_ID)).thenReturn(
-                Optional.of(overseasEntitiesRegistrationSubmission));
-
-        var result = costService.getCosts(transaction,TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
         assertEquals("13.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
@@ -61,18 +50,11 @@ class CostsServiceTest {
     }
 
     @Test
-    void getUpdateCosts()
-            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void getUpdateCosts() throws SubmissionNotFoundException {
 
-        OverseasEntitySubmissionDto overseasEntitiesUpdateSubmission = new OverseasEntitySubmissionDto();
-        overseasEntitiesUpdateSubmission.setEntityNumber("OE123456");
-        overseasEntitiesUpdateSubmission.setIsRemove(false);
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(true);
 
-        when(overseasEntitiesService.getSavedOverseasEntity(transaction, TEST_OVERSEAS_ENTITY_ID, TEST_REQUEST_ID)).thenReturn(
-                Optional.of(overseasEntitiesUpdateSubmission));
-        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, overseasEntitiesUpdateSubmission)).thenReturn(true);
-
-        var result = costService.getCosts(transaction, TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
         assertEquals("26.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
@@ -85,19 +67,12 @@ class CostsServiceTest {
     }
 
     @Test
-    void getRemoveCosts()
-            throws SubmissionNotFoundException, SubmissionNotLinkedToTransactionException {
+    void getRemoveCosts() throws SubmissionNotFoundException {
 
-        OverseasEntitySubmissionDto overseasEntitiesRemoveSubmission = new OverseasEntitySubmissionDto();
-        overseasEntitiesRemoveSubmission.setEntityNumber("OE123456");
-        overseasEntitiesRemoveSubmission.setIsRemove(true);
+        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(false);
+        when(overseasEntitiesService.isSubmissionARemove(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID)).thenReturn(true);
 
-        when(overseasEntitiesService.getSavedOverseasEntity(transaction, TEST_OVERSEAS_ENTITY_ID, TEST_REQUEST_ID)).thenReturn(
-                Optional.of(overseasEntitiesRemoveSubmission));
-        when(overseasEntitiesService.isSubmissionAnUpdate(TEST_REQUEST_ID, overseasEntitiesRemoveSubmission)).thenReturn(false);
-        when(overseasEntitiesService.isSubmissionARemove(TEST_REQUEST_ID, overseasEntitiesRemoveSubmission)).thenReturn(true);
-
-        var result = costService.getCosts(transaction, TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
+        var result = costService.getCosts(TEST_REQUEST_ID, TEST_OVERSEAS_ENTITY_ID);
 
         assertEquals("39.00", result.getAmount());
         assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlJurisdictionType;
 import uk.gov.companieshouse.overseasentitiesapi.model.NatureOfControlType;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
